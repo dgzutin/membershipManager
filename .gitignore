@@ -1,0 +1,3 @@
+vendor/*
+src/app/config/config.json
+public/assets/images/logo.png

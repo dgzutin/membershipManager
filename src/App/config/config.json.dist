@@ -1,0 +1,17 @@
+{
+  "dbConn": {
+    "driver": "pdo_mysql",
+    "host": "localhost",
+    "dbname": "your-db-name",
+    "user": "",
+    "password": ""
+  },
+
+  "swiftmailer": {
+     "smtp": "",
+     "port": 25,
+     "encryption": "",
+     "username": "",
+     "password": ""
+   }
+}

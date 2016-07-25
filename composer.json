@@ -1,0 +1,17 @@
+{
+    "require": {
+        "slim/slim": "^3.0",
+        "slim/twig-view": "^2.1",
+        "doctrine/orm": "^2.5",
+        "tecnickcom/tcpdf": "^6.2",
+        "swiftmailer/swiftmailer": "^5.4"
+    },
+
+
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/App"
+        }
+    }
+
+}

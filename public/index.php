@@ -1,0 +1,145 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Danilo Zutin
+ * Date: 13.05.16
+ * Time: 14:38
+ */
+
+
+use App\Controller;
+use App\Service;
+use App\Middleware\UserAuthenticationMiddleware;
+use App\EmFactory;
+
+require '../vendor/autoload.php';
+require '../vendor/swiftmailer/swiftmailer/lib/swift_required.php';
+
+//require '../src/App/Middleware/UserAuthenticationMiddleware.php';
+//require '../src/App/Controller/AdminController.php';
+
+
+$configuration = [
+    'settings' => [
+        'displayErrorDetails' => true,
+    ],
+];
+
+$container = new \Slim\Container($configuration);
+$app = new \Slim\App($container);
+
+// Get container
+$container = $app->getContainer();
+
+
+// Register components on container
+
+$container['view'] = function ($container) {
+    $view = new \Slim\Views\Twig('../src/App/views', [
+        'cache' => false
+    ]);
+    $view->addExtension(new \Slim\Views\TwigExtension(
+        $container['router'],
+        $container['request']->getUri()
+    ));
+    return $view;
+};
+
+$container['em'] = function (){
+
+    $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
+    $jsonConfig = json_decode($appConfig);
+    $em = new EmFactory($jsonConfig, true); //change to false if not in Dev mode
+    return $em->createEntityManager();
+};
+
+
+//Register Services
+$container['mailServices'] = function ($container) {
+
+    $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
+    $jsonConfig = json_decode($appConfig);
+    // Create the Transport
+    $transport = Swift_SmtpTransport::newInstance($jsonConfig->swiftmailer->smtp, $jsonConfig->swiftmailer->port, $jsonConfig->swiftmailer->encryption)
+        ->setUsername($jsonConfig->swiftmailer->username)
+        ->setPassword($jsonConfig->swiftmailer->password);
+    // Create the Mailer using the created Transport
+    $mailer = Swift_Mailer::newInstance($transport);
+    $message = Swift_Message::newInstance();
+
+    $loader = new Twig_Loader_Filesystem('../src/App/views');
+    $twig = new Twig_Environment($loader, array(
+        'cache' => false,
+    ));
+
+    return new Service\MailServices($mailer, $message, $twig);
+};
+
+$container['userServices'] = function($container){
+    return new Service\UserServices($container);
+};
+
+
+
+
+//Register Controllers
+$container['\AdminController'] = function ($container) {
+    return new Controller\AdminController($container);
+};
+$container['\UserController'] = function ($container) {
+    return new Controller\UserController($container);
+};
+$container['\PublicController'] = function ($container) {
+    return new Controller\PublicController($container);
+};
+$container['\ApiController'] = function ($container) {
+    return new Controller\ApiController($container);
+};
+
+
+
+//Define the Routes for admin group
+
+$app->group('/admin', function () use ($app) {
+
+    $app->get('/home', '\AdminController:homeAction' )->setName('homeAdmin');
+    $app->get('/users', '\AdminController:usersAction')->setName('usersTableView');
+    $app->get('/usersJson', '\AdminController:users')->setName('usersTableView');
+    $app->get('/users/{userId}', '\AdminController:viewUserProfileAction')->setName('adminViewUserProfile');
+    $app->post('/users/{userId}', '\AdminController:saveUserProfileAction')->setName('adminSaveUserProfile');
+
+    //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
+})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
+
+//Define the Routes for user group
+$app->group('/user', function () use ($app) {
+
+    $app->get('/home', '\UserController:homeAction')->setName('homeUser');
+    $app->get('/profile', '\UserController:viewUserProfileAction')->setName('userProfile');
+    $app->post('/profile', '\UserController:saveUserProfileAction')->setName('editUserProfile');
+
+    //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
+})->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN')));
+
+//Define the Routes for API
+
+$app->group('/api/v1', function () use ($app) {
+
+    $app->post('/sendSingleMail', '\ApiController:sendSingleMailAction' )->setName('sendSingleMail');
+    $app->post('/test', '\ApiController:testAction' )->setName('test');
+
+
+    //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
+})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
+
+
+// Define the public routes
+$app->get('/', '\PublicController:homeAction');
+$app->get('/login', '\PublicController:loginAction')->setName('login');
+$app->post('/login', '\PublicController:processLoginAction')->setName('process_login');
+$app->get('/logout', '\PublicController:logoutAction')->setName('logout');
+$app->get('/register', '\PublicController:registerAction')->setName('register');
+$app->post('/register', '\PublicController:processRegisterAction')->setName('processRegister');
+$app->get('/activateAccount/{key}', '\PublicController:activateAccountAction')->setName('activateAccount');
+
+$app->run();

@@ -1,0 +1,192 @@
+<html>
+
+<head>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ baseUrl }}/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript
+================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+
+
+</head>
+<body>
+
+<div class="container" style="margin-top:30px">
+    <div class="col-md-10 col-md-offset-1">
+
+        <h1 class="text-center"><img src="{{ baseUrl }}/assets/images/logo.png" width="850"></h1>
+        <hr>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><h3 class="panel-title"><strong>Register </strong></h3>
+                <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="{{ baseUrl }}/login">User Login</a></div>
+            </div>
+
+            <div class="panel-body">
+                <form data-toggle="validator" role="form" method="post">
+
+                    {% if validation.exception == true %}
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ validation.message }}
+                        </div>
+                    {% endif %}
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group {% if form.title.error == true %}has-error{% endif %}">
+                                <label class="control-label" for="first_name">Title</label>
+                                <select required="required" value="{{ form.title.value }}" class="form-control" name="title" id="title">
+                                    <option>Dr.</option>
+                                    <option>Mrs.</option>
+                                    <option>Mr.</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group {% if form.first_name.error == true %}has-error{% endif %}">
+                                <label class="control-label" for="first_name">First Name</label>
+                                <input required="required" type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" value="{{ form.first_name.value }}" tabindex="1">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group {% if form.last_name.error == true %}has-error{% endif %}">
+                                <label class="control-label" for="last_name">Last Name</label>
+                                <input required="required" type="text" name="last_name" id="last_name" class="form-control " placeholder="Last Name" value="{{ form.last_name.value }}" tabindex="2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group {% if form.position.error == true %}has-error{% endif %}">
+                        <label class="control-label" for="position">Position</label>
+                        <input type="text" name="position" id="position" class="form-control " placeholder="position" value="{{ form.position.value }}" tabindex="3">
+                    </div>
+                    <div class="form-group {% if form.institution.error == true %}has-error{% endif %}">
+                        <label class="control-label" for="institution">Institution</label>
+                        <input type="text" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution.value }}" tabindex="3">
+                    </div>
+                    <div class="form-group {% if form.department.error == true %}has-error{% endif %}">
+                        <label class="control-label" for="department">Department</label>
+                        <input type="text" name="department" id="department" class="form-control " placeholder="Department" value="{{ form.department.value }}" tabindex="3">
+                    </div>
+                    <div class="form-group {% if form.street.error == true %}has-error{% endif %}">
+                        <label class="control-label" for="street">Street</label>
+                        <input required type="text" name="street" id="street" class="form-control " placeholder="street" value="{{ form.street.value }}" tabindex="3">
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group {% if form.country.error == true %}has-error{% endif %}">
+                                <label for="">Country</label>
+                                <div  id="country" class="bfh-selectbox bfh-countries" data-country="{{ form.country.value }}"  data-name="country" data-flags="true">
+                                    <input type="hidden" value="">
+                                    <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+                                        <span class="bfh-selectbox-option input-medium" data-option=""></span>
+                                        <b class="caret"></b>
+                                    </a>
+                                    <div class="bfh-selectbox-options">
+                                        <input type="text" class="bfh-selectbox-filter">
+                                        <div role="listbox">
+                                            <ul role="option">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group {% if form.city.error == true %}has-error{% endif %}">
+                                <label for="city">City</label>
+                                <input required="required" type="text" name="city" id="city" class="form-control " placeholder="" value="{{ form.city.value }}" tabindex="5">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group {% if form.zip.error == true %}has-error{% endif %}">
+                                <label for="zip">ZIP</label>
+                                <input type="text" name="zip" id="zip" class="form-control " placeholder="" value="{{ form.zip.value }}" tabindex="6">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group {% if form.website.error == true %}has-error{% endif %}">
+                        <label for="website">Website</label>
+                        <input type="text" name="website" id="street" class="form-control " placeholder="" value="{{ form.website.value }}" tabindex="3">
+                    </div>
+
+                    <div class="form-group {% if form.phone.error == true %}has-error{% endif %}">
+                        <label for="phone">Phone</label>
+                        <input type="text" id="phone" name="phone" class="form-control" value="{{ form.phone.value }}">
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group {% if form.email_1.error == true %}has-error{% endif %}">
+                                <label for="email_1">Primary E-mail</label>
+                                <input type="email" name="email_1" id="email_1" class="form-control " placeholder="" value="{{ form.email_1.value }}" tabindex="5" data-error="This e-mail address is invalid" required />
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group {% if form.email_2.error == true %}has-error{% endif %}">
+                                <label for="e-mail_2">Secondary E-mail</label>
+                                <input type="email" name="email_2" id="email_2" class="form-control " placeholder="" value="{{ form.email_2.value }}" tabindex="6" data-error="This e-mail address is invalid">
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group {% if form.password.error == true %}has-error{% endif %}">
+                                <input type="password" name="password" id="inputPassword" class="form-control " placeholder="Password" tabindex="5">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group {% if form.password_confirmation.error == true %}has-error{% endif %}">
+                                <input type="password" name="password_confirmation" id="inputPasswordConfirm" class="form-control " placeholder="Confirm Password" tabindex="6" data-match="#inputPassword" data-match-error="Passwords don't match" required>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="checkbox" style="margin-top: 0px;">
+                            <label>
+                                <input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Sign up</button>
+
+                    <hr style="margin-top:10px;margin-bottom:10px;" >
+
+                    <div class="form-group">
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script>
+    $('#myForm').validator();
+</script>
+
+
+</html>

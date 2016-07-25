@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>ADMIN: Manage Users and Members</strong></div>
+            <div class="panel-body">
+
+
+                <table class="display" id="users" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Institution</th>
+                        <th>Email</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for user in users %}
+                        <tr class="">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.lastName }}, {{ user.firstName }}</td>
+                            <td>{{ user.institution }}</td>
+                            <td>{{ user.email1 }}</td>
+                            <td><a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">view</a></td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#users').DataTable();
+        } );
+
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{
+  "dbConn": {
+    "driver": "pdo_mysql",
+    "host": "localhost",
+    "dbname": "membershipManager",
+    "user": "root",
+    "password": "toor"
+  },
+
+  "swiftmailer": {
+    "smtp": "educon-conference.org",
+    "port": 25,
+    "encryption": "",
+    "username": "tpc@educon-conference.org",
+    "password": "v5c9u3s2"
+  }
+
+
+}
