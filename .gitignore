@@ -1,5 +1,6 @@
 vendor/*
 src/App/config/config.json
 public/assets/images/logo.png
+public/files/*
 composer.phar
 .idea
