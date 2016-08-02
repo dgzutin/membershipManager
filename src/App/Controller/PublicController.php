@@ -137,4 +137,62 @@ class PublicController {
         return $this->container->view->render($response, 'userNotification.twig', $result);
         
     }
+
+    public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        //TODO: sanitize params
+        $key = $args['key'];
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->findUserByKey($key);
+
+        if ($resp['exception'] == false){
+            return $this->container->view->render($response, 'resetPassword.html.twig');
+        }
+        return $this->container->view->render($response, 'userNotification.twig', $resp);
+
+    }
+
+    public function processResetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        //TODO: sanitize params
+        $key = $args['key'];
+
+        $form_data = $request->getParsedBody();
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->findUserByKey($key);
+
+        if ($resp['exception'] == false){
+
+            $user = $resp['user'];
+            $resetResp = $userService->resetPassword($user->getId(), $form_data['password']);
+            return $this->container->view->render($response, 'userNotification.twig', $resetResp);
+        }
+        return $this->container->view->render($response, 'userNotification.twig', $resp);
+
+    }
+
+    public function forgotPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        return $this->container->view->render($response, 'forgotPassword.html.twig');
+    }
+
+    public function processForgotPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $form_data = $request->getParsedBody();
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->findUserByEmail($form_data['email_1']);
+        
+        if ($resp['exception'] == false){
+
+            $user = $resp['user'];
+            $mailServices = $this->container->get('mailServices');
+            $resetResp = $mailServices->sendResetPasswordMail($user, $request);
+            return $this->container->view->render($response, 'userNotification.twig', $resetResp);
+        }
+        return $this->container->view->render($response, 'userNotification.twig', $resp);
+    }
+
 }

@@ -95,7 +95,9 @@ $container['\PublicController'] = function ($container) {
 $container['\ApiController'] = function ($container) {
     return new Controller\ApiController($container);
 };
-
+$container['\MembersAreaController'] = function ($container) {
+    return new Controller\MembersAreaController($container);
+};
 
 
 //Define the Routes for admin group
@@ -107,6 +109,9 @@ $app->group('/admin', function () use ($app) {
     $app->get('/usersJson', '\AdminController:users')->setName('usersTableView');
     $app->get('/users/{userId}', '\AdminController:viewUserProfileAction')->setName('adminViewUserProfile');
     $app->post('/users/{userId}', '\AdminController:saveUserProfileAction')->setName('adminSaveUserProfile');
+    $app->get('/resetPassword/{userId}', '\AdminController:resetPasswordAction')->setName('resetPasswordByAdmin');
+    $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsAdmin');
+    $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsAdmin');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
@@ -117,6 +122,10 @@ $app->group('/user', function () use ($app) {
     $app->get('/home', '\UserController:homeAction')->setName('homeUser');
     $app->get('/profile', '\UserController:viewUserProfileAction')->setName('userProfile');
     $app->post('/profile', '\UserController:saveUserProfileAction')->setName('editUserProfile');
+    $app->get('/resetPassword', '\UserController:resetPasswordAction')->setName('resetPasswordByUser');
+    $app->map(['GET', 'POST'], '/elFinderConnector', '\MembersAreaController:elFinderConnectorAction')->setName('elFinderConnector');
+    $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsUser');
+    $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsUser');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN')));
@@ -141,5 +150,8 @@ $app->get('/logout', '\PublicController:logoutAction')->setName('logout');
 $app->get('/register', '\PublicController:registerAction')->setName('register');
 $app->post('/register', '\PublicController:processRegisterAction')->setName('processRegister');
 $app->get('/activateAccount/{key}', '\PublicController:activateAccountAction')->setName('activateAccount');
-
+$app->get('/resetPassword/{key}', '\PublicController:resetPasswordAction')->setName('resetPassword');
+$app->post('/resetPassword/{key}', '\PublicController:processResetPasswordAction')->setName('processResetPassword');
+$app->get('/forgotPassword', '\PublicController:forgotPasswordAction')->setName('forgotPassword');
+$app->post('/forgotPassword', '\PublicController:processForgotPasswordAction')->setName('processForgotPassword');
 $app->run();

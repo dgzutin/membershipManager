@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+
+    <!-- jQuery and jQuery UI (REQUIRED) -->
+    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <!-- elFinder CSS (REQUIRED) -->
+    <link rel="stylesheet" type="text/css" href="{{ baseUrl }}/assets/elFinder-2.1.14/css/elfinder.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ baseUrl }}/assets/elFinder-2.1.14/css/theme.css">
+
+    <!-- elFinder JS (REQUIRED) -->
+    <script src="{{ baseUrl }}/assets/elFinder-2.1.14/js/elfinder.min.js"></script>
+
+    <!-- GoogleDocs Quicklook plugin for GoogleDrive Volume (OPTIONAL) -->
+    <!--<script src="js/extras/quicklook.googledocs.js"></script>-->
+
+    <!-- elFinder translation (OPTIONAL) -->
+    <!--<script src="js/i18n/elfinder.ru.js"></script>-->
+
+    <!-- elFinder initialization (REQUIRED) -->
+    <script type="text/javascript" charset="utf-8">
+        // Documentation for client options:
+        // https://github.com/Studio-42/elFinder/wiki/Client-configuration-options
+        $(document).ready(function() {
+            $('#elfinder').elfinder({
+                url : '{{ path_for('elFinderConnector')}}',  // connector URL (REQUIRED)
+                defaultView : 'list',
+                // , lang: 'ru'                    // language (OPTIONAL)
+            });
+        });
+    </script>
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Member's Area: Documents</strong></div>
+            <div class="panel-body" id="elfinder">
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

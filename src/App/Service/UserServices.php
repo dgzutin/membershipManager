@@ -140,7 +140,7 @@ class UserServices
             $user->setWebsite($user_data['website']);
             $user->setZip($user_data['zip']);
             $user->setActive(true);
-            $user->setProfileKey(sha1(microtime().rand()));
+            //$user->setProfileKey(sha1(microtime().rand()));
 
             try{
                 $this->em->flush();
@@ -187,6 +187,89 @@ class UserServices
             return array('exception' => true,
                          'message' => 'This account has already been activated or the key is invalid.');
         }
+    }
+
+    public function resetPassword($userId, $password)
+    {
+        $repository = $this->em->getRepository('App\Entity\User');
+        $user = $repository->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.id = :id')
+            ->setParameter('id', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        //var_dump($user);
+
+        if ($user != NULL){
+            $user->setActive(true);
+            $user->setProfileKey(sha1(microtime().rand()));
+            $hash = password_hash($password, PASSWORD_BCRYPT);
+            $user->setPassword($hash);
+
+            $this->em->flush();
+
+            return array('exception' => false,
+                         'message' => 'Password has been reset');
+        }
+        else{
+            return array('exception' => true,
+                         'message' => 'User not found for the provided id');
+        }
+    }
+
+    public function findUserByKey($key)
+    {
+        $repository = $this->em->getRepository('App\Entity\User');
+        $user = $repository->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.profileKey = :profileKey')
+            ->setParameter('profileKey', $key)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($user != NULL){
+            $user->setActive(true);
+            $this->em->flush();
+
+            $result = array('exception' => false,
+                            'message' => 'Account found',
+                            'user' => $user);
+        }
+        else{
+            $result =  array('exception' => true,
+                             'message' => 'Invalid Key',
+                             'user' => NULL);
+        }
+        return $result;
+
+    }
+
+    public function findUserByEmail($email_1)
+    {
+        $repository = $this->em->getRepository('App\Entity\User');
+        $user = $repository->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.email_1 = :email_1')
+            ->setParameter('email_1', $email_1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($user != NULL){
+            $user->setActive(true);
+            $this->em->flush();
+
+            $result = array('exception' => false,
+                           'message' => 'Account found',
+                           'user' => $user);
+        }
+        else{
+            $result =  array('exception' => true,
+                'message' => 'No user account exist for the e-mail '.$email_1,
+                'user' => NULL);
+        }
+        return $result;
+
     }
 
     public function getUserById($userId)

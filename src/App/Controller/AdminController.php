@@ -137,5 +137,18 @@ class AdminController {
         }
     }
 
+    public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = $args['userId'];
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->getUserById($userId);
+
+        $mailServices = $this->container->get('mailServices');
+        $resetResp = $mailServices->sendResetPasswordMail($resp['user'], $request);
+
+        return $this->container->view->render($response, 'userNotification.twig', $resetResp);
+    }
+
 
 }

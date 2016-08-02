@@ -152,7 +152,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6">
 
-                            Send reset password request to user: <a href="#"><button class="btn btn-primary btn-sm">Reset password</button></a>
+                            Send reset password request to user: <a href="{{ path_for('resetPasswordByAdmin', { 'userId': form.id.value }) }}"><label class="btn btn-primary btn-sm">Reset password</label></a>
 
                         </div>
                     </div>

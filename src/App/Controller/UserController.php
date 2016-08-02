@@ -111,8 +111,22 @@ class UserController {
                                                                                                      'exception' => $resp['exception'],
                                                                                                      'message' => $resp['message'],
                                                                                                      'form' => $user));
-
         }
     }
+
+    public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $userId = $_SESSION['user_id'];
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->getUserById($userId);
+
+        $mailServices = $this->container->get('mailServices');
+        $resetResp = $mailServices->sendResetPasswordMail($resp['user'], $request);
+
+        return $this->container->view->render($response, 'userNotification.twig', $resetResp);
+    }
+    
+
 
 }

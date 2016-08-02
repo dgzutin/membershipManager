@@ -35,7 +35,7 @@ class User
     /** @Column(type="string", length=10, nullable=true) **/
     public $position;
 
-    /** @Column(type="string", length=50, nullable=false) **/
+    /** @Column(type="string", length=100, nullable=false) **/
     public $institution;
 
     /** @Column(type="string", length=50, nullable=true) **/
