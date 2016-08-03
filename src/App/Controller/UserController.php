@@ -33,10 +33,16 @@ class UserController {
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
                        'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
 
+        $userService = $this->container->get('userServices');
+        $resp = $userService->getUserById($_SESSION['user_id']);
+        $user = $resp['user'];
+        $userName = $user->getFirstName().' '.$user->getLastName();
+
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
             'links' => $links,
             'user_id' => $_SESSION['user_id'],
-            'user_role' => $_SESSION['user_role']
+            'user_role' => $_SESSION['user_role'],
+            'userName' => $userName
         ));
     }
     

@@ -26,10 +26,16 @@ class AdminController {
                       'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
                       'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
 
+        $userService = $this->container->get('userServices');
+        $resp = $userService->getUserById($_SESSION['user_id']);
+        $user = $resp['user'];
+        $userName = $user->getFirstName().' '.$user->getLastName();
+
         return $this->container->view->render($response, 'admin/adminHome.html.twig', array(
             'links' => $links,
             'user_id' => $_SESSION['user_id'],
-            'user_role' => $_SESSION['user_role']
+            'user_role' => $_SESSION['user_role'],
+            'userName' => $userName
         ));
     }
 

@@ -4,20 +4,14 @@
 
     <div class="panel-group">
 
-        <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Your Membership</strong></div>
-            <div class="panel-body">
-                <li><a href="">Manage your membership</a> <span class="label label-success label-pill pull-xs-right">You are not yet a member</span></li>
-                <li><a href="">Renew your membership</a> <span class="label label-danger label-pill pull-xs-right">Renew your expired membership</span></li>
-                <li><a href="{{ path_for('documentsUser')}}">Documents for Members</a></li>
-            </div>
-        </div>
+        <h2>Welcome, {{ userName }}!</h2>
 
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Ing.Paed.IGIP</strong></div>
+            <div class="panel-heading"><strong>As a user you have the following options</strong></div>
             <div class="panel-body">
-                <li><a href="">Manage Something here</a></li>
-                <li><a href="">Manage Something here</a></li>
+                <li class="active"><a href="{{ links.viewProfile }}">Edit your user account</a></li>
+                <li><a href="">Manage your membership</a> <span class="label label-success label-pill pull-xs-right">You are not yet a member</span></li>
+                <li><a href="{{ path_for('documentsUser')}}">Documents for Members</a></li>
             </div>
         </div>
 

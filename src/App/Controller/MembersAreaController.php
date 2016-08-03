@@ -21,7 +21,7 @@ class MembersAreaController{
 
     public function elFinderConnectorAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        //TODO: Define different access rights based on the Membership Type if needed
+        //TODO: Define different access rights based on the Membership Type if needed. At the moment only ADMIN has all rights
 
         $userService = $this->container->get('userServices');
         $resp = $userService->getUserById($_SESSION['user_id']);
@@ -71,8 +71,8 @@ class MembersAreaController{
                         )
                     );
                     break;
-                case 'ROLE_USER':
 
+                default:
                     $opts = array(
                         // 'debug' => true,
                         'roots' => array(
@@ -110,6 +110,7 @@ class MembersAreaController{
                             )
                         )
                     );
+
                     break;
 
             }

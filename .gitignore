@@ -4,3 +4,4 @@ public/assets/images/logo.png
 public/files/*
 composer.phar
 .idea
+src/App/config/config.json
