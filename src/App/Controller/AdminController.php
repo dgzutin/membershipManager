@@ -156,5 +156,34 @@ class AdminController {
         return $this->container->view->render($response, 'userNotification.twig', $resetResp);
     }
 
+    public function createBulkMailAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
+            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
+            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
+
+        return $this->container->view->render($response, 'admin/adminWriteBulkMail.html.twig', array(
+            'links' => $links));
+    }
+
+    public function verifyBulkMailAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $form_data = $request->getParsedBody();
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->findUsersFiltered(null);
+
+
+        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
+            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
+            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
+
+        return $this->container->view->render($response, 'admin/adminVerifyBulkMail.html.twig', array(
+            'links' => $links,
+            'users' => $resp['users'],
+            'submited_form' => $form_data));
+
+    }
 
 }

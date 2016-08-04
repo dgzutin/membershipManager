@@ -25,7 +25,8 @@ class MembersAreaController{
 
         $userService = $this->container->get('userServices');
         $resp = $userService->getUserById($_SESSION['user_id']);
-        $url = $url = $request->getUri()->getBaseUrl().'/files/';
+        $url_admin = $request->getUri()->getBaseUrl().'/files/';
+        $url_members = $request->getUri()->getBaseUrl()."/files/Member's Area";
 
         if ($resp['exception'] != true){
             $user = $resp['user'];
@@ -39,7 +40,7 @@ class MembersAreaController{
                             array(
                                 'driver'        => 'LocalFileSystem',            // driver for accessing file system (REQUIRED)
                                 'path'          => realpath(dirname(__DIR__).'/../../public/files/'),                 // path to files (REQUIRED)
-                                'URL'           => $url,                         // URL to files (REQUIRED)
+                                'URL'           => $url_admin,                         // URL to files (REQUIRED)
                                 'uploadDeny'    => array('application/x-msdownload'),                // All Mimetypes not allowed to upload
                                 'uploadAllow'   => array('image/png'),          // Mimetype `image` and `text/plain` allowed to upload
                                 'uploadOrder'   => array('deny', 'allow'),      // allowed Mimetype `image` and `text/plain` only
@@ -78,8 +79,8 @@ class MembersAreaController{
                         'roots' => array(
                             array(
                                 'driver'        => 'LocalFileSystem',           // driver for accessing file system (REQUIRED)
-                                'path'          => realpath(dirname(__DIR__).'/../../public/files/'),                 // path to files (REQUIRED)
-                                'URL'           => $url, // URL to files (REQUIRED)
+                                'path'          => realpath(dirname(__DIR__)."/../../public/files/Member's Area/"),                 // path to files (REQUIRED)
+                                'URL'           => $url_members, // URL to files (REQUIRED)
                                 'uploadDeny'    => array('application/x-msdownload'),                // All Mimetypes not allowed to upload
                                 'uploadAllow'   => array('image/png'),// Mimetype `image` and `text/plain` allowed to upload
                                 'uploadOrder'   => array('deny', 'allow'),      // allowed Mimetype `image` and `text/plain` only

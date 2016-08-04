@@ -10,11 +10,12 @@ namespace App\Service;
 
 class MailServices
 {
-    public function __construct($mailer, $message, $twig)
+    public function __construct($mailer, $message, $twig, $em)
     {
         $this->mailer = $mailer;
         $this->message = $message;
         $this->twig = $twig;
+        $this->em = $em;
     }
 
     public function sendSingleMail($email, $recipient, $subject, $emailBody, $sender_email, $sender_name)
@@ -106,6 +107,36 @@ class MailServices
                 'message' => $e->getMessage());
         }
         return $result;
+    }
+    
+    public function sendBulkEmails($userIds, $emailSubject, $emailBody)
+    {
+
+        $users = $this->em->getRepository('App\Entity\User')->findById($userIds);
+
+        foreach ($users as $user){
+
+            $this->message
+                ->setSubject($emailSubject)
+                ->setFrom(array('office@igip.org' => 'Name of Organization'));
+            try{
+                $this->message->setTo(array($user->getEmail1() => $user->getFirstName().' '.$user->getLastName()));
+                $this->message->setBody($emailBody);
+
+                $result = array('exception' => false,
+                    'sent' => $this->mailer->send($this->message),
+                    'message' => 'Email successfully sent to '.$user->getEmail1());
+            }
+            catch (\Exception $e){
+
+                $result = array('exception' => true,
+                    'sent' => $this->mailer->send($this->message),
+                    'message' => $e->getMessage());
+            }
+            $results[$user->getId()] = $result;
+
+        }
+        return $results;
     }
 
 }

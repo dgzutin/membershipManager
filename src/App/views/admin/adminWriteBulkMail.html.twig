@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Bulk Email function</strong></div>
+            <div class="panel-body">
+
+                <form data-toggle="validator" role="form" method="post">
+
+                <div class="row">
+
+                <div class="col-xs-12 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label for="filter1">Send Mail to</label>
+                    <select class="form-control" id="filter1" name="filter1">
+                        <option>All registered users</option>
+                        <option>Members only</option>
+                    </select>
+                </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label for="filter2">Membership Type</label>
+                    <select class="form-control" id="filter2" name="filter2">
+                        <option>Type one</option>
+                        <option>Type two</option>
+                    </select>
+                </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-4 col-md-4">
+                <div class="form-group">
+                    <label for="filter3">Membership Status</label>
+                    <select class="form-control" id="filter3" name="filter3">
+                        <option value="valid">Valid memberships</option>
+                        <option value="expired">Expired memberships</option>
+                        <option value="expired_1year">Expired memberships (1 year or less)</option>
+                        <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
+                    </select>
+                </div>
+                </div>
+
+                </div>
+
+
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <input class="form-control" type="text" id="subject" name="subject">
+                </div>
+
+                    <div class="form-group">
+                        <label for="replyTo">Reply to:</label>
+                        <input class="form-control" type="email" id="replyTo" name="replyTo">
+                    </div>
+
+                <div class="form-group">
+                    <label for="emailBoby">Email text:</label>
+                    <textarea  class="form-control" rows="10" id="emailBoby" name="emailBody"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Next</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+
+    </script>
+
+
+{% endblock %}

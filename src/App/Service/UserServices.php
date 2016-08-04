@@ -292,7 +292,29 @@ class UserServices
             return array('exception' => true,
                          'message' => 'User not found. Provided Id is invalid');
         }
+
     }
 
+    public function findUsersFiltered($filter)
+    {
+        //TODO: Apply filter here when implemented
+
+        $users = $this->em->getRepository('App\Entity\User')->findAll();
+        
+        if ($users == null){
+
+            $result = array('exception' => true,
+                            'message' => "No users found that match this criteria");
+            return $result;
+        }
+        $numberOfUsers = sizeof($users);
+
+        $result = array('exception' => false,
+                        'users' => $users,
+                        'numberOfrecords' => $numberOfUsers,
+                        'message' => "Users found");
+
+        return $result;
+    }
 
 }

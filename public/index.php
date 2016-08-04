@@ -72,7 +72,7 @@ $container['mailServices'] = function ($container) {
         'cache' => false,
     ));
 
-    return new Service\MailServices($mailer, $message, $twig);
+    return new Service\MailServices($mailer, $message, $twig, $container['em']);
 };
 
 $container['userServices'] = function($container){
@@ -112,6 +112,9 @@ $app->group('/admin', function () use ($app) {
     $app->get('/resetPassword/{userId}', '\AdminController:resetPasswordAction')->setName('resetPasswordByAdmin');
     $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsAdmin');
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsAdmin');
+    $app->get('/createBulkMail', '\AdminController:createBulkMailAction')->setName('createBulkMailAdmin');
+    $app->post('/createBulkMail', '\AdminController:verifyBulkMailAction')->setName('verifyBulkMailAdmin');
+
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
@@ -135,7 +138,7 @@ $app->group('/user', function () use ($app) {
 $app->group('/api/v1', function () use ($app) {
 
     $app->post('/sendSingleMail', '\ApiController:sendSingleMailAction' )->setName('sendSingleMail');
-    $app->post('/test', '\ApiController:testAction' )->setName('test');
+    $app->get('/test', '\ApiController:testAction' )->setName('test');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

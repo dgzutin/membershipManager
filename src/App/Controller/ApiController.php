@@ -47,11 +47,15 @@ class ApiController {
         echo json_encode($result);
         
     }
-    
+
+    //Route /api/v1/testAction
     public function testAction(ServerRequestInterface $request, ResponseInterface $response)
     {
 
-
+        $mailServices = $this->container->get('mailServices');
+        $results = $mailServices->sendBulkEmails(array(2, 38, 63, 40, 1, 'bla'), 'Test Subject', 'test body..hehe bye!');
+        
+        echo json_encode($results);
     }
 
 }
