@@ -1,7 +1,7 @@
 vendor/*
 src/App/config/config.json
-public/assets/images/logo.png
-public/files/*
+public/files/Member's Area/.quarantine/*
+public/files/Member's Area/.tmb/*
 composer.phar
 .idea
 src/App/config/config.json
