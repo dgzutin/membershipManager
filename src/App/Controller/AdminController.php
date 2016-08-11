@@ -186,4 +186,57 @@ class AdminController {
 
     }
 
+    public function yourMembershipAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $em = $this->container->get('em');
+        $repository = $em->getRepository('App\Entity\MembershipType');
+        $membershipTypes = $repository->createQueryBuilder('memberships')
+            ->select('memberships')
+            ->getQuery()
+            ->getResult();
+
+        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
+            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
+            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
+
+        return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('links' => $links,
+            'membershipTypes' => $membershipTypes,
+            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('shoppingCartAdmin')),
+            'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/admin/addMembershipToCart',
+            'message' => '',
+            'form' => ''));
+    }
+
+    public function shoppingCartAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $items = $shoppingCartServices->getItems();
+
+       // shoppingCartServices
+        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
+            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
+            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
+
+        $totalPrice = $shoppingCartServices->getTotalPrice($items);
+
+        return $this->container->view->render($response, 'user/shoppingCart.html.twig', array('links' => $links,
+            'exception' => false,
+            'items' => $items,
+            'currency' => 'EUR',
+            'totalPrice' => $totalPrice,
+            'message' => ''));
+    }
+
+    public function addMembershipToCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $membershipTypeId = $args['membershipTypeId'];
+
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $res = $shoppingCartServices->addIMembershipToCart($membershipTypeId);
+
+
+        $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin'));
+        return $response = $response->withRedirect($uri, 200);
+    }
+
 }

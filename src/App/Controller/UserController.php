@@ -132,7 +132,83 @@ class UserController {
 
         return $this->container->view->render($response, 'userNotification.twig', $resetResp);
     }
-    
 
+    public function yourMembershipAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $em = $this->container->get('em');
+        $repository = $em->getRepository('App\Entity\MembershipType');
+        $membershipTypes = $repository->createQueryBuilder('memberships')
+            ->select('memberships')
+            ->where('memberships.selectable = :selectable')
+            ->setParameter('selectable', true)
+            ->getQuery()
+            ->getResult();
+        
+        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
+            'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
+
+        return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('links' => $links,
+            'membershipTypes' => $membershipTypes,
+            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('shoppingCartUser')),
+            'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/user/addMembershipToCart',
+            'message' => '',
+            'form' => ''));
+    }
+
+
+    public function shoppingCartAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $items = $shoppingCartServices->getItems();
+
+        // shoppingCartServices
+        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
+            'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
+
+        $totalPrice = $shoppingCartServices->getTotalPrice($items);
+
+        return $this->container->view->render($response, 'user/shoppingCart.html.twig', array('links' => $links,
+            'exception' => false,
+            'items' => $items,
+            'currency' => 'EUR',
+            'totalPrice' => $totalPrice,
+            'message' => ''));
+    }
+
+    public function addMembershipToCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $membershipTypeId = $args['membershipTypeId'];
+
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $res = $shoppingCartServices->addIMembershipToCart($membershipTypeId);
+              
+
+        $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipUser'));
+        return $response = $response->withRedirect($uri, 200);
+    }
+
+    public function registerMemberAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        //TODO: verify if user is already a member
+
+        $userId = $_SESSION['user_id'];
+        $userService = $this->container->get('userServices');
+        $resp = $userService->getUserById($userId);
+
+        if ($resp['exception'] == false){
+
+            $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
+                'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
+
+            return $this->container->view->render($response, 'user/registerMember.html.twig', array('links' => $links,
+                'membershipSelected' => $args['selected'],
+                'user' => $resp['user'],
+                'form' => ''));
+        }
+        else{
+            return $this->container->view->render($response, 'userNotification.twig', $resp);
+        }
+    }
+        
 
 }

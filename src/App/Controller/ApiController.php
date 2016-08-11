@@ -48,14 +48,40 @@ class ApiController {
         
     }
 
-    //Route /api/v1/testAction
-    public function testAction(ServerRequestInterface $request, ResponseInterface $response)
+    //Route /api/v1/sendBulkMail
+    public function sendBulkMailAction(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $body = $request->getBody();
+        $req = json_decode($body);
 
         $mailServices = $this->container->get('mailServices');
-        $results = $mailServices->sendBulkEmails(array(2, 38, 63, 40, 1, 'bla'), 'Test Subject', 'test body..hehe bye!');
+        $results = $mailServices->sendBulkEmails($req->userIds, $req->mailSubject, $req->mailBody, $req->replyTo, $request);
         
         echo json_encode($results);
     }
 
+    //Route /api/v1/getFilteredUsers
+    public function getFilteredUsersAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+         * Example of request body:
+         * {
+	         "groupe": "users/members",
+	         "memberType": "Name of membership type",
+	         "memberStatus": "status",
+            }
+        */
+
+        $body = $request->getBody();
+        $body_json = json_decode($body);
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->findUsersFiltered(null);
+        
+        $result = json_encode($resp['users']);
+
+        $newResponse = $response->withJson($resp['users']);
+
+        return $newResponse;
+    }
 }
