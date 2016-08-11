@@ -62,7 +62,8 @@ $container['mailServices'] = function ($container) {
     // Create the Transport
     $transport = Swift_SmtpTransport::newInstance($jsonConfig->swiftmailer->smtp, $jsonConfig->swiftmailer->port, $jsonConfig->swiftmailer->encryption)
         ->setUsername($jsonConfig->swiftmailer->username)
-        ->setPassword($jsonConfig->swiftmailer->password);
+        ->setPassword($jsonConfig->swiftmailer->password)
+        ->setAuthMode($jsonConfig->swiftmailer->authentication);
     // Create the Mailer using the created Transport
     $mailer = Swift_Mailer::newInstance($transport);
     $message = Swift_Message::newInstance();
@@ -77,6 +78,10 @@ $container['mailServices'] = function ($container) {
 
 $container['userServices'] = function($container){
     return new Service\UserServices($container);
+};
+
+$container['shoppingCartServices'] = function($container){
+    return new Service\ShoppingCartServices($container);
 };
 
 
@@ -114,7 +119,9 @@ $app->group('/admin', function () use ($app) {
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsAdmin');
     $app->get('/createBulkMail', '\AdminController:createBulkMailAction')->setName('createBulkMailAdmin');
     $app->post('/createBulkMail', '\AdminController:verifyBulkMailAction')->setName('verifyBulkMailAdmin');
-
+    $app->get('/yourMembership', '\AdminController:yourMembershipAction')->setName('yourMembershipAdmin');
+    $app->get('/addMembershipToCart/{membershipTypeId}', '\AdminController:addMembershipToCartAction')->setName('addMembershipToCartAdmin');
+    $app->get('/shoppingCart', '\AdminController:shoppingCartAction')->setName('shoppingCartAdmin');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
@@ -129,6 +136,11 @@ $app->group('/user', function () use ($app) {
     $app->map(['GET', 'POST'], '/elFinderConnector', '\MembersAreaController:elFinderConnectorAction')->setName('elFinderConnector');
     $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsUser');
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsUser');
+    $app->get('/yourMembership', '\UserController:yourMembershipAction')->setName('yourMembershipUser');
+    $app->get('/registerMember', '\UserController:registerMemberAction')->setName('registerMemberUser');
+    $app->get('/shoppingCart', '\UserController:shoppingCartAction')->setName('shoppingCartUser');
+    $app->get('/addMembershipToCart/{membershipTypeId}', '\UserController:addMembershipToCartAction')->setName('addMembershipToCartUser');
+
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN')));
@@ -138,7 +150,8 @@ $app->group('/user', function () use ($app) {
 $app->group('/api/v1', function () use ($app) {
 
     $app->post('/sendSingleMail', '\ApiController:sendSingleMailAction' )->setName('sendSingleMail');
-    $app->get('/test', '\ApiController:testAction' )->setName('test');
+    $app->post('/sendBulkMail', '\ApiController:sendBulkMailAction' )->setName('sendBulkMail');
+    $app->get('/getFilteredUsers', '\ApiController:getFilteredUsersAction' )->setName('getFilteredUsers');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
