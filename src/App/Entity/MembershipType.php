@@ -25,11 +25,17 @@ class MembershipType
     /** @Column(type="boolean", length=50, nullable=false) * */
     protected $selectable;
 
-    /** @Column(type="decimal", length=10, nullable=true) * */
+    /** @Column(type="decimal", precision=7, scale=2) * */
     protected $fee;
+
+    /** @Column(type="string", length=10, nullable=true) * */
+    protected $currency;
 
     /** @Column(type="string", length=20, nullable=true) * */
     protected $recurrence;
+
+    /** @Column(type="string", length=500, nullable=true) **/
+    protected $description;
 
     
 
@@ -163,4 +169,53 @@ class MembershipType
     {
         return $this->recurrence;
     }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return MembershipType
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     *
+     * @return MembershipType
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
 }

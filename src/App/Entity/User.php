@@ -65,7 +65,7 @@ class User
     /** @Column(type="string", length=50, nullable=true) **/
     public $phone;
 
-    /** @Column(type="string", length=200, nullable=true) **/
+    /** @Column(type="string", length=500, nullable=true) **/
     protected $comments;
 
     /** @Column(type="string", length=50, nullable=true) * */
