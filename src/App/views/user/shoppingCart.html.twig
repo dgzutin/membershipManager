@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Your Shopping Cart</strong></div>
+            <div class="panel-body">
+
+                    <table class="table table-condensed" id="items" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th></th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for item in items %}
+                            <tr class="">
+                                <td>{{ item.name }}</td>
+                                <td></td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.unitPrice }}</td>
+                                <td>{{ item.totalPrice }}</td>
+                                <td><a href="#">remove</a></td>
+                            </tr>
+                        {% endfor %}
+
+                        <tr class="">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong>TOTAL:</strong></td>
+                            <td>{{ currency }} {{ totalPrice }}</td>
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+
+                <a class="btn btn-primary btn-md" href="#" role="button">Checkout</a>
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+

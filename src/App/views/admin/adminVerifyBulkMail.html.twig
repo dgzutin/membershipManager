@@ -1,0 +1,244 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Bulk Email recipients</strong></div>
+            <div class="panel-body">
+
+    <!--        <form role="form" method="post"> -->
+
+                    <div class="row">
+
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group">
+                                <label for="filter1">Send Mail to</label>
+                                <select class="form-control" id="filter1" name="filter1">
+                                    <option>All registered users</option>
+                                    <option>Members only</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group">
+                                <label for="filter2">Membership Type</label>
+                                <select class="form-control" id="filter2" name="filter2">
+                                    <option>Type one</option>
+                                    <option>Type two</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group">
+                                <label for="filter3">Membership Status</label>
+                                <select class="form-control" id="filter3" name="filter3">
+                                    <option value="valid">Valid memberships</option>
+                                    <option value="expired">Expired memberships</option>
+                                    <option value="expired_1year">Expired memberships (1 year or less)</option>
+                                    <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="subject">Subject:</label>
+                        <input class="form-control" type="text" id="subject" name="subject" value="{{ submited_form.subject }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="replyTo">Reply to:</label>
+                        <input class="form-control" type="email" id="replyTo" name="replyTo" value="{{ submited_form.replyTo }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emailBoby">Email text:</label>
+                        <textarea  class="form-control" rows="10" id="emailBody" name="emailBody" readonly>{{ submited_form.emailBody }}</textarea>
+                    </div>
+
+                    <!-- Table Starts here  -->
+                    <div class="alert alert-info" id="message" hidden="true"></div>
+
+                    <button id="button_sendMail" type="submit" class="btn btn-primary">Send e-mail(s) now</button>
+
+                    <a href="{{ path_for('createBulkMailAdmin') }}"><button id="button_return" type="submit" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
+
+                    <table class="table table-condensed" id="recipients" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" id="checkbox_all" checked class="select_all_recipient"></th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th></th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+
+         <!--       </form> -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var users;
+
+        $(document).ready(function(){
+            $.ajax({url: "{{ path_for('getFilteredUsers')}}", success: function(result){
+                //console.log(JSON.stringify(result[0]));
+                users = result;
+                console.log(users);
+                fillTable('recipients');
+                //$("#div1").html(result);
+            }});
+        });
+
+        function updateSelectedUser(updateIndex)
+        {
+
+            users[updateIndex].selected = $('#checkbox_'+updateIndex).prop("checked");
+            console.log('Item '+updateIndex+' select was set to '+users[updateIndex].selected);
+
+        }
+
+        function fillTable(tableId)
+        {
+            var table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+
+            for (i=0; i<users.length; i++) {
+
+                users[i].selected = true;
+
+                userId = users[i].id;
+                name = users[i].last_name + ', ' + users[i].first_name;
+                email_1 = users[i].email_1;
+
+                var row = table.insertRow(table.rows.length); //can start at the beginning, argument = 0
+
+                row.insertCell(0).innerHTML = '<input type="checkbox" id="checkbox_'+i+'" checked onchange="updateSelectedUser('+i+')" class="select_recipient">';
+                row.insertCell(1).innerHTML = userId;
+                row.insertCell(2).innerHTML = name;
+                row.insertCell(3).innerHTML = email_1;
+                row.insertCell(4).innerHTML = '<div id="message_'+userId+'"></div>';
+            }
+        }
+
+        //Event Listeners
+
+        $("#checkbox_all").change(function () {
+            $("input:checkbox").prop('checked', $(this).prop("checked"));
+
+            for (i=0; i<users.length; i++){
+                users[i].selected = $(this).prop("checked");
+            }
+        });
+
+        //Send emails
+        $("#button_sendMail").click(function(){
+
+
+            //disable checkboxes and send button
+            for (i=0; i<users.length; i++){
+               $('#checkbox_'+i).prop('disabled', true);
+            }
+            $("#button_sendMail").prop('disabled', true);
+            $("#checkbox_all").prop('disabled', true);
+            //===========================================
+
+            //Notify user
+            $("#message").html('Sending e-mails. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
+            $("#message").show();
+
+            var userIds = [];
+            var j = 0;
+            var k = 1;
+
+            for (i = 0; i<users.length; i++){
+
+                if (users[i].selected == true){
+
+                    userIds[j] = users[i].id;
+                    j++;
+                    if (k % 2 == 0){
+                        /*
+                        console.log('Sending: ');
+                        console.log(userIds);
+                        sendBulkEmails(userIds);
+                        userIds = [];
+                        j = 0;
+                        */
+                    }
+                    k++;
+                }
+            }
+            sendBulkEmails(userIds);
+
+            });
+
+        function sendBulkEmails(userIds)
+        {
+            var request = {
+                userIds : userIds,
+                mailSubject: $('#subject').val(),
+                mailBody: $('#emailBody').val(),
+                replyTo: $('#replyTo').val()
+            };
+
+            console.log('Request: ');
+            console.log(request);
+
+
+            $.ajax({url: "{{ path_for('sendBulkMail')}}",
+                data: JSON.stringify(request),
+                type: 'POST',
+                success: function(result){
+
+                    var resultJson = JSON.parse(result);
+
+                    var n = 0;
+                    if (resultJson != null){
+
+                        for (i=0; i<resultJson.length; i++){
+                            //console.log(result[i].userId);
+                            if (resultJson[i].exception == true){
+                                document.getElementById('message_'+resultJson[i].userId).innerHTML = '<p class="text-danger">'+resultJson[i].message+'</p>';
+                            }
+                            else{
+                                document.getElementById('message_'+resultJson[i].userId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
+                                n++;
+                            }
+                        }
+                        console.log('Result: ');
+                        console.log(resultJson);
+                    }
+                    else{
+                        console.log("No e-mail recipients were selected");
+                    }
+
+
+                    $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
+                    // Set return button to visible
+                    //===============================================
+                    $('#button_return').css('visibility', 'visible');
+                    //===============================================
+
+                }});
+        }
+
+
+
+    </script>
+
+
+{% endblock %}

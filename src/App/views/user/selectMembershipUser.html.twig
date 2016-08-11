@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Your Membership(s)</strong></div>
+            <div class="panel-body">
+
+                {%  for membershipType in membershipTypes %}
+
+                    <div class="jumbotron">
+                    <div class="media">
+                        <div class="media-left">
+                            <img class="media-object" src="{{ baseUrl }}/assets/images/membership_logo.png" alt="...">
+                        </div>
+                        <div class="media-body">
+
+                            <h2 class="media-heading">{{ membershipType.typeName }}</h2>
+
+                                {% if membershipType.selectable == false %}
+                                    <p class="text-danger">(Users cannot select this group. Available only to admins)</p>
+                                {% endif %}
+
+                            <strong>Description:</strong> {{ membershipType.description }}
+                            <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
+                            <a class="btn btn-primary btn-md" href="{{ addMembershipToCartUrl }}/{{ membershipType.id }}" role="button">Add to cart</a>
+                            <a class="btn btn-success btn-md" href="#" role="button">Manage</a>
+                            <a class="btn btn-danger btn-md" href="#" role="button">Cancel</a>
+                        </div>
+                    </div>
+                    </div>
+                {% endfor %}
+
+                <a class="btn btn-primary btn-md" href="{{ checkoutUrl }}" role="button">Checkout</a>
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
