@@ -36,7 +36,6 @@ class MailServices
                 'sent' => $this->mailer->send($this->message),
                 'message' => $e->getMessage());
         }
-
         return $result;
     }
     
@@ -109,34 +108,56 @@ class MailServices
         return $result;
     }
     
-    public function sendBulkEmails($userIds, $emailSubject, $emailBody)
+    public function sendBulkEmails($userIds, $emailSubject, $emailBody, $replyTo, $request)
     {
 
         $users = $this->em->getRepository('App\Entity\User')->findById($userIds);
 
+        $i = 0;
         foreach ($users as $user){
 
+            $newMail = $this->replacePlaceholders($emailSubject, $emailBody, $user, $request);
+
             $this->message
-                ->setSubject($emailSubject)
+                ->setSubject($newMail['subject'])
                 ->setFrom(array('office@igip.org' => 'Name of Organization'));
             try{
                 $this->message->setTo(array($user->getEmail1() => $user->getFirstName().' '.$user->getLastName()));
-                $this->message->setBody($emailBody);
+                $this->message->setBody($newMail['body']);
+                $this->message->setReplyTo($replyTo);
 
                 $result = array('exception' => false,
+                    'userId' => $user->getId(),
                     'sent' => $this->mailer->send($this->message),
                     'message' => 'Email successfully sent to '.$user->getEmail1());
             }
             catch (\Exception $e){
 
                 $result = array('exception' => true,
+                    'userId' => $user->getId(),
                     'sent' => $this->mailer->send($this->message),
                     'message' => $e->getMessage());
             }
-            $results[$user->getId()] = $result;
-
+            $results[$i] = $result;
+            $i++;
         }
         return $results;
+    }
+
+    private function replacePlaceholders($emailSubject, $emailBodyText, $user, $request)
+    {
+        //Replace all placeholdes by the actual data
+        $placeholders = array("{resetPasswordLink}" => $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey(),
+            "{formalSalutation_en}" => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
+            "{firstName}" => $user->getFirstName(),
+            "{lastName}" => $user->getLastName()
+        );
+
+        $body_mod = strtr($emailBodyText, $placeholders);
+        $subject_mod = strtr($emailSubject, $placeholders);
+
+        return array('body' => $body_mod,
+                     'subject' => $subject_mod);
     }
 
 }

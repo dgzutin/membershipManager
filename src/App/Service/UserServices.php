@@ -210,7 +210,7 @@ class UserServices
             $this->em->flush();
 
             return array('exception' => false,
-                         'message' => 'Password has been reset');
+                         'message' => 'Password has been changed');
         }
         else{
             return array('exception' => true,
