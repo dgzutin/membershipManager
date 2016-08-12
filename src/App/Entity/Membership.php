@@ -15,14 +15,17 @@ class Membership
     /** @Id @Column(type="integer") @GeneratedValue * */
     protected $id;
 
-    /** @Column(type="integer", length=50, nullable=false) **/
-    protected $memberIds;
+    /** @Column(type="integer",  nullable=false) **/
+    protected $memberId;
 
-    /** @Column(type="integer", length=50, nullable=false) **/
+    /** @Column(type="integer", nullable=false) **/
     protected $membershipType;
 
     /** @Column(type="string", length=50, nullable=false) * */
     protected $memberRegDate;
+
+    /** @Column(type="boolean", nullable=false) * */
+    protected $active;
 
 
 
@@ -130,5 +133,30 @@ class Membership
     public function getMemberRegDate()
     {
         return $this->memberRegDate;
+    }
+
+
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     *
+     * @return Membership
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 }

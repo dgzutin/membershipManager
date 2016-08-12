@@ -108,5 +108,47 @@ class ShoppingCartServices
 
     }
 
+    //Remove an item from shopping cart. If $quantity = NULL removes all
+
+    public function removeItemFromCart($itemId, $quantity)
+    {
+        $userId = $_SESSION['user_id'];
+        
+        $repository =$this->em->getRepository('App\Entity\ShoppingCartItem');
+        $cartItem = $repository->createQueryBuilder('cart')
+            ->select('cart')
+            ->where('cart.id = :id')
+            ->andWhere('cart.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->setParameter('id', $itemId)
+            ->getQuery()
+            ->getOneorNullResult();
+
+        if ($cartItem != NULL){
+
+            if ($quantity == NULL){
+                $this->em->remove($cartItem);
+            }
+            else{
+                $cartItem->setQuantity($quantity - $quantity);
+                $cartItem->setTotalPrice($cartItem->getTotalPrice() - ($quantity * $cartItem->getUnitPrice()));
+                $this->em->persist($cartItem);
+            }
+
+            try{
+                $this->em->flush();
+                $result = array('exception' => false,
+                    'message' => "Item(s) was/were removed");
+            }
+            catch (\Exception $e){
+                $result = array('exception' => true,
+                    'message' => $e->getMessage());
+            }
+        }
+
+        return $result;
+
+    }
+
     
 }

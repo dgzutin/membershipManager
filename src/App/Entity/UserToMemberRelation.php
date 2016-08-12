@@ -2,32 +2,32 @@
 /**
  * Created by PhpStorm.
  * User: garbi
- * Date: 09.08.16
- * Time: 16:38
+ * Date: 11.08.16
+ * Time: 18:22
  */
 
 namespace App\Entity;
 /**
- * @Entity @Table(name="invoice")
+ * @Entity @Table(name="UserToMemberRelation")
  **/
 
-class Invoice
+class UserToMemberRelation
 {
     /** @Id @Column(type="integer") @GeneratedValue * */
     protected $id;
 
-    /** @Column(type="integer", nullable=false) * */
+    /** @Column(type="integer",  nullable=false) * */
     protected $userId;
 
     /** @Column(type="integer",  nullable=false) * */
-    protected $billingId;
+    protected $memberId;
+
+    /** @Column(type="boolean", nullable=false) * */
+    protected $isOwner;
 
     /** @Column(type="string", length=50, nullable=false) * */
     protected $createDate;
 
-    /** @Column(type="string", length=50, nullable=false) * */
-    protected $dueDate;
-    
 
 
     /**
@@ -45,7 +45,7 @@ class Invoice
      *
      * @param integer $userId
      *
-     * @return Invoice
+     * @return UserToMemberRelation
      */
     public function setUserId($userId)
     {
@@ -65,27 +65,51 @@ class Invoice
     }
 
     /**
-     * Set billingId
+     * Set memberId
      *
-     * @param integer $billingId
+     * @param integer $memberId
      *
-     * @return Invoice
+     * @return UserToMemberRelation
      */
-    public function setBillingId($billingId)
+    public function setMemberId($memberId)
     {
-        $this->billingId = $billingId;
+        $this->memberId = $memberId;
 
         return $this;
     }
 
     /**
-     * Get billingId
+     * Get memberId
      *
      * @return integer
      */
-    public function getBillingId()
+    public function getMemberId()
     {
-        return $this->billingId;
+        return $this->memberId;
+    }
+
+    /**
+     * Set isOwner
+     *
+     * @param boolean $isOwner
+     *
+     * @return UserToMemberRelation
+     */
+    public function setIsOwner($isOwner)
+    {
+        $this->isOwner = $isOwner;
+
+        return $this;
+    }
+
+    /**
+     * Get isOwner
+     *
+     * @return boolean
+     */
+    public function getIsOwner()
+    {
+        return $this->isOwner;
     }
 
     /**
@@ -93,7 +117,7 @@ class Invoice
      *
      * @param string $createDate
      *
-     * @return Invoice
+     * @return UserToMemberRelation
      */
     public function setCreateDate($createDate)
     {
@@ -110,29 +134,5 @@ class Invoice
     public function getCreateDate()
     {
         return $this->createDate;
-    }
-
-    /**
-     * Set dueDate
-     *
-     * @param string $dueDate
-     *
-     * @return Invoice
-     */
-    public function setDueDate($dueDate)
-    {
-        $this->dueDate = $dueDate;
-
-        return $this;
-    }
-
-    /**
-     * Get dueDate
-     *
-     * @return string
-     */
-    public function getDueDate()
-    {
-        return $this->dueDate;
     }
 }

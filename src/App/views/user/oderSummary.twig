@@ -12,7 +12,7 @@
     <div class="panel-group">
 
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Your Shopping Cart</strong></div>
+            <div class="panel-heading"><strong>Confirm your order</strong></div>
             <div class="panel-body">
 
                     <table class="table table-condensed" id="items" cellspacing="0" width="100%">
@@ -34,7 +34,9 @@
                                 <td>{{ item.quantity }}</td>
                                 <td>{{ item.unitPrice }}</td>
                                 <td>{{ item.totalPrice }}</td>
-                                <td><a href="#">remove</a></td>
+                                <td>
+
+                                </td>
                             </tr>
                         {% endfor %}
 
@@ -46,11 +48,12 @@
                             <td>{{ currency }} {{ totalPrice }}</td>
                         </tr>
 
-
                         </tbody>
                     </table>
 
-                <a class="btn btn-primary btn-md" href="#" role="button">Checkout</a>
+                <h4>Billing Address:</h4>
+
+                <p class="text-right"><a class="btn btn-primary btn-md" href="#" role="button">Place order</a></p>
 
             </div>
         </div>

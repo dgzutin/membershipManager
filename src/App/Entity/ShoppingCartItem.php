@@ -16,7 +16,7 @@ class ShoppingCartItem
     /** @Id @Column(type="integer") @GeneratedValue * */
     protected $id;
 
-    /** @Column(type="integer", length=50, nullable=false) * */
+    /** @Column(type="integer", nullable=false) * */
     protected $userId;
 
     /** @Column(type="string", length=100, nullable=false) * */
@@ -28,7 +28,7 @@ class ShoppingCartItem
     /** @Column(type="string", length=500, nullable=false) * */
     protected $description;
 
-    /** @Column(type="integer", length=50, nullable=false) * */
+    /** @Column(type="integer", nullable=false) * */
     protected $quantity;
 
     /** @Column(type="decimal", precision=7, scale=2) * */

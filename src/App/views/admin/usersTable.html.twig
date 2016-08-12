@@ -16,6 +16,7 @@
                         <th>Institution</th>
                         <th>Email</th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -25,6 +26,10 @@
                             <td>{{ user.lastName }}, {{ user.firstName }}</td>
                             <td>{{ user.institution }}</td>
                             <td>{{ user.email1 }}</td>
+                            <td>
+                                <a class="small" href="#">View membership data</a><br>
+                                <a class="small" href="#">Register as member</a>
+                            </td>
                             <td><a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">view</a></td>
                         </tr>
                     {% endfor %}

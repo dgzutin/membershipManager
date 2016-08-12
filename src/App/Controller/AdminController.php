@@ -195,14 +195,23 @@ class AdminController {
             ->getQuery()
             ->getResult();
 
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $items = $shoppingCartServices->getItems();
+
+        $totalPrice = $shoppingCartServices->getTotalPrice($items);
+
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
             'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
             'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
 
         return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('links' => $links,
             'membershipTypes' => $membershipTypes,
-            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('shoppingCartAdmin')),
+            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('orderSummaryAdmin')),
             'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/admin/addMembershipToCart',
+            'items' => $items,
+            'currency' => 'EUR',
+            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/admin/removeItemfromCart',
+            'totalPrice' => $totalPrice,
             'message' => '',
             'form' => ''));
     }
@@ -219,10 +228,11 @@ class AdminController {
 
         $totalPrice = $shoppingCartServices->getTotalPrice($items);
 
-        return $this->container->view->render($response, 'user/shoppingCart.html.twig', array('links' => $links,
+        return $this->container->view->render($response, 'user/oderSummary.twig', array('links' => $links,
             'exception' => false,
             'items' => $items,
             'currency' => 'EUR',
+            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/admin/removeItemfromCart',
             'totalPrice' => $totalPrice,
             'message' => ''));
     }
@@ -238,5 +248,22 @@ class AdminController {
         $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin'));
         return $response = $response->withRedirect($uri, 200);
     }
+
+    public function removeItemfromCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $itemId = $args['itemId'];
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $resp = $shoppingCartServices->removeItemFromCart($itemId, NULL);
+
+        if ($resp['exception'] == true){
+
+            return $this->container->view->render($response, 'userNotification.twig', $resp);
+        }
+        $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin'));
+        return $response = $response->withRedirect($uri, 200);
+
+    }
+
+
 
 }

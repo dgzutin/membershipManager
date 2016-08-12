@@ -22,6 +22,12 @@ class MembershipType
     /** @Column(type="string", length=50, nullable=false) * */
     protected $typeAlias;
 
+    /** @Column(type="string", length=10, nullable=true) * */
+    protected $prefix;
+
+    /** @Column(type="boolean", length=50, nullable=false) * */
+    protected $useGlobalMemberNumberAssignment;
+
     /** @Column(type="boolean", length=50, nullable=false) * */
     protected $selectable;
 
@@ -36,6 +42,9 @@ class MembershipType
 
     /** @Column(type="string", length=500, nullable=true) **/
     protected $description;
+
+    /** @Column(type="integer", nullable=false) **/
+    protected $numberOfRepresentatives;
 
     
 
@@ -217,5 +226,79 @@ class MembershipType
     {
         return $this->currency;
     }
+    
+    
 
+
+    /**
+     * Set numberOfRepresentatives
+     *
+     * @param integer $numberOfRepresentatives
+     *
+     * @return MembershipType
+     */
+    public function setNumberOfRepresentatives($numberOfRepresentatives)
+    {
+        $this->numberOfRepresentatives = $numberOfRepresentatives;
+
+        return $this;
+    }
+
+    /**
+     * Get numberOfRepresentatives
+     *
+     * @return integer
+     */
+    public function getNumberOfRepresentatives()
+    {
+        return $this->numberOfRepresentatives;
+    }
+
+    /**
+     * Set prefix
+     *
+     * @param string $prefix
+     *
+     * @return MembershipType
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+
+        return $this;
+    }
+
+    /**
+     * Get prefix
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * Set useGlobalMemberNumberAssignment
+     *
+     * @param boolean $useGlobalMemberNumberAssignment
+     *
+     * @return MembershipType
+     */
+    public function setUseGlobalMemberNumberAssignment($useGlobalMemberNumberAssignment)
+    {
+        $this->useGlobalMemberNumberAssignment = $useGlobalMemberNumberAssignment;
+
+        return $this;
+    }
+
+    /**
+     * Get useGlobalMemberNumberAssignment
+     *
+     * @return boolean
+     */
+    public function getUseGlobalMemberNumberAssignment()
+    {
+        return $this->useGlobalMemberNumberAssignment;
+    }
 }

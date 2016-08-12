@@ -143,14 +143,23 @@ class UserController {
             ->setParameter('selectable', true)
             ->getQuery()
             ->getResult();
+
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $items = $shoppingCartServices->getItems();
+
+        $totalPrice = $shoppingCartServices->getTotalPrice($items);
         
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
             'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
 
         return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('links' => $links,
             'membershipTypes' => $membershipTypes,
-            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('shoppingCartUser')),
+            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('orderSummaryUser')),
             'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/user/addMembershipToCart',
+            'items' => $items,
+            'currency' => 'EUR',
+            'totalPrice' => $totalPrice,
+            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
             'message' => '',
             'form' => ''));
     }
@@ -167,12 +176,28 @@ class UserController {
 
         $totalPrice = $shoppingCartServices->getTotalPrice($items);
 
-        return $this->container->view->render($response, 'user/shoppingCart.html.twig', array('links' => $links,
+        return $this->container->view->render($response, 'user/oderSummary.twig', array('links' => $links,
             'exception' => false,
             'items' => $items,
             'currency' => 'EUR',
             'totalPrice' => $totalPrice,
+            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
             'message' => ''));
+    }
+
+    public function removeItemfromCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $itemId = $args['itemId'];
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $resp = $shoppingCartServices->removeItemFromCart($itemId, NULL);
+
+        if ($resp['exception'] == true){
+
+            return $this->container->view->render($response, 'userNotification.twig', $resp);
+        }
+        $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipUser'));
+        return $response = $response->withRedirect($uri, 200);
+
     }
 
     public function addMembershipToCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -186,6 +211,7 @@ class UserController {
         $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipUser'));
         return $response = $response->withRedirect($uri, 200);
     }
+
 
     public function registerMemberAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
@@ -209,6 +235,7 @@ class UserController {
             return $this->container->view->render($response, 'userNotification.twig', $resp);
         }
     }
+
         
 
 }
