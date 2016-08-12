@@ -2,6 +2,13 @@
 
 {% block mainPanel %}
 
+    <style>
+        mark {
+            background-color: yellow;
+            color: black;
+        }
+    </style>
+
 
     <div class="panel-group">
         <div class="panel panel-primary">
@@ -49,7 +56,8 @@
 
                     <div class="form-group">
                         <label for="subject">Subject:</label>
-                        <input class="form-control" type="text" id="subject" name="subject" value="{{ submited_form.subject }}" readonly>
+                        <div> {{ highlightedSubject|raw }}</div>
+                        <input class="form-control" type="hidden" id="subject" name="subject" value="{{ submited_form.subject }}" readonly>
                     </div>
 
                     <div class="form-group">
@@ -59,7 +67,17 @@
 
                     <div class="form-group">
                         <label for="emailBoby">Email text:</label>
-                        <textarea  class="form-control" rows="10" id="emailBody" name="emailBody" readonly>{{ submited_form.emailBody }}</textarea>
+
+                        <div id="emailBodyView">
+
+                            {{ highlightedBody|raw }}
+
+                        </div>
+
+                        <hr>
+
+                        <input type="hidden"class="form-control" id="emailBody" name="emailBody" value="{{ submited_form.emailBody }}" readonly>
+
                     </div>
 
                     <!-- Table Starts here  -->
@@ -85,7 +103,7 @@
                         </tbody>
                     </table>
 
-         <!--       </form> -->
+         <!--       </form>   -->
             </div>
         </div>
     </div>

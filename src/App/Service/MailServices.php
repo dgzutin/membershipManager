@@ -118,12 +118,19 @@ class MailServices
 
             $newMail = $this->replacePlaceholders($emailSubject, $emailBody, $user, $request);
 
+            $template = $this->twig->loadTemplate('email/bulkEmail.html.twig');
+            $htmlMail = $template->render(array('mailSubject' => $newMail['subject'],
+                                                'mailBody' => $newMail['body'],
+                                                'nameOfOrganization' => 'Name of Organization',
+                                                'orgWebsite' => 'http://www.igip.org'));
+
             $this->message
                 ->setSubject($newMail['subject'])
                 ->setFrom(array('office@igip.org' => 'Name of Organization'));
+
             try{
                 $this->message->setTo(array($user->getEmail1() => $user->getFirstName().' '.$user->getLastName()));
-                $this->message->setBody($newMail['body']);
+                $this->message->setBody($htmlMail, 'text/html');
                 $this->message->setReplyTo($replyTo);
 
                 $result = array('exception' => false,
@@ -142,6 +149,22 @@ class MailServices
             $i++;
         }
         return $results;
+    }
+
+    public function highlightPlaceholders($emailSubject, $emailBodyText)
+    {
+        //Highlight all placeholdes by the actual data
+        $placeholders = array("{resetPasswordLink}" => '<mark>{resetPasswordLink}</mark>',
+            "{formalSalutation_en}" => '<mark>{formalSalutation_e}</mark>',
+            "{firstName}" => '<mark>{firstName}</mark>',
+            "{lastName}" => '<mark>{lastName}</mark>'
+        );
+
+        $body_mod = strtr($emailBodyText, $placeholders);
+        $subject_mod = strtr($emailSubject, $placeholders);
+
+        return array('body' => $body_mod,
+            'subject' => $subject_mod);
     }
 
     private function replacePlaceholders($emailSubject, $emailBodyText, $user, $request)

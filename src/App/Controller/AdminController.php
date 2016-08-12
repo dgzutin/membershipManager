@@ -171,6 +171,10 @@ class AdminController {
     {
         $form_data = $request->getParsedBody();
 
+        $mailServices = $this->container->get('mailServices');
+
+        $respMail = $mailServices->highlightPlaceholders($form_data['subject'], $form_data['emailBody']);
+
         $userService = $this->container->get('userServices');
         $resp = $userService->findUsersFiltered(null);
 
@@ -182,6 +186,8 @@ class AdminController {
         return $this->container->view->render($response, 'admin/adminVerifyBulkMail.html.twig', array(
             'links' => $links,
             'users' => $resp['users'],
+            'highlightedBody' => $respMail['body'],
+            'highlightedSubject' => $respMail['subject'],
             'submited_form' => $form_data));
 
     }
