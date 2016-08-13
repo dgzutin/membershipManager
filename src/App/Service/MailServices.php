@@ -16,6 +16,13 @@ class MailServices
         $this->message = $message;
         $this->twig = $twig;
         $this->em = $em;
+
+        $repository = $this->em->getRepository('App\Entity\Settings');
+        $this->settings = $repository->createQueryBuilder('settings')
+            ->select('settings')
+            ->getQuery()
+            ->getOneOrNullResult();
+
     }
 
     public function sendSingleMail($email, $recipient, $subject, $emailBody, $sender_email, $sender_name)
@@ -48,8 +55,8 @@ class MailServices
             'message' => 'To activate your account please confirm your email address by clicking the link below.',
             'link' => $activateAccountLink,
             'buttonLabel' => 'Confirm Email And Activate Account',
-            'nameOfOrganization' => 'Name of Organization',
-            'orgWebsite' => 'http://www.igip.org');
+            'nameOfOrganization' => $this->settings->getNameOfOrganization(),
+            'orgWebsite' => $this->settings->getOrgWebsite());
 
         $template = $this->twig->loadTemplate('email/emailNotificationWithLink.html.twig');
         $emailBody = $template->render($resp);
@@ -57,7 +64,7 @@ class MailServices
 
         $this->message
             ->setSubject('Activate your account')
-            ->setFrom(array('office@igip.org' => 'Name of Organization'));
+            ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getNameOfOrganization()));
         try{
             $this->message->setTo(array($user->getEmail1()));
             $this->message->setBody($emailBody, 'text/html');
@@ -83,15 +90,15 @@ class MailServices
                       'message' => 'To reset your password follow the link below. If you have not not requested a password reset please ignore this message.',
                       'link' => $recoverPasswordLink,
                       'buttonLabel' => 'Reset password',
-                      'nameOfOrganization' => 'Name of Organization',
-                      'orgWebsite' => 'http://www.igip.org');
+                      'nameOfOrganization' => $this->settings->getNameOfOrganization(),
+                      'orgWebsite' => $this->settings->getOrgWebsite());
 
         $template = $this->twig->loadTemplate('email/emailNotificationWithLink.html.twig');
         $emailBody = $template->render($resp);
         
         $this->message
             ->setSubject('Reset Password request')
-            ->setFrom(array('office@igip.org' => 'Name of Organization'));
+            ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getNameOfOrganization()));
         try{
             $this->message->setTo(array($user->getEmail1()));
             $this->message->setBody($emailBody, 'text/html');
@@ -121,12 +128,12 @@ class MailServices
             $template = $this->twig->loadTemplate('email/bulkEmail.html.twig');
             $htmlMail = $template->render(array('mailSubject' => $newMail['subject'],
                                                 'mailBody' => $newMail['body'],
-                                                'nameOfOrganization' => 'Name of Organization',
-                                                'orgWebsite' => 'http://www.igip.org'));
+                                                'nameOfOrganization' => $this->settings->getNameOfOrganization(),
+                                                'orgWebsite' => $this->settings->getOrgWebsite()));
 
             $this->message
                 ->setSubject($newMail['subject'])
-                ->setFrom(array('office@igip.org' => 'Name of Organization'));
+                ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getNameOfOrganization()));
 
             try{
                 $this->message->setTo(array($user->getEmail1() => $user->getFirstName().' '.$user->getLastName()));
