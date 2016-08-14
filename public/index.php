@@ -22,6 +22,7 @@ require '../vendor/swiftmailer/swiftmailer/lib/swift_required.php';
 $configuration = [
     'settings' => [
         'displayErrorDetails' => true,
+        'addContentLengthHeader' => false,
     ],
 ];
 
