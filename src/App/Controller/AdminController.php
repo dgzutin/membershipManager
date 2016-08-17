@@ -204,7 +204,8 @@ class AdminController {
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $items = $shoppingCartServices->getItems();
 
-        $totalPrice = $shoppingCartServices->getTotalPrice($items);
+        $total = $shoppingCartServices->getTotalPrice($items);
+        $totalPrice = number_format($total,2,".",",");
 
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
             'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
@@ -230,9 +231,11 @@ class AdminController {
        // shoppingCartServices
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
             'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
+            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id'],
+            'backButton'=> $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin')));
 
-        $totalPrice = $shoppingCartServices->getTotalPrice($items);
+        $total = $shoppingCartServices->getTotalPrice($items);
+        $totalPrice = number_format($total,2,".",",");
 
         return $this->container->view->render($response, 'user/oderSummary.twig', array('links' => $links,
             'exception' => false,
@@ -249,7 +252,6 @@ class AdminController {
 
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $res = $shoppingCartServices->addIMembershipToCart($membershipTypeId);
-
 
         $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin'));
         return $response = $response->withRedirect($uri, 200);

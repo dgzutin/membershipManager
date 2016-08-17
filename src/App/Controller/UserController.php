@@ -147,10 +147,12 @@ class UserController {
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $items = $shoppingCartServices->getItems();
 
-        $totalPrice = $shoppingCartServices->getTotalPrice($items);
-        
+        $total = $shoppingCartServices->getTotalPrice($items);
+        $totalPrice = number_format($total,2,".",",");
+
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
-            'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
+            'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')),
+            'backButton'=> $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin')));
 
         return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('links' => $links,
             'membershipTypes' => $membershipTypes,
@@ -174,7 +176,8 @@ class UserController {
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
             'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
 
-        $totalPrice = $shoppingCartServices->getTotalPrice($items);
+        $total = $shoppingCartServices->getTotalPrice($items);
+        $totalPrice = number_format($total,2,".",",");
 
         return $this->container->view->render($response, 'user/oderSummary.twig', array('links' => $links,
             'exception' => false,
