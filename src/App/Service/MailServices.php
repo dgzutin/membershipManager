@@ -162,7 +162,7 @@ class MailServices
     {
         //Highlight all placeholdes by the actual data
         $placeholders = array("{resetPasswordLink}" => '<mark>{resetPasswordLink}</mark>',
-            "{formalSalutation_en}" => '<mark>{formalSalutation_e}</mark>',
+            "{formalSalutation_en}" => '<mark>{formalSalutation_en}</mark>',
             "{firstName}" => '<mark>{firstName}</mark>',
             "{lastName}" => '<mark>{lastName}</mark>'
         );
