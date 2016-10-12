@@ -50,6 +50,7 @@ class AdminController {
         
         return $this->container->view->render($response, 'admin/usersTable.html.twig', array(
             'links' => $links,
+            'user_role' => $_SESSION['user_role'],
             'user_id' => $_SESSION['user_id'],
             'users' => $users
         ));
@@ -86,6 +87,7 @@ class AdminController {
             'fields' => array());
 
         return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array('links' => $links,
+                                                                                                'user_role' => $_SESSION['user_role'],
                                                                                                 'form_submission' => false,
                                                                                                 'exception' => $resp['exception'],
                                                                                                 'message' => $resp['message'],
@@ -116,6 +118,7 @@ class AdminController {
 
             return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
                 'links' => $links,
+                'user_role' => $_SESSION['user_role'],
                 'form_submission' => true,
                 'exception' => $form_validation['exception'],
                 'message' => $form_validation['message'],
@@ -135,6 +138,7 @@ class AdminController {
 
             return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
                 'links' => $links,
+                'user_role' => $_SESSION['user_role'],
                 'form_submission' => true,
                 'exception' => $resp['exception'],
                 'message' => $resp['message'],
@@ -164,7 +168,8 @@ class AdminController {
             'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
 
         return $this->container->view->render($response, 'admin/adminWriteBulkMail.html.twig', array(
-            'links' => $links));
+            'links' => $links,
+            'user_role' => $_SESSION['user_role']));
     }
 
     public function verifyBulkMailAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -185,6 +190,7 @@ class AdminController {
 
         return $this->container->view->render($response, 'admin/adminVerifyBulkMail.html.twig', array(
             'links' => $links,
+            'user_role' => $_SESSION['user_role'],
             'users' => $resp['users'],
             'highlightedBody' => $respMail['body'],
             'highlightedSubject' => $respMail['subject'],
@@ -211,7 +217,7 @@ class AdminController {
             'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
             'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
 
-        return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('links' => $links,
+        return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('user_role' => $_SESSION['user_role'],
             'membershipTypes' => $membershipTypes,
             'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('orderSummaryAdmin')),
             'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/admin/addMembershipToCart',
@@ -238,6 +244,7 @@ class AdminController {
         $totalPrice = number_format($total,2,".",",");
 
         return $this->container->view->render($response, 'user/oderSummary.twig', array('links' => $links,
+            'user_role' => $_SESSION['user_role'],
             'exception' => false,
             'items' => $items,
             'currency' => 'EUR',

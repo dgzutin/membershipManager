@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Invoice Nr. {{ invoiceData.id }}</strong></div>
+            <div class="panel-body">
+
+                <div class="well">
+
+
+
+
+                <div class="row show-grid">
+                    <div class="col-md-6">
+
+                            <address>
+                                <strong>{{ invoiceData.name }}
+                                    <br>{{ invoiceData.institution }}
+                                    <br>{{ invoiceData.street }}
+                                    <br>{{ invoiceData.city }}, {{ invoiceData.zip }}
+                                    <br>{{ invoiceData.country }}
+                                    <br>{{ invoiceData.vat }}
+                                    <br>{{ invoiceData.reference }}
+                                </strong>
+                            </address>
+                        </div>
+
+                    <div class="col-md-6">
+
+
+                        <p class="text-right">
+                            {{ issuerData.nameOfOrganization }}
+                            <br>{{ issuerData.street }}
+                            <br>{{ issuerData.city }}, {{ issuerData.zip }}
+                            <br>{{ issuerData.country }}
+                            <br>{{ issuerData.vat }}
+                            <br>{{ issuerData.registrationNumber }}
+                            <br>E-mail: <a href="mailto:{{ issuerData.email }}">{{ issuerData.email }}</a>
+                            <br>
+                            <br> <strong>Invoice Date:</strong> {{ invoiceDate }}
+                        </p>
+
+                    </div>
+                </div>
+
+                <br>
+
+                    <table class="table table-condensed" id="items" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th></th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                            <th>Included VAT</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for item in items %}
+                            <tr class="">
+                                <td style="width: 400px;">{{ item.name }}</td>
+                                <td></td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.unitPrice }}</td>
+                                <td>{{ item.totalPrice }}</td>
+                                <td>0.0%</td>
+                            </tr>
+                        {% endfor %}
+
+                        <tr class="">
+                            <td><br></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <tr class="">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong>Invoice Total:</strong></td>
+                            <td>{{ invoiceData.currency }} {{ totalPrice }}</td>
+                            <td></td>
+                        </tr>
+
+                        <tr class="">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong>Amount paid:</strong></td>
+                            <td>{{ invoiceData.currency }} {{ amountPaid }}</td>
+                            <td></td>
+                        </tr>
+
+                        <tr class="">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong>TOTAL DUE:</strong></td>
+                            <td><strong>{{ invoiceData.currency }} {{ outstandingAmount }}</strong></td>
+                            <td></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+
+                <br>
+
+                <strong>{{ message }}</strong>
+
+                <br>
+
+              <!-- Display payment options if oustanding amount is greater that 0  -->
+             {% if outstandingAmount > 0 %}
+
+                <hr>
+                <p class="text-danger"><strong>Terms and conditions:</strong></p>
+                Payment is due within  <strong>30 days</strong> after invoice date.
+                <br>
+
+                 <hr>
+                 <p class="text-danger"><strong>Payment options:</strong></p>
+
+
+                <div class="row show-grid">
+
+                    <!-- Display Wire transfer options if active    -->
+                    {% if issuerData.wireTransferActive == true %}
+
+
+
+                    <div class="col-md-6">
+
+                        <br><strong>Wire transfer:</strong>
+                        <br>
+                        <br>{{ issuerData.nameOfOrganization }}
+                        <br><strong>Bank: </strong>{{ issuerData.bankAddress }}
+                        <br><strong>IBAN: </strong>{{ issuerData.iban }}
+                        <br><strong>BIC/SWIFT: </strong> {{ issuerData.bic }}
+                        <br><strong>Reason for transfer: </strong> Invoice Nr. {{ invoiceData.id }}
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- Display Paypal button if Paypal active    -->
+
+                    {% if issuerData.paypalActive == true %}
+
+                    <div class="col-md-6">
+
+                        <br><strong>Pay with credit card via Paypal:</strong>
+                        <br><br>
+
+
+                        {% if issuerData.paypalSandboxMode == true %}
+
+                            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method='post' name='paypal'>
+
+                        {% else %}
+
+                                <form action="https://www.paypal.com/cgi-bin/webscr" method='post' name='paypal'>
+
+                        {% endif %}
+
+                            <input type='hidden' name="notify_url" value="{{ path_for('paypal_ipn')}}">
+
+                            <input type='hidden' name="return" value="">
+                            <input type='hidden' name="cancel_return" value="">
+                            <input type='hidden' name="rm" value="2">
+                            <input type='hidden' name="ah" value="0">
+                            <input type='hidden' name="amount" value="{{ outstandingAmount_paypal }}">
+                            <input type='hidden' name="currency_code" value="{{ invoiceData.currency }}">
+
+                            {% if items|length == 1 %}
+
+                                <input type='hidden' name="item_name" value="Invoice Nr. {{ invoiceData.id }} - {{items[0].name}}">
+
+                            {% else %}
+
+                                <input type='hidden' name="item_name" value="Invoice Nr. {{ invoiceData.id }}, {{ issuerData.nameOfOrganization }} ">
+
+                            {% endif %}
+
+
+                            <input type='hidden' name="invoice" value="{{ invoiceData.id }}">
+                            <input type='hidden' name="no_note" value="1">
+                            <input type='hidden' name="no_shipping" value="1">
+                            <input type='hidden' name="charset" value="UTF-8">
+                            <input type='hidden' name="cmd" value="_ext-enter">
+                            <input type='hidden' name="redirect_cmd" value="_xclick">
+                            <input type='hidden' name="business" value="{{ issuerData.paypalEmail }}">
+                            <input type='hidden' name="custom" value="2299">
+
+                            <input type='hidden' name="email" value="{{ user.email_1 }}">
+                            <input type='hidden' name="first_name" value="{{ user.first_name }}">
+                            <input type='hidden' name="last_name" value="{{ user.last_name }}">
+                            <input type='hidden' name="address1" value="{{ invoiceData.institution }}">
+                            <input type='hidden' name="address2" value="{{ invoiceData.street }}">
+                            <input type='hidden' name="city" value="{{ invoiceData.city }}">
+                            <input type='hidden' name="state" value="">
+                            <input type='hidden' name="zip" value="{{ invoiceData.zip }}">
+                            <input type='hidden' name="country" value="{{ invoiceData.country }}">
+
+                            <input type='hidden' name="lc" value="US">
+                            <input type="image" name="submit" border="0" src="{{ baseUrl }}/assets/images/pay_now_button.png" alt="Please select to make your payment with PayPal - it's fast, free and secure!">
+                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                        </form>
+
+
+                    </div>
+
+                    {% endif %}
+                </div>
+
+                 </div>
+
+             {% else %}
+
+                <p class="text-right"><img src="{{ baseUrl }}/assets/images/paid.png"></p>
+
+             {% endif %}
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+{% endblock %}
+

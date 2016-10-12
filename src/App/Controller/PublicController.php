@@ -56,8 +56,9 @@ class PublicController {
             if (isset($_SESSION['original_route'])){
                 $path = $_SESSION['original_route'];
             }
-            $uri = $request->getUri()->withPath($this->container->router->pathFor($path));
+            $uri = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
             return $response = $response->withRedirect($uri, 401);
+
         }
         
         return $this->container->view->render($response, 'login.html.twig', array(
@@ -193,6 +194,16 @@ class PublicController {
             return $this->container->view->render($response, 'userNotification.twig', $resetResp);
         }
         return $this->container->view->render($response, 'userNotification.twig', $resp);
+    }
+
+    public function paypalIPnAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $paypalVariables = $request->getParsedBody();
+
+        $invoiceId = $paypalVariables['invoice'];
+        $paymentStatus = $paypalVariables['payment_status'];
+        
+
     }
 
 }

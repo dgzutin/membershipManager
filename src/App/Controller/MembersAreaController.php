@@ -149,8 +149,9 @@ class MembersAreaController{
     public function documentsAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
-            'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
-        return $this->container->view->render($response, 'members/documents.html.twig',array('links' => $links));
+                       'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
+        return $this->container->view->render($response, 'members/documents.html.twig',array('links' => $links,
+                                                                                             'user_role' => $_SESSION['user_role']));
     }
 
 }

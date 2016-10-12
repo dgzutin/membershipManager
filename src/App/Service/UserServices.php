@@ -9,13 +9,26 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Entity\Invoice;
+use App\Entity\InvoiceItem;
+use App\Entity\Billing;
+use App\Entity\ShoppingCartItem;
+use DateTime;
+use DateInterval;
 
 class UserServices
 {
     public function __construct($container)
     {
         $this->mailService = $container['mailServices'];
+        $this->shoppingCartServices = $container['shoppingCartServices'];
         $this->em = $container['em'];
+
+        $repository = $this->em->getRepository('App\Entity\Settings');
+        $this->settings = $repository->createQueryBuilder('settings')
+            ->select('settings')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function authenticateUser($email_1, $password)
@@ -315,6 +328,182 @@ class UserServices
                         'message' => "Users found");
 
         return $result;
+    }
+
+    public function getUserBillingInfo($userId)
+    {
+        $repository = $this->em->getRepository('App\Entity\Billing');
+        $billinInfo = $repository->createQueryBuilder('billing')
+            ->select('billing')
+            ->where('billing.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+
+        if (count($billinInfo) != 0){
+
+            return array('exception' => false,
+                'billinAddress' => $billinInfo,
+                'message' => 'User found');
+        }
+        else{
+            return array('exception' => true,
+                         'message' => 'No billing address found');
+        }
+    }
+
+    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems)
+    {
+
+        $newInvoice = new Invoice();
+
+        $newInvoice->setUserId($user->getId());
+        $newInvoice->setCreateDate(date('d/m/Y h:i:s a'));
+        $newInvoice->setDueDate(date('d/m/Y h:i:s a', strtotime("+30 days")));
+        $newInvoice->setCurrency($this->settings->getSystemCurrency());
+        $newInvoice->setName($billingInfo->getName());
+        $newInvoice->setInstitution($billingInfo->getInstitution());
+        $newInvoice->setStreet($billingInfo->getStreet());
+        $newInvoice->setCity($billingInfo->getCity());
+        $newInvoice->setZip($billingInfo->getZip());
+        $newInvoice->setCountry($billingInfo->getCountry());
+        $newInvoice->setVat($billingInfo->getVat());
+        $newInvoice->setReference($billingInfo->getReference());
+
+        $this->em->persist($newInvoice);
+
+        try{
+            $this->em->flush();
+
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'message' => $e->getMessage());
+        }
+
+        foreach ($cartItems as $cartItem){
+
+            $invoiceItem = new InvoiceItem();
+
+            $invoiceItem->setInvoiceId($newInvoice->getId());
+            $invoiceItem->setName($cartItem->getName());
+            $invoiceItem->setDescription($cartItem->getDescription());
+            $invoiceItem->setQuantity($cartItem->getQuantity());
+            $invoiceItem->setUnitPrice($cartItem->getUnitPrice());
+            $invoiceItem->setTotalPrice($cartItem->getTotalPrice());
+
+            $this->em->persist($invoiceItem);
+
+            try{
+                $this->em->flush();
+
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                             'message' => $e->getMessage());
+            }
+
+        }
+
+        return array('exception' => false,
+                     'invoiceId' => $newInvoice->getId(),
+                     'message' => 'Invoice created. Invoice ID: '.$newInvoice->getId());
+
+    }
+
+    public function getInvoiceDataForUser($invoiceId, $userId)
+    {
+
+        $repository = $this->em->getRepository('App\Entity\Invoice');
+        $invoice = $repository->createQueryBuilder('invoice')
+            ->select('invoice')
+            ->where('invoice.id = :invoiceId')
+            ->andWhere('invoice.userId = :userId')
+            ->setParameter('invoiceId', $invoiceId)
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($invoice != NULL){
+
+            //retrieve Invoice items
+            $repository = $this->em->getRepository('App\Entity\InvoiceItem');
+            $invoiceItems = $repository->createQueryBuilder('items')
+                ->select('items')
+                ->where('items.invoiceId = :invoiceId')
+                ->setParameter('invoiceId', $invoiceId)
+                ->getQuery()
+                ->getResult();
+
+            $totalPrice = $this->shoppingCartServices->getTotalPrice($invoiceItems);
+
+            //get date of invoice
+
+            $invoiceDate = date_create($invoice->getCreateDate());
+
+            $date_formatted = $invoiceDate->format('d/m/Y');
+
+
+            //Retrieve invoice payment (if any)
+            $repository = $this->em->getRepository('App\Entity\InvoicePayment');
+            $invoicePayments = $repository->createQueryBuilder('payment')
+                ->select('payment')
+                ->where('payment.invoiceId = :invoiceId')
+                ->setParameter('invoiceId', $invoiceId)
+                ->getQuery()
+                ->getResult();
+
+            //calculate the outstanding amount
+            $amountPaid = 0;
+
+            foreach ($invoicePayments as $invoicePayment){
+                $amountPaid = $amountPaid + $invoicePayment->getAmountPaid();
+            }
+            $outstandingAmount = $totalPrice - $amountPaid;
+
+            if ($outstandingAmount <= 0){
+                $message = 'Payment in full has been received. Thank you.';
+            }
+            elseif(($outstandingAmount < $totalPrice) & ($outstandingAmount > 0)){
+                $message = 'This invoice has been partially paid.';
+            }
+            elseif($outstandingAmount == $totalPrice ){
+                $message = 'No payment received until the preset moment.';
+            }
+
+            $issuerData = array('nameOfOrganization' => $this->settings->getNameOfOrganization(),
+                                'street' => $this->settings->getStreet(),
+                                'city' => $this->settings->getCity(),
+                                'zip' => $this->settings->getZip(),
+                                'country' => $this->settings->getCountry(),
+                                'email' => $this->settings->getEmail(),
+                                'orgWebsite' => $this->settings->getOrgWebsite(),
+                                'vat' => $this->settings->getVat(),
+                                'registrationNumber' => $this->settings->getRegistrationNumber(),
+                                'iban' => $this->settings->getIban(),
+                                'bic' => $this->settings->getBic(),
+                                'bankAddress' => $this->settings->getBankAddress(),
+                                'paypalEmail' => $this->settings->getPaypalEmail(),
+                                'paypalActive' => $this->settings->getPaypalActive(),
+                                'paypalSandboxMode' => $this->settings->getPaypalSandboxModeActive(),
+                                'wireTransferActive' => $this->settings->getWireTransferActive());
+
+            return array('exception' => false,
+                         'invoice' => $invoice,
+                         'invoiceDate' => $date_formatted,
+                         'invoiceItems' => $invoiceItems,
+                         'issuerData' => $issuerData,
+                         'totalPrice' => $totalPrice,
+                         'amountPaid' => $amountPaid,
+                         'outstandingAmount' => $outstandingAmount,
+                         'message' => $message);
+
+        }
+        else{
+            return array('exception' => true,
+                         'message' => 'Invoice not found');
+        }
+
     }
 
 }

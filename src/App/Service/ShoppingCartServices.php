@@ -36,8 +36,15 @@ class ShoppingCartServices
             ->setParameter('userId', $userId)
             ->getQuery()
             ->getResult();
-        
-        return $items;
+
+        if (count($items) == 0){
+            return array('exception' => true,
+                         'message' => "No item was found");
+        }
+
+        return array('exception' => false,
+                     'items' => $items,
+                     'message' => "Items found");
 
     }
     
@@ -46,9 +53,31 @@ class ShoppingCartServices
         $totalPrice = 0;
         foreach ($items as $item){
 
-            $totalPrice = $totalPrice + $item->getTotalPrice();
+            $unitPrice = $item->getUnitPrice();
+            $quantity = $item->getQuantity();
+
+           $totalPrice = $totalPrice + ($unitPrice*$quantity);
         }
+
         return $totalPrice;
+    }
+
+    //Convert all amounts in the items to locale settings for the view
+    public function convertAmountToLocaleSettings($amount)
+    {
+        return number_format($amount,2,",",".");
+    }
+
+    public function convertAmountsToLocaleSettings($items)
+    {
+        $i =0;
+        foreach ($items as $item) {
+
+            //TODO: get locale settings from config, DB, etc..
+            $items[$i]->setUnitPrice(number_format($item->getUnitPrice(),2,",","."));
+            $items[$i]->setTotalPrice(number_format($item->getTotalPrice(),2,",","."));
+        }
+        return $items;
     }
 
     public function addIMembershipToCart($membershipTypeId)
@@ -88,9 +117,11 @@ class ShoppingCartServices
             $this->em->persist($cartItem);
         }
         else{
-            $quantity = $cartItem->getQuantity();
-            $cartItem->setQuantity($quantity + 1);
-            $cartItem->setTotalPrice($cartItem->getTotalPrice()+ $membershipType->getFee());
+
+            // Only one membership (quantity = 1) is allowed per user
+            //$quantity = $cartItem->getQuantity();
+            //$cartItem->setQuantity($quantity + 1);
+            //$cartItem->setTotalPrice($cartItem->getTotalPrice()+ $membershipType->getFee());
         }
 
         try{
@@ -110,15 +141,13 @@ class ShoppingCartServices
 
     //Remove an item from shopping cart. If $quantity = NULL removes all
 
-    public function removeItemFromCart($itemId, $quantity)
+    public function removeItemFromCart($userId, $itemId, $quantityToRemove)
     {
-        $userId = $_SESSION['user_id'];
-        
         $repository =$this->em->getRepository('App\Entity\ShoppingCartItem');
-        $cartItem = $repository->createQueryBuilder('cart')
-            ->select('cart')
-            ->where('cart.id = :id')
-            ->andWhere('cart.userId = :userId')
+        $cartItem = $repository->createQueryBuilder('cartItem')
+            ->select('cartItem')
+            ->where('cartItem.id = :id')
+            ->andWhere('cartItem.userId = :userId')
             ->setParameter('userId', $userId)
             ->setParameter('id', $itemId)
             ->getQuery()
@@ -126,12 +155,12 @@ class ShoppingCartServices
 
         if ($cartItem != NULL){
 
-            if ($quantity == NULL){
+            if (($quantityToRemove == NULL) OR ($cartItem->getQuantity() == 1)){
                 $this->em->remove($cartItem);
             }
             else{
-                $cartItem->setQuantity($quantity - $quantity);
-                $cartItem->setTotalPrice($cartItem->getTotalPrice() - ($quantity * $cartItem->getUnitPrice()));
+                $cartItem->setQuantity($cartItem->getQuantity() - $quantityToRemove);
+                $cartItem->setTotalPrice($cartItem->getTotalPrice() - ($cartItem->getQuantity() * $cartItem->getUnitPrice()));
                 $this->em->persist($cartItem);
             }
 
@@ -147,6 +176,37 @@ class ShoppingCartServices
         }
 
         return $result;
+
+    }
+
+    public function emptyCart()
+    {
+        $userId = $_SESSION['user_id'];
+        $repository =$this->em->getRepository('App\Entity\ShoppingCartItem');
+        $cartItems = $repository->createQueryBuilder('cartItem')
+            ->select('cartItem')
+            ->andWhere('cartItem.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+
+        if (count($cartItems) != 0){
+
+            $result = array('exception' => false,
+                            'message' => "Item(s) was/were removed");
+            foreach ($cartItems as $cartItem){
+
+                $this->em->remove($cartItem);
+                try{
+                    $this->em->flush();
+                }
+                catch (\Exception $e){
+                    $result = array('exception' => true,
+                                    'message' => $e->getMessage());
+                }
+            }
+        }
+
 
     }
 

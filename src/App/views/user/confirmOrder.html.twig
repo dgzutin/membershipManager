@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Confirm your order</strong></div>
+            <div class="panel-body">
+
+                <strong>Name and Invoice address:</strong>
+
+                <br><a href="{{ path_for('userProfile')}}">{{ form.name }}</a>
+                <br>{{ form.institution }}
+                <br>{{ form.street }}
+                <br>{{ form.zip }} - {{ form.city }}
+                <br>{{ form.country }}
+                <br>{{ form.vat }}
+                <br>{{ form.reference }}
+
+
+
+                <h4>Your order:</h4>
+
+                <div class="well">
+                    <table class="table table-condensed" id="items" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th></th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for item in items %}
+                            <tr class="">
+                                <td>{{ item.name }}</td>
+                                <td></td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.unitPrice }}</td>
+                                <td>{{ item.totalPrice }}</td>
+                                <td>
+                                    <a href="{{ removeItemBaseUrl }}/{{ item.id }}">
+                                        <span class="fa fa-trash-o"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><strong>TOTAL:</strong></td>
+                            <td>{{ currency }} {{ totalPrice }}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+
+                <form id="form_billing_info" data-toggle="validator" role="form" method="post" action="{{ path_for('processOrder')}}">
+
+                    <input type="hidden" name="name" id="first_name" class="form-control" placeholder="Name" value="{{ form.name }}" tabindex="1">
+                    <input type="hidden" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution }}" tabindex="3">
+                    <input required type="hidden" name="street" id="street" class="form-control " placeholder="street" value="{{ form.street }}" tabindex="3">
+                    <input type="hidden" name="country" id="country" value="{{ form.country }}">
+                    <input required="required" type="hidden" name="city" id="city" class="form-control " placeholder="" value="{{ form.city }}" tabindex="5">
+                    <input type="hidden" name="zip" id="zip" class="form-control " placeholder="" value="{{ form.zip }}" tabindex="6">
+                    <input type="hidden" name="vat" id="vat" class="form-control " placeholder="" value="{{ form.vat }}" tabindex="5" data-error="" />
+                    <input type="hidden" name="reference" id="reference" class="form-control " placeholder="" value="{{ form.reference }}" tabindex="6" data-error="">
+
+
+                    {{ terms }}
+
+
+                    <div class="checkbox">
+                        <label>
+                            <input name="consent" id="consent" type="checkbox" value="">I have understood the invoice and payment terms and declare acceptance.
+                        </label>
+                    </div>
+
+                    <p class="text-right">
+                        <a class="btn btn-primary btn-md" href="{{ path_for('orderSummaryUser')}}" role="button">Back: Edit Invoice Address</a>
+                        <button id="place_order" type="submit" class="btn btn-success">Confirm Purchase</button>
+                    </p>
+
+                </form>
+
+                <hr>
+
+            </div>
+        </div>
+
+    </div>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $("#dialog").dialog({
+                autoOpen: false,
+                modal: true
+            });
+        });
+
+        $("#place_order").click(function(e) {
+            e.preventDefault();
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog").dialog({
+                buttons : {
+                    "Place order" : function() {
+                       // window.location.href = targetUrl;
+                        $( "#form_billing_info" ).submit();
+                    },
+                    "Cancel" : function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+            $("#dialog").dialog("open");
+        });
+    </script>
+
+
+    <div id="dialog" title="Comfirm order">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Place order and generate invoice?</p>
+    </div>
+
+
+
+{% endblock %}
+

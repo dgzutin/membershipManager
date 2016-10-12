@@ -19,6 +19,9 @@ class Billing
     /** @Column(type="integer", length=50, nullable=false) **/
     protected $userId;
 
+    /** @Column(type="string", length=50, nullable=true) * */
+    protected $typeAlias;
+
     // ----- Billing Address
 
     /** @Column(type="string", length=50, nullable=true) **/
@@ -271,5 +274,30 @@ class Billing
     public function getReference()
     {
         return $this->reference;
+    }
+    
+
+    /**
+     * Set typeAlias
+     *
+     * @param string $typeAlias
+     *
+     * @return Billing
+     */
+    public function setTypeAlias($typeAlias)
+    {
+        $this->typeAlias = $typeAlias;
+
+        return $this;
+    }
+
+    /**
+     * Get typeAlias
+     *
+     * @return string
+     */
+    public function getTypeAlias()
+    {
+        return $this->typeAlias;
     }
 }

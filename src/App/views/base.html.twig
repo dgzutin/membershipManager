@@ -32,8 +32,12 @@
     <script src="{{ baseUrl }}/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
 
+    <!-- JQuery UI  ============================================== -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <!-- Notify.js JavaScript  ============================================== -->
-    <script src="{{ baseUrl }}/assets/js/notify.min.js"></script>
+   <!-- <script src="{{ baseUrl }}/assets/js/notify.min.js"></script>  -->
 
 
 </head>
@@ -61,13 +65,15 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="{{ links.home }}">Home</a></li>
+                    <li class="active"><a href="{{ path_for('homeUser')}}">Home</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact</a></li>
 
+                    <li><a href="#">{{ user_role }}</a></li>
+
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="active"><a href="{{ links.viewProfile }}">My Account<span class="sr-only">(current)</span></a></li>
+                    <li class="active"><a href="{{ path_for('userProfile')}}">My Account<span class="sr-only">(current)</span></a></li>
                     <li><a href="{{ path_for('logout')}}">Logout</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
@@ -77,12 +83,10 @@
 
     {% block mainPanel %}{% endblock %}
 
+        <footer class="footer">
+            <p class="text-center text-muted">&copy; Company 2014</p>
+        </footer>
 
-    <div id="footer">
-        <div class="container">
-            <p class="muted credit">Name of Website</p>
-        </div>
-    </div>
     </div>
 
 </div> <!-- /container -->

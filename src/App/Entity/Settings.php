@@ -45,8 +45,14 @@ class Settings
 
     // Payment Settings
 
+    /** @Column(type="string", length=10, nullable=false) * */
+    protected $systemCurrency;
+
     /** @Column(type="boolean", nullable=false) **/
     protected $paypalActive;
+
+    /** @Column(type="boolean", nullable=false) **/
+    protected $paypalSandboxModeActive;
 
     /** @Column(type="string", length=50, nullable=true) **/
     protected $paypalEmail;
@@ -432,5 +438,53 @@ class Settings
     public function getOrgWebsite()
     {
         return $this->orgWebsite;
+    }
+
+    /**
+     * Set systemCurrency
+     *
+     * @param string $systemCurrency
+     *
+     * @return Settings
+     */
+    public function setSystemCurrency($systemCurrency)
+    {
+        $this->systemCurrency = $systemCurrency;
+
+        return $this;
+    }
+
+    /**
+     * Get systemCurrency
+     *
+     * @return string
+     */
+    public function getSystemCurrency()
+    {
+        return $this->systemCurrency;
+    }
+
+    /**
+     * Set paypalSandboxModeActive
+     *
+     * @param boolean $paypalSandboxModeActive
+     *
+     * @return Settings
+     */
+    public function setPaypalSandboxModeActive($paypalSandboxModeActive)
+    {
+        $this->paypalSandboxModeActive = $paypalSandboxModeActive;
+
+        return $this;
+    }
+
+    /**
+     * Get paypalSandboxModeActive
+     *
+     * @return boolean
+     */
+    public function getPaypalSandboxModeActive()
+    {
+        return $this->paypalSandboxModeActive;
     }
 }

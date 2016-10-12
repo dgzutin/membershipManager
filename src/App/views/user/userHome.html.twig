@@ -10,12 +10,30 @@
             <div class="panel-heading"><strong>As a user you have the following options</strong></div>
             <div class="panel-body">
                 <ul>
-                <li class="active"><a href="{{ links.viewProfile }}">Edit your user account</a></li>
+                <li class="active"><a href="{{ path_for('userProfile')}}">Edit your user account</a></li>
                 <li><a href="{{ path_for('yourMembershipUser')}}">Your Membership</a> <span class="label label-success label-pill pull-xs-right">You are not yet a member</span></li>
                 <li><a href="{{ path_for('documentsUser')}}">Documents for Members</a></li>
                 </ul>
             </div>
         </div>
+
+        {% if user_role == 'ROLE_ADMIN' %}
+
+            <div class="panel panel-primary">
+                <div class="panel-heading"><strong>Functions available for Administrators</strong></div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="{{ baseUrl }}/admin/users">Manage Registered Users</a>, <a href="">Register new User</a></li>
+                        <li><a href="">Manage Members</a>, <a href="">Register new member</a></li>
+                        <li><a href="">System Settings</a></li>
+                        <li><a href="">Manage Membership types</a></li>
+                        <li><a href="{{ path_for('documentsAdmin')}}">Manage documents for members</a></li>
+                        <li><a href="{{ path_for('createBulkMailAdmin')}}">Send Bulk e-mails</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        {% endif %}
 
     </div>
 

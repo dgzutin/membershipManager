@@ -17,7 +17,7 @@
 
                 {%  for membershipType in membershipTypes %}
 
-                    <div class="jumbotron">
+                    <div class="well">
                     <div class="media">
                         <div class="media-left">
                             <img class="media-object" src="{{ baseUrl }}/assets/images/membership_logo.png" alt="...">
@@ -32,58 +32,14 @@
 
                             <strong>Description:</strong> {{ membershipType.description }}
                             <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
-                            <a class="btn btn-primary btn-md" href="{{ addMembershipToCartUrl }}/{{ membershipType.id }}" role="button"><spam class="fa fa-shopping-cart"></spam> Add to cart</a>
+                            <a class="btn btn-primary btn-md" href="{{ addMembershipToCartUrl }}/{{ membershipType.id }}" role="button"><spam class="fa fa-sign-in"></spam> Become a member</a>
                             <a class="btn btn-success btn-md" href="#" role="button">Manage</a>
-                            <a class="btn btn-danger btn-md" href="#" role="button">Cancel</a>
+                            <a class="btn btn-danger btn-md" href="#" role="button">Conditions</a>
                         </div>
                     </div>
                     </div>
                 {% endfor %}
 
-                <h3>Your order:</h3>
-                <hr>
-
-                <table class="table table-condensed" id="items" cellspacing="0" width="100%">
-                    <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th></th>
-                        <th>Quantity</th>
-                        <th>Unit Price</th>
-                        <th>Amount</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {%  for item in items %}
-                        <tr class="">
-                            <td>{{ item.name }}</td>
-                            <td></td>
-                            <td>{{ item.quantity }}</td>
-                            <td>{{ item.unitPrice }}</td>
-                            <td>{{ item.totalPrice }}</td>
-                            <td>
-                                <a href="{{ removeItemBaseUrl }}/{{ item.id }}">
-                                    <span class="fa fa-trash-o"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-
-                    <tr class="">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><strong>TOTAL:</strong></td>
-                        <td>{{ currency }} {{ totalPrice }}</td>
-                    </tr>
-
-
-                    </tbody>
-                </table>
-
-
-                <p class="text-right"><a class="btn btn-primary btn-md" href="{{ checkoutUrl }}" role="button">Continue</a></p>
 
             </div>
         </div>

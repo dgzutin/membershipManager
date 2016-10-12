@@ -43,6 +43,9 @@ class MembershipType
     /** @Column(type="string", length=500, nullable=true) **/
     protected $description;
 
+    /** @Column(type="string", length=500, nullable=true) **/
+    protected $terms;
+
     /** @Column(type="integer", nullable=false) **/
     protected $numberOfRepresentatives;
 
@@ -300,5 +303,29 @@ class MembershipType
     public function getUseGlobalMemberNumberAssignment()
     {
         return $this->useGlobalMemberNumberAssignment;
+    }
+
+    /**
+     * Set terms
+     *
+     * @param string $terms
+     *
+     * @return MembershipType
+     */
+    public function setTerms($terms)
+    {
+        $this->terms = $terms;
+
+        return $this;
+    }
+
+    /**
+     * Get terms
+     *
+     * @return string
+     */
+    public function getTerms()
+    {
+        return $this->terms;
     }
 }

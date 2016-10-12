@@ -23,9 +23,6 @@ class InvoiceItem
     /** @Column(type="integer", nullable=false) * */
     protected $invoiceId;
 
-    /** @Column(type="integer", nullable=false) * */
-    protected $billingId;
-
     /** @Column(type="string", length=100, nullable=false) * */
     protected $name;
 
@@ -75,30 +72,7 @@ class InvoiceItem
     {
         return $this->invoiceId;
     }
-
-    /**
-     * Set billingId
-     *
-     * @param integer $billingId
-     *
-     * @return InvoiceItem
-     */
-    public function setBillingId($billingId)
-    {
-        $this->billingId = $billingId;
-
-        return $this;
-    }
-
-    /**
-     * Get billingId
-     *
-     * @return integer
-     */
-    public function getBillingId()
-    {
-        return $this->billingId;
-    }
+    
 
     /**
      * Set name

@@ -18,16 +18,23 @@ class Membership
     /** @Column(type="integer",  nullable=false) **/
     protected $memberId;
 
+    /** @Column(type="integer",  nullable=false) **/
+    protected $billingAddressId;
+
     /** @Column(type="integer", nullable=false) **/
     protected $membershipType;
 
     /** @Column(type="string", length=50, nullable=false) * */
     protected $memberRegDate;
 
+    /** @Column(type="string", length=100, nullable=true) * */
+    protected $quickRenewKey;
+
     /** @Column(type="boolean", nullable=false) * */
     protected $active;
 
 
+    
 
     /**
      * Get id
@@ -66,7 +73,7 @@ class Membership
     /**
      * Set membershipType
      *
-     * @param string $membershipType
+     * @param integer $membershipType
      *
      * @return Membership
      */
@@ -80,35 +87,11 @@ class Membership
     /**
      * Get membershipType
      *
-     * @return string
+     * @return integer
      */
     public function getMembershipType()
     {
         return $this->membershipType;
-    }
-
-    /**
-     * Set memberIds
-     *
-     * @param integer $memberIds
-     *
-     * @return Membership
-     */
-    public function setMemberIds($memberIds)
-    {
-        $this->memberIds = $memberIds;
-
-        return $this;
-    }
-
-    /**
-     * Get memberIds
-     *
-     * @return integer
-     */
-    public function getMemberIds()
-    {
-        return $this->memberIds;
     }
 
     /**
@@ -135,6 +118,29 @@ class Membership
         return $this->memberRegDate;
     }
 
+    /**
+     * Set quickRenewKey
+     *
+     * @param string $quickRenewKey
+     *
+     * @return Membership
+     */
+    public function setQuickRenewKey($quickRenewKey)
+    {
+        $this->quickRenewKey = $quickRenewKey;
+
+        return $this;
+    }
+
+    /**
+     * Get quickRenewKey
+     *
+     * @return string
+     */
+    public function getQuickRenewKey()
+    {
+        return $this->quickRenewKey;
+    }
 
     /**
      * Set active
@@ -158,5 +164,29 @@ class Membership
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * Set billingAddressId
+     *
+     * @param integer $billingAddressId
+     *
+     * @return Membership
+     */
+    public function setBillingAddressId($billingAddressId)
+    {
+        $this->billingAddressId = $billingAddressId;
+
+        return $this;
+    }
+
+    /**
+     * Get billingAddressId
+     *
+     * @return integer
+     */
+    public function getBillingAddressId()
+    {
+        return $this->billingAddressId;
     }
 }

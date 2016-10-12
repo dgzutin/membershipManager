@@ -85,6 +85,10 @@ $container['shoppingCartServices'] = function($container){
     return new Service\ShoppingCartServices($container);
 };
 
+$container['membershipServices'] = function($container){
+    return new Service\MembershipServices($container);
+};
+
 
 
 
@@ -140,9 +144,12 @@ $app->group('/user', function () use ($app) {
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsUser');
     $app->get('/selectMembership', '\UserController:yourMembershipAction')->setName('yourMembershipUser');
     $app->get('/registerMember', '\UserController:registerMemberAction')->setName('registerMemberUser');
-    $app->get('/orderSummary', '\UserController:shoppingCartAction')->setName('orderSummaryUser');
+    $app->get('/orderSummary', '\UserController:orderSummaryAction')->setName('orderSummaryUser');
     $app->get('/addMembershipToCart/{membershipTypeId}', '\UserController:addMembershipToCartAction')->setName('addMembershipToCartUser');
     $app->get('/removeItemfromCart/{itemId}', '\UserController:removeItemfromCartAction')->setName('removeItemfromCartUser');
+    $app->post('/processOrder', '\UserController:processOrderAction')->setName('processOrder');
+    $app->get('/singleInvoice/{invoiceId}', '\UserController:singleInvoiceAction')->setName('singleInvoice');
+    $app->post('/confirmOrder', '\UserController:confirmOrderAction')->setName('confirmOrder');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
@@ -173,4 +180,6 @@ $app->get('/resetPassword/{key}', '\PublicController:resetPasswordAction')->setN
 $app->post('/resetPassword/{key}', '\PublicController:processResetPasswordAction')->setName('processResetPassword');
 $app->get('/forgotPassword', '\PublicController:forgotPasswordAction')->setName('forgotPassword');
 $app->post('/forgotPassword', '\PublicController:processForgotPasswordAction')->setName('processForgotPassword');
+$app->post('/paypal_ipn', '\PublicController:paypalIPnAction')->setName('paypal_ipn');
+
 $app->run();

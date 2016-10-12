@@ -36,7 +36,7 @@ class ShoppingCartItem
 
     /** @Column(type="decimal", precision=7, scale=2) * */
     protected $totalPrice;
-    
+
 
     /**
      * Get id
