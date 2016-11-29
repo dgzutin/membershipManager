@@ -128,7 +128,6 @@ class PublicController {
                                                                                                     'systemInfo' => $this->systemInfo,
                                                                                                     'mailResponse' => $resp));
             }
-
         }
     }
     
@@ -137,8 +136,9 @@ class PublicController {
         $userServices = $this->container->get('userServices');
         $result = $userServices->activateAccount($args['key']);
 
-        return $this->container->view->render($response, 'userNotification.twig', $result);
-        
+        return $this->container->view->render($response, 'userNotification.twig', array('exception' => $result['exception'],
+                                                                                        'systemInfo' => $this->systemInfo,
+                                                                                        'message' => $result)['message']);
     }
 
     public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -157,7 +157,6 @@ class PublicController {
         return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
                                                                                         'systemInfo' => $this->systemInfo,
                                                                                         'message' => $resp['message']));
-
     }
 
     public function processResetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)

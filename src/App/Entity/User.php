@@ -68,7 +68,7 @@ class User
     /** @Column(type="string", length=500, nullable=true) **/
     protected $comments;
 
-    /** @Column(type="string", length=50, nullable=true) * */
+    /** @Column(type="datetime", nullable=true) * */
     protected $userRegDate;
 
     /** @Column(type="string", length=100, nullable=true) * */

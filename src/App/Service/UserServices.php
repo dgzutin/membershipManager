@@ -118,7 +118,7 @@ class UserServices
 
             $newuser->setPassword($hash);
             $newuser->setStreet($user_data['street']);
-            $newuser->setUserRegDate(date('d/m/Y h:i:s a'));
+            $newuser->setUserRegDate(new DateTime());
             $newuser->setWebsite($user_data['website']);
             $newuser->setZip($user_data['zip']);
             $newuser->setActive(false);
@@ -172,7 +172,6 @@ class UserServices
             $user->setPhone($user_data['phone']);
             $user->setPosition($user_data['position']);
             $user->setStreet($user_data['street']);
-            $user->setUserRegDate(date('d/m/Y h:i:s a'));
             $user->setWebsite($user_data['website']);
             $user->setZip($user_data['zip']);
             $user->setActive(true);
