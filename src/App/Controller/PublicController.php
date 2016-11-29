@@ -138,7 +138,7 @@ class PublicController {
 
         return $this->container->view->render($response, 'userNotification.twig', array('exception' => $result['exception'],
                                                                                         'systemInfo' => $this->systemInfo,
-                                                                                        'message' => $result)['message']);
+                                                                                        'message' => $result['message']));
     }
 
     public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
