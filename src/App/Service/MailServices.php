@@ -98,23 +98,26 @@ class MailServices
         
         $this->message
             ->setSubject('Reset Password request')
-            ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getNameOfOrganization()));
+            ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getAcronym().' Secretariat'));
         try{
             $this->message->setTo(array($user->getEmail1()));
             $this->message->setBody($emailBody, 'text/html');
             $result = array('exception' => false,
                 'sent' => $this->mailer->send($this->message),
-                'message' => 'Email successfully sent to '.$user->getEmail1());
+                'emailRecipient' => $user->getEmail1(),
+                'message' => 'An e-mail was sent to '.$user->getEmail1().' with instructions to reset your password.');
         }
         catch (\Exception $e){
 
             $result = array('exception' => true,
-                'sent' => $this->mailer->send($this->message),
-                'message' => $e->getMessage());
+                            'notificationType' => 'EMAIL_SENT',
+                            'sent' => $this->mailer->send($this->message),
+                            'message' => $e->getMessage());
         }
         return $result;
     }
-    
+
+    // $userIds is an array of user ids of the email recipients
     public function sendBulkEmails($userIds, $emailSubject, $emailBody, $replyTo, $request)
     {
 
@@ -178,7 +181,7 @@ class MailServices
     {
         //Replace all placeholdes by the actual data
         $placeholders = array("{resetPasswordLink}" => $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey(),
-            "{formalSalutation_en}" => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
+            "{formalSalutation_en}" => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName(),
             "{firstName}" => $user->getFirstName(),
             "{lastName}" => $user->getLastName()
         );

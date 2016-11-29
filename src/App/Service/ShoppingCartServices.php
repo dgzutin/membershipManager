@@ -39,12 +39,12 @@ class ShoppingCartServices
 
         if (count($items) == 0){
             return array('exception' => true,
-                         'message' => "No item was found");
+                         'message' => "No item was found in the shopping cart");
         }
 
         return array('exception' => false,
                      'items' => $items,
-                     'message' => "Items found");
+                     'message' => "Item(s) found");
 
     }
     
@@ -95,9 +95,9 @@ class ShoppingCartServices
         $repository =$this->em->getRepository('App\Entity\ShoppingCartItem');
         $cartItem = $repository->createQueryBuilder('cart')
             ->select('cart')
-            ->where('cart.typeAlias = :typeAlias')
+            ->where('cart.typeId = :typeId')
             ->andWhere('cart.userId = :userId')
-            ->setParameter('typeAlias', $membershipType->getTypeAlias())
+            ->setParameter('typeId', $membershipTypeId)
             ->setParameter('userId', $userId)
             ->getQuery()
             ->getOneorNullResult();
@@ -108,7 +108,7 @@ class ShoppingCartServices
 
             $cartItem->setDescription('');
             $cartItem->setName($membershipType->getTypeName());
-            $cartItem->settypeAlias($membershipType->getTypeAlias());
+            $cartItem->setTypeId($membershipType->getId());
             $cartItem->setQuantity(1);
             $cartItem->setUserID($userId);
             $cartItem->setTotalPrice($membershipType->getFee());

@@ -30,6 +30,29 @@ class UserServices
             ->getQuery()
             ->getOneOrNullResult();
     }
+    
+    public function getSystemInfo()
+    {
+        try{
+            $repository =$this->em->getRepository('App\Entity\Settings');
+            $result = $repository->createQueryBuilder('s')
+                ->select('s')
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+        catch (\Exception $e){
+            $result = array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        $date_now = new DateTime();
+        $year = $date_now->format('Y');
+
+        return array('exception' => false,
+                     'year' => $year,
+                     'settings' => $result);
+
+    }
 
     public function authenticateUser($email_1, $password)
     {
@@ -278,7 +301,7 @@ class UserServices
         }
         else{
             $result =  array('exception' => true,
-                'message' => 'No user account exist for the e-mail '.$email_1,
+                'message' => 'No user account exists for e-mail '.$email_1,
                 'user' => NULL);
         }
         return $result;
@@ -352,14 +375,24 @@ class UserServices
         }
     }
 
-    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems)
+    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems, $onPaymentActions)
     {
 
         $newInvoice = new Invoice();
 
         $newInvoice->setUserId($user->getId());
-        $newInvoice->setCreateDate(date('d/m/Y h:i:s a'));
-        $newInvoice->setDueDate(date('d/m/Y h:i:s a', strtotime("+30 days")));
+
+        $date_create = new DateTime();
+        $newInvoice->setCreateDate($date_create);
+
+        $date_due = new DateTime();
+        $date_due->add(new DateInterval('P1M'));
+        $newInvoice->setDueDate($date_due);
+
+        //$newInvoice->setCreateDate(date('d/m/Y'));
+        //$newInvoice->setDueDate(date('d/m/Y', strtotime("+30 days")));
+
+
         $newInvoice->setCurrency($this->settings->getSystemCurrency());
         $newInvoice->setName($billingInfo->getName());
         $newInvoice->setInstitution($billingInfo->getInstitution());
@@ -369,6 +402,8 @@ class UserServices
         $newInvoice->setCountry($billingInfo->getCountry());
         $newInvoice->setVat($billingInfo->getVat());
         $newInvoice->setReference($billingInfo->getReference());
+        $newInvoice->setPaid(false);
+        $newInvoice->setOnPaymentActions($onPaymentActions);
 
         $this->em->persist($newInvoice);
 
@@ -439,10 +474,11 @@ class UserServices
 
             //get date of invoice
 
-            $invoiceDate = date_create($invoice->getCreateDate());
+            $invoiceDate = $invoice->getCreateDate();
+            $invoiceDate_string = $invoiceDate->format('jS F Y');
 
-            $date_formatted = $invoiceDate->format('d/m/Y');
-
+            $invoiceDueDate = $invoice->getDueDate();
+            $invoiceDueDate_string = $invoiceDueDate->format('l jS F Y');
 
             //Retrieve invoice payment (if any)
             $repository = $this->em->getRepository('App\Entity\InvoicePayment');
@@ -461,6 +497,7 @@ class UserServices
             }
             $outstandingAmount = $totalPrice - $amountPaid;
 
+            $message = '';
             if ($outstandingAmount <= 0){
                 $message = 'Payment in full has been received. Thank you.';
             }
@@ -472,6 +509,7 @@ class UserServices
             }
 
             $issuerData = array('nameOfOrganization' => $this->settings->getNameOfOrganization(),
+                                'acronym' => $this->settings->getNameOfOrganization(),
                                 'street' => $this->settings->getStreet(),
                                 'city' => $this->settings->getCity(),
                                 'zip' => $this->settings->getZip(),
@@ -489,8 +527,11 @@ class UserServices
                                 'wireTransferActive' => $this->settings->getWireTransferActive());
 
             return array('exception' => false,
+                         'invoiceId' => $invoice->getId(),
+                         'invoiceCurrency' => $invoice->getCurrency(),
                          'invoice' => $invoice,
-                         'invoiceDate' => $date_formatted,
+                         'invoiceDate' => $invoiceDate_string,
+                         'invoiceDueDate' => $invoiceDueDate_string,
                          'invoiceItems' => $invoiceItems,
                          'issuerData' => $issuerData,
                          'totalPrice' => $totalPrice,
@@ -503,7 +544,101 @@ class UserServices
             return array('exception' => true,
                          'message' => 'Invoice not found');
         }
-
     }
+
+    public function getBillingInfoForUser($userId)
+    {
+        $repository = $this->em->getRepository('App\Entity\Billing');
+        $billingAddress = $repository->createQueryBuilder('billing')
+            ->select('billing')
+            ->where('billing.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($billingAddress != NULL){
+
+            return array('exception' => false,
+                'billing' => $billingAddress,
+                'message' => 'Billing address found');
+        }
+        else{
+            return array('exception' => true,
+                'message' => 'No billing address for resource user '.$userId.' found');
+        }
+    }
+    
+    public function createOrUpdateBillingInfo($billing, User $user)
+    {
+        $repository = $this->em->getRepository('App\Entity\Billing');
+        $existingBillingInfo = $repository->createQueryBuilder('billing')
+            ->select('billing')
+            ->where('billing.userId = :userId')
+            ->setParameter('userId', $user->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($existingBillingInfo == NULL){
+
+            $billingInfo = new Billing();
+
+        }
+        else{
+
+            $billingInfo = $existingBillingInfo;
+        }
+        $billingInfo->setUserId($user->getId());
+        $billingInfo->setName($billing['name']);
+        $billingInfo->setInstitution($billing['institution']);
+        $billingInfo->setStreet($billing['street']);
+        $billingInfo->setCountry($billing['country']);
+        $billingInfo->setCity($billing['city']);
+        $billingInfo->setZip($billing['zip']);
+        $billingInfo->setVat($billing['vat']);
+        $billingInfo->setReference($billing['reference']);
+
+        $this->em->persist($billingInfo);
+
+        try{
+            $this->em->flush();
+
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'message' => 'Could not create billing information: '.$e->getMessage());
+        }
+        return array('exception' => false,
+                     'billingInfo' => $billingInfo,
+                     'message' => 'New Billing info for user '.$user->getId().' added/updated.');
+    }
+
+    public function getOpenInvoicesForUser($userId)
+    {
+        $repository = $this->em->getRepository('App\Entity\Invoice');
+        $invoices = $repository->createQueryBuilder('invoice')
+            ->select('invoice')
+            ->where('invoice.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+
+        $openInvoicesArray = null;
+
+            $i = 0;
+            foreach ($invoices as $invoice){
+
+                $invoiceData = $this->getInvoiceDataForUser($invoice->getId(), $userId);
+
+                if ($invoiceData['outstandingAmount'] > 0){
+                    $openInvoicesArray[$i] = $invoiceData;
+                    $i++;
+                }
+            }
+
+        return array ('exception' => false,
+                      'numberOfInvoices' => count($openInvoicesArray),
+                      'openInvoicesArray' => $openInvoicesArray);
+    }
+    
 
 }
