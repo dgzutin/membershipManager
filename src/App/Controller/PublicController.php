@@ -174,10 +174,14 @@ class PublicController {
 
             $user = $resp['user'];
             $resetResp = $userService->resetPassword($user->getId(), $form_data['password']);
-            return $this->container->view->render($response, 'userNotification.twig', $resetResp);
+            return $this->container->view->render($response, 'userNotification.twig', array('exception' => $resetResp['exception'],
+                                                                                            'systemInfo' => $this->systemInfo,
+                                                                                            'message' => $resetResp['message']));
         }
-        return $this->container->view->render($response, 'userNotification.twig', $resp);
 
+        return $this->container->view->render($response, 'userNotification.twig',  array('exception' => $resp['exception'],
+                                                                                         'systemInfo' => $this->systemInfo,
+                                                                                         'message' => $resp['message']));
     }
 
     public function forgotPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
