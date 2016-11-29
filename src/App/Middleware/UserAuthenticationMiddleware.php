@@ -44,8 +44,9 @@ class UserAuthenticationMiddleware
         $route = $request->getAttribute('route');
 
         $_SESSION['original_route'] = $route->getName();
+        //$_SESSION['original_URL'] = $request->getUri()->getPath();
 
-        return $response = $response->withRedirect($baseUrl, 403);
+        return $response = $response->withRedirect($baseUrl.'/login', 403);
 
         //return $next($request, $response);
 
