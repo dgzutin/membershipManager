@@ -136,7 +136,7 @@ class MailServices
 
             $this->message
                 ->setSubject($newMail['subject'])
-                ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getNameOfOrganization()));
+                ->setFrom(array( $this->settings->getEmail() => $this->settings->getAcronym().' Secretariat'));
 
             try{
                 $this->message->setTo(array($user->getEmail1() => $user->getFirstName().' '.$user->getLastName()));
