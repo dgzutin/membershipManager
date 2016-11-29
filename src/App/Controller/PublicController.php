@@ -151,11 +151,11 @@ class PublicController {
 
         if ($resp['exception'] == false){
             return $this->container->view->render($response, 'resetPassword.html.twig', array('exception' => false,
-                                                                                              'systemInfo' => $this->systemInfo['settings'],
+                                                                                              'systemInfo' => $this->systemInfo,
                                                                                               'message' => $resp['message']));
         }
         return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
-                                                                                        'systemInfo' => $this->systemInfo['settings'],
+                                                                                        'systemInfo' => $this->systemInfo,
                                                                                         'message' => $resp['message']));
 
     }
