@@ -9,6 +9,44 @@
     <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
     <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
 
+    <!-- progress Steps CSS -->
+    <link href="{{ baseUrl }}/assets/css/progressSteps.css" rel="stylesheet">
+
+    <!-- progress Steps CSS -->
+    <link href="{{ baseUrl }}/assets/css/progressSteps.css" rel="stylesheet">
+
+    <div class="row bs-wizard" style="border-bottom:0;">
+
+        <div class="col-xs-3 bs-wizard-step complete">
+            <div class="text-center bs-wizard-stepnum">Step 1</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Your Membership</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+            <div class="text-center bs-wizard-stepnum">Step 2</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Membership and Billing Information</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+            <div class="text-center bs-wizard-stepnum">Step 3</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Confirm Order and agree with terms</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+            <div class="text-center bs-wizard-stepnum">Step 4</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Invoice and Payment</div>
+        </div>
+
+    </div>
+
     <div class="panel-group">
 
         <div class="panel panel-primary">
@@ -21,7 +59,7 @@
                 <br>{{ form.institution }}
                 <br>{{ form.street }}
                 <br>{{ form.zip }} - {{ form.city }}
-                <br>{{ form.country }}
+                <br> <span class="bfh-countries" data-country="{{ form.country }}" data-flags="true"></span>
                 <br>{{ form.vat }}
                 <br>{{ form.reference }}
 
@@ -62,7 +100,7 @@
                             <td></td>
                             <td></td>
                             <td><strong>TOTAL:</strong></td>
-                            <td>{{ currency }} {{ totalPrice }}</td>
+                            <td>{{ systemInfo.settings.systemCurrency }} {{ totalPrice }}</td>
                         </tr>
 
                         </tbody>
@@ -82,20 +120,36 @@
                     <input type="hidden" name="vat" id="vat" class="form-control " placeholder="" value="{{ form.vat }}" tabindex="5" data-error="" />
                     <input type="hidden" name="reference" id="reference" class="form-control " placeholder="" value="{{ form.reference }}" tabindex="6" data-error="">
 
+                    <h4>Invoice terms:</h4>
+                    {{ invoiceTerms }}
 
-                    {{ terms }}
-
-
-                    <div class="checkbox">
-                        <label>
-                            <input name="consent" id="consent" type="checkbox" value="">I have understood the invoice and payment terms and declare acceptance.
-                        </label>
-                    </div>
 
                     <p class="text-right">
                         <a class="btn btn-primary btn-md" href="{{ path_for('orderSummaryUser')}}" role="button">Back: Edit Invoice Address</a>
-                        <button id="place_order" type="submit" class="btn btn-success">Confirm Purchase</button>
+                        <a id="place_order_button" class="btn btn-success" data-toggle="modal" data-target="#place_order">Confirm Purchase</a>
+
                     </p>
+
+                    <!-- Dialog with terms and conditions -->
+                    <div class="modal fade" id="place_order" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">Confirm order?</h4>
+                                </div>
+                                <div class="modal-body">
+                                    I confirm that I have read and agree with the invoice and membership terms.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Disagree</button>
+                                    <button type="submit" class="btn btn-primary" form="form_billing_info">Agree and place order</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
 
                 </form>
 
@@ -106,43 +160,6 @@
 
     </div>
 
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-
-
-    <script type="text/javascript">
-
-        $(document).ready(function() {
-            $("#dialog").dialog({
-                autoOpen: false,
-                modal: true
-            });
-        });
-
-        $("#place_order").click(function(e) {
-            e.preventDefault();
-            var targetUrl = $(this).attr("href");
-
-            $("#dialog").dialog({
-                buttons : {
-                    "Place order" : function() {
-                       // window.location.href = targetUrl;
-                        $( "#form_billing_info" ).submit();
-                    },
-                    "Cancel" : function() {
-                        $(this).dialog("close");
-                    }
-                }
-            });
-
-            $("#dialog").dialog("open");
-        });
-    </script>
-
-
-    <div id="dialog" title="Comfirm order">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Place order and generate invoice?</p>
-    </div>
 
 
 

@@ -2,33 +2,116 @@
 
 {% block mainPanel %}
 
+        <div class="well well-sm">
+        <div class="row show-grid">
+            <div class="col-xs-12">
+
+                    <h4>Welcome, {{ userName }}!</h4>
+
+                    {% for membership in memberships.memberships %}
+
+                        {% if membership.validUntil != null %}
+
+                            {% if membership.valid %}
+                                <p class="text-primary">Member ID: <strong>{{ membership.memberId }}</strong>  {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
+                            {% else %}
+                                <p class="text-danger"><span class="fa fa-warning"></span>  Member ID: <strong>{{ membership.memberId }}</strong>  (This membership expired on {{ membership.validUntil }}) <a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a></p>
+                            {% endif %}
+
+                        {% endif %}
+
+
+                    {% endfor %}
+
+            </div>
+        </div>
+        </div>
+
+    {% if invoiceInfo.numberOfInvoices > 0 %}
+
+        <div class="alert alert-warning">
+        <h4><strong>You have the following open invoices:</strong></h4>
+
+        {%  for invoice in invoiceInfo.openInvoicesArray %}
+            <p style="font-size:14px"><a href="{{ path_for('singleInvoice', { 'invoiceId': invoice.invoiceId }) }}">Invoice Nr. {{ invoice.invoiceId }} ({{ invoice.invoiceDate }})</a></p>
+        {% endfor %}
+
+        </div>
+    {% endif %}
+
     <div class="panel-group">
 
-        <h2>Welcome, {{ userName }}!</h2>
-
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>As a user you have the following options</strong></div>
+            <div class="panel-heading"><spam class="fa fa-user"></spam> As a user you have the following options</div>
             <div class="panel-body">
                 <ul>
-                <li class="active"><a href="{{ path_for('userProfile')}}">Edit your user account</a></li>
-                <li><a href="{{ path_for('yourMembershipUser')}}">Your Membership</a> <span class="label label-success label-pill pull-xs-right">You are not yet a member</span></li>
-                <li><a href="{{ path_for('documentsUser')}}">Documents for Members</a></li>
+                <li class="active"><a href="{{ path_for('userProfile')}}"><spam class="fa fa-user"></spam> Edit your user account</a></li>
+                <li><a href="{{ path_for('yourMembershipUser')}}"><spam class="fa fa-star"></spam> Apply for or Renew your Membership(s)</a></li>
                 </ul>
             </div>
         </div>
 
-        {% if user_role == 'ROLE_ADMIN' %}
 
-            <div class="panel panel-primary">
-                <div class="panel-heading"><strong>Functions available for Administrators</strong></div>
+
+    {% if memberships.memberships != null %}
+
+        {% if memberships.validMembershipFound %}
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><spam class="fa fa-star"></spam> Options for Members only</div>
                 <div class="panel-body">
                     <ul>
-                        <li><a href="{{ baseUrl }}/admin/users">Manage Registered Users</a>, <a href="">Register new User</a></li>
-                        <li><a href="">Manage Members</a>, <a href="">Register new member</a></li>
+                        <li><a href="{{ path_for('documentsUser')}}"><spam class="fa fa-files-o"></spam> Documents for Members</a></li>
+                        <li><a href="{{ path_for('documentsUser')}}"><spam class="fa fa-share-alt"></spam> Submit article for Newsletter</a></li>
+                        <li><a href="{{ path_for('documentsUser')}}"><spam class="fa fa-envelope-o"></spam> Published Newsletters</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        {% else %}
+
+            <!--
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Options for Members (not available)</strong></div>
+                <div class="panel-body">
+                    <ul>
+                        <li><p class="text-muted"><spam class="fa fa-files-o"></spam> Documents for Members</p></li>
+                        <li><p class="text-muted"><spam class="fa fa-share-alt"></spam> Submit article for Newsletter</p></li>
+                        <li><p class="text-muted"><spam class="fa fa-envelope-o"></spam> Published Newsletters</p></li>
+                    </ul>
+                </div>
+            </div>
+            -->
+
+        {% endif %}
+
+    {% endif %}
+
+
+        {% if user_role == 'ROLE_ADMIN' %}
+
+            <h4>Functions for System Administrators:</h4>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><spam class="fa fa-group"></spam> User and Member's Management</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="{{ path_for('usersTableView')}}"><spam class="fa fa-group"></spam> Manage All Registered Users</a>, <a href="">Register new User</a></li>
+                        <li><a href=""><spam class="fa fa-group"></spam> Manage Members</a>, <a href="">Register new member</a></li>
+                        <li><a href="{{ path_for('documentsAdmin')}}"><spam class="fa fa-file-text"></spam> Manage documents for members</a></li>
+                        <li><a href="{{ path_for('createBulkMailAdmin')}}"><spam class="fa fa-envelope"></spam> Send Bulk e-mails</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><spam class="fa fa-gears"></spam> System Settings</div>
+                <div class="panel-body">
+                    <ul>
                         <li><a href="">System Settings</a></li>
                         <li><a href="">Manage Membership types</a></li>
-                        <li><a href="{{ path_for('documentsAdmin')}}">Manage documents for members</a></li>
-                        <li><a href="{{ path_for('createBulkMailAdmin')}}">Send Bulk e-mails</a></li>
+                        <li><a href="">Manage Membership grades</a></li>
                     </ul>
                 </div>
             </div>

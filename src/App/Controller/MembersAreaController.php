@@ -17,6 +17,7 @@ class MembersAreaController{
     public function __construct($container){
 
         $this->container = $container;
+        $this->systemInfo = $container->get('userServices')->getSystemInfo();
     }
 
     public function elFinderConnectorAction(ServerRequestInterface $request, ResponseInterface $response)
@@ -117,9 +118,10 @@ class MembersAreaController{
             }
         }
         else{
-            return $this->container->view->render($response, 'userNotification.twig', $resp);
+            return $this->container->view->render($response, 'userNotification.twig', array ('exception' => true,
+                                                                                             'systemInfo' => $this->systemInfo,
+                                                                                             'message' => $resp['message']));
         }
-
 
         // run elFinder
         $connector = new \elFinderConnector(new \elFinder($opts));
@@ -148,9 +150,8 @@ class MembersAreaController{
 
     public function documentsAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
-                       'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
-        return $this->container->view->render($response, 'members/documents.html.twig',array('links' => $links,
+
+        return $this->container->view->render($response, 'members/documents.html.twig', array('systemInfo' => $this->systemInfo,
                                                                                              'user_role' => $_SESSION['user_role']));
     }
 

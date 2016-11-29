@@ -4,7 +4,7 @@
 
     <div class="panel-group">
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>ADMIN: Manage Users and Members</strong></div>
+            <div class="panel-heading"><strong>Manage Users and Members</strong></div>
             <div class="panel-body">
 
 
@@ -27,8 +27,7 @@
                             <td>{{ user.institution }}</td>
                             <td>{{ user.email1 }}</td>
                             <td>
-                                <a class="small" href="#">View membership data</a><br>
-                                <a class="small" href="#">Register as member</a>
+
                             </td>
                             <td><a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">view</a></td>
                         </tr>
@@ -41,6 +40,8 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
 
     <script>
 

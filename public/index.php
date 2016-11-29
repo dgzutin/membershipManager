@@ -113,8 +113,7 @@ $container['\MembersAreaController'] = function ($container) {
 //Define the Routes for admin group
 
 $app->group('/admin', function () use ($app) {
-
-    $app->get('/home', '\AdminController:homeAction' )->setName('homeAdmin');
+    
     $app->get('/users', '\AdminController:usersAction')->setName('usersTableView');
     $app->get('/usersJson', '\AdminController:users')->setName('usersTableView');
     $app->get('/users/{userId}', '\AdminController:viewUserProfileAction')->setName('adminViewUserProfile');
@@ -124,10 +123,7 @@ $app->group('/admin', function () use ($app) {
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsAdmin');
     $app->get('/createBulkMail', '\AdminController:createBulkMailAction')->setName('createBulkMailAdmin');
     $app->post('/createBulkMail', '\AdminController:verifyBulkMailAction')->setName('verifyBulkMailAdmin');
-    $app->get('/selectMembership', '\AdminController:yourMembershipAction')->setName('yourMembershipAdmin');
-    $app->get('/addMembershipToCart/{membershipTypeId}', '\AdminController:addMembershipToCartAction')->setName('addMembershipToCartAdmin');
-    $app->get('/orderSummary', '\AdminController:shoppingCartAction')->setName('orderSummaryAdmin');
-    $app->get('/removeItemfromCart/{itemId}', '\AdminController:removeItemfromCartAction')->setName('removeItemfromCartAdmin');
+
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
@@ -143,13 +139,15 @@ $app->group('/user', function () use ($app) {
     $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsUser');
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsUser');
     $app->get('/selectMembership', '\UserController:yourMembershipAction')->setName('yourMembershipUser');
-    $app->get('/registerMember', '\UserController:registerMemberAction')->setName('registerMemberUser');
+    $app->get('/membershipData/{membershipTypeId}', '\UserController:membershipDataAction')->setName('membershipData');
     $app->get('/orderSummary', '\UserController:orderSummaryAction')->setName('orderSummaryUser');
     $app->get('/addMembershipToCart/{membershipTypeId}', '\UserController:addMembershipToCartAction')->setName('addMembershipToCartUser');
     $app->get('/removeItemfromCart/{itemId}', '\UserController:removeItemfromCartAction')->setName('removeItemfromCartUser');
-    $app->post('/processOrder', '\UserController:processOrderAction')->setName('processOrder');
+    $app->post('/processOrder', '\UserController:processMembershipOrderAction')->setName('processOrder');
     $app->get('/singleInvoice/{invoiceId}', '\UserController:singleInvoiceAction')->setName('singleInvoice');
     $app->post('/confirmOrder', '\UserController:confirmOrderAction')->setName('confirmOrder');
+
+    $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

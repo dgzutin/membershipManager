@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
+
 {% block mainPanel %}
 
     <!-- Bootstrap core CSS -->
@@ -7,18 +8,9 @@
 
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
-    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
 
-    <div class="panel-group">
-
-        <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Invoice Nr. {{ invoiceData.id }}</strong></div>
-            <div class="panel-body">
 
                 <div class="well">
-
-
-
 
                 <div class="row show-grid">
                     <div class="col-md-6">
@@ -28,30 +20,34 @@
                                     <br>{{ invoiceData.institution }}
                                     <br>{{ invoiceData.street }}
                                     <br>{{ invoiceData.city }}, {{ invoiceData.zip }}
-                                    <br>{{ invoiceData.country }}
-                                    <br>{{ invoiceData.vat }}
-                                    <br>{{ invoiceData.reference }}
+                                    <br><span class="bfh-countries" data-country="{{ invoiceData.country }}" data-flags="true"></span>
                                 </strong>
+                                <br>
+                                <br>{{ invoiceData.vat }}
+                                <br>{{ invoiceData.reference }}
                             </address>
                         </div>
 
                     <div class="col-md-6">
 
-
                         <p class="text-right">
                             {{ issuerData.nameOfOrganization }}
                             <br>{{ issuerData.street }}
-                            <br>{{ issuerData.city }}, {{ issuerData.zip }}
+                            <br>{{ issuerData.city }} {{ issuerData.zip }}
                             <br>{{ issuerData.country }}
                             <br>{{ issuerData.vat }}
                             <br>{{ issuerData.registrationNumber }}
                             <br>E-mail: <a href="mailto:{{ issuerData.email }}">{{ issuerData.email }}</a>
                             <br>
-                            <br> <strong>Invoice Date:</strong> {{ invoiceDate }}
+                            <br>Invoice date: <strong>{{ invoiceDate }}</strong>
                         </p>
-
                     </div>
                 </div>
+
+                 <div class="row show-grid">
+                     <div class="col-md-12"><h3><strong>Invoice Nr. {{ invoiceData.id }}</strong></h3></div>
+                     </div>
+
 
                 <br>
 
@@ -129,7 +125,7 @@
 
                 <hr>
                 <p class="text-danger"><strong>Terms and conditions:</strong></p>
-                Payment is due within  <strong>30 days</strong> after invoice date.
+                Payment is due on  <strong>{{ invoiceDueDate }}</strong>.
                 <br>
 
                  <hr>
@@ -221,6 +217,8 @@
                             <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                         </form>
 
+                                <p class="text-right"><img src="{{ baseUrl }}/assets/images/PDF_downlaod.png"></p>
+
 
                     </div>
 
@@ -232,15 +230,10 @@
              {% else %}
 
                 <p class="text-right"><img src="{{ baseUrl }}/assets/images/paid.png"></p>
+                 <p class="text-right"><img src="{{ baseUrl }}/assets/images/PDF_download.png"></p>
 
              {% endif %}
 
-
-            </div>
-
-        </div>
-
-    </div>
 
 
 {% endblock %}

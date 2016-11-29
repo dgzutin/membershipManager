@@ -18,64 +18,31 @@ class AdminController {
     public function __construct($container){
 
         $this->container = $container;
+        $this->userServices = $container->get('userServices');
+        $this->systemInfo = $this->userServices->getSystemInfo();
     }
 
-    public function homeAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
-
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-                      'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-                      'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
-
-        $userService = $this->container->get('userServices');
-        $resp = $userService->getUserById($_SESSION['user_id']);
-        $user = $resp['user'];
-        $userName = $user->getFirstName().' '.$user->getLastName();
-
-        return $this->container->view->render($response, 'admin/adminHome.html.twig', array(
-            'links' => $links,
-            'user_id' => $_SESSION['user_id'],
-            'user_role' => $_SESSION['user_role'],
-            'userName' => $userName
-        ));
-    }
 
     public function usersAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
-
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
 
         $em = $this->container->get('em');
         $users = $em->getRepository('App\Entity\User')->findAll();
         
         return $this->container->view->render($response, 'admin/usersTable.html.twig', array(
-            'links' => $links,
+            'systemInfo' => $this->systemInfo['settings'],
             'user_role' => $_SESSION['user_role'],
             'user_id' => $_SESSION['user_id'],
             'users' => $users
         ));
     }
 
-    public function users(ServerRequestInterface $request, ResponseInterface $response, $args) {
-
-        $em = $this->container->get('em');
-        $users = $em->getRepository('App\Entity\User')->findAll();
-
-        $response->getBody()->write(json_encode($users));
-
-    }
 
     public function viewUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
 
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
 
         $userId = $args['userId'];
 
-
-        $userService = $this->container->get('userServices');
-        $resp = $userService->getUserById($userId);
+        $resp =  $this->userServices->getUserById($userId);
 
         //convert the data to be shown in the form
         foreach ($resp['user'] as $key =>$data){
@@ -86,7 +53,7 @@ class AdminController {
             'message' => '',
             'fields' => array());
 
-        return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array('links' => $links,
+        return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array('systemInfo' => $this->systemInfo['settings'],
                                                                                                 'user_role' => $_SESSION['user_role'],
                                                                                                 'form_submission' => false,
                                                                                                 'exception' => $resp['exception'],
@@ -96,9 +63,6 @@ class AdminController {
 
     public function saveUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
 
         $form_data = $request->getParsedBody();
 
@@ -117,7 +81,7 @@ class AdminController {
         if ($form_validation['exception'] == true){
 
             return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
-                'links' => $links,
+                'systemInfo' => $this->systemInfo['settings'],
                 'user_role' => $_SESSION['user_role'],
                 'form_submission' => true,
                 'exception' => $form_validation['exception'],
@@ -137,7 +101,7 @@ class AdminController {
             }
 
             return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
-                'links' => $links,
+                'systemInfo' => $this->systemInfo,
                 'user_role' => $_SESSION['user_role'],
                 'form_submission' => true,
                 'exception' => $resp['exception'],
@@ -151,24 +115,20 @@ class AdminController {
     {
         $userId = $args['userId'];
 
-        $userService = $this->container->get('userServices');
-        $resp = $userService->getUserById($userId);
+        $resp = $this->userServices->getUserById($userId);
 
         $mailServices = $this->container->get('mailServices');
         $resetResp = $mailServices->sendResetPasswordMail($resp['user'], $request);
 
-        return $this->container->view->render($response, 'userNotification.twig', $resetResp);
+        return $this->container->view->render($response, 'userNotificationMail.twig', array('systemInfo' => $this->systemInfo['settings'],
+                                                                                             'mailResponse' => $resetResp));
     }
 
     public function createBulkMailAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
 
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
-
         return $this->container->view->render($response, 'admin/adminWriteBulkMail.html.twig', array(
-            'links' => $links,
+            'systemInfo' => $this->systemInfo,
             'user_role' => $_SESSION['user_role']));
     }
 
@@ -184,12 +144,8 @@ class AdminController {
         $resp = $userService->findUsersFiltered(null);
 
 
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
-
         return $this->container->view->render($response, 'admin/adminVerifyBulkMail.html.twig', array(
-            'links' => $links,
+            'systemInfo' => $this->systemInfo,
             'user_role' => $_SESSION['user_role'],
             'users' => $resp['users'],
             'highlightedBody' => $respMail['body'],
@@ -197,88 +153,5 @@ class AdminController {
             'submited_form' => $form_data));
 
     }
-
-    public function yourMembershipAction(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        $em = $this->container->get('em');
-        $repository = $em->getRepository('App\Entity\MembershipType');
-        $membershipTypes = $repository->createQueryBuilder('memberships')
-            ->select('memberships')
-            ->getQuery()
-            ->getResult();
-
-        $shoppingCartServices = $this->container->get('shoppingCartServices');
-        $items = $shoppingCartServices->getItems();
-
-        $total = $shoppingCartServices->getTotalPrice($items);
-        $totalPrice = number_format($total,2,".",",");
-
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id']);
-
-        return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array('user_role' => $_SESSION['user_role'],
-            'membershipTypes' => $membershipTypes,
-            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('orderSummaryAdmin')),
-            'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/admin/addMembershipToCart',
-            'items' => $items,
-            'currency' => 'EUR',
-            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/admin/removeItemfromCart',
-            'totalPrice' => $totalPrice,
-            'message' => '',
-            'form' => ''));
-    }
-
-    public function shoppingCartAction(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        $shoppingCartServices = $this->container->get('shoppingCartServices');
-        $items = $shoppingCartServices->getItems();
-
-       // shoppingCartServices
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeAdmin')),
-            'logout' => $request->getUri()->withPath($this->container->router->pathFor('logout')),
-            'viewProfile' => $request->getUri()->getBaseUrl(). '/admin/users/'.$_SESSION['user_id'],
-            'backButton'=> $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin')));
-
-        $total = $shoppingCartServices->getTotalPrice($items);
-        $totalPrice = number_format($total,2,".",",");
-
-        return $this->container->view->render($response, 'user/oderSummary.twig', array('links' => $links,
-            'user_role' => $_SESSION['user_role'],
-            'exception' => false,
-            'items' => $items,
-            'currency' => 'EUR',
-            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/admin/removeItemfromCart',
-            'totalPrice' => $totalPrice,
-            'message' => ''));
-    }
-
-    public function addMembershipToCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-        $membershipTypeId = $args['membershipTypeId'];
-
-        $shoppingCartServices = $this->container->get('shoppingCartServices');
-        $res = $shoppingCartServices->addIMembershipToCart($membershipTypeId);
-
-        $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin'));
-        return $response = $response->withRedirect($uri, 200);
-    }
-
-    public function removeItemfromCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-        $itemId = $args['itemId'];
-        $shoppingCartServices = $this->container->get('shoppingCartServices');
-        $resp = $shoppingCartServices->removeItemFromCart($itemId, NULL);
-
-        if ($resp['exception'] == true){
-
-            return $this->container->view->render($response, 'userNotification.twig', $resp);
-        }
-        $uri = $request->getUri()->withPath($this->container->router->pathFor('yourMembershipAdmin'));
-        return $response = $response->withRedirect($uri, 200);
-
-    }
-
-
 
 }

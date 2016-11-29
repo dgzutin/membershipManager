@@ -7,7 +7,42 @@
 
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
-    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+    <!-- progress Steps CSS -->
+    <link href="{{ baseUrl }}/assets/css/progressSteps.css" rel="stylesheet">
+
+    <!-- progress Steps CSS -->
+    <link href="{{ baseUrl }}/assets/css/progressSteps.css" rel="stylesheet">
+
+    <div class="row bs-wizard" style="border-bottom:0;">
+
+        <div class="col-xs-3 bs-wizard-step complete">
+            <div class="text-center bs-wizard-stepnum">Step 1</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Your Membership</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+            <div class="text-center bs-wizard-stepnum">Step 2</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Billing Information</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+            <div class="text-center bs-wizard-stepnum">Step 3</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Confirm Order and agree with terms</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+            <div class="text-center bs-wizard-stepnum">Step 4</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Confirmation and Payment</div>
+        </div>
+    </div>
 
     <div class="panel-group">
 
@@ -48,7 +83,7 @@
                             <td></td>
                             <td></td>
                             <td><strong>TOTAL:</strong></td>
-                            <td>{{ currency }} {{ totalPrice }}</td>
+                            <td>{{ systemInfo.settings.systemCurrency }} {{ totalPrice }}</td>
                         </tr>
 
                         </tbody>
@@ -84,13 +119,13 @@
 
 
                     <div class="form-group {% if form.name.error == true %}has-error{% endif %}">
-                        <label class="control-label" for="first_name">Name</label>
-                        <input type="text" name="name" id="first_name" class="form-control" placeholder="Name" value="{{ form.name.value }}" tabindex="1">
+                        <label class="control-label" for="name">Name</label>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Name" value="{{ form.name.value }}" tabindex="1">
                     </div>
 
                     <div class="form-group {% if form.institution.error == true %}has-error{% endif %}">
                         <label class="control-label" for="institution">Institution</label>
-                        <input type="text" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution.value }}" tabindex="3">
+                        <input type="text" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution.value }}" tabindex="2">
                     </div>
 
                     <div class="form-group {% if form.street.error == true %}has-error{% endif %}">

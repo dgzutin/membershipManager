@@ -10,10 +10,10 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Navbar Template for Bootstrap</title>
+    <title>{{ systemInfo.settings.acronym }} - {{ systemInfo.settings.nameOfOrganization }}</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ baseUrl }}/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ baseUrl }}/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <link href="{{ baseUrl }}/assets/bootstrap/css/footer.css" rel="stylesheet">
 
@@ -29,8 +29,9 @@
     <!-- Bootstrap core JavaScript  ============================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
     <script src="{{ baseUrl }}/assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+
 
     <!-- JQuery UI  ============================================== -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -38,54 +39,76 @@
 
     <!-- Notify.js JavaScript  ============================================== -->
    <!-- <script src="{{ baseUrl }}/assets/js/notify.min.js"></script>  -->
-
-
 </head>
 
 <body>
+
+<div class='jumbotron'>
+    <div class='container'>
+        <img alt='header' src='{{ baseUrl }}/assets/images/header.jpg' class='img-rounded img-responsive hidden-xs hidden-sm centered'/>
+        <h2 style='margin:-35px 0 10px 122px;line-height:0.8;padding-bottom:4px;color:white;text-shadow:0 0 4px black;' class='visible-lg visible-md'>{{ systemInfo.settings.acronym }}  <small style='color:white;'>{{ systemInfo.settings.nameOfOrganization }} </small></h2>
+    </div>
+</div>
+
+<!-- Navigation -->
+
+<nav class="navbar navbar-inverse">
+
+    <div class="container">
+
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"></a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="{{ path_for('homeUser')}}">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+
+                <li><a href="#">{{ user_role }}</a></li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="{{ path_for('userProfile')}}">My Account<span class="sr-only">(current)</span></a></li>
+                <li><a href="{{ baseUrl }}/login">Login</a></li>
+                <li><a href="{{ path_for('logout')}}">Logout</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
 
 <div class="container">
     <div class="col-md-10 col-md-offset-1">
 
 
-    <h1 class="text-center"><img src="{{ baseUrl }}/assets/images/logo.png" width="850"></h1>
-    <hr>
-
-    <!-- Static navbar -->
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="{{ path_for('homeUser')}}">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-
-                    <li><a href="#">{{ user_role }}</a></li>
-
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="active"><a href="{{ path_for('userProfile')}}">My Account<span class="sr-only">(current)</span></a></li>
-                    <li><a href="{{ path_for('logout')}}">Logout</a></li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-    </nav>
+<!--    <h1 class="text-center"><img src="{{ baseUrl }}/assets/images/logo.png" width="850"></h1>  -->
 
 
-    {% block mainPanel %}{% endblock %}
+      {% block mainPanel %}{% endblock %}
+
+        {% if systemInfo.settings.exception == false %}
+
+
 
         <footer class="footer">
-            <p class="text-center text-muted">&copy; Company 2014</p>
+                <p style="font-size:12px" class="text-center text-muted">&copy; {{ systemInfo.year}} {{ systemInfo.settings.acronym }} - <a target="_blank" href="{{ systemInfo.settings.orgWebsite }}"> {{ systemInfo.settings.nameOfOrganization }}</a> |
+                    {{ systemInfo.settings.street }} {{ systemInfo.settings.zip }} {{ systemInfo.settings.city }} - {{ systemInfo.settings.country }} | E-mail: <a href="mailto:{{ systemInfo.settings.email }}">{{ systemInfo.settings.email }}</a>
+                </p>
+                <p  style="font-size:9px" class="text-center text-muted">Software Development: Danilo Zutin | e-mail: <a href="mailto:danilo@zutin.net">danilo@zutin.net</a></p>
         </footer>
+
+        {% endif %}
 
     </div>
 

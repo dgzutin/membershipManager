@@ -22,6 +22,11 @@ class UserController {
     public function __construct($container) {
 
         $this->container = $container;
+        $this->userServices = $container->get('userServices');
+        $this->membershipServices = $container->get('membershipServices');
+        $this->shoppingCartServices = $container->get('shoppingCartServices');
+        $this->mailServices = $container->get('mailServices');
+        $this->systemInfo = $this->userServices->getSystemInfo();
 
     }
 
@@ -32,27 +37,33 @@ class UserController {
 
     public function homeAction(ServerRequestInterface $request, ResponseInterface $response) {
 
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
-                       'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
 
-        $userService = $this->container->get('userServices');
-        $resp = $userService->getUserById($_SESSION['user_id']);
+        $resp = $this->userServices->getUserById($_SESSION['user_id']);
         $user = $resp['user'];
         $userName = $user->getFirstName().' '.$user->getLastName();
 
+        $memberships = $this->membershipServices->getMembershipsForUser($user->getId());
+
+        $openInvoiceResult = $this->userServices->getOpenInvoicesForUser($_SESSION['user_id']);
+
+        if ($this->systemInfo['exception'] == true){
+
+            $systemInfo = null;
+        }
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
-            'links' => $links,
+            'invoiceInfo' => $openInvoiceResult,
             'user_id' => $_SESSION['user_id'],
             'user_role' => $_SESSION['user_role'],
-            'userName' => $userName
+            'userName' => $userName,
+            'memberships' => $memberships,
+            'systemInfo' => $this->systemInfo
         ));
     }
     
     public function viewUserProfileAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         $userId = $_SESSION['user_id'];
-        $userService = $this->container->get('userServices');
-        $resp = $userService->getUserById($userId);
+        $resp = $this->userServices->getUserById($userId);
 
         //convert the data to be shown in the form
         foreach ($resp['user'] as $key =>$data){
@@ -63,10 +74,8 @@ class UserController {
                             'message' => '',
                             'fields' => array());
 
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
-            'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
 
-        return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('links' => $links,
+        return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('systemInfo' => $this->systemInfo,
                                                                                                  'user_role' => $_SESSION['user_role'],
                                                                                                  'form_submission' => false,
                                                                                                  'exception' => $resp['exception'],
@@ -76,10 +85,7 @@ class UserController {
 
     public function saveUserProfileAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
-                       'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
-
-        $form_data = $request->getParsedBody();
+       $form_data = $request->getParsedBody();
 
         foreach ($form_data as $key =>$data){
 
@@ -95,7 +101,7 @@ class UserController {
 
         if ($form_validation['exception'] == true){
 
-            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('links' => $links,
+            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('systemInfo' => $this->systemInfo,
                                                                                                      'user_role' => $_SESSION['user_role'],
                                                                                                      'form_submission' => true,
                                                                                                      'exception' => $form_validation['exception'],
@@ -105,8 +111,7 @@ class UserController {
         else{
             $userId = $_SESSION['user_id'];
 
-            $userService = $this->container->get('userServices');
-            $resp = $userService->updateUserProfile($userId, $form_data);
+            $resp = $this->userServices->updateUserProfile($userId, $form_data);
 
             //convert the data to be shown in the form
             foreach ($resp['user'] as $key =>$data){
@@ -114,7 +119,7 @@ class UserController {
                     'error' => false);
             }
 
-            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('links' => $links,
+            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('systemInfo' => $this->systemInfo,
                                                                                                      'user_role' => $_SESSION['user_role'],
                                                                                                      'form_submission' => true,
                                                                                                      'exception' => $resp['exception'],
@@ -127,49 +132,34 @@ class UserController {
     {
         $userId = $_SESSION['user_id'];
 
-        $userService = $this->container->get('userServices');
-        $resp = $userService->getUserById($userId);
+        $resp = $this->userServices->getUserById($userId);
 
-        $mailServices = $this->container->get('mailServices');
-        $resetResp = $mailServices->sendResetPasswordMail($resp['user'], $request);
+        $resetResp = $this->mailServices->sendResetPasswordMail($resp['user'], $request);
 
-        return $this->container->view->render($response, 'userNotification.twig', $resetResp);
+        return $this->container->view->render($response, 'userNotificationMail.twig',  array('systemInfo' => $this->systemInfo,
+                                                                                             'mailResponse' => $resetResp));
     }
 
     public function yourMembershipAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $em = $this->container->get('em');
-        $repository = $em->getRepository('App\Entity\MembershipType');
 
-        $shoppingCartServices = $this->container->get('shoppingCartServices');
-        $shoppingCartServices->emptyCart();
-
-        if ($_SESSION['user_role'] == 'ROLE_ADMIN'){
-
-            $membershipTypes = $repository->createQueryBuilder('memberships')
-                ->select('memberships')
-                ->getQuery()
-                ->getResult();
+        $this->shoppingCartServices->emptyCart();
+        $user = $this->userServices->getUserById($_SESSION['user_id']);
+        $result = $this->membershipServices->getMembershipTypeAndStatusOfUser($user['user'], NULL, false);
+        
+        if ($result['exception'] == true){
+            return $this->container->view->render($response, 'userNotification.twig', $result);            
         }
-        else{
-
-            $membershipTypes = $repository->createQueryBuilder('memberships')
-                ->select('memberships')
-                ->where('memberships.selectable = :selectable')
-                ->setParameter('selectable', true)
-                ->getQuery()
-                ->getResult();
-        }
-
 
         return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array(
+            'systemInfo' => $this->systemInfo,
             'user_role' => $_SESSION['user_role'],
-            'membershipTypes' => $membershipTypes,
+            'membershipTypes' => $result['membershipTypes'],
             'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('orderSummaryUser')),
             'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/user/addMembershipToCart',
             'currency' => 'EUR',
             'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
-            'message' => '',
+            'message' => $result['message'],
             'form' => ''));
     }
 
@@ -178,8 +168,7 @@ class UserController {
     {
         //retrive user data for billing information
         $userId = $_SESSION['user_id'];
-        $userService = $this->container->get('userServices');
-        $userResp = $userService->getUserById($userId);
+        $userResp = $this->userServices->getUserById($userId);
         $user =  $userResp['user'];
 
         $membershipServices = $this->container->get('membershipServices');
@@ -187,6 +176,9 @@ class UserController {
         // shoppingCartServices
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $itemsResp = $shoppingCartServices->getItems();
+        
+        //get Billing Info
+        $billingInfo = $this->userServices->getBillingInfoForUser($userId);
 
         //Try to retrieve the billing address if renewing membership
         //TODO: check if is renewal or not
@@ -203,19 +195,30 @@ class UserController {
             }
         }
         else{
-            //convert the data to be shown in the form
-            $billing['name'] = array('value' => $user->title.' '.$user->first_name.' '.$user->last_name,
-                                     'error' => false);
-            $billing['institution'] = array('value' => $user->institution,
-                'error' => false);
-            $billing['street'] = array('value' => $user->street,
-                 'error' => false);
-            $billing['country'] = array('value' => $user->country,
-                 'error' => false);
-            $billing['city'] = array('value' => $user->city,
-                 'error' => false);
-            $billing['zip'] = array('value' => $user->zip,
-                 'error' => false);
+
+            if ($billingInfo['exception'] == true){
+
+                //convert the data to be shown in the form
+                $billing['name'] = array('value' => $user->title.' '.$user->first_name.' '.$user->last_name,
+                    'error' => false);
+                $billing['institution'] = array('value' => $user->institution,
+                    'error' => false);
+                $billing['street'] = array('value' => $user->street,
+                    'error' => false);
+                $billing['country'] = array('value' => $user->country,
+                    'error' => false);
+                $billing['city'] = array('value' => $user->city,
+                    'error' => false);
+                $billing['zip'] = array('value' => $user->zip,
+                    'error' => false);
+            }
+            else{
+                //convert the data to be shown in the form
+                foreach ($billingInfo['billing'] as $key =>$data){
+                         $billing[$key] = array('value' => $data,
+                                                'error' => false);
+                }
+            }
         }
 
         $totalPrice = $shoppingCartServices->getTotalPrice($itemsResp['items']);
@@ -227,14 +230,13 @@ class UserController {
             // If shopping cart is empty return to home
             $uri = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
             return $response = $response->withRedirect($uri, 200);
-
         }
 
         return $this->container->view->render($response, 'user/oderSummary.twig', array(
+            'systemInfo' => $this->systemInfo,
             'user_role' => $_SESSION['user_role'],
             'exception' => false,
             'items' => $items,
-            'currency' => 'EUR',
             'totalPrice' => $totalPrice,
             'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
             'message' => '',
@@ -246,11 +248,8 @@ class UserController {
     {
         //retrive user data for billing information
         $userId = $_SESSION['user_id'];
-        $userService = $this->container->get('userServices');
-        $userResp = $userService->getUserById($userId);
+        $userResp = $this->userServices->getUserById($userId);
         $user =  $userResp['user'];
-
-        $membershipServices = $this->container->get('membershipServices');
 
         // shoppingCartServices
         $shoppingCartServices = $this->container->get('shoppingCartServices');
@@ -264,6 +263,7 @@ class UserController {
         $items = $shoppingCartServices->convertAmountsToLocaleSettings($itemsResp['items']);
 
         return $this->container->view->render($response, 'user/confirmOrder.html.twig', array(
+            'systemInfo' => $this->systemInfo,
             'user_role' => $_SESSION['user_role'],
             'exception' => false,
             'items' => $items,
@@ -271,60 +271,72 @@ class UserController {
             'totalPrice' => $totalPrice,
             'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
             'message' => '',
-            'terms' => 'Payment is due within 30 days after confirmation of purchase. Form membership fee payments, the membership will only be be active after the full payment is received.',
+            'invoiceTerms' => 'Payment is due within 30 days after confirmation of purchase. For membership fee payments, the membership will only be be active after the full payment is received.',
             'form' => $form_data));
 
     }
 
 
-    public function processOrderAction(ServerRequestInterface $request, ResponseInterface $response)
+    public function processMembershipOrderAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         $userId = $_SESSION['user_id'];
-        $userService = $this->container->get('userServices');
-        $userResp = $userService->getUserById($userId);
+        $userResp = $this->userServices->getUserById($userId);
         $user =  $userResp['user'];
 
         $form_data = $request->getParsedBody();
-
-        $billingInfo = new Billing();
-
-        $billingInfo->setName($form_data['name']);
-        $billingInfo->setInstitution($form_data['institution']);
-        $billingInfo->setStreet($form_data['street']);
-        $billingInfo->setCountry($form_data['country']);
-        $billingInfo->setCity($form_data['city']);
-        $billingInfo->setZip($form_data['zip']);
-        $billingInfo->setVat($form_data['vat']);
-        $billingInfo->setReference($form_data['reference']);
+        
+        //Create or update billing info. 
+        $billingResp = $this->userServices->createOrUpdateBillingInfo($form_data, $user);
 
         // shoppingCartServices
         $shoppingCartServices = $this->container->get('shoppingCartServices');
+
+        if ($billingResp['exception'] == true){
+            return $this->container->view->render($response, 'userNotification.twig', $billingResp);
+        }
+
         $itemsResp = $shoppingCartServices->getItems();
 
+        if ($itemsResp['exception'] == true){
+            return $this->container->view->render($response, 'userNotification.twig', $itemsResp);
+        }
 
-        $resultsGenInvoice = $userService->generateInvoiceForUser($user, $billingInfo, $itemsResp['items']);
+        foreach ($itemsResp['items'] as $item){
+
+            //add Membership to the database and link it to user. Active is set to false
+            $addMemberResult = $this->membershipServices->addMember($userId, NULL, $item->getTypeId());
+
+            if ($addMemberResult['exception'] == true){
+                return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
+                                                                                                'systemInfo' => $this->systemInfo,
+                                                                                                'message' => $addMemberResult['message']));
+            }
+        }
+        //Generate invoice if member is succesfully added
+        $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingResp['billingInfo'], $itemsResp['items'], NULL);
 
         if ($resultsGenInvoice['exception'] == false){
-
 
             //delete shopping cart items if invoice is generated
             $shoppingCartServices->emptyCart();
 
-            $uri = $request->getUri()->withPath($this->container->router->pathFor('singleInvoice',[
-                'invoiceId' => $resultsGenInvoice['invoiceId']]));
+            return $this->container->view->render($response, '/user/confirmationAndPayment.html.twig', array('systemInfo' => $this->systemInfo,
+                                                                                                              'resultsGenInvoice' => $resultsGenInvoice));
+        }
 
-            return $response = $response->withRedirect($uri, 200);
-
+        else{
+            return $this->container->view->render($response, 'userNotification.twig',  array('exception' => true,
+                                                                                             'systemInfo' => $this->systemInfo,
+                                                                                             'message' => $resultsGenInvoice['message']));
         }
     }
 
     public function singleInvoiceAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $userId = $_SESSION['user_id'];
-        $userService = $this->container->get('userServices');
         $invoiceId = $args['invoiceId'];
         //Retrieve the user creating the invoice
-        $userResp = $userService->getUserById($userId);
+        $userResp = $this->userServices->getUserById($userId);
 
         if ($userResp['exception'] == false){
             $user =  $userResp['user'];
@@ -333,7 +345,7 @@ class UserController {
             return $this->container->view->render($response, 'userNotification.twig', $userResp);
         }
 
-        $respInvoiceData = $userService->getInvoiceDataForUser($invoiceId, $userId);
+        $respInvoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, $userId);
 
         if ($respInvoiceData['exception'] == true){
 
@@ -353,13 +365,15 @@ class UserController {
             $items[$i]->setTotalPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getTotalPrice()));
             $i++;
         }
-        // END Convert all prices to locale settings ---------------------
 
+        // END Convert all prices to locale settings ---------------------
         return $this->container->view->render($response, 'user/singleInvoice.html.twig', array('user_role' => $_SESSION['user_role'],
+            'systemInfo' => $this->systemInfo,
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],
             'invoiceDate' => $respInvoiceData['invoiceDate'],
+            'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
             'totalPrice' =>  $totalPrice_formatted,
@@ -390,38 +404,82 @@ class UserController {
     public function addMembershipToCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $membershipTypeId = $args['membershipTypeId'];
-
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $res = $shoppingCartServices->addIMembershipToCart($membershipTypeId);
-              
 
         $uri = $request->getUri()->withPath($this->container->router->pathFor('orderSummaryUser'));
         return $response = $response->withRedirect($uri, 200);
     }
 
 
-    public function registerMemberAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    public function membershipDataAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+        $membershipTypeId = $args['membershipTypeId'];
+
         //TODO: verify if user is already a member
 
-        $userId = $_SESSION['user_id'];
-        $userService = $this->container->get('userServices');
-        $resp = $userService->getUserById($userId);
+        $resp = $this->userServices->getUserById($_SESSION['user_id']);
 
         if ($resp['exception'] == false){
 
-            $links = array('home' =>  $request->getUri()->withPath($this->container->router->pathFor('homeUser')),
-                'viewProfile' => $request->getUri()->withPath($this->container->router->pathFor('userProfile')));
+            $result = $this->membershipServices->getMembershipTypeAndStatusOfUser($resp['user'], $membershipTypeId, false);
 
-            return $this->container->view->render($response, 'user/registerMember.html.twig', array('links' => $links,
-                'user_role' => $_SESSION['user_role'],
-                'membershipSelected' => $args['selected'],
+            if ($result['exception'] == true){
+                return $this->container->view->render($response, 'userNotification.twig', $result);
+            }
+
+            return $this->container->view->render($response, 'user/membershipData.html.twig', array(
+                'systemInfo' => $this->systemInfo,
                 'user' => $resp['user'],
+                'user_role' => $_SESSION['user_role'],
+                'membershipTypes' => $result['membershipTypes'],
+                'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
+                'message' => '',
                 'form' => ''));
+
         }
         else{
             return $this->container->view->render($response, 'userNotification.twig', $resp);
         }
+    }
+
+    public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = $_SESSION['user_id'];
+
+        $user = $this->userServices->getUserById($userId);
+
+        $validUntil = new \DateTime('2018-12-31 23:59:59');
+        $result = $this->membershipServices->addNewMembershipValidity(58, 'year', '10-30', NULL, NULL);
+        //$Result = $this->membershipServices->getMembershipTypeAndStatusOfUser($user['user'], NULL, true);
+
+        //$result = $this->membershipServices->getMembershipValidity(58);
+        //$Result = $this->userServices->getInvoiceDataForUser(135, 2);
+
+        /*
+        $em = $this->container->get('em');
+        $repository = $em->getRepository('App\Entity\MembershipValidity');
+            $maxValidity = $repository->createQueryBuilder('Validity')
+                ->select('MAX(Validity.validUntil)')
+                ->where('Validity.membershipId = :membershipId')
+                ->setParameter('membershipId', 58)
+                ->getQuery()
+                ->getSingleScalarResult();
+
+        $validity = $repository->createQueryBuilder('Validity')
+            ->select('Validity')
+            ->where('Validity.validUntil = :validUntil')
+            ->andWhere('Validity.membershipId = :membershipId')
+            ->setParameter('validUntil', $maxValidity)
+            ->setParameter('membershipId', 58)
+            ->getQuery()
+            ->getResult();
+*/
+
+        //var_dump(max(array_keys($validity)));
+
+        var_dump($result);
+       // echo 'ok';
     }
     
 }
