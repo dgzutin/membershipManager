@@ -23,6 +23,8 @@ class MailServices
             ->getQuery()
             ->getOneOrNullResult();
 
+        $this->from = $this->settings->getAcronym().' Secretariat';
+
     }
 
     public function sendSingleMail($email, $recipient, $subject, $emailBody, $sender_email, $sender_name)
@@ -64,7 +66,7 @@ class MailServices
 
         $this->message
             ->setSubject('Activate your account')
-            ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getNameOfOrganization()));
+            ->setFrom(array( $this->settings->getEmail() =>  $this->from));
         try{
             $this->message->setTo(array($user->getEmail1()));
             $this->message->setBody($emailBody, 'text/html');
@@ -75,7 +77,7 @@ class MailServices
         catch (\Exception $e){
 
             $result = array('exception' => true,
-                'sent' => $this->mailer->send($this->message),
+                'sent' => false,
                 'message' => $e->getMessage());
         }
         return $result;
@@ -98,7 +100,7 @@ class MailServices
         
         $this->message
             ->setSubject('Reset Password request')
-            ->setFrom(array( $this->settings->getEmail() =>  $this->settings->getAcronym().' Secretariat'));
+            ->setFrom(array( $this->settings->getEmail() => $this->from));
         try{
             $this->message->setTo(array($user->getEmail1()));
             $this->message->setBody($emailBody, 'text/html');
@@ -136,7 +138,7 @@ class MailServices
 
             $this->message
                 ->setSubject($newMail['subject'])
-                ->setFrom(array( $this->settings->getEmail() => $this->settings->getAcronym().' Secretariat'));
+                ->setFrom(array( $this->settings->getEmail() => $this->from));
 
             try{
                 $this->message->setTo(array($user->getEmail1() => $user->getFirstName().' '.$user->getLastName()));
