@@ -1113,6 +1113,12 @@ a:focus {
 figure {
   margin: 0;
 }
+
+img.centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto }
+
 img {
   vertical-align: middle;
 }
@@ -1122,7 +1128,7 @@ img {
 .carousel-inner > .item > img,
 .carousel-inner > .item > a > img {
   display: block;
-  max-width: 100%;
+  width: 918px;
   height: auto;
 }
 .img-rounded {
@@ -4183,7 +4189,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-collapse {
-  padding-right: 15px;
+  padding-right: 115px;
   padding-left: 15px;
   overflow-x: visible;
   -webkit-overflow-scrolling: touch;
@@ -4277,7 +4283,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-brand {
   float: left;
   height: 50px;
-  padding: 15px 15px;
+  padding: 15px 55px;
   font-size: 18px;
   line-height: 20px;
 }
@@ -4959,9 +4965,10 @@ a.badge:focus {
   margin-left: 3px;
 }
 .jumbotron {
-  padding-top: 30px;
-  padding-bottom: 30px;
-  margin-bottom: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   color: inherit;
   background-color: #eee;
 }
@@ -4988,8 +4995,8 @@ a.badge:focus {
 }
 @media screen and (min-width: 768px) {
   .jumbotron {
-    padding-top: 48px;
-    padding-bottom: 48px;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
   .container .jumbotron,
   .container-fluid .jumbotron {
