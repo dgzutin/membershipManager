@@ -19,10 +19,10 @@ class Invoice
     /** @Column(type="integer", nullable=false) * */
     protected $userId;
 
-    /** @Column(type="string", length=50, nullable=false) * */
+    /** @Column(type="datetime", nullable=false) * */
     protected $createDate;
 
-    /** @Column(type="string", length=50, nullable=false) * */
+    /** @Column(type="datetime", nullable=false) * */
     protected $dueDate;
 
     /** @Column(type="string", length=10, nullable=false) * */
@@ -30,7 +30,17 @@ class Invoice
 
     /** @Column(type="string", length=500, nullable=true) * */
     protected $invoiceNote;
-    
+
+    /** @Column(type="datetime", nullable=true) * */
+    protected $paidDate;
+
+    /** @Column(type="boolean", nullable=true) * */
+    protected $paid;
+
+    /** @Column(type="string", length=500, nullable=true) * */
+    protected $onPaymentActions;
+
+
 
     // ----- Billing Address
 
@@ -404,5 +414,77 @@ class Invoice
     public function getInvoiceNote()
     {
         return $this->invoiceNote;
+    }
+
+    /**
+     * Set onPaymentActions
+     *
+     * @param string $onPaymentActions
+     *
+     * @return Invoice
+     */
+    public function setOnPaymentActions($onPaymentActions)
+    {
+        $this->onPaymentActions = $onPaymentActions;
+
+        return $this;
+    }
+
+    /**
+     * Get onPaymentActions
+     *
+     * @return string
+     */
+    public function getOnPaymentActions()
+    {
+        return $this->onPaymentActions;
+    }
+
+    /**
+     * Set paidDate
+     *
+     * @param \DateTime $paidDate
+     *
+     * @return Invoice
+     */
+    public function setPaidDate($paidDate)
+    {
+        $this->paidDate = $paidDate;
+
+        return $this;
+    }
+
+    /**
+     * Get paidDate
+     *
+     * @return \DateTime
+     */
+    public function getPaidDate()
+    {
+        return $this->paidDate;
+    }
+
+    /**
+     * Set paid
+     *
+     * @param boolean $paid
+     *
+     * @return Invoice
+     */
+    public function setPaid($paid)
+    {
+        $this->paid = $paid;
+
+        return $this;
+    }
+
+    /**
+     * Get paid
+     *
+     * @return boolean
+     */
+    public function getPaid()
+    {
+        return $this->paid;
     }
 }

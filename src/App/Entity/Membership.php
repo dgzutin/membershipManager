@@ -19,19 +19,28 @@ class Membership
     protected $memberId;
 
     /** @Column(type="integer",  nullable=false) **/
-    protected $billingAddressId;
+    protected $ownerId;
 
     /** @Column(type="integer", nullable=false) **/
-    protected $membershipType;
+    protected $membershipTypeId;
 
-    /** @Column(type="string", length=50, nullable=false) * */
+    /** @Column(type="datetime", nullable=false) * */
     protected $memberRegDate;
 
     /** @Column(type="string", length=100, nullable=true) * */
     protected $quickRenewKey;
 
     /** @Column(type="boolean", nullable=false) * */
-    protected $active;
+    protected $cancelled;
+
+    /** @Column(type="string", length=50, nullable=true) * */
+    protected $dateCancelled;
+
+    /** @Column(type="integer", nullable=true) * */
+    protected $membershipGrade;
+
+    /** @Column(type="string", length=500, nullable=true) **/
+    protected $comments;
 
 
     
@@ -68,30 +77,6 @@ class Membership
     public function getMemberId()
     {
         return $this->memberId;
-    }
-
-    /**
-     * Set membershipType
-     *
-     * @param integer $membershipType
-     *
-     * @return Membership
-     */
-    public function setMembershipType($membershipType)
-    {
-        $this->membershipType = $membershipType;
-
-        return $this;
-    }
-
-    /**
-     * Get membershipType
-     *
-     * @return integer
-     */
-    public function getMembershipType()
-    {
-        return $this->membershipType;
     }
 
     /**
@@ -165,28 +150,173 @@ class Membership
     {
         return $this->active;
     }
+    
 
     /**
-     * Set billingAddressId
+     * Set cancelled
      *
-     * @param integer $billingAddressId
+     * @param boolean $cancelled
      *
      * @return Membership
      */
-    public function setBillingAddressId($billingAddressId)
+    public function setCancelled($cancelled)
     {
-        $this->billingAddressId = $billingAddressId;
+        $this->cancelled = $cancelled;
 
         return $this;
     }
 
     /**
-     * Get billingAddressId
+     * Get cancelled
+     *
+     * @return boolean
+     */
+    public function getCancelled()
+    {
+        return $this->cancelled;
+    }
+
+    /**
+     * Set dateCancelled
+     *
+     * @param string $dateCancelled
+     *
+     * @return Membership
+     */
+    public function setDateCancelled($dateCancelled)
+    {
+        $this->dateCancelled = $dateCancelled;
+
+        return $this;
+    }
+
+    /**
+     * Get dateCancelled
+     *
+     * @return string
+     */
+    public function getDateCancelled()
+    {
+        return $this->dateCancelled;
+    }
+
+    /**
+     * Set comments
+     *
+     * @param string $comments
+     *
+     * @return Membership
+     */
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
+
+        return $this;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return string
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * Set ownerId
+     *
+     * @param integer $ownerId
+     *
+     * @return Membership
+     */
+    public function setOwnerId($ownerId)
+    {
+        $this->ownerId = $ownerId;
+
+        return $this;
+    }
+
+    /**
+     * Get ownerId
      *
      * @return integer
      */
-    public function getBillingAddressId()
+    public function getOwnerId()
     {
-        return $this->billingAddressId;
+        return $this->ownerId;
+    }
+
+    /**
+     * Set membershipTypeId
+     *
+     * @param integer $membershipTypeId
+     *
+     * @return Membership
+     */
+    public function setMembershipTypeId($membershipTypeId)
+    {
+        $this->membershipTypeId = $membershipTypeId;
+
+        return $this;
+    }
+
+    /**
+     * Get membershipTypeId
+     *
+     * @return integer
+     */
+    public function getMembershipTypeId()
+    {
+        return $this->membershipTypeId;
+    }
+
+    /**
+     * Set grade
+     *
+     * @param string $grade
+     *
+     * @return Membership
+     */
+    public function setGrade($grade)
+    {
+        $this->grade = $grade;
+
+        return $this;
+    }
+
+    /**
+     * Get grade
+     *
+     * @return string
+     */
+    public function getGrade()
+    {
+        return $this->grade;
+    }
+
+    /**
+     * Set membershipGrade
+     *
+     * @param integer $membershipGrade
+     *
+     * @return Membership
+     */
+    public function setMembershipGrade($membershipGrade)
+    {
+        $this->membershipGrade = $membershipGrade;
+
+        return $this;
+    }
+
+    /**
+     * Get membershipGrade
+     *
+     * @return integer
+     */
+    public function getMembershipGrade()
+    {
+        return $this->membershipGrade;
     }
 }

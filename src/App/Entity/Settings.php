@@ -19,6 +19,9 @@ class Settings
     /** @Column(type="string", length=100, nullable=false) * */
     protected $nameOfOrganization;
 
+    /** @Column(type="string", length=20, nullable=false) * */
+    protected $acronym;
+
     /** @Column(type="string", length=50, nullable=false) * */
     protected $email;
 
@@ -486,5 +489,29 @@ class Settings
     public function getPaypalSandboxModeActive()
     {
         return $this->paypalSandboxModeActive;
+    }
+
+    /**
+     * Set acronym
+     *
+     * @param string $acronym
+     *
+     * @return Settings
+     */
+    public function setAcronym($acronym)
+    {
+        $this->acronym = $acronym;
+
+        return $this;
+    }
+
+    /**
+     * Get acronym
+     *
+     * @return string
+     */
+    public function getAcronym()
+    {
+        return $this->acronym;
     }
 }

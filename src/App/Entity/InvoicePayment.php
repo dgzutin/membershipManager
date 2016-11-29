@@ -22,7 +22,7 @@ class InvoicePayment
     /** @Column(type="integer", nullable=false) * */
     protected $invoiceId;
 
-    /** @Column(type="string", length=50, nullable=false) * */
+    /** @Column(type="datetime", nullable=false) * */
     protected $datePaid;
 
     /** @Column(type="decimal", precision=7, scale=2) * */

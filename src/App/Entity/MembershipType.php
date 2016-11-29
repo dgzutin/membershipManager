@@ -28,6 +28,9 @@ class MembershipType
     /** @Column(type="boolean", length=50, nullable=false) * */
     protected $useGlobalMemberNumberAssignment;
 
+    /** @Column(type="integer",  nullable=true) **/
+    protected $initialMemberId; //used only once, if useGlobalMemberNumberAssignment is FALSE
+
     /** @Column(type="boolean", length=50, nullable=false) * */
     protected $selectable;
 
@@ -43,7 +46,7 @@ class MembershipType
     /** @Column(type="string", length=500, nullable=true) **/
     protected $description;
 
-    /** @Column(type="string", length=500, nullable=true) **/
+    /** @Column(type="string", length=2000, nullable=true) **/
     protected $terms;
 
     /** @Column(type="integer", nullable=false) **/
@@ -327,5 +330,29 @@ class MembershipType
     public function getTerms()
     {
         return $this->terms;
+    }
+
+    /**
+     * Set initialMemberId
+     *
+     * @param integer $initialMemberId
+     *
+     * @return MembershipType
+     */
+    public function setInitialMemberId($initialMemberId)
+    {
+        $this->initialMemberId = $initialMemberId;
+
+        return $this;
+    }
+
+    /**
+     * Get initialMemberId
+     *
+     * @return integer
+     */
+    public function getInitialMemberId()
+    {
+        return $this->initialMemberId;
     }
 }

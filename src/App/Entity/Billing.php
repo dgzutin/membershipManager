@@ -25,28 +25,28 @@ class Billing
     // ----- Billing Address
 
     /** @Column(type="string", length=50, nullable=true) **/
-    protected $name;
+    public $name;
 
     /** @Column(type="string", length=50, nullable=true) **/
-    protected $institution;
+    public $institution;
 
     /** @Column(type="string", length=50, nullable=true) **/
-    protected $street;
+    public $street;
 
     /** @Column(type="string", length=50, nullable=true) **/
-    protected $city;
+    public $city;
 
     /** @Column(type="string", length=20, nullable=true) **/
-    protected $zip;
+    public $zip;
 
     /** @Column(type="string", length=50, nullable=true) **/
-    protected $country;
+    public $country;
 
     /** @Column(type="string", length=50, nullable=true) **/
-    protected $vat;
+    public $vat;
 
     /** @Column(type="string", length=50, nullable=true) **/
-    protected $reference;
+    public $reference;
 
 
 

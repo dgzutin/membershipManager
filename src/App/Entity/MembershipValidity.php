@@ -17,20 +17,19 @@ class MembershipValidity
     protected $id;
 
     /** @Column(type="integer", nullable=false) * */
-    protected $memberId;
+    protected $membershipId;
+    
 
-    /** @Column(type="string", length=50, nullable=false) * */
-    protected $membershipType;
-
-    /** @Column(type="string", length=50, nullable=false) * */
+    /** @Column(type="datetime", nullable=false) * */
     protected $validFrom;
 
-    /** @Column(type="string", length=50, nullable=false) * */
+    /** @Column(type="datetime", nullable=false) * */
     protected $validUntil;
 
-    /** @Column(type="string", length=50, nullable=false) * */
+    /** @Column(type="datetime", nullable=false) * */
     protected $date;
 
+    
 
     /**
      * Get id
@@ -43,132 +42,35 @@ class MembershipValidity
     }
 
     /**
-     * Set memberId
+     * Set membershipId
      *
-     * @param integer $memberId
+     * @param integer $membershipId
      *
-     * @return Renewal
+     * @return MembershipValidity
      */
-    public function setMemberId($memberId)
+    public function setMembershipId($membershipId)
     {
-        $this->memberId = $memberId;
+        $this->membershipId = $membershipId;
 
         return $this;
     }
 
     /**
-     * Get memberId
+     * Get membershipId
      *
      * @return integer
      */
-    public function getMemberId()
+    public function getMembershipId()
     {
-        return $this->memberId;
-    }
-
-    /**
-     * Set membershipType
-     *
-     * @param string $membershipType
-     *
-     * @return Renewal
-     */
-    public function setMembershipType($membershipType)
-    {
-        $this->membershipType = $membershipType;
-
-        return $this;
-    }
-
-    /**
-     * Get membershipType
-     *
-     * @return string
-     */
-    public function getMembershipType()
-    {
-        return $this->membershipType;
-    }
-
-
-    /**
-     * Set date
-     *
-     * @param string $date
-     *
-     * @return Renewal
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return string
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * Set renewalDate
-     *
-     * @param string $renewalDate
-     *
-     * @return Renewal
-     */
-    public function setRenewalDate($renewalDate)
-    {
-        $this->renewalDate = $renewalDate;
-
-        return $this;
-    }
-
-    /**
-     * Get renewalDate
-     *
-     * @return string
-     */
-    public function getRenewalDate()
-    {
-        return $this->renewalDate;
-    }
-
-    /**
-     * Set renewedUntil
-     *
-     * @param string $renewedUntil
-     *
-     * @return Renewal
-     */
-    public function setRenewedUntil($renewedUntil)
-    {
-        $this->renewedUntil = $renewedUntil;
-
-        return $this;
-    }
-
-    /**
-     * Get renewedUntil
-     *
-     * @return string
-     */
-    public function getRenewedUntil()
-    {
-        return $this->renewedUntil;
+        return $this->membershipId;
     }
 
     /**
      * Set validFrom
      *
-     * @param string $validFrom
+     * @param \DateTime $validFrom
      *
-     * @return Renewal
+     * @return MembershipValidity
      */
     public function setValidFrom($validFrom)
     {
@@ -180,7 +82,7 @@ class MembershipValidity
     /**
      * Get validFrom
      *
-     * @return string
+     * @return \DateTime
      */
     public function getValidFrom()
     {
@@ -190,9 +92,9 @@ class MembershipValidity
     /**
      * Set validUntil
      *
-     * @param string $validUntil
+     * @param \DateTime $validUntil
      *
-     * @return Renewal
+     * @return MembershipValidity
      */
     public function setValidUntil($validUntil)
     {
@@ -204,10 +106,34 @@ class MembershipValidity
     /**
      * Get validUntil
      *
-     * @return string
+     * @return \DateTime
      */
     public function getValidUntil()
     {
         return $this->validUntil;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     *
+     * @return MembershipValidity
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
     }
 }

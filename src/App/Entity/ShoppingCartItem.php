@@ -22,8 +22,8 @@ class ShoppingCartItem
     /** @Column(type="string", length=100, nullable=false) * */
     protected $name;
 
-    /** @Column(type="string", length=50, nullable=false) * */
-    protected $typeAlias;
+    /** @Column(type="integer", length=50, nullable=true) * */
+    protected $typeId;
 
     /** @Column(type="string", length=500, nullable=false) * */
     protected $description;
@@ -143,31 +143,6 @@ class ShoppingCartItem
     {
         return $this->quantity;
     }
-    
-
-    /**
-     * Set typeAlias
-     *
-     * @param string $typeAlias
-     *
-     * @return ShoppingCartItem
-     */
-    public function setTypeAlias($typeAlias)
-    {
-        $this->typeAlias = $typeAlias;
-
-        return $this;
-    }
-
-    /**
-     * Get typeAlias
-     *
-     * @return string
-     */
-    public function getTypeAlias()
-    {
-        return $this->typeAlias;
-    }
 
     /**
      * Set unitPrice
@@ -215,5 +190,29 @@ class ShoppingCartItem
     public function getTotalPrice()
     {
         return $this->totalPrice;
+    }
+
+    /**
+     * Set typeId
+     *
+     * @param integer $typeId
+     *
+     * @return ShoppingCartItem
+     */
+    public function setTypeId($typeId)
+    {
+        $this->typeId = $typeId;
+
+        return $this;
+    }
+
+    /**
+     * Get typeId
+     *
+     * @return integer
+     */
+    public function getTypeId()
+    {
+        return $this->typeId;
     }
 }

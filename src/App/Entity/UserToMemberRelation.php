@@ -20,14 +20,16 @@ class UserToMemberRelation
     protected $userId;
 
     /** @Column(type="integer",  nullable=false) * */
-    protected $memberId;
+    protected $membershipId;
+
+    /** @Column(type="integer",  nullable=false) * */
+    protected $membershipTypeId;
+
+    /** @Column(type="datetime", nullable=false) * */
+    protected $createDate;
 
     /** @Column(type="boolean", nullable=false) * */
     protected $isOwner;
-
-    /** @Column(type="string", length=50, nullable=false) * */
-    protected $createDate;
-
 
 
     /**
@@ -87,6 +89,55 @@ class UserToMemberRelation
     {
         return $this->memberId;
     }
+    
+
+    /**
+     * Set createDate
+     *
+     * @param string $createDate
+     *
+     * @return UserToMemberRelation
+     */
+    public function setCreateDate($createDate)
+    {
+        $this->createDate = $createDate;
+
+        return $this;
+    }
+
+    /**
+     * Get createDate
+     *
+     * @return string
+     */
+    public function getCreateDate()
+    {
+        return $this->createDate;
+    }
+
+    /**
+     * Set membershipTypeId
+     *
+     * @param integer $membershipTypeId
+     *
+     * @return UserToMemberRelation
+     */
+    public function setMembershipTypeId($membershipTypeId)
+    {
+        $this->membershipTypeId = $membershipTypeId;
+
+        return $this;
+    }
+
+    /**
+     * Get membershipTypeId
+     *
+     * @return integer
+     */
+    public function getMembershipTypeId()
+    {
+        return $this->membershipTypeId;
+    }
 
     /**
      * Set isOwner
@@ -113,26 +164,26 @@ class UserToMemberRelation
     }
 
     /**
-     * Set createDate
+     * Set membershipId
      *
-     * @param string $createDate
+     * @param integer $membershipId
      *
      * @return UserToMemberRelation
      */
-    public function setCreateDate($createDate)
+    public function setMembershipId($membershipId)
     {
-        $this->createDate = $createDate;
+        $this->membershipId = $membershipId;
 
         return $this;
     }
 
     /**
-     * Get createDate
+     * Get membershipId
      *
-     * @return string
+     * @return integer
      */
-    public function getCreateDate()
+    public function getMembershipId()
     {
-        return $this->createDate;
+        return $this->membershipId;
     }
 }
