@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+
+                {% if mailResponse.exception == true %}
+                    <div class="alert alert-danger">
+                      <p class="text-center text-muted"><span class="fa fa-warning"></span> {{ mailResponse.message }}</p>
+                    </div>
+                {% else %}
+
+                    <p class="text-center text-muted"><img src="{{ baseUrl }}/assets/images/mail_sent.png" width="150"></p>
+
+                    <p class="text-center text-muted"><strong>{{ mailResponse.message }}</strong></p>
+
+                {% endif %}
+
+    <hr>
+
+
+{% endblock %}
