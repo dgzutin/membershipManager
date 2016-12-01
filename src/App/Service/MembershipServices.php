@@ -696,7 +696,7 @@ class MembershipServices
 
         while ($l <= $r){
 
-            $m = intdiv(($l + $r), 2);
+            $m = round(($l + $r)/ 2);
             if ($sortedArray[$m]->getId() < $id){
                 $l = $m +1;
             }
