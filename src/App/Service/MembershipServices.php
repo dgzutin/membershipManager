@@ -439,10 +439,10 @@ class MembershipServices
                          'message' => $e->getMessage());
         }
 
-        $maxIndex = max(array_keys($validity));
 
         if (count($validity) > 0){
 
+            $maxIndex = max(array_keys($validity));
             $now = new DateTime();
             if ($validity[$maxIndex]->getValidUntil() < $now){
                 $valid = false;
