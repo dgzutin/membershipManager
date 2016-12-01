@@ -13,13 +13,13 @@ namespace App\Entity;
 
 class Billing
 {
-    /** @Id @Column(type="integer") @GeneratedValue * */
+    /** @Id @Column(type="integer") @GeneratedValue **/
     protected $id;
 
     /** @Column(type="integer", length=50, nullable=false) **/
     protected $userId;
 
-    /** @Column(type="string", length=50, nullable=true) * */
+    /** @Column(type="string", length=50, nullable=true) **/
     protected $typeAlias;
 
     // ----- Billing Address

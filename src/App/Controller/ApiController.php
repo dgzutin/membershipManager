@@ -66,7 +66,7 @@ class ApiController {
         /*
          * Example of request body:
          * {
-	         "groupe": "users/members",
+	         "group": "users/members",
 	         "memberType": "Name of membership type",
 	         "memberStatus": "status",
             }

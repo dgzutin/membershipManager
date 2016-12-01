@@ -123,6 +123,7 @@ $app->group('/admin', function () use ($app) {
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsAdmin');
     $app->get('/createBulkMail', '\AdminController:createBulkMailAction')->setName('createBulkMailAdmin');
     $app->post('/createBulkMail', '\AdminController:verifyBulkMailAction')->setName('verifyBulkMailAdmin');
+    $app->map(['GET', 'POST'], '/members', '\AdminController:membersAction')->setName('members');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

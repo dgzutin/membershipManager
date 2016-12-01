@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Manage Users and Members</div>
+            <div class="panel-body">
+
+                <form class="" method="post">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="membershipTypeId">Membership Type</label>
+                            <select class="form-control" id="membershipTypeId" name="membershipTypeId" onchange="this.form.submit()">
+
+                                <option value="-1">All Membership Types</option>
+                                {% for membershipType in membershipTypes %}
+                                    <option value="{{ membershipType.id }}" {% if form.membershipTypeId == membershipType.id  %}selected{% endif %}>{{ membershipType.typeName }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="membershipGrade">Member Grade</label>
+                            <select class="form-control" id="membershipGrade" name="membershipGrade" onchange="this.form.submit()">
+
+                                <option value="-1">All Grades</option>
+                                {% for memberGrade in memberGrades %}
+                                    <option value="{{ memberGrade.id }}" {% if form.membershipGrade == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xs-6 col-sm-3">
+
+                        <div class="form-group">
+                            <label for="validUntil">Valid until:</label>
+                            <select class="form-control" id="validUntil" name="validUntil" onchange="this.form.submit()">
+
+                                <option value="-1">All Members</option>
+                                <option value="2016-12-31 23:59:59">2016</option>
+
+
+                            </select>
+                        </div>
+
+                        <!--
+                        <div class="form-group">
+                            <label for="expiry_date">Expiry date</label>
+                            <select class="form-control" id="expiry_date" name="expiry_date">
+                                <option value="valid">Valid memberships</option>
+                                <option value="expired">All expired memberships</option>
+                                <option value="expired_1year">Expired memberships (1 year or less)</option>
+                                <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
+                            </select>
+                        </div>
+-->
+                    </div>
+
+
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="member_grade"></label>
+                            <button type="submit" class="btn btn-lg btn-success btn-block">Apply Filter</button>
+                        </div>
+                    </div>
+
+                </div>
+                </form>
+
+                <hr>
+
+                <table class="display" id="users" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Member ID</th>
+                        <th>Expiry date</th>
+                        <th>Type</th>
+                        <th>Representative</th>
+                        <th>Email</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for member in members %}
+                        <tr class="">
+                            <td>{{ member.membership.memberId }}</td>
+                            <td>
+                                {% if member.validity != null  %}
+                                    {% if member.valid == true  %}
+                                       <span class="text-success">{{ member.validity.validUntil|date('jS F Y') }}</span>
+                                    {% else %}
+                                       <span class="text-danger">{{ member.validity.validUntil|date('jS F Y') }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    Not valid
+                                {% endif %}
+                            </td>
+                            <td>{{ member.membershipTypePrefix }} {{ member.memberGrade }}</td>
+                            <td>{{ member.user.title }} {{ member.user.firstName }} {{ member.user.lastName }}</td>
+                            <td>{{ member.user.email1 }}</td>
+                            <td><a href="{{ path_for('adminViewUserProfile', { 'userId': member.user.id }) }}">view</a></td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#users').DataTable();
+        } );
+
+    </script>
+
+
+{% endblock %}

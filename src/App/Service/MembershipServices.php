@@ -417,6 +417,8 @@ class MembershipServices
         }
         catch (\Exception $e){
             return array('exception' => true,
+                         'valid' => false,
+                         'validity' => null,
                          'message' => $e->getMessage());
         }
 
@@ -442,7 +444,6 @@ class MembershipServices
         if (count($validity) > 0){
 
             $now = new DateTime();
-
             if ($validity[$maxIndex]->getValidUntil() < $now){
                 $valid = false;
             }
@@ -461,7 +462,9 @@ class MembershipServices
                      'message' => 'No validity date found for membership ID '.$membershipId);
     }
 
-    public function getMembershipsForUser($userId){
+
+    public function getMembershipsForUser($userId)
+    {
 
         $repository = $this->em->getRepository('App\Entity\Membership');
         $memberships = $repository->createQueryBuilder('Membership')
@@ -560,6 +563,152 @@ class MembershipServices
                      'memberships' => $membershipsArray,
                      'message' => $message);
 
+    }
+
+    public function getAllMembershipTypes()
+    {
+        try{
+            $repository = $this->em->getRepository('App\Entity\MembershipType');
+            $membershipTypes = $repository->findBy(array(), array('id' => 'ASC'));
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'membershipTypes' => null,
+                         'count' => null,
+                         'message' => $e->getMessage());
+        }
+        return array('exception' => false,
+                     'count' => count($membershipTypes),
+                     'membershipTypes' => $membershipTypes);
+
+    }
+
+    public function getAllMemberGrades()
+    {
+        try{
+            $repository = $this->em->getRepository('App\Entity\MembershipGrade');
+            $grades = $repository->findBy(array(), array('id' => 'ASC'));
+
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'memberGrades' => null,
+                         'count' => null,
+                         'message' => $e->getMessage());
+        }
+
+        return array('exception' => true,
+                     'memberGrades' => $grades,
+                     'count' => count($grades),
+                     'message' => count($grades). ' membership grade(s) found');
+    }
+
+    public function getMembers($filter_member, $validUntil)
+    {
+        try{
+            $repository = $this->em->getRepository('App\Entity\Membership');
+            $memberships = $repository->findBy( $filter_member, array('id' => 'ASC'));
+
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'count' => null,
+                         'members' => null,
+                         'message' => $e->getMessage());
+        }
+
+        $i = 0;
+        $memberIds = null;
+
+        try{
+            $repository = $this->em->getRepository('App\Entity\User');
+            $users = $repository->findBy( array(), array('id' => 'ASC'));
+
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'count' => null,
+                         'members' => null,
+                         'memberGrade' => null,
+                         'valid' => null,
+                         'validity' => null,
+                         'membershipTypePrefix' => null,
+                         'message' => $e->getMessage());
+        }
+
+        //get MembershipTypes and Grades
+        $gradesRes = $this->getAllMemberGrades();
+        $membershipTypes = $this->getAllMembershipTypes();
+
+        $members = null;
+        //aggregate information from both arrays
+        $i = 0;
+        foreach ($memberships as $membership){
+
+            $memberGrade = $this->searchArrayById($gradesRes['memberGrades'], $membership->getMembershipGrade());
+
+            if ($memberGrade != null){
+                $memberGrade = $memberGrade->getGradeName();
+            }
+
+            $membershipType = $this->searchArrayById($membershipTypes['membershipTypes'], $membership->getMembershipTypeId());
+
+            // Find the user owner of this membership
+            $user = $this->searchArrayById($users, $membership->getOwnerId());
+
+            //find the membership validity
+            $validityResp = $this->getMembershipValidity($membership->getId());
+
+
+            if ($validityResp['validity'] != null){
+
+            }
+            else{
+
+            }
+
+            $members[$i] = array('membership' => $membership,
+                'user' => $user,
+                'memberGrade' => $memberGrade,
+                'valid' => $validityResp['valid'],
+                'validity' => $validityResp['validity'],
+                'membershipTypePrefix' => $membershipType->getPrefix());
+            $i++;
+        }
+
+        return array('exception' => false,
+                     'count' => count($members),
+                     'members' => $members,
+                     'message' => count($members).' members found');
+    }
+
+
+
+
+
+// ======================== MOVE THIS TO UTILS ?? ===================
+    
+    //implements binary search to find object by ID in array: ARRAY MUST BE SORTED BY ID !!!
+    private function searchArrayById($sortedArray, $id)
+    {
+        $l = 0;
+        $r = count($sortedArray) - 1;
+
+        while ($l <= $r){
+
+            $m = intdiv(($l + $r), 2);
+            if ($sortedArray[$m]->getId() < $id){
+                $l = $m +1;
+            }
+            elseif ($sortedArray[$m]->getId() > $id){
+                $r = $m - 1;
+            }
+            elseif ($sortedArray[$m]->getId() == $id){
+
+                return $sortedArray[$m];
+            }
+        }
+        return null;
     }
 
 

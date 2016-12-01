@@ -19,6 +19,7 @@ class AdminController {
 
         $this->container = $container;
         $this->userServices = $container->get('userServices');
+        $this->membershipServices = $container->get('membershipServices');
         $this->systemInfo = $this->userServices->getSystemInfo();
     }
 
@@ -29,7 +30,7 @@ class AdminController {
         $users = $em->getRepository('App\Entity\User')->findAll();
         
         return $this->container->view->render($response, 'admin/usersTable.html.twig', array(
-            'systemInfo' => $this->systemInfo['settings'],
+            'systemInfo' => $this->systemInfo,
             'user_role' => $_SESSION['user_role'],
             'user_id' => $_SESSION['user_id'],
             'users' => $users
@@ -53,7 +54,7 @@ class AdminController {
             'message' => '',
             'fields' => array());
 
-        return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array('systemInfo' => $this->systemInfo['settings'],
+        return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array('systemInfo' => $this->systemInfo,
                                                                                                 'user_role' => $_SESSION['user_role'],
                                                                                                 'form_submission' => false,
                                                                                                 'exception' => $resp['exception'],
@@ -120,7 +121,7 @@ class AdminController {
         $mailServices = $this->container->get('mailServices');
         $resetResp = $mailServices->sendResetPasswordMail($resp['user'], $request);
 
-        return $this->container->view->render($response, 'userNotificationMail.twig', array('systemInfo' => $this->systemInfo['settings'],
+        return $this->container->view->render($response, 'userNotificationMail.twig', array('systemInfo' => $this->systemInfo,
                                                                                              'mailResponse' => $resetResp));
     }
 
@@ -135,11 +136,8 @@ class AdminController {
     public function verifyBulkMailAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $form_data = $request->getParsedBody();
-
         $mailServices = $this->container->get('mailServices');
-
         $respMail = $mailServices->highlightPlaceholders($form_data['subject'], $form_data['emailBody']);
-
         $userService = $this->container->get('userServices');
         $resp = $userService->findUsersFiltered(null);
 
@@ -152,6 +150,58 @@ class AdminController {
             'highlightedSubject' => $respMail['subject'],
             'submited_form' => $form_data));
 
+    }
+
+    public function membersAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
+
+        $post_data = $request->getParsedBody();
+
+        //sanitize post variables, just to be sure
+        if (isset($post_data['membershipTypeId'])){
+            $filter['membershipTypeId'] = (int)$post_data['membershipTypeId'];
+        }
+        if (isset($post_data['membershipGrade'])){
+            $filter['membershipGrade'] = (int)$post_data['membershipGrade'];
+        }
+
+        if (isset($post_data['validUntil']) AND $post_data['validUntil'] != -1){
+            $validUntil = new \DateTime($post_data['validUntil']);
+        }
+        else{
+            $validUntil = NULL;
+        }
+
+        $data = array();
+        if (isset($post_data['membershipTypeId']) or isset($post_data['membershipGrade'])){
+
+            foreach ($filter as $key => $param){
+
+                if ($param != -1){
+                    $data[$key] = $param;
+                }
+            }
+        }
+        
+
+        $membersResp = $this->membershipServices->getMembers($data, $validUntil);
+
+        $membershipTypesResp = $this->membershipServices->getAllMembershipTypes();
+        $memberGradesResp = $this->membershipServices->getAllMemberGrades();
+        
+        if ($membersResp['exception']){
+
+            return $this->container->view->render($response, 'userNotification.twig', array('systemInfo' => $this->systemInfo,
+                                                                                            'message' => $membersResp['message']));
+        }
+
+        return $this->container->view->render($response, 'admin/membersTable.html.twig', array(
+            'systemInfo' => $this->systemInfo,
+            'membershipTypes' => $membershipTypesResp['membershipTypes'],
+            'memberGrades' => $memberGradesResp['memberGrades'],
+            'user_role' => $_SESSION['user_role'],
+            'members' => $membersResp['members'],
+            'form' => $data
+        ));
     }
 
 }

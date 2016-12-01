@@ -22,6 +22,7 @@ class UserController {
     public function __construct($container) {
 
         $this->container = $container;
+        $this->em = $container['em'];
         $this->userServices = $container->get('userServices');
         $this->membershipServices = $container->get('membershipServices');
         $this->shoppingCartServices = $container->get('shoppingCartServices');
@@ -436,7 +437,6 @@ class UserController {
                 'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
                 'message' => '',
                 'form' => ''));
-
         }
         else{
             return $this->container->view->render($response, 'userNotification.twig', $resp);
@@ -447,10 +447,10 @@ class UserController {
     {
         $userId = $_SESSION['user_id'];
 
-        $user = $this->userServices->getUserById($userId);
+        //$user = $this->userServices->getUserById($userId);
 
-        $validUntil = new \DateTime('2018-12-31 23:59:59');
-        $result = $this->membershipServices->addNewMembershipValidity(58, 'year', '10-30', NULL, NULL);
+        //$validUntil = new \DateTime('2018-12-31 23:59:59');
+        //$result = $this->membershipServices->addNewMembershipValidity(58, 'year', '10-30', NULL, NULL);
         //$Result = $this->membershipServices->getMembershipTypeAndStatusOfUser($user['user'], NULL, true);
 
         //$result = $this->membershipServices->getMembershipValidity(58);
@@ -475,6 +475,8 @@ class UserController {
             ->getQuery()
             ->getResult();
 */
+
+        $result = $this->membershipServices->getMembers(array());
 
         //var_dump(max(array_keys($validity)));
 
