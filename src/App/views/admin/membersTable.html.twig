@@ -42,12 +42,17 @@
                     <div class="col-xs-6 col-sm-3">
 
                         <div class="form-group">
-                            <label for="validUntil">Valid until:</label>
-                            <select class="form-control" id="validUntil" name="validUntil" onchange="this.form.submit()">
+                            <label for="validity">Validity:</label>
+                            <select class="form-control" id="validity" name="validity" onchange="this.form.submit()">
 
                                 <option value="-1">All Members</option>
-                                <option value="2016-12-31 23:59:59">2016</option>
-
+                                <option value="0" {% if form.validity == '0'  %}selected{% endif %}>All Valid Memberships</option>
+                                <option value="1" {% if form.validity == '1'  %}selected{% endif %}>{{ validity_filter.current_period }}</option>
+                                <option value="2" {% if form.validity == '2'  %}selected{% endif %}>{{ validity_filter.next_period }}</option>
+                                <option value="3" {% if form.validity == '3'  %}selected{% endif %}>{{ validity_filter.one_period_ago }}</option>
+                                <option value="4" {% if form.validity == '4'  %}selected{% endif %}>{{ validity_filter.two_periods_ago }}</option>
+                                <option value="5" {% if form.validity == '5'  %}selected{% endif %}>All Expired</option>
+                                <option value="6" {% if form.validity == '6'  %}selected{% endif %}>Never validated memberships</option>
 
                             </select>
                         </div>
@@ -65,11 +70,10 @@
 -->
                     </div>
 
-
                     <div class="col-xs-6 col-sm-3">
                         <div class="form-group">
                             <label for="member_grade"></label>
-                            <button type="submit" class="btn btn-lg btn-success btn-block">Apply Filter</button>
+                            <button type="submit" class="btn btn-lg btn-success btn-block">Apply filter</button>
                         </div>
                     </div>
 

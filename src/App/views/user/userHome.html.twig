@@ -2,30 +2,36 @@
 
 {% block mainPanel %}
 
-        <div class="well well-sm">
-        <div class="row show-grid">
-            <div class="col-xs-12">
+    <div class="row show-grid">
+        <div class="col-xs-6 col-md-4">
+            <div class="well well-sm">
+                <p><strong>Welcome, {{ userName }}!</strong></p>
+            </div>
 
-                    <h4>Welcome, {{ userName }}!</h4>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-8">
+            <div class="well well-sm">
 
-                    {% for membership in memberships.memberships %}
+                {% for membership in memberships.memberships %}
 
-                        {% if membership.validUntil != null %}
+                    {% if membership.validUntil != null %}
 
-                            {% if membership.valid %}
-                                <p class="text-primary">Member ID: <strong>{{ membership.memberId }}</strong>  {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
-                            {% else %}
-                                <p class="text-danger"><span class="fa fa-warning"></span>  Member ID: <strong>{{ membership.memberId }}</strong>  (This membership expired on {{ membership.validUntil }}) <a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a></p>
-                            {% endif %}
-
+                        {% if membership.valid %}
+                            <p class="text-primary"><strong>Member ID: {{ membership.memberId }}</strong>  {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
+                        {% else %}
+                            <p class="text-danger"><strong>Member ID: {{ membership.memberId }}</strong> <span class="fa fa-warning"></span> (This membership expired on {{ membership.validUntil }}) <a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a></p>
                         {% endif %}
 
+                    {% endif %}
 
-                    {% endfor %}
+
+                {% endfor %}
 
             </div>
         </div>
-        </div>
+    </div>
+
+
 
     {% if invoiceInfo.numberOfInvoices > 0 %}
 

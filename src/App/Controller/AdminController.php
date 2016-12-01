@@ -37,7 +37,6 @@ class AdminController {
         ));
     }
 
-
     public function viewUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
 
 
@@ -75,8 +74,8 @@ class AdminController {
         }
 
         $form_validation = array('exception' => false,
-            'message' => 'One or more fields are not valid. Please check your data and submit it again.',
-            'fields' => array());
+                                 'message' => 'One or more fields are not valid. Please check your data and submit it again.',
+                                 'fields' => array());
 
 
         if ($form_validation['exception'] == true){
@@ -164,11 +163,80 @@ class AdminController {
             $filter['membershipGrade'] = (int)$post_data['membershipGrade'];
         }
 
-        if (isset($post_data['validUntil']) AND $post_data['validUntil'] != -1){
-            $validUntil = new \DateTime($post_data['validUntil']);
+        if (!isset($post_data['validity'])){
+            $validity = -1;
         }
         else{
-            $validUntil = NULL;
+            $validity = $post_data['validity'];
+        }
+
+        $now = new \DateTime();
+        $current_year = $now->format('Y');
+
+        switch ($validity){
+            case null:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = null;
+                break;
+            case -1:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = null;
+                break;
+            case 0:
+                $onlyValid = true;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = null;
+                break;
+            case 1:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = new \DateTime($current_year.'-12-31T23:59:59');
+                break;
+            case 2:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = new \DateTime($current_year.'-12-31T23:59:59');
+                $validity->add(new \DateInterval('P1Y'));
+                break;
+            case 3:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = new \DateTime($current_year.'-12-31T23:59:59');
+                $validity->sub(new \DateInterval('P1Y'));
+                break;
+            case 4:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = new \DateTime($current_year.'-12-31T23:59:59');
+                $validity->sub(new \DateInterval('P2Y'));
+                break;
+            case 5:
+                $onlyValid = false;
+                $onlyexpired = true;
+                $never_validated = false;
+                $validity = null;
+                break;
+            case 6:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = true;
+                $validity = null;
+                break;
+            default:
+                $onlyValid = false;
+                $onlyexpired = false;
+                $never_validated = false;
+                $validity = null;
+                break;
         }
 
         $data = array();
@@ -181,12 +249,30 @@ class AdminController {
                 }
             }
         }
-        
 
-        $membersResp = $this->membershipServices->getMembers($data, $validUntil);
-
+        // get data to generate the filter options
         $membershipTypesResp = $this->membershipServices->getAllMembershipTypes();
         $memberGradesResp = $this->membershipServices->getAllMemberGrades();
+
+        //Currently only YEAR is supported
+        $recurrence = 'year';
+        switch ($recurrence){
+
+            case 'year':
+                $now = new \DateTime();
+                $current_year = $now->format('Y');
+                $current_period = new \DateTime($current_year.'-12-31T23:59:59');
+                $validity_filter['current_period'] = $current_period->format('jS F Y');
+                $next_period = $current_period->add(new \DateInterval('P1Y'));
+                $validity_filter['next_period'] = $next_period->format('jS F Y');
+                $one_period_ago = $current_period->sub(new \DateInterval('P2Y'));
+                $validity_filter['one_period_ago'] = $one_period_ago->format('jS F Y');
+                $two_periods_ago = $current_period->sub(new \DateInterval('P1Y'));
+                $validity_filter['two_periods_ago'] = $two_periods_ago->format('jS F Y');
+                break;
+        }
+
+        $membersResp = $this->membershipServices->getMembers($data, $validity, $onlyValid, $onlyexpired, $never_validated);
         
         if ($membersResp['exception']){
 
@@ -198,9 +284,10 @@ class AdminController {
             'systemInfo' => $this->systemInfo,
             'membershipTypes' => $membershipTypesResp['membershipTypes'],
             'memberGrades' => $memberGradesResp['memberGrades'],
+            'validity_filter' => $validity_filter,
             'user_role' => $_SESSION['user_role'],
             'members' => $membersResp['members'],
-            'form' => $data
+            'form' => $post_data
         ));
     }
 

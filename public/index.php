@@ -166,7 +166,6 @@ $app->group('/api/v1', function () use ($app) {
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
 
-
 // Define the public routes
 $app->get('/', '\PublicController:homeAction');
 $app->get('/login', '\PublicController:loginAction')->setName('login');

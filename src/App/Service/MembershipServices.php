@@ -603,7 +603,7 @@ class MembershipServices
                      'message' => count($grades). ' membership grade(s) found');
     }
 
-    public function getMembers($filter_member, $validUntil)
+    public function getMembers($filter_member, $filter_validity, $onlyValid, $onlyexpired, $never_validated)
     {
         try{
             $repository = $this->em->getRepository('App\Entity\Membership');
@@ -659,27 +659,98 @@ class MembershipServices
             //find the membership validity
             $validityResp = $this->getMembershipValidity($membership->getId());
 
+            //if condition is match, consider the filter
+            if ($filter_validity != null AND $onlyValid == false AND $onlyexpired == false AND $never_validated == false){
 
-            if ($validityResp['validity'] != null){
+                if ($validityResp['validity'] != null){
+
+                    $validUntil = $validityResp['validity']->getValidUntil();
+                    if ($validUntil == $filter_validity){
+
+                        $members[$i] = array('membership' => $membership,
+                            'user' => $user,
+                            'memberGrade' => $memberGrade,
+                            'valid' => $validityResp['valid'],
+                            'validity' => $validityResp['validity'],
+                            'membershipTypePrefix' => $membershipType->getPrefix());
+                        $i++;
+                    }
+                }
+            }
+            elseif ($filter_validity == null AND $onlyValid == true AND $onlyexpired == false AND $never_validated == false){
+
+                if ($validityResp['valid'] == true){
+                    $members[$i] = array('membership' => $membership,
+                        'user' => $user,
+                        'memberGrade' => $memberGrade,
+                        'valid' => $validityResp['valid'],
+                        'validity' => $validityResp['validity'],
+                        'membershipTypePrefix' => $membershipType->getPrefix());
+                    $i++;
+                }
+            }
+            elseif ($filter_validity == null AND $onlyValid == false AND $onlyexpired == true AND $never_validated == false){
+
+                if ($validityResp['valid'] == false){
+                    $members[$i] = array('membership' => $membership,
+                        'user' => $user,
+                        'memberGrade' => $memberGrade,
+                        'valid' => $validityResp['valid'],
+                        'validity' => $validityResp['validity'],
+                        'membershipTypePrefix' => $membershipType->getPrefix());
+                    $i++;
+                }
+            }
+            elseif ($filter_validity == null AND $onlyValid == false AND $onlyexpired == false AND $never_validated == true){
+
+                if ($validityResp['exception'] == true){
+                    $members[$i] = array('membership' => $membership,
+                        'user' => $user,
+                        'memberGrade' => $memberGrade,
+                        'valid' => $validityResp['valid'],
+                        'validity' => $validityResp['validity'],
+                        'membershipTypePrefix' => $membershipType->getPrefix());
+                    $i++;
+                }
 
             }
+            // do not consider filter
             else{
-
+                $members[$i] = array('membership' => $membership,
+                    'user' => $user,
+                    'memberGrade' => $memberGrade,
+                    'valid' => $validityResp['valid'],
+                    'validity' => $validityResp['validity'],
+                    'membershipTypePrefix' => $membershipType->getPrefix());
+                $i++;
             }
 
-            $members[$i] = array('membership' => $membership,
-                'user' => $user,
-                'memberGrade' => $memberGrade,
-                'valid' => $validityResp['valid'],
-                'validity' => $validityResp['validity'],
-                'membershipTypePrefix' => $membershipType->getPrefix());
-            $i++;
+
         }
 
         return array('exception' => false,
                      'count' => count($members),
                      'members' => $members,
                      'message' => count($members).' members found');
+    }
+
+
+    public function getValidities()
+    {
+        try{
+            $repository = $this->em->getRepository('App\Entity\MembershipValidity');
+            $validitiy = $repository->createQueryBuilder('MembershipValidity')
+                ->select('MAX(MembershipValidity.validUntil), MIN(MembershipValidity.validUntil)')
+                ->getQuery()
+                ->getSingleResult();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        return $validitiy;
+
     }
 
 

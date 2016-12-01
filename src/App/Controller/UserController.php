@@ -476,7 +476,9 @@ class UserController {
             ->getResult();
 */
 
-        $result = $this->membershipServices->getMembers(array());
+        //$result = $this->membershipServices->getMembers(array());
+
+        $result = $this->membershipServices->getValidities();
 
         //var_dump(max(array_keys($validity)));
 
