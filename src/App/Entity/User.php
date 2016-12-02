@@ -72,7 +72,7 @@ class User
     protected $userRegDate;
 
     /** @Column(type="string", length=100, nullable=true) * */
-    protected $profileKey;
+    public $profileKey;
 
     /** @Column(type="boolean", nullable=false) * */
     protected $active;

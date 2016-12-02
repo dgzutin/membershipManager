@@ -13,16 +13,16 @@ namespace App\Entity;
 class Membership
 {
     /** @Id @Column(type="integer") @GeneratedValue * */
-    protected $id;
+    public $id;
 
     /** @Column(type="integer",  nullable=false) **/
-    protected $memberId;
+    public $memberId;
 
     /** @Column(type="integer",  nullable=false) **/
     protected $ownerId;
 
     /** @Column(type="integer", nullable=false) **/
-    protected $membershipTypeId;
+    public $membershipTypeId;
 
     /** @Column(type="datetime", nullable=false) * */
     protected $memberRegDate;
@@ -37,7 +37,7 @@ class Membership
     protected $dateCancelled;
 
     /** @Column(type="integer", nullable=true) * */
-    protected $membershipGrade;
+    public $membershipGrade;
 
     /** @Column(type="string", length=500, nullable=true) **/
     protected $comments;

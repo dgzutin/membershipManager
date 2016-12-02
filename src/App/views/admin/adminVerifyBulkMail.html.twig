@@ -83,9 +83,10 @@
                     <!-- Table Starts here  -->
                     <div class="alert alert-info" id="message" hidden="true"></div>
 
-                    <button id="button_sendMail" type="submit" class="btn btn-primary">Send e-mail(s) now</button>
+                    <a href="{{ path_for('createBulkMailUsersAdmin') }}"><button id="button_return" type="submit" class="btn btn-primary">Back</button></a>
+                    <button id="button_sendMail" type="submit" class="btn btn-success">Send e-mail(s) now</button>
 
-                    <a href="{{ path_for('createBulkMailAdmin') }}"><button id="button_return" type="submit" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
+                    <a href="{{ path_for('createBulkMailUsersAdmin') }}"><button id="button_return" type="submit" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
 
                     <table class="table table-condensed" id="recipients" cellspacing="0" width="100%">
                         <thead>
@@ -167,7 +168,7 @@
 
 
             //disable checkboxes and send button
-            for (i=0; i<users.length; i++){
+            for (i=0; i<members.length; i++){
                $('#checkbox_'+i).prop('disabled', true);
             }
             $("#button_sendMail").prop('disabled', true);

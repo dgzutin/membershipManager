@@ -608,7 +608,6 @@ class MembershipServices
         try{
             $repository = $this->em->getRepository('App\Entity\Membership');
             $memberships = $repository->findBy( $filter_member, array('id' => 'ASC'));
-
         }
         catch (\Exception $e){
             return array('exception' => true,
@@ -639,6 +638,17 @@ class MembershipServices
         //get MembershipTypes and Grades
         $gradesRes = $this->getAllMemberGrades();
         $membershipTypes = $this->getAllMembershipTypes();
+
+        if ($membershipTypes['exception'] == true){
+            return array('exception' => true,
+                'count' => null,
+                'members' => null,
+                'memberGrade' => null,
+                'valid' => null,
+                'validity' => null,
+                'membershipTypePrefix' => null,
+                'message' => $membershipTypes['message']);
+        }
 
         $members = null;
         //aggregate information from both arrays
@@ -672,7 +682,8 @@ class MembershipServices
                             'memberGrade' => $memberGrade,
                             'valid' => $validityResp['valid'],
                             'validity' => $validityResp['validity'],
-                            'membershipTypePrefix' => $membershipType->getPrefix());
+                            'membershipTypePrefix' => $membershipType->getPrefix(),
+                            'membershipTypeName' => $membershipType->getTypeName());
                         $i++;
                     }
                 }
@@ -685,19 +696,21 @@ class MembershipServices
                         'memberGrade' => $memberGrade,
                         'valid' => $validityResp['valid'],
                         'validity' => $validityResp['validity'],
-                        'membershipTypePrefix' => $membershipType->getPrefix());
+                        'membershipTypePrefix' => $membershipType->getPrefix(),
+                        'membershipTypeName' => $membershipType->getTypeName());
                     $i++;
                 }
             }
             elseif ($filter_validity == null AND $onlyValid == false AND $onlyexpired == true AND $never_validated == false){
 
-                if ($validityResp['valid'] == false){
+                if ($validityResp['valid'] == false AND $validityResp['exception'] == false){
                     $members[$i] = array('membership' => $membership,
                         'user' => $user,
                         'memberGrade' => $memberGrade,
                         'valid' => $validityResp['valid'],
                         'validity' => $validityResp['validity'],
-                        'membershipTypePrefix' => $membershipType->getPrefix());
+                        'membershipTypePrefix' => $membershipType->getPrefix(),
+                        'membershipTypeName' => $membershipType->getTypeName());
                     $i++;
                 }
             }
@@ -709,7 +722,8 @@ class MembershipServices
                         'memberGrade' => $memberGrade,
                         'valid' => $validityResp['valid'],
                         'validity' => $validityResp['validity'],
-                        'membershipTypePrefix' => $membershipType->getPrefix());
+                        'membershipTypePrefix' => $membershipType->getPrefix(),
+                        'membershipTypeName' => $membershipType->getTypeName());
                     $i++;
                 }
 
@@ -721,7 +735,8 @@ class MembershipServices
                     'memberGrade' => $memberGrade,
                     'valid' => $validityResp['valid'],
                     'validity' => $validityResp['validity'],
-                    'membershipTypePrefix' => $membershipType->getPrefix());
+                    'membershipTypePrefix' => $membershipType->getPrefix(),
+                    'membershipTypeName' => $membershipType->getTypeName());
                 $i++;
             }
 

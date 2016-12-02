@@ -7,6 +7,12 @@
             <div class="panel-heading">Manage Users and Members</div>
             <div class="panel-body">
 
+                {% if exception == true %}
+                    <div class="alert alert-danger">
+                        <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                    </div>
+                {% endif %}
+
                 <form class="" method="post">
                 <div class="row">
                     <div class="col-xs-6 col-sm-3">
@@ -45,12 +51,12 @@
                             <label for="validity">Validity:</label>
                             <select class="form-control" id="validity" name="validity" onchange="this.form.submit()">
 
-                                <option value="-1">All Members</option>
-                                <option value="0" {% if form.validity == '0'  %}selected{% endif %}>All Valid Memberships</option>
-                                <option value="1" {% if form.validity == '1'  %}selected{% endif %}>{{ validity_filter.current_period }}</option>
-                                <option value="2" {% if form.validity == '2'  %}selected{% endif %}>{{ validity_filter.next_period }}</option>
-                                <option value="3" {% if form.validity == '3'  %}selected{% endif %}>{{ validity_filter.one_period_ago }}</option>
-                                <option value="4" {% if form.validity == '4'  %}selected{% endif %}>{{ validity_filter.two_periods_ago }}</option>
+                                <option value="-1" {% if form.validity == '-1'  %}selected{% endif %}>All</option>
+                                <option value="0" {% if form.validity == '0'  %}selected{% endif %}>Only Valid Memberships</option>
+                                <option value="1" {% if form.validity == '1'  %}selected{% endif %}>Valid until {{ validity.current_period }}</option>
+                                <option value="2" {% if form.validity == '2'  %}selected{% endif %}>Valid until {{ validity.next_period }}</option>
+                                <option value="3" {% if form.validity == '3'  %}selected{% endif %}>Valid until {{ validity.one_period_ago }}</option>
+                                <option value="4" {% if form.validity == '4'  %}selected{% endif %}>Valid until {{ validity.two_periods_ago }}</option>
                                 <option value="5" {% if form.validity == '5'  %}selected{% endif %}>All Expired</option>
                                 <option value="6" {% if form.validity == '6'  %}selected{% endif %}>Never validated memberships</option>
 

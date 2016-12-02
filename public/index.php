@@ -88,6 +88,9 @@ $container['shoppingCartServices'] = function($container){
 $container['membershipServices'] = function($container){
     return new Service\MembershipServices($container);
 };
+$container['utilsServices'] = function($container){
+    return new Service\UtilsServices($container);
+};
 
 
 
@@ -121,8 +124,10 @@ $app->group('/admin', function () use ($app) {
     $app->get('/resetPassword/{userId}', '\AdminController:resetPasswordAction')->setName('resetPasswordByAdmin');
     $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsAdmin');
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsAdmin');
-    $app->get('/createBulkMail', '\AdminController:createBulkMailAction')->setName('createBulkMailAdmin');
-    $app->post('/createBulkMail', '\AdminController:verifyBulkMailAction')->setName('verifyBulkMailAdmin');
+    $app->get('/createBulkMailUsers', '\AdminController:createBulkMailUsersAction')->setName('createBulkMailUsersAdmin');
+    $app->get('/createBulkMailMembers', '\AdminController:createBulkMailMembersAction')->setName('createBulkMailMembersAdmin');
+    $app->post('/verifyBulkMailUsers', '\AdminController:verifyBulkMailUsersAction')->setName('verifyBulkMailUsersAdmin');
+    $app->post('/verifyBulkMailMembers', '\AdminController:verifyBulkMailMembersAction')->setName('verifyBulkMailMembersAdmin');
     $app->map(['GET', 'POST'], '/members', '\AdminController:membersAction')->setName('members');
 
 
@@ -160,8 +165,9 @@ $app->group('/api/v1', function () use ($app) {
 
     $app->post('/sendSingleMail', '\ApiController:sendSingleMailAction' )->setName('sendSingleMail');
     $app->post('/sendBulkMail', '\ApiController:sendBulkMailAction' )->setName('sendBulkMail');
+    $app->post('/sendBulkMailMembers', '\ApiController:sendBulkMailMembersAction' )->setName('sendBulkMailMembers');
     $app->get('/getFilteredUsers', '\ApiController:getFilteredUsersAction' )->setName('getFilteredUsers');
-
+    $app->post('/getFilteredMembers', '\ApiController:getFilteredMembersAction' )->setName('getFilteredMembers');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));

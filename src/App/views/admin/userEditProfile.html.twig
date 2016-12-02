@@ -37,6 +37,8 @@
                         {% endif %}
                     {% endif %}
 
+
+
                     <div class="row">
                         <div class="col-xs-12 col-sm-4 col-md-4">
                             <div class="form-group {% if form.title.error == true %}has-error{% endif %}">
@@ -151,8 +153,7 @@
 
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6">
-
-                            Send reset password request to user: <a href="{{ path_for('resetPasswordByAdmin', { 'userId': form.id.value }) }}"><label class="btn btn-primary btn-sm">Reset password</label></a>
+                            <strong>To reset your password click here:</strong> <a href="{{ path_for('resetPasswordByUser')}}"><label class="btn btn-primary btn-sm">Reset password</label></a>
 
                         </div>
                     </div>
@@ -165,9 +166,6 @@
 
 
                 </form>
-
-                <h4>Membership(s) of  {{ form.first_name.value }} {{ form.last_name.value }}:</h4>
-
 
             </div>
         </div>

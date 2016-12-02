@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script>tinymce.init({ selector:'textarea' });</script>
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Bulk Email function</strong></div>
+            <div class="panel-body">
+
+                <form data-toggle="validator" role="form" method="post" action="{{ path_for('verifyBulkMailMembersAdmin') }}">
+
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+                                <label for="membershipTypeId">Membership Type</label>
+                                <select class="form-control" id="membershipTypeId" name="membershipTypeId">
+
+                                    <option value="-1">All Membership Types</option>
+                                    {% for membershipType in membershipTypes %}
+                                        <option value="{{ membershipType.id }}" {% if form.membershipTypeId == membershipType.id  %}selected{% endif %}>{{ membershipType.typeName }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+                                <label for="membershipGrade">Member Grade</label>
+                                <select class="form-control" id="membershipGrade" name="membershipGrade">
+
+                                    <option value="-1">All Grades</option>
+                                    {% for memberGrade in memberGrades %}
+                                        <option value="{{ memberGrade.id }}" {% if form.membershipGrade == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-xs-6 col-sm-3">
+
+                            <div class="form-group">
+                                <label for="validity">Validity:</label>
+                                <select class="form-control" id="validity" name="validity">
+
+                                    <option value="-1" {% if form.validity == '-1'  %}selected{% endif %}>All</option>
+                                    <option value="0" {% if form.validity == '0'  %}selected{% endif %}>Only Valid Memberships</option>
+                                    <option value="1" {% if form.validity == '1'  %}selected{% endif %}>Valid until {{ validity.current_period }}</option>
+                                    <option value="2" {% if form.validity == '2'  %}selected{% endif %}>Valid until {{ validity.next_period }}</option>
+                                    <option value="3" {% if form.validity == '3'  %}selected{% endif %}>Valid until {{ validity.one_period_ago }}</option>
+                                    <option value="4" {% if form.validity == '4'  %}selected{% endif %}>Valid until {{ validity.two_periods_ago }}</option>
+                                    <option value="5" {% if form.validity == '5'  %}selected{% endif %}>All Expired</option>
+                                    <option value="6" {% if form.validity == '6'  %}selected{% endif %}>Never validated memberships</option>
+
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+                                <label for="member_grade"></label>
+                                <button type="submit" class="btn btn-lg btn-success btn-block disabled" >Apply filter</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <input class="form-control" type="text" id="subject" name="subject">
+                </div>
+
+                    <div class="form-group">
+                        <label for="replyTo">Reply to:</label>
+                        <input class="form-control" type="email" id="replyTo" name="replyTo" value="office@igip.org">
+                    </div>
+
+                <div class="form-group">
+                    <label for="emailBoby">Email text:</label>
+                    <textarea  class="form-control" rows="10" id="emailBoby" name="emailBody"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Next</button>
+
+                    <div class="form-group">
+                        <h5>Supported placeholders:</h5>
+                        <strong>{resetPasswordLink}: </strong>Send link to reset password<br>
+                        <strong>{formalSalutation_en}:</strong> Dear Dr. Max Mustermann<br>
+                        <strong>{firstName}:</strong> Max <br>
+                        <strong>{lastName}:</strong> Mustermann
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    <script>
+
+
+    </script>
+
+
+{% endblock %}
