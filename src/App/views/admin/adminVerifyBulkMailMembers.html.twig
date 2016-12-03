@@ -20,7 +20,7 @@
                 <fieldset disabled>
 
                 <div class="row">
-                    <div class="col-xs-6 col-sm-3">
+                    <div class="col-xs-6 col-sm-4">
                         <div class="form-group">
                             <label for="membershipTypeId">Membership Type</label>
                             <select class="form-control" id="membershipTypeId" name="membershipTypeId">
@@ -35,7 +35,7 @@
 
                     </div>
 
-                    <div class="col-xs-6 col-sm-3">
+                    <div class="col-xs-6 col-sm-4">
                         <div class="form-group">
                             <label for="membershipGrade">Member Grade</label>
                             <select class="form-control" id="membershipGrade" name="membershipGrade">
@@ -50,7 +50,7 @@
                     </div>
 
 
-                    <div class="col-xs-6 col-sm-3">
+                    <div class="col-xs-6 col-sm-4">
 
                         <div class="form-group">
                             <label for="validity">Validity:</label>
@@ -81,12 +81,6 @@
 -->
                     </div>
 
-                    <div class="col-xs-6 col-sm-3">
-                        <div class="form-group">
-                            <label for="member_grade"></label>
-                            <button type="submit" class="btn btn-lg btn-success btn-block disabled" >Apply filter</button>
-                        </div>
-                    </div>
 
                 </div>
 
@@ -129,8 +123,8 @@
                         <thead>
                         <tr>
                             <th><input type="checkbox" id="checkbox_all" checked class="select_all_recipient"></th>
-                            <th>Member ID</th>
-                            <th>Type</th>
+                            <th>Member ID (type)</th>
+                            <th>Expiry date</th>
                             <th>Representative</th>
                             <th>Email</th>
                             <th></th>
@@ -142,14 +136,13 @@
                         </tbody>
                     </table>
        <!--           </form>   -->
-
             </div>
         </div>
     </div>
 
     <script>
 
-        var users;
+        //var users;
 
         $(document).ready(getFilteredMembers());
 
@@ -206,17 +199,19 @@
                 memberId = members[i].membership.memberId;
                 membershipId = members[i].membership.id;
                 type = members[i].membershipTypeName;
+                prefix = members[i].membershipTypePrefix;
+                expiryDate = members[i].validity_string;
                 name = members[i].user.last_name + ', ' + members[i].user.first_name;
                 email_1 = members[i].user.email_1;
 
                 var row = table.insertRow(table.rows.length); //can start at the beginning, argument = 0
 
                 row.insertCell(0).innerHTML = '<input type="checkbox" id="checkbox_'+i+'" checked onchange="updateSelectedUser('+i+')" class="select_recipient">';
-                row.insertCell(1).innerHTML = memberId;
-                row.insertCell(2).innerHTML = type;
+                row.insertCell(1).innerHTML = memberId+' ('+prefix+')';
+                row.insertCell(2).innerHTML = expiryDate;
                 row.insertCell(3).innerHTML = name;
-                row.insertCell(4).innerHTML = email_1;
-                row.insertCell(5).innerHTML = '<div id="message_'+membershipId+'"></div>';
+                row.insertCell(4).innerHTML = '<div id="message_'+membershipId+'">'+email_1+'</div>';
+               // row.insertCell(5).innerHTML = '<div id="message_'+membershipId+'"></div>';
             }
         }
 
@@ -311,17 +306,13 @@
                         console.log("No e-mail recipients were selected");
                     }
 
-
                     $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
                     // Set return button to visible
                     //===============================================
                     $('#button_return').css('visibility', 'visible');
                     //===============================================
-
                 }});
         }
-
-
 
     </script>
 

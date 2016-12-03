@@ -669,6 +669,14 @@ class MembershipServices
             //find the membership validity
             $validityResp = $this->getMembershipValidity($membership->getId());
 
+            //convert validity to string to be serialized to JSON
+            if ($validityResp['validity'] != null){
+                $validity_string = $validityResp['validity']->getValidUntil()->format('jS F Y');
+            }
+            else{
+                $validity_string = 'n/a';
+            }
+
             //if condition is match, consider the filter
             if ($filter_validity != null AND $onlyValid == false AND $onlyexpired == false AND $never_validated == false){
 
@@ -682,6 +690,7 @@ class MembershipServices
                             'memberGrade' => $memberGrade,
                             'valid' => $validityResp['valid'],
                             'validity' => $validityResp['validity'],
+                            'validity_string' => $validity_string,
                             'membershipTypePrefix' => $membershipType->getPrefix(),
                             'membershipTypeName' => $membershipType->getTypeName());
                         $i++;
@@ -696,6 +705,7 @@ class MembershipServices
                         'memberGrade' => $memberGrade,
                         'valid' => $validityResp['valid'],
                         'validity' => $validityResp['validity'],
+                        'validity_string' => $validity_string,
                         'membershipTypePrefix' => $membershipType->getPrefix(),
                         'membershipTypeName' => $membershipType->getTypeName());
                     $i++;
@@ -709,6 +719,7 @@ class MembershipServices
                         'memberGrade' => $memberGrade,
                         'valid' => $validityResp['valid'],
                         'validity' => $validityResp['validity'],
+                        'validity_string' => $validity_string,
                         'membershipTypePrefix' => $membershipType->getPrefix(),
                         'membershipTypeName' => $membershipType->getTypeName());
                     $i++;
@@ -722,6 +733,7 @@ class MembershipServices
                         'memberGrade' => $memberGrade,
                         'valid' => $validityResp['valid'],
                         'validity' => $validityResp['validity'],
+                        'validity_string' => $validity_string,
                         'membershipTypePrefix' => $membershipType->getPrefix(),
                         'membershipTypeName' => $membershipType->getTypeName());
                     $i++;
@@ -735,6 +747,7 @@ class MembershipServices
                     'memberGrade' => $memberGrade,
                     'valid' => $validityResp['valid'],
                     'validity' => $validityResp['validity'],
+                    'validity_string' => $validity_string,
                     'membershipTypePrefix' => $membershipType->getPrefix(),
                     'membershipTypeName' => $membershipType->getTypeName());
                 $i++;

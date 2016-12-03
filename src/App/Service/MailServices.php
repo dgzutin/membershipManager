@@ -217,7 +217,11 @@ class MailServices
         $placeholders = array("{resetPasswordLink}" => '<mark>{resetPasswordLink}</mark>',
             "{formalSalutation_en}" => '<mark>{formalSalutation_en}</mark>',
             "{firstName}" => '<mark>{firstName}</mark>',
-            "{lastName}" => '<mark>{lastName}</mark>'
+            "{lastName}" => '<mark>{lastName}</mark>',
+            "{memberId}" =>  '<mark>{memberId}</mark>',
+            "{membershipExpiryDate}" =>  '<mark>{membershipExpiryDate}</mark>',
+            "{membershipType}" =>  '<mark>{membershipType}</mark>',
+            "{memberGrade}" =>  '<mark>{memberGrade}</mark>',
         );
 
         $body_mod = strtr($emailBodyText, $placeholders);
@@ -233,7 +237,11 @@ class MailServices
         $placeholders = array("{resetPasswordLink}" => $request->getUri()->getBaseUrl(). '/resetPassword/'.$member->user->profileKey,
             "{formalSalutation_en}" => 'Dear '.$member->user->title.' '.$member->user->first_name.' '.$member->user->last_name,
             "{firstName}" => $member->user->first_name,
-            "{lastName}" => $member->user->last_name
+            "{lastName}" => $member->user->last_name,
+            "{memberId}" => $member->membership->memberId,
+            "{membershipExpiryDate}" => $member->validity_string,
+            "{membershipType}" => $member->membershipTypeName,
+            "{memberGrade}" => $member->memberGrade
         );
 
         $body_mod = strtr($emailBodyText, $placeholders);

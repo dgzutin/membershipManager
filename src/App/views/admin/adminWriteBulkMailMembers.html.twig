@@ -12,7 +12,7 @@
                 <form data-toggle="validator" role="form" method="post" action="{{ path_for('verifyBulkMailMembersAdmin') }}">
 
                     <div class="row">
-                        <div class="col-xs-6 col-sm-3">
+                        <div class="col-xs-6 col-sm-4">
                             <div class="form-group">
                                 <label for="membershipTypeId">Membership Type</label>
                                 <select class="form-control" id="membershipTypeId" name="membershipTypeId">
@@ -27,7 +27,7 @@
 
                         </div>
 
-                        <div class="col-xs-6 col-sm-3">
+                        <div class="col-xs-6 col-sm-4">
                             <div class="form-group">
                                 <label for="membershipGrade">Member Grade</label>
                                 <select class="form-control" id="membershipGrade" name="membershipGrade">
@@ -42,7 +42,7 @@
                         </div>
 
 
-                        <div class="col-xs-6 col-sm-3">
+                        <div class="col-xs-6 col-sm-4">
 
                             <div class="form-group">
                                 <label for="validity">Validity:</label>
@@ -62,13 +62,6 @@
 
                         </div>
 
-                        <div class="col-xs-6 col-sm-3">
-                            <div class="form-group">
-                                <label for="member_grade"></label>
-                                <button type="submit" class="btn btn-lg btn-success btn-block disabled" >Apply filter</button>
-                            </div>
-                        </div>
-
                     </div>
 
                 <div class="form-group">
@@ -83,17 +76,23 @@
 
                 <div class="form-group">
                     <label for="emailBoby">Email text:</label>
-                    <textarea  class="form-control" rows="10" id="emailBoby" name="emailBody"></textarea>
+                    <textarea  class="form-control" rows="10" id="emailBoby" name="emailBody">
+                        {formalSalutation_en},
+                    </textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Next</button>
 
                     <div class="form-group">
-                        <h5>Supported placeholders:</h5>
+                        <p class="text-info">Supported placeholders:</p>
                         <strong>{resetPasswordLink}: </strong>Send link to reset password<br>
                         <strong>{formalSalutation_en}:</strong> Dear Dr. Max Mustermann<br>
                         <strong>{firstName}:</strong> Max <br>
-                        <strong>{lastName}:</strong> Mustermann
+                        <strong>{lastName}:</strong> Mustermann <br>
+                        <strong>{memberId}:</strong> Member ID <br>
+                        <strong>{membershipExpiryDate}:</strong> Ex.: 31st December 1888 <br>
+                        <strong>{membershipType}:</strong> Membership type <br>
+                        <strong>{memberGrade}:</strong> Member's grade
                     </div>
 
                 </form>

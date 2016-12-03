@@ -28,7 +28,7 @@ class Membership
     protected $memberRegDate;
 
     /** @Column(type="string", length=100, nullable=true) * */
-    protected $quickRenewKey;
+    public $quickRenewKey;
 
     /** @Column(type="boolean", nullable=false) * */
     protected $cancelled;
