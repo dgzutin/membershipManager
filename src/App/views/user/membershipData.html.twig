@@ -79,7 +79,16 @@
                                     {% endif %}
 
                                     <strong>Description:</strong> {{ membershipType.description }}
-                                    <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
+
+                                    {% if membershipType.free == true %}
+
+                                        <h5><strong>Fee: </strong>FREE</h5>
+
+                                    {% else %}
+
+                                        <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
+
+                                    {% endif %}
 
                                     {% if membershipType.validUntil != null or membershipType.cancelled %}
 
@@ -102,7 +111,16 @@
                                 {% else %}
 
                                     <strong>Description:</strong> {{ membershipType.description }}
-                                    <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
+
+                                    {% if membershipType.free == true %}
+
+                                        <h5><strong>Fee: </strong>FREE</h5>
+
+                                    {% else %}
+
+                                        <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
+
+                                    {% endif %}
 
                                     <!-- Button trigger dialog -->
                                     <button class="btn btn-warning btn-md" data-toggle="modal" data-target="#terms_{{ membershipType.id }}">Terms and Conditions</button>
@@ -174,10 +192,23 @@
 
                         {% else %}
 
-                            <a class="btn btn-success" href="{{ path_for('addMembershipToCartUser', { 'membershipTypeId': membershipType.id }) }}">Proceed to add billing information</a>
+                            {% if membershipType.free == true %}
+
+                                <a id="place_order_button" class="btn btn-success" data-toggle="modal" data-target="#place_order">Confirm and become a member</a>
+
+                            {% else %}
+
+                                <a class="btn btn-success" href="{{ path_for('addMembershipToCartUser', { 'membershipTypeId': membershipType.id }) }}">Proceed to add billing information</a>
+
+                            {% endif %}
 
                         {% endif %}
                     </p>
+
+                    <form id="process_order" data-toggle="validator" role="form" method="post" action="{{ path_for('processOrder')}}">
+                        <input type="hidden" name="free_membership" id="free_membership" class="form-control " placeholder="" value="free" tabindex="6" data-error="">
+                        <input type="hidden" name="membershipTypeId" id="membershipTypeId" class="form-control " placeholder="" value="{{  membershipType.id }}" tabindex="6" data-error="">
+                    </form>
 
                     <!-- Dialog with terms and conditions -->
                     <div class="modal fade" id="terms_{{ membershipType.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -192,6 +223,27 @@
                                  </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+
+                    <!-- Modal Confirmation -->
+                    <div class="modal fade" id="place_order" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">Confirm order?</h4>
+                                </div>
+                                <div class="modal-body">
+                                    I confirm that I have read and agree with the membership terms.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Disagree</button>
+                                    <button type="submit" class="btn btn-primary" form="process_order">Agree and become a member</button>
                                 </div>
                             </div>
                             <!-- /.modal-content -->

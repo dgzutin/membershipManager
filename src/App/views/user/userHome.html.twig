@@ -4,30 +4,41 @@
 
     <div class="row show-grid">
         <div class="col-xs-6 col-md-4">
-            <div class="well well-sm">
-                <p><strong>Welcome, {{ userName }}!</strong></p>
-            </div>
+
+          <h4><strong>Welcome, {{ userName }}!</strong></h4>
 
         </div>
+
         <div class="col-xs-12 col-sm-6 col-md-8">
-            <div class="well well-sm">
+
+
+                {% if memberships.membershipFound > 0 %}
+
+                    <p class="text-right">{{ memberships.message  }}</p>
 
                 {% for membership in memberships.memberships %}
 
                     {% if membership.validUntil != null %}
 
                         {% if membership.valid %}
-                            <p class="text-primary"><strong>Member ID: {{ membership.memberId }}</strong>  {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong>  {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
                         {% else %}
-                            <p class="text-danger"><strong>Member ID: {{ membership.memberId }}</strong> <span class="fa fa-warning"></span> (This membership expired on {{ membership.validUntil }}) <a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a></p>
+                            <p class="text-danger text-right"><a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a><strong> Member ID: {{ membership.memberId }}</strong> (This membership expired on {{ membership.validUntil }})</p>
                         {% endif %}
 
+                    {% else %}
+
+                        <p class="text-danger text-right"><strong>Member ID: {{ membership.memberId }}</strong> (This membership has not been activated yet)</p>
+
                     {% endif %}
-
-
                 {% endfor %}
 
-            </div>
+                {% else %}
+
+                <p class="text-warning text-right">{{ memberships.message  }} <a href="{{ path_for('yourMembershipUser')}}" class="btn btn-success btn-xs">Apply for membership here</a></p>
+
+                {% endif %}
+
         </div>
     </div>
 
@@ -52,7 +63,7 @@
             <div class="panel-body">
                 <ul>
                 <li class="active"><a href="{{ path_for('userProfile')}}"><spam class="fa fa-user"></spam> Edit your user account</a></li>
-                <li><a href="{{ path_for('yourMembershipUser')}}"><spam class="fa fa-star"></spam> Apply for or Renew your Membership(s)</a></li>
+                <li><a href="{{ path_for('yourMembershipUser')}}"><spam class="fa fa-star"></spam> Your Membership(s)</a></li>
                 </ul>
             </div>
         </div>

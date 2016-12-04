@@ -203,6 +203,7 @@ class MembershipServices
 
                 $membershipTypes = $repository->createQueryBuilder('memberships')
                     ->select('memberships')
+                    ->orderBy('memberships.listingOrder', 'ASC')
                     ->getQuery()
                     ->getResult();
             }
@@ -211,6 +212,7 @@ class MembershipServices
                     ->select('memberships')
                     ->where('memberships.selectable = :selectable')
                     ->setParameter('selectable', true)
+                    ->orderBy('memberships.listingOrder', 'ASC')
                     ->getQuery()
                     ->getResult();
             }
@@ -220,6 +222,7 @@ class MembershipServices
                 ->select('memberships')
                 ->where('memberships.id = :id')
                 ->setParameter('id', $membershipTypeId)
+                ->orderBy('memberships.listingOrder', 'ASC')
                 ->getQuery()
                 ->getResult();
         }
@@ -239,10 +242,16 @@ class MembershipServices
                 ->getQuery()
                 ->getOneOrNullResult();
 
+            $isMembershipFree = false;
+            if ($membershipType->getFee() == 0){
+
+                $isMembershipFree = true;
+            }
+
             if ($membership  != NULL){
 
                 //check membership validity
-                $validity = $this->getMembershipValidity($membership->getId());
+                $validity = $this->getMembershipValidity($membership->getId(), $membershipType);
                 $validUntil_string = null;
                 $valid = null;
 
@@ -269,6 +278,7 @@ class MembershipServices
                 else{
                     $membershipGrade = null;
                 }
+
                 $membershipTypesArray[$i] = array('owner' => true,
                                               //    'user' => $user,
                                                   'membershipGrade' => $membershipGrade,
@@ -281,6 +291,7 @@ class MembershipServices
                                                   'description' => $membershipType->getDescription(),
                                                   'terms' => $membershipType->getTerms(),
                                                   'selectable' => $membershipType->getSelectable(),
+                                                  'free' => $isMembershipFree,
                                                   'fee' => $membershipType->getFee(),
                                                   'currency' => $membershipType->getCurrency(),
                                                   'recurrence' => $membershipType->getRecurrence());
@@ -301,6 +312,7 @@ class MembershipServices
                         'description' => $membershipType->getDescription(),
                         'terms' => $membershipType->getTerms(),
                         'selectable' => $membershipType->getSelectable(),
+                        'free' => $isMembershipFree,
                         'fee' => $membershipType->getFee(),
                         'currency' => $membershipType->getCurrency(),
                         'recurrence' => $membershipType->getRecurrence());
@@ -345,7 +357,7 @@ class MembershipServices
 
         if ($validUntil == NULL){
 
-            $current_validity = $this->getMembershipValidity($membershipId);
+            $current_validity = $this->getMembershipValidity($membershipId, Null);
 
             if (($current_validity['exception'] == false) AND ($current_validity['valid'] == true)){
                 //In this case membership is still valid, so add one year to it
@@ -403,8 +415,20 @@ class MembershipServices
 
     }
 
-    function getMembershipValidity($membershipId)
+    function getMembershipValidity($membershipId, $membershipType)
     {
+        // if membership fee is free, return valid
+        if ($membershipType != Null){
+            if ($membershipType->getFee() == 0){
+
+                return array('exception' => false,
+                    'valid' => true,
+                    'free' => true,
+                    'validity' => null,
+                    'message' => 'This membership is free');
+            }
+        }
+
         $repository = $this->em->getRepository('App\Entity\MembershipValidity');
 
         try{
@@ -418,6 +442,7 @@ class MembershipServices
         catch (\Exception $e){
             return array('exception' => true,
                          'valid' => false,
+                         'free' => false,
                          'validity' => null,
                          'message' => $e->getMessage());
         }
@@ -435,6 +460,7 @@ class MembershipServices
         catch (\Exception $e){
             return array('exception' => true,
                          'valid' => false,
+                         'free' => false,
                          'validity' => null,
                          'message' => $e->getMessage());
         }
@@ -452,14 +478,17 @@ class MembershipServices
             }
             return array('exception' => false,
                          'valid' => $valid,
+                         'free' => false,
                          'validity' => $validity[$maxIndex],
                          'message' => 'Validity found for membership ID '.$membershipId);
         }
+
 
         return array('exception' => true,
                      'valid' => false,
                      'validity' => null,
                      'message' => 'No validity date found for membership ID '.$membershipId);
+
     }
 
 
@@ -495,20 +524,16 @@ class MembershipServices
                         'message' => $e->getMessage());
                 }
 
-                //check membership validity
-                $validity = $this->getMembershipValidity($membership->getId());
-                $validUntil_string = null;
-                $valid = false;
+                $validity = $this->getMembershipValidity($membership->getId(), $membershipType);
 
+                $validUntil_string = 'n/a';
                 if (($validity['exception'] == false) AND ($validity['validity'] != NULL)){
 
                     $validUntil = $validity['validity']->getValidUntil();
-                    $valid = $validity['valid'];
-
-                    if ($valid == true){
-                        $validMembershipsFound = true;
-                    }
                     $validUntil_string = $validUntil->format('jS F Y');
+                }
+                if ($validity['valid'] == true){
+                    $validMembershipsFound = true;
                 }
 
                 try{
@@ -532,12 +557,14 @@ class MembershipServices
                 else{
                     $membershipGrade = null;
                 }
+
+
                 $membershipsArray[$i] = array('owner' => true,
                     //    'user' => $user,
                     'membershipGrade' => $membershipGrade,
                     'cancelled' => $membership->getCancelled(),
                     'memberId' => $membership->getMemberId(),
-                    'valid' => $valid,
+                    'valid' => $validity['valid'],
                     'validUntil' => $validUntil_string,
                     'id' => $membershipType->getId(),
                     'typeName' => $membershipType->getTypeName(),
@@ -545,6 +572,7 @@ class MembershipServices
                     'description' => $membershipType->getDescription(),
                     'terms' => $membershipType->getTerms(),
                     'selectable' => $membershipType->getSelectable(),
+                    'free' => $validity['free'],
                     'fee' => $membershipType->getFee(),
                     'currency' => $membershipType->getCurrency(),
                     'recurrence' => $membershipType->getRecurrence());
@@ -553,13 +581,14 @@ class MembershipServices
         }
 
         if ($membershipsArray != null){
-            $message = count($membershipsArray).' membership(s) found.';
+            $message = count($membershipsArray).' membership(s) found';
         }
         else{
-            $message = 'No available memberships found';
+            $message = 'No membership(s) associated with your user account found ';
         }
         return array('exception' => false,
                      'validMembershipFound' => $validMembershipsFound,
+                     'membershipFound' => count($membershipsArray),
                      'memberships' => $membershipsArray,
                      'message' => $message);
 
@@ -655,19 +684,22 @@ class MembershipServices
         $i = 0;
         foreach ($memberships as $membership){
 
+            // First argument MUST be a SORTED array!
             $memberGrade = $this->searchArrayById($gradesRes['memberGrades'], $membership->getMembershipGrade());
 
             if ($memberGrade != null){
                 $memberGrade = $memberGrade->getGradeName();
             }
 
+            // First argument MUST be a SORTED array!
             $membershipType = $this->searchArrayById($membershipTypes['membershipTypes'], $membership->getMembershipTypeId());
 
             // Find the user owner of this membership
+            // First argument MUST be a SORTED array!
             $user = $this->searchArrayById($users, $membership->getOwnerId());
 
             //find the membership validity
-            $validityResp = $this->getMembershipValidity($membership->getId());
+            $validityResp = $this->getMembershipValidity($membership->getId(), $membershipType);
 
             //convert validity to string to be serialized to JSON
             if ($validityResp['validity'] != null){
@@ -788,7 +820,7 @@ class MembershipServices
 // ======================== MOVE THIS TO UTILS ?? ===================
     
     //implements binary search to find object by ID in array: ARRAY MUST BE SORTED BY ID !!!
-    private function searchArrayById($sortedArray, $id)
+    public function searchArrayById($sortedArray, $id)
     {
         $l = 0;
         $r = count($sortedArray) - 1;

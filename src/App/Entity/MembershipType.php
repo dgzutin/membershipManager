@@ -16,6 +16,10 @@ class MembershipType
     /** @Id @Column(type="integer") @GeneratedValue * */
     protected $id;
 
+    /** @Column(type="integer", nullable=false) **/
+    protected $listingOrder;
+
+
     /** @Column(type="string", length=50, nullable=false) * */
     protected $typeName;
 
@@ -354,5 +358,29 @@ class MembershipType
     public function getInitialMemberId()
     {
         return $this->initialMemberId;
+    }
+
+    /**
+     * Set listingOrder
+     *
+     * @param integer $listingOrder
+     *
+     * @return MembershipType
+     */
+    public function setListingOrder($listingOrder)
+    {
+        $this->listingOrder = $listingOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get listingOrder
+     *
+     * @return integer
+     */
+    public function getListingOrder()
+    {
+        return $this->listingOrder;
     }
 }
