@@ -18,18 +18,21 @@
 
                 {% for membership in memberships.memberships %}
 
-                    {% if membership.validUntil != null %}
+                    {% if membership.valid == true %}
 
-                        {% if membership.valid %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }} {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
+                        {% if membership.validUntil != null %}
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %} ({{ membership.membershipGrade }}){% endif %}. <strong>Valid until:</strong> {{ membership.validUntil | date('jS F Y') }} </p>
                         {% else %}
-                            <p class="text-danger text-right"><a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a><strong> Member ID: {{ membership.memberId }}</strong> (This membership expired on {{ membership.validUntil | date('jS F Y') }})</p>
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %} ({{ membership.membershipGrade }}){% endif %} </p>
                         {% endif %}
 
                     {% else %}
 
-                        <p class="text-danger text-right"><strong>Member ID: {{ membership.memberId }}</strong> (This membership has not been activated yet)</p>
-
+                        {% if membership.validUntil != null %}
+                            <p class="text-danger text-right"><a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a><strong> Member ID: {{ membership.memberId }}</strong> (This membership expired on {{ membership.validUntil | date('jS F Y') }})</p>
+                        {% else %}
+                            <p class="text-danger text-right"><strong> Member ID: {{ membership.memberId }}</strong> (This membership is not active)</p>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
 

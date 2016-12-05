@@ -638,13 +638,18 @@ class MembershipServices
     {
         try{
             $repository = $this->em->getRepository('App\Entity\Membership');
-            $memberships = $repository->findBy( $filter_member, array('id' => 'ASC'));
+            $memberships = $repository->findBy($filter_member, array('id' => 'ASC'));
         }
         catch (\Exception $e){
             return array('exception' => true,
-                         'count' => null,
-                         'members' => null,
-                         'message' => $e->getMessage());
+                'count' => null,
+                'members' => null,
+                'memberGrade' => null,
+                'valid' => null,
+                'validity' => null,
+                'validity_string' => 'n/a',
+                'membershipTypePrefix' => null,
+                'message' => $e->getMessage());
         }
 
         $i = 0;
@@ -662,6 +667,7 @@ class MembershipServices
                          'memberGrade' => null,
                          'valid' => null,
                          'validity' => null,
+                         'validity_string' => 'n/a',
                          'membershipTypePrefix' => null,
                          'message' => $e->getMessage());
         }
@@ -677,6 +683,7 @@ class MembershipServices
                 'memberGrade' => null,
                 'valid' => null,
                 'validity' => null,
+                'validity_string' => 'n/a',
                 'membershipTypePrefix' => null,
                 'message' => $membershipTypes['message']);
         }
