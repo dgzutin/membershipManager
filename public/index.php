@@ -35,17 +35,7 @@ $container = $app->getContainer();
 
 // Register components on container
 
-$container['view'] = function ($container) {
-    $view = new \Slim\Views\Twig('../src/App/views', [
-        'cache' => false
-    ]);
-    $view->addExtension(new \Slim\Views\TwigExtension(
-        $container['router'],
-        $container['request']->getUri()
-    ));
-    return $view;
-};
-
+//create Doctrine Entity Manager
 $container['em'] = function (){
 
     $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
@@ -54,6 +44,22 @@ $container['em'] = function (){
     return $em->createEntityManager();
 };
 
+$container['view'] = function ($container) {
+    $view = new \Slim\Views\Twig('../src/App/views', [
+        'cache' => false
+    ]);
+    $view->addExtension(new \Slim\Views\TwigExtension(
+        $container['router'],
+        $container['request']->getUri()
+    ));
+
+    // retrieve System Info and pass it as a global variable to all templates
+    $systemInfo = $container['userServices']->getSystemInfo();
+    $twigEnv = $view->getEnvironment();
+    $twigEnv->addGlobal('systemInfo', $systemInfo);
+
+    return $view;
+};
 
 //Register Services
 $container['mailServices'] = function ($container) {
@@ -132,11 +138,11 @@ $app->group('/admin', function () use ($app) {
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
+})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
 
 //Define the Routes for user group
 $app->group('/user', function () use ($app) {
-
+    
     $app->get('/home', '\UserController:homeAction')->setName('homeUser');
     $app->get('/profile', '\UserController:viewUserProfileAction')->setName('userProfile');
     $app->post('/profile', '\UserController:saveUserProfileAction')->setName('editUserProfile');
@@ -157,7 +163,7 @@ $app->group('/user', function () use ($app) {
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN')));
+})->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN'), $container));
 
 //Define the Routes for API
 
@@ -170,7 +176,7 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/getFilteredMembers', '\ApiController:getFilteredMembersAction' )->setName('getFilteredMembers');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN')));
+})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
 
 // Define the public routes
 $app->get('/', '\PublicController:homeAction');

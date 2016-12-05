@@ -27,8 +27,7 @@ class PublicController {
     public function loginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
 
-        return $this->container->view->render($response, 'login.html.twig', array('systemInfo' => $this->systemInfo));
-
+        return $this->container->view->render($response, 'login.html.twig');
     }
 
     public function processLoginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -47,22 +46,16 @@ class PublicController {
 
             $path = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
             if (isset($_SESSION['original_route'])){
-                $path = $path = $request->getUri()->withPath($this->container->router->pathFor($_SESSION['original_route']));
-
+                $path = $request->getUri()->withPath($this->container->router->pathFor($_SESSION['original_route']));
             }
 
-            //var_dump($_SESSION['original_URL']);
-
-            return $response = $response->withRedirect($path, 401);
-
+            return $response->withRedirect($path, 200);
         }
         
         return $this->container->view->render($response, 'login.html.twig', array(
             'form_submission' => true,
-            'systemInfo' => $this->systemInfo,
             'exception' => $auth_result['exception'],
             'message' => $auth_result['message']));
-
     }
 
     public function homeAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -83,50 +76,48 @@ class PublicController {
     public function registerAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
 
-        return $this->container->view->render($response, 'register.html.twig', array('systemInfo' => $this->systemInfo));
+        return $this->container->view->render($response, 'register.html.twig');
     }
 
     public function processRegisterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $form_data = $request->getParsedBody();
 
-
+        $val_array = null;
         foreach ($form_data as $key =>$data){
 
-            //add validation code for each input here
-
+         //TODO: add validation code for each input here
             $val_array[$key] = array('value' => $data,
                                      'error' => false);
         }
 
-        //TODO: Add code to validate form inputs
         $validation = array('exception' => false,
                             'message' => 'One or more fields are not valid. Please check your data and submit it again.',
                             'fields' => array());
 
         if ($validation['exception'] == true){
 
-            return $this->container->view->render($response, 'register.html.twig', array('systemInfo' => $this->systemInfo,
-                                                                                         'validation' => $validation,
-                                                                                        'form' => $val_array,));
+            return $this->container->view->render($response, 'register.html.twig', array(
+                'validation' => $validation,
+                'form' => $val_array,));
         }
         else{
-
             $userService = $this->container->get('userServices');
             $resp = $userService->registerNewUser($form_data);
 
             if ($resp['exception'] == true){
 
-                return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
-                                                                                                'systemInfo' => $this->systemInfo,
-                                                                                                'message' => $resp['message']));
+                return $this->container->view->render($response, 'userNotification.twig', array(
+                    'exception' => true,
+                    'message' => $resp['message']));
             }
             else{
                 $mailServices = $this->container->get('mailServices');
                 $mailServices->sendActivateAccountMail($resp['user'], $request);
-                return $this->container->view->render($response, 'userNotificationMail.twig', array('exception' => false,
-                                                                                                    'systemInfo' => $this->systemInfo,
-                                                                                                    'mailResponse' => $resp));
+
+                return $this->container->view->render($response, 'userNotificationMail.twig', array(
+                    'exception' => false,
+                    'mailResponse' => $resp));
             }
         }
     }
@@ -135,28 +126,26 @@ class PublicController {
     {
         $userServices = $this->container->get('userServices');
         $result = $userServices->activateAccount($args['key']);
-
-        return $this->container->view->render($response, 'userNotification.twig', array('exception' => $result['exception'],
-                                                                                        'systemInfo' => $this->systemInfo,
-                                                                                        'message' => $result['message']));
+        return $this->container->view->render($response, 'userNotification.twig', array(
+            'exception' => $result['exception'],
+            'message' => $result['message']));
     }
 
     public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         //TODO: sanitize params
         $key = $args['key'];
-
         $userService = $this->container->get('userServices');
         $resp = $userService->findUserByKey($key);
 
         if ($resp['exception'] == false){
-            return $this->container->view->render($response, 'resetPassword.html.twig', array('exception' => false,
-                                                                                              'systemInfo' => $this->systemInfo,
-                                                                                              'message' => $resp['message']));
+            return $this->container->view->render($response, 'resetPassword.html.twig', array(
+                'exception' => false,
+                'message' => $resp['message']));
         }
-        return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
-                                                                                        'systemInfo' => $this->systemInfo,
-                                                                                        'message' => $resp['message']));
+        return $this->container->view->render($response, 'userNotification.twig', array(
+            'exception' => true,
+            'message' => $resp['message']));
     }
 
     public function processResetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -165,7 +154,6 @@ class PublicController {
         $key = $args['key'];
 
         $form_data = $request->getParsedBody();
-
         $userService = $this->container->get('userServices');
         $resp = $userService->findUserByKey($key);
 
@@ -173,19 +161,20 @@ class PublicController {
 
             $user = $resp['user'];
             $resetResp = $userService->resetPassword($user->getId(), $form_data['password']);
-            return $this->container->view->render($response, 'userNotification.twig', array('exception' => $resetResp['exception'],
-                                                                                            'systemInfo' => $this->systemInfo,
-                                                                                            'message' => $resetResp['message']));
+
+            return $this->container->view->render($response, 'userNotification.twig', array(
+                'exception' => $resetResp['exception'],
+                'message' => $resetResp['message']));
         }
 
-        return $this->container->view->render($response, 'userNotification.twig',  array('exception' => $resp['exception'],
-                                                                                         'systemInfo' => $this->systemInfo,
-                                                                                         'message' => $resp['message']));
+        return $this->container->view->render($response, 'userNotification.twig',  array(
+            'exception' => $resp['exception'],
+            'message' => $resp['message']));
     }
 
     public function forgotPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        return $this->container->view->render($response, 'forgotPassword.html.twig', array('systemInfo' => $this->systemInfo));
+        return $this->container->view->render($response, 'forgotPassword.html.twig');
     }
 
     public function processForgotPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -200,11 +189,10 @@ class PublicController {
             $user = $resp['user'];
             $mailServices = $this->container->get('mailServices');
             $resetResp = $mailServices->sendResetPasswordMail($user, $request);
-            return $this->container->view->render($response, 'userNotificationMail.twig', array('systemInfo' => $this->systemInfo,
-                                                                                                'mailResponse' => $resetResp));
+            return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resetResp));
         }
-        return $this->container->view->render($response, 'userNotificationMail.twig', array('systemInfo' => $this->systemInfo,
-                                                                                            'mailResponse' => $resp));
+
+        return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resp));
     }
 
     public function paypalIPnAction(ServerRequestInterface $request, ResponseInterface $response)
@@ -213,8 +201,6 @@ class PublicController {
 
         $invoiceId = $paypalVariables['invoice'];
         $paymentStatus = $paypalVariables['payment_status'];
-        
-
     }
 
 }

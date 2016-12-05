@@ -31,20 +31,20 @@ class UserController {
 
     }
 
-    public function usersAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
+    public function usersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
 
 
     }
 
-    public function homeAction(ServerRequestInterface $request, ResponseInterface $response) {
-
+    public function homeAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
 
         $resp = $this->userServices->getUserById($_SESSION['user_id']);
         $user = $resp['user'];
         $userName = $user->getFirstName().' '.$user->getLastName();
 
         $memberships = $this->membershipServices->getMembershipsForUser($user->getId());
-
         $openInvoiceResult = $this->userServices->getOpenInvoicesForUser($_SESSION['user_id']);
 
         if ($this->systemInfo['exception'] == true){
@@ -53,11 +53,8 @@ class UserController {
         }
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
             'invoiceInfo' => $openInvoiceResult,
-            'user_id' => $_SESSION['user_id'],
-            'user_role' => $_SESSION['user_role'],
             'userName' => $userName,
-            'memberships' => $memberships,
-            'systemInfo' => $this->systemInfo
+            'memberships' => $memberships
         ));
     }
     
@@ -76,12 +73,11 @@ class UserController {
                             'fields' => array());
 
 
-        return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('systemInfo' => $this->systemInfo,
-                                                                                                 'user_role' => $_SESSION['user_role'],
-                                                                                                 'form_submission' => false,
-                                                                                                 'exception' => $resp['exception'],
-                                                                                                 'message' => $resp['message'],
-                                                                                                 'form' => $user));
+        return $this->container->view->render($response, 'user/userEditProfile.html.twig', array(
+            'form_submission' => false,
+            'exception' => $resp['exception'],
+            'message' => $resp['message'],
+            'form' => $user));
     }
 
     public function saveUserProfileAction(ServerRequestInterface $request, ResponseInterface $response)
@@ -102,12 +98,11 @@ class UserController {
 
         if ($form_validation['exception'] == true){
 
-            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('systemInfo' => $this->systemInfo,
-                                                                                                     'user_role' => $_SESSION['user_role'],
-                                                                                                     'form_submission' => true,
-                                                                                                     'exception' => $form_validation['exception'],
-                                                                                                     'message' => $form_validation['message'],
-                                                                                                     'form' => $val_array));
+            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array(
+                'form_submission' => true,
+                'exception' => $form_validation['exception'],
+                'message' => $form_validation['message'],
+                'form' => $val_array));
         }
         else{
             $userId = $_SESSION['user_id'];
@@ -120,25 +115,21 @@ class UserController {
                     'error' => false);
             }
 
-            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array('systemInfo' => $this->systemInfo,
-                                                                                                     'user_role' => $_SESSION['user_role'],
-                                                                                                     'form_submission' => true,
-                                                                                                     'exception' => $resp['exception'],
-                                                                                                     'message' => $resp['message'],
-                                                                                                     'form' => $user));
+            return $this->container->view->render($response, 'user/userEditProfile.html.twig', array(
+                'form_submission' => true,
+                'exception' => $resp['exception'],
+                'message' => $resp['message'],
+                'form' => $user));
         }
     }
 
     public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         $userId = $_SESSION['user_id'];
-
         $resp = $this->userServices->getUserById($userId);
-
         $resetResp = $this->mailServices->sendResetPasswordMail($resp['user'], $request);
 
-        return $this->container->view->render($response, 'userNotificationMail.twig',  array('systemInfo' => $this->systemInfo,
-                                                                                             'mailResponse' => $resetResp));
+        return $this->container->view->render($response, 'userNotificationMail.twig',  array('mailResponse' => $resetResp));
     }
 
     public function yourMembershipAction(ServerRequestInterface $request, ResponseInterface $response)
@@ -153,8 +144,6 @@ class UserController {
         }
 
         return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array(
-            'systemInfo' => $this->systemInfo,
-            'user_role' => $_SESSION['user_role'],
             'membershipTypes' => $result['membershipTypes'],
             'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('orderSummaryUser')),
             'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/user/addMembershipToCart',
@@ -233,8 +222,6 @@ class UserController {
         }
 
         return $this->container->view->render($response, 'user/oderSummary.twig', array(
-            'systemInfo' => $this->systemInfo,
-            'user_role' => $_SESSION['user_role'],
             'exception' => false,
             'items' => $items,
             'totalPrice' => $totalPrice,
@@ -263,8 +250,6 @@ class UserController {
         $items = $shoppingCartServices->convertAmountsToLocaleSettings($itemsResp['items']);
 
         return $this->container->view->render($response, 'user/confirmOrder.html.twig', array(
-            'systemInfo' => $this->systemInfo,
-            'user_role' => $_SESSION['user_role'],
             'exception' => false,
             'items' => $items,
             'currency' => 'EUR',
@@ -273,7 +258,6 @@ class UserController {
             'message' => '',
             'invoiceTerms' => 'Payment is due within 30 days after confirmation of purchase. For membership fee payments, the membership will only be be active after the full payment is received.',
             'form' => $form_data));
-
     }
 
 
@@ -310,8 +294,7 @@ class UserController {
 
                 if ($addMemberResult['exception'] == true){
                     return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
-                        'systemInfo' => $this->systemInfo,
-                        'message' => $addMemberResult['message']));
+                                                                                                    'message' => $addMemberResult['message']));
                 }
             }
             //Generate invoice if member is succesfully added
@@ -322,14 +305,12 @@ class UserController {
                 //delete shopping cart items if invoice is generated
                 $shoppingCartServices->emptyCart();
 
-                return $this->container->view->render($response, '/user/confirmationAndPayment.html.twig', array('systemInfo' => $this->systemInfo,
-                    'resultsGenInvoice' => $resultsGenInvoice));
+                return $this->container->view->render($response, '/user/confirmationAndPayment.html.twig', array('resultsGenInvoice' => $resultsGenInvoice));
             }
 
             else{
                 return $this->container->view->render($response, 'userNotification.twig',  array('exception' => true,
-                    'systemInfo' => $this->systemInfo,
-                    'message' => $resultsGenInvoice['message']));
+                                                                                                 'message' => $resultsGenInvoice['message']));
             }
         }
 
@@ -338,13 +319,11 @@ class UserController {
 
         if ($addMemberResult['exception'] == true){
             return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
-                'systemInfo' => $this->systemInfo,
-                'message' => $addMemberResult['message']));
+                                                                                            'message' => $addMemberResult['message']));
         }
         else{
             return $this->container->view->render($response, 'userNotification.twig', array('exception' => false,
-                'systemInfo' => $this->systemInfo,
-                'message' => $addMemberResult['message']));
+                                                                                            'message' => $addMemberResult['message']));
         }
 
     }
@@ -385,8 +364,7 @@ class UserController {
         }
 
         // END Convert all prices to locale settings ---------------------
-        return $this->container->view->render($response, 'user/singleInvoice.html.twig', array('user_role' => $_SESSION['user_role'],
-            'systemInfo' => $this->systemInfo,
+        return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],
@@ -445,9 +423,7 @@ class UserController {
             }
 
             return $this->container->view->render($response, 'user/membershipData.html.twig', array(
-                'systemInfo' => $this->systemInfo,
                 'user' => $resp['user'],
-                'user_role' => $_SESSION['user_role'],
                 'membershipTypes' => $result['membershipTypes'],
                 'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
                 'message' => '',

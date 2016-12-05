@@ -118,9 +118,9 @@ class MembersAreaController{
             }
         }
         else{
-            return $this->container->view->render($response, 'userNotification.twig', array ('exception' => true,
-                                                                                             'systemInfo' => $this->systemInfo,
-                                                                                             'message' => $resp['message']));
+            return $this->container->view->render($response, 'userNotification.twig', array (
+                'exception' => true,
+                'message' => $resp['message']));
         }
 
         // run elFinder
@@ -151,8 +151,7 @@ class MembersAreaController{
     public function documentsAction(ServerRequestInterface $request, ResponseInterface $response)
     {
 
-        return $this->container->view->render($response, 'members/documents.html.twig', array('systemInfo' => $this->systemInfo,
-                                                                                             'user_role' => $_SESSION['user_role']));
+        return $this->container->view->render($response, 'members/documents.html.twig', array('user_role' => $_SESSION['user_role']));
     }
 
 }

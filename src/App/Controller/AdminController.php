@@ -31,8 +31,6 @@ class AdminController {
         $users = $em->getRepository('App\Entity\User')->findAll();
         
         return $this->container->view->render($response, 'admin/usersTable.html.twig', array(
-            'systemInfo' => $this->systemInfo,
-            'user_role' => $_SESSION['user_role'],
             'user_id' => $_SESSION['user_id'],
             'users' => $users
         ));
@@ -55,12 +53,11 @@ class AdminController {
             'message' => '',
             'fields' => array());
 
-        return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array('systemInfo' => $this->systemInfo,
-                                                                                                'user_role' => $_SESSION['user_role'],
-                                                                                                'form_submission' => false,
-                                                                                                'exception' => $resp['exception'],
-                                                                                                'message' => $resp['message'],
-                                                                                                'form' => $user));
+        return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
+            'form_submission' => false,
+            'exception' => $resp['exception'],
+            'message' => $resp['message'],
+            'form' => $user));
     }
 
     public function saveUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -83,8 +80,6 @@ class AdminController {
         if ($form_validation['exception'] == true){
 
             return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
-                'systemInfo' => $this->systemInfo['settings'],
-                'user_role' => $_SESSION['user_role'],
                 'form_submission' => true,
                 'exception' => $form_validation['exception'],
                 'message' => $form_validation['message'],
@@ -103,8 +98,6 @@ class AdminController {
             }
 
             return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
-                'systemInfo' => $this->systemInfo,
-                'user_role' => $_SESSION['user_role'],
                 'form_submission' => true,
                 'exception' => $resp['exception'],
                 'message' => $resp['message'],
@@ -118,19 +111,16 @@ class AdminController {
         $userId = $args['userId'];
 
         $resp = $this->userServices->getUserById($userId);
-
         $mailServices = $this->container->get('mailServices');
         $resetResp = $mailServices->sendResetPasswordMail($resp['user'], $request);
 
-        return $this->container->view->render($response, 'userNotificationMail.twig', array('systemInfo' => $this->systemInfo,
-                                                                                             'mailResponse' => $resetResp));
+        return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resetResp));
     }
 
     public function createBulkMailUsersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
 
         return $this->container->view->render($response, 'admin/adminWriteBulkMail.html.twig', array(
-            'systemInfo' => $this->systemInfo,
             'user_role' => $_SESSION['user_role']));
     }
 
@@ -144,8 +134,6 @@ class AdminController {
 
 
         return $this->container->view->render($response, 'admin/adminVerifyBulkMail.html.twig', array(
-            'systemInfo' => $this->systemInfo,
-            'user_role' => $_SESSION['user_role'],
             'users' => $resp['users'],
             'highlightedBody' => $respMail['body'],
             'highlightedSubject' => $respMail['subject'],
@@ -175,11 +163,9 @@ class AdminController {
         return $this->container->view->render($response, 'admin/membersTable.html.twig', array(
             'exception' => $membersResp['exception'],
             'message' => $membersResp['message'],
-            'systemInfo' => $this->systemInfo,
             'membershipTypes' => $filter_form['membershipTypes'],
             'memberGrades' => $filter_form['memberGrades'],
             'validity' => $filter_form['validity'],
-            'user_role' => $_SESSION['user_role'],
             'members' => $membersResp['members'],
             'form' => $post_data
         ));
@@ -197,8 +183,6 @@ class AdminController {
 
 
         return $this->container->view->render($response, 'admin/adminWriteBulkMailMembers.html.twig', array(
-            'systemInfo' => $this->systemInfo,
-            'user_role' => $_SESSION['user_role'],
             'membershipTypes' => $filter_form['membershipTypes'],
             'memberGrades' => $filter_form['memberGrades'],
             'validity' => $filter_form['validity'],
@@ -221,8 +205,6 @@ class AdminController {
 
 
         return $this->container->view->render($response, 'admin/adminVerifyBulkMailMembers.html.twig', array(
-            'systemInfo' => $this->systemInfo,
-            'user_role' => $_SESSION['user_role'],
             'users' => $resp['users'],
             'highlightedBody' => $respMail['body'],
             'highlightedSubject' => $respMail['subject'],

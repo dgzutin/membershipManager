@@ -17,9 +17,10 @@ class UserAuthenticationMiddleware
      */
     private $roles_allowed;
 
-    public function __construct($roles_allowed)
+    public function __construct($roles_allowed, $container)
     {
         $this->roles_allowed = $roles_allowed;
+        $this->container = $container;
     }
 
     public function __invoke($request, $response, $next)
@@ -30,6 +31,9 @@ class UserAuthenticationMiddleware
 
             //get user role
             $user_role = $_SESSION['user_role'];
+
+            $twigEnv = $this->container['view']->getEnvironment();
+            $twigEnv->addGlobal('user_role', $user_role);
 
             foreach ($this->roles_allowed as $role_allowed){
                 if($role_allowed == $user_role){
@@ -47,9 +51,6 @@ class UserAuthenticationMiddleware
         //$_SESSION['original_URL'] = $request->getUri()->getPath();
 
         return $response = $response->withRedirect($baseUrl.'/login', 403);
-
-        //return $next($request, $response);
-
-        //return $response;
+        
     }
 }
