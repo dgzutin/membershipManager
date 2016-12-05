@@ -527,6 +527,7 @@ class MembershipServices
                 $validity = $this->getMembershipValidity($membership->getId(), $membershipType);
 
                 $validUntil_string = 'n/a';
+                $validUntil = null;
                 if (($validity['exception'] == false) AND ($validity['validity'] != NULL)){
 
                     $validUntil = $validity['validity']->getValidUntil();
@@ -565,7 +566,8 @@ class MembershipServices
                     'cancelled' => $membership->getCancelled(),
                     'memberId' => $membership->getMemberId(),
                     'valid' => $validity['valid'],
-                    'validUntil' => $validUntil_string,
+                    'validUntil' => $validUntil,
+                    'validUntil_string' => $validUntil_string,
                     'id' => $membershipType->getId(),
                     'typeName' => $membershipType->getTypeName(),
                     'typeId' => $membershipType->getId(),

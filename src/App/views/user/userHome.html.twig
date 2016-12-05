@@ -21,9 +21,9 @@
                     {% if membership.validUntil != null %}
 
                         {% if membership.valid %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong>  {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }} {% if membership.membershipGrade != null %}({{ membership.membershipGrade }}){% endif %} </p>
                         {% else %}
-                            <p class="text-danger text-right"><a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a><strong> Member ID: {{ membership.memberId }}</strong> (This membership expired on {{ membership.validUntil }})</p>
+                            <p class="text-danger text-right"><a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a><strong> Member ID: {{ membership.memberId }}</strong> (This membership expired on {{ membership.validUntil | date('jS F Y') }})</p>
                         {% endif %}
 
                     {% else %}

@@ -106,9 +106,7 @@ class ApiController {
         /*
          * Example of request body:
          * {
-	         "group": "users/members",
-	         "memberType": "Name of membership type",
-	         "memberStatus": "status",
+	        ...
             }
         */
         $body = $request->getBody();

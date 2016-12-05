@@ -104,14 +104,14 @@
                         <tr class="">
                             <td>{{ member.membership.memberId }}</td>
                             <td>
-                                {% if member.validity != null  %}
-                                    {% if member.valid == true  %}
-                                       <span class="text-success">{{ member.validity.validUntil|date('jS F Y') }}</span>
-                                    {% else %}
-                                       <span class="text-danger">{{ member.validity.validUntil|date('jS F Y') }}</span>
-                                    {% endif %}
+                                {% if member.valid == true  %}
+
+                                    <span class="text-success">{{ member.validity_string }}</span>
+
                                 {% else %}
-                                    Not valid
+
+                                    <span class="text-danger">{{ member.validity_string }}</span>
+
                                 {% endif %}
                             </td>
                             <td>{{ member.membershipTypePrefix }} {{ member.memberGrade }}</td>
