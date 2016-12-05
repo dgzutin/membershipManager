@@ -21,9 +21,9 @@
                     {% if membership.valid == true %}
 
                         {% if membership.validUntil != null %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %} ({{ membership.membershipGrade }}){% endif %}. <strong>Valid until:</strong> {{ membership.validUntil | date('jS F Y') }} </p>
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %}. <strong>Valid until:</strong> {{ membership.validUntil | date('jS F Y') }} </p>
                         {% else %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %} ({{ membership.membershipGrade }}){% endif %} </p>
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %} </p>
                         {% endif %}
 
                     {% else %}
