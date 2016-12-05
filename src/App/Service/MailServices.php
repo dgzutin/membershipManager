@@ -125,6 +125,7 @@ class MailServices
 
         $users = $this->em->getRepository('App\Entity\User')->findById($userIds);
 
+        $results = NULL;
         $i = 0;
         foreach ($users as $user){
 
@@ -163,7 +164,7 @@ class MailServices
         return $results;
     }
 
-    // $userIds is an array of user ids of the email recipients
+    // $members is an array of users and memberships
     public function sendBulkEmailsMembers($members, $emailSubject, $emailBody, $replyTo, $request)
     {
 
