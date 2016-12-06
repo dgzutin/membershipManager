@@ -34,7 +34,6 @@ class PublicController {
     {
 
         $userInfo = $request->getParsedBody();
-
         $userService = $this->container->get('userServices');
         $auth_result = $userService->authenticateUser($userInfo['email'],$password = $userInfo['password'] );
 
@@ -44,12 +43,13 @@ class PublicController {
             $_SESSION['user_id'] = $auth_result['user_id'];
             $_SESSION['user_role'] = $auth_result['user_role'];
 
-            $path = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
-            if (isset($_SESSION['original_route'])){
-                $path = $request->getUri()->withPath($this->container->router->pathFor($_SESSION['original_route']));
+            $redirect_url = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
+            if (isset($_SESSION['orig_uri'])){
+
+                $redirect_url = $_SESSION['orig_uri'];
             }
 
-            return $response->withRedirect($path, 200);
+            return $response->withRedirect($redirect_url, 200);
         }
         
         return $this->container->view->render($response, 'login.html.twig', array(

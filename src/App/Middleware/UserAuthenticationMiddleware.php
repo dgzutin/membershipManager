@@ -44,13 +44,12 @@ class UserAuthenticationMiddleware
 
         session_start();
 
+        // Save original URL for later redirection
         $baseUrl = $request->getUri()->getBaseUrl();
-        $route = $request->getAttribute('route');
+        $loginUrl = $request->getUri()->withPath($this->container->router->pathFor('login'));
+        $_SESSION['orig_uri'] = $baseUrl.$_SERVER['REQUEST_URI'];
 
-        $_SESSION['original_route'] = $route->getName();
-        //$_SESSION['original_URL'] = $request->getUri()->getPath();
-
-        return $response = $response->withRedirect($baseUrl.'/login', 403);
+        return $response = $response->withRedirect($loginUrl, 403);
         
     }
 }
