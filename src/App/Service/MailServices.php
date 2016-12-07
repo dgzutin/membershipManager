@@ -53,7 +53,7 @@ class MailServices
         $activateAccountLink = $request->getUri()->getBaseUrl(). '/activateAccount/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
-            'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName(),
+            'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
             'message' => 'To activate your account please confirm your email address by clicking the link below.',
             'link' => $activateAccountLink,
             'buttonLabel' => 'Confirm Email And Activate Account',
