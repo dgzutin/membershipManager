@@ -70,7 +70,7 @@ class AdminController {
                     return $this->container->view->render($response, 'admin/adminRegisterNewUser.html.twig', array(
                         'form_submission' => true,
                         'exception' => true,
-                        'message' => $resp['exception'],
+                        'message' => $resp['message'],
                         'form' => $val_array));
                 }
                 else{
