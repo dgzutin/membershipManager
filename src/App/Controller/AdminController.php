@@ -67,9 +67,11 @@ class AdminController {
 
                 if ($resp['exception'] == true){
 
-                    return $this->container->view->render($response, 'userNotification.twig', array(
+                    return $this->container->view->render($response, 'admin/adminRegisterNewUser.html.twig', array(
+                        'form_submission' => true,
                         'exception' => true,
-                        'message' => $resp['message']));
+                        'message' => $resp['exception'],
+                        'form' => $val_array));
                 }
                 else{
 
