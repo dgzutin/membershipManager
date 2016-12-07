@@ -88,8 +88,8 @@ class MailServices
         $resetPasswordLink = $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
-            'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName(),
-            'message' => 'A user account with the '.$this->settings->getNameOfOrganization().' was created for you by. To set the password and activate your account please follow the link below.',
+            'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
+            'message' => 'A user account with the '.$this->settings->getNameOfOrganization().' was created for you. To set the password and activate your account please follow the link below.',
             'link' => $resetPasswordLink,
             'buttonLabel' => 'Create password and activate your account',
             'nameOfOrganization' => $this->settings->getNameOfOrganization(),
