@@ -68,10 +68,18 @@ class ApiController {
         $body = $request->getBody();
         $req = json_decode($body);
 
-        $mailServices = $this->container->get('mailServices');
-        $results = $mailServices->sendBulkEmailsMembers($req->members, $req->mailSubject, $req->mailBody, $req->replyTo, $request);
+        try{
+            $mailServices = $this->container->get('mailServices');
+            $results = $mailServices->sendBulkEmailsMembers($req->members, $req->mailSubject, $req->mailBody, $req->replyTo, $request);
+        }
+        catch (\Exception $e){
 
-        echo json_encode($results);
+            return array('exception' => true,
+                         'message' => $e->getMessage());
+        }
+
+        return $response->withJson(array('exception' => false,
+                                         'results' => $results));
     }
 
 
@@ -126,7 +134,6 @@ class ApiController {
 
 
         $newResponse = $response->withJson($membersResp);
-
         return $newResponse;
     }
     

@@ -24,6 +24,7 @@ class UserController {
         $this->container = $container;
         $this->em = $container['em'];
         $this->userServices = $container->get('userServices');
+        $this->utilsServices = $container->get('utilsServices');
         $this->membershipServices = $container->get('membershipServices');
         $this->shoppingCartServices = $container->get('shoppingCartServices');
         $this->mailServices = $container->get('mailServices');
@@ -471,13 +472,24 @@ class UserController {
 
       //$result = $this->membershipServices->getMembershipsForUser($userId);
 
-        $membershipTypes = $this->membershipServices->getAllMembershipTypes();
+        //$membershipTypes = $this->membershipServices->getAllMembershipTypes();
 
-        $membershipType = $this->membershipServices->searchArrayById($membershipTypes['membershipTypes'], 1);
+        //$membershipType = $this->membershipServices->searchArrayById($membershipTypes['membershipTypes'], 1);
 
-        $result = $this->membershipServices->getMembershipValidity(72, $membershipType);
+        //$result = $this->membershipServices->getMembershipValidity(72, $membershipType);
 
-        //var_dump(max(array_keys($validity)));
+        //
+
+        try{
+            $repository = $this->em->getRepository('App\Entity\Membership');
+            $memberships = $repository->findBy(array(), array('ownerId' => 'ASC'));
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        $result = $this->utilsServices->searchMembershipsByOwnnerId($memberships, 2);
 
         var_dump($result);
        // echo 'ok';

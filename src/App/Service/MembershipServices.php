@@ -19,7 +19,8 @@ class MembershipServices
 {
     public function __construct($container)
     {
-        $this->mailService = $container['mailServices'];
+        $this->mailService = $container->get('mailServices');
+        //$this->utilsServices = $container->get('utilsServices');
         $this->em = $container['em'];
     }
 
@@ -218,13 +219,27 @@ class MembershipServices
             }
         }
         else{
-            $membershipTypes = $repository->createQueryBuilder('memberships')
-                ->select('memberships')
-                ->where('memberships.id = :id')
-                ->setParameter('id', $membershipTypeId)
-                ->orderBy('memberships.listingOrder', 'ASC')
-                ->getQuery()
-                ->getResult();
+            if ($user->getRole() == 'ROLE_ADMIN'){
+
+                $membershipTypes = $repository->createQueryBuilder('memberships')
+                    ->select('memberships')
+                    ->where('memberships.id = :id')
+                    ->setParameter('id', $membershipTypeId)
+                    ->orderBy('memberships.listingOrder', 'ASC')
+                    ->getQuery()
+                    ->getResult();
+            }
+            else {
+                $membershipTypes = $repository->createQueryBuilder('memberships')
+                    ->select('memberships')
+                    ->where('memberships.id = :id')
+                    ->andWhere('memberships.selectable = :selectable')
+                    ->setParameter('id', $membershipTypeId)
+                    ->setParameter('selectable', true)
+                    ->orderBy('memberships.listingOrder', 'ASC')
+                    ->getQuery()
+                    ->getResult();
+            }
         }
 
         $i = 0;
@@ -701,11 +716,11 @@ class MembershipServices
             }
 
             // First argument MUST be a SORTED array!
-            $membershipType = $this->searchArrayById($membershipTypes['membershipTypes'], $membership->getMembershipTypeId());
+            $membershipType =  $this->searchArrayById($membershipTypes['membershipTypes'], $membership->getMembershipTypeId());
 
             // Find the user owner of this membership
             // First argument MUST be a SORTED array!
-            $user = $this->searchArrayById($users, $membership->getOwnerId());
+            $user =  $this->searchArrayById($users, $membership->getOwnerId());
 
             //find the membership validity
             $validityResp = $this->getMembershipValidity($membership->getId(), $membershipType);
@@ -822,12 +837,48 @@ class MembershipServices
 
     }
 
+    public function findUsersFiltered($filter)
+    {
+        //TODO: Apply filter here when implemented
+        try{
+            $repository = $this->em->getRepository('App\Entity\User');
+            $users = $repository->findBy($filter, array('id' => 'ASC'));
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'users' => null,
+                'numberOfrecords' => 0,
+                'message' => $e->getMessage());
+        }
 
+        //retrieve all memberships
+        try{
+            $repository = $this->em->getRepository('App\Entity\Membership');
+            $memberships = $repository->findBy($filter, array('id' => 'ASC'));
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'memberships' => null,
+                'numberOfrecords' => 0,
+                'message' => $e->getMessage());
+        }
 
+        if (count($users) == 0){
 
+            $result = array('exception' => true,
+                'message' => "No users found that match this criteria");
+            return $result;
+        }
+        $numberOfUsers = count($users);
 
-// ======================== MOVE THIS TO UTILS ?? ===================
-    
+        $result = array('exception' => false,
+            'users' => $users,
+            'numberOfrecords' => $numberOfUsers,
+            'message' => "Users found");
+
+        return $result;
+    }
+
     //implements binary search to find object by ID in array: ARRAY MUST BE SORTED BY ID !!!
     public function searchArrayById($sortedArray, $id)
     {
@@ -850,6 +901,5 @@ class MembershipServices
         }
         return null;
     }
-
-
+    
 }

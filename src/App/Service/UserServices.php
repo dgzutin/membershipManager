@@ -21,6 +21,7 @@ class UserServices
     public function __construct($container)
     {
         $this->mailService = $container['mailServices'];
+        $this->utilsServices = $container->get('utilsServices');
         $this->shoppingCartServices = $container['shoppingCartServices'];
         $this->em = $container['em'];
 
@@ -333,16 +334,60 @@ class UserServices
     public function findUsersFiltered($filter)
     {
         //TODO: Apply filter here when implemented
-
-        $users = $this->em->getRepository('App\Entity\User')->findAll();
-        
-        if ($users == null){
-
-            $result = array('exception' => true,
-                            'message' => "No users found that match this criteria");
-            return $result;
+        try{
+            $repository = $this->em->getRepository('App\Entity\User');
+            $usersRes = $repository->findBy($filter, array('id' => 'ASC'));
         }
-        $numberOfUsers = sizeof($users);
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'message' => $e->getMessage());
+        }
+
+        //retrieve all memberships
+        try{
+            $repository = $this->em->getRepository('App\Entity\Membership');
+            $memberships = $repository->findBy(array(), array('ownerId' => 'ASC'));
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'message' => $e->getMessage());
+        }
+
+        if (count($usersRes) == 0){
+
+           return array('exception' => true,
+                        'message' => "No users found that match this criteria");
+        }
+
+        $users = array();
+        $i = 0;
+        foreach ($usersRes as $userRes){
+
+            $membership = $this->utilsServices->searchMembershipsByOwnerId($memberships, $userRes->getId());
+
+            if ($membership != null){
+
+                $users[$i] = array('id' => $userRes->getId(),
+                    'country' => $userRes->getCountry(),
+                    'firstName' => $userRes->getFirstName(),
+                    'lastName' => $userRes->getLastName(),
+                    'userRegDate' => $userRes->getUserRegDate(),
+                    'email1' => $userRes->getEmail1(),
+                    'member' => true);
+            }
+            else{
+                $users[$i] = array('id' => $userRes->getId(),
+                    'country' => $userRes->getCountry(),
+                    'firstName' => $userRes->getFirstName(),
+                    'lastName' => $userRes->getLastName(),
+                    'userRegDate' => $userRes->getUserRegDate(),
+                    'email1' => $userRes->getEmail1(),
+                    'member' => false);
+            }
+            $i++;
+        }
+
+        $numberOfUsers = count($users);
 
         $result = array('exception' => false,
                         'users' => $users,

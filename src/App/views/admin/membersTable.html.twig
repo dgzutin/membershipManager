@@ -92,6 +92,7 @@
                     <thead>
                     <tr>
                         <th>Member ID</th>
+                        <th>Country</th>
                         <th>Expiry date</th>
                         <th>Type</th>
                         <th>Representative</th>
@@ -103,6 +104,7 @@
                     {%  for member in members %}
                         <tr class="">
                             <td>{{ member.membership.memberId }}</td>
+                            <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
                             <td>
                                 {% if member.valid == true  %}
 

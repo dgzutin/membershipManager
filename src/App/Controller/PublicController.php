@@ -82,7 +82,6 @@ class PublicController {
     public function processRegisterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $form_data = $request->getParsedBody();
-
         $val_array = null;
         foreach ($form_data as $key =>$data){
 

@@ -20,23 +20,83 @@ class AdminController {
         $this->container = $container;
         $this->userServices = $container->get('userServices');
         $this->membershipServices = $container->get('membershipServices');
+        $this->mailServices = $container->get('mailServices');
         $this->utilsServices = $container->get('utilsServices');
         $this->systemInfo = $this->userServices->getSystemInfo();
     }
 
 
-    public function usersAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
+    public function usersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
 
-        $em = $this->container->get('em');
-        $users = $em->getRepository('App\Entity\User')->findAll();
+        $users = $this->userServices->findUsersFiltered(array());
         
         return $this->container->view->render($response, 'admin/usersTable.html.twig', array(
-            'user_id' => $_SESSION['user_id'],
-            'users' => $users
+            'users' => $users['users']
         ));
     }
 
-    public function viewUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args) {
+    public function registerNewUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $val_array = null;
+        if ($request->getMethod() == 'POST'){
+
+            $form_data = $request->getParsedBody();
+            foreach ($form_data as $key =>$data){
+
+                //TODO: add validation code for each input here
+                $val_array[$key] = array('value' => $data,
+                    'error' => false);
+            }
+            $validation = array('exception' => false,
+                'message' => 'One or more fields are not valid. Please check your data and submit it again.',
+                'fields' => array());
+
+            if ($validation['exception'] == true){
+
+                return $this->container->view->render($response, 'admin/adminRegisterNewUser.html.twig', array(
+                    'form_submission' => true,
+                    'exception' => true,
+                    'message' => $validation['message'],
+                    'form' => $val_array));
+            }
+            else{
+                $userService = $this->container->get('userServices');
+                $resp = $userService->registerNewUser($form_data);
+
+                if ($resp['exception'] == true){
+
+                    return $this->container->view->render($response, 'userNotification.twig', array(
+                        'exception' => true,
+                        'message' => $resp['message']));
+                }
+                else{
+
+                    if ($form_data['send_confirmation_mail'] == true){
+                        $this->mailServices->sendUserAddedByAdminEmail($resp['user'], $request);
+                    }
+
+                    return $this->container->view->render($response, 'admin/adminRegisterNewUser.html.twig', array(
+                        'form_submission' => true,
+                        'exception' => false,
+                        'message' => 'User successfully added. ID: '.$resp['user']->getId(),
+                        'form' => $val_array));
+                }
+            }
+        }
+        else{
+
+            return $this->container->view->render($response, 'admin/adminRegisterNewUser.html.twig', array(
+                'form_submission' => false,
+                'exception' => false,
+                'message' => 'nope',
+                'form' => $val_array));
+        }
+    }
+
+    public function viewUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
 
 
         $userId = $args['userId'];

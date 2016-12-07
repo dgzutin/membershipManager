@@ -1,18 +1,11 @@
-userEditProfile.html.twig{% extends 'base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block mainPanel %}
-
-    <!-- Bootstrap core CSS -->
-    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
-
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
-    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
 
     <div class="panel-group">
 
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>User profile</strong></div>
+            <div class="panel-heading"><strong>Register new user</strong></div>
             <div class="panel-body">
                 <form data-toggle="validator" role="form" method="post">
 
@@ -36,8 +29,6 @@ userEditProfile.html.twig{% extends 'base.html.twig' %}
                             </div>
                         {% endif %}
                     {% endif %}
-
-
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-4 col-md-4">
@@ -149,11 +140,12 @@ userEditProfile.html.twig{% extends 'base.html.twig' %}
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-6">
 
-
+                            <div class="checkbox">
+                                <label><input type="checkbox" id="send_confirmation_mail" name="send_confirmation_mail" value="false">Send welcome e-mail and password create link to new user</label>
+                            </div>
 
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6">
-                            <strong>To reset your password click here:</strong> <a href="{{ path_for('resetPasswordByUser')}}"><label class="btn btn-primary btn-sm">Reset password</label></a>
 
                         </div>
                     </div>

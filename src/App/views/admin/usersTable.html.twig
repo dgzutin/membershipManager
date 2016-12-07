@@ -13,9 +13,9 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Institution</th>
+                        <th>Country</th>
                         <th>Email</th>
-                        <th>Reg. Date</th>
+                        <th>Member</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -24,9 +24,9 @@
                         <tr class="">
                             <td>{{ user.id }}</td>
                             <td>{{ user.lastName }}, {{ user.firstName }}</td>
-                            <td>{{ user.institution }}</td>
+                            <td><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span></td>
                             <td>{{ user.email1 }}</td>
-                            <td>{{ user.userRegDate|date('jS F Y') }}</td>
+                            <td>{% if user.member == true %}<spam class="fa fa-star"> Member</spam> {% else %} not a member {% endif %}</td>
                             <td><a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">view</a></td>
                         </tr>
                     {% endfor %}

@@ -282,12 +282,14 @@
             $.ajax({url: "{{ path_for('sendBulkMailMembers')}}",
                 data: JSON.stringify(request),
                 type: 'POST',
-                success: function(result){
+                success: function(responseJson){
 
-                    var resultJson = JSON.parse(result);
+                    //console.log(responseJson);
+                   // var responseJson = JSON.parse(response);
+                    var resultJson = responseJson.results;
 
                     var n = 0;
-                    if (resultJson != null){
+                    if (responseJson.exception == false){
 
                         for (i=0; i<resultJson.length; i++){
                             //console.log(result[i].userId);
@@ -298,19 +300,28 @@
                                 document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
                                 n++;
                             }
+
+                            $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
+                            // Set return button to visible
+                            //===============================================
+                            $('#button_return').css('visibility', 'visible');
+                            //===============================================
                         }
                         console.log('Result: ');
                         console.log(resultJson);
                     }
                     else{
-                        console.log("No e-mail recipients were selected");
+
+                        console.log(responseJson.message);
+                        $("#message").toggleClass('alert-info');
+                        $("#message").toggleClass('alert-danger');
+                        $("#message").html('An exception occurred while trying to send the e-mail(s). <strong>'+responseJson.message+'</strong>');
+                        // Set return button to visible
+                        //===============================================
+                        $('#button_return').css('visibility', 'visible');
+                        //===============================================
                     }
 
-                    $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
-                    // Set return button to visible
-                    //===============================================
-                    $('#button_return').css('visibility', 'visible');
-                    //===============================================
                 }});
         }
 

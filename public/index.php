@@ -61,7 +61,12 @@ $container['view'] = function ($container) {
     return $view;
 };
 
-//Register Services
+//Register
+
+$container['utilsServices'] = function($container){
+    return new Service\UtilsServices($container);
+};
+
 $container['mailServices'] = function ($container) {
 
     $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
@@ -93,9 +98,6 @@ $container['shoppingCartServices'] = function($container){
 
 $container['membershipServices'] = function($container){
     return new Service\MembershipServices($container);
-};
-$container['utilsServices'] = function($container){
-    return new Service\UtilsServices($container);
 };
 
 
@@ -134,6 +136,7 @@ $app->group('/admin', function () use ($app) {
     $app->get('/createBulkMailMembers', '\AdminController:createBulkMailMembersAction')->setName('createBulkMailMembersAdmin');
     $app->post('/verifyBulkMailUsers', '\AdminController:verifyBulkMailUsersAction')->setName('verifyBulkMailUsersAdmin');
     $app->post('/verifyBulkMailMembers', '\AdminController:verifyBulkMailMembersAction')->setName('verifyBulkMailMembersAdmin');
+    $app->map(['GET', 'POST'], '/registerNewUser', '\AdminController:registerNewUserAction')->setName('registerNewUser');
     $app->map(['GET', 'POST'], '/members', '\AdminController:membersAction')->setName('members');
 
 
@@ -158,6 +161,8 @@ $app->group('/user', function () use ($app) {
     $app->post('/processOrder', '\UserController:processMembershipOrderAction')->setName('processOrder');
     $app->get('/singleInvoice/{invoiceId}', '\UserController:singleInvoiceAction')->setName('singleInvoice');
     $app->post('/confirmOrder', '\UserController:confirmOrderAction')->setName('confirmOrder');
+
+    $app->get('/manageMembership/{membershipTypeId}', '\UserController:membershipDataAction')->setName('membershipData');
 
     $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
 

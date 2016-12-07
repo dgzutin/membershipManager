@@ -83,6 +83,41 @@ class MailServices
         return $result;
     }
 
+    public function sendUserAddedByAdminEmail($user, $request)
+    {
+        $resetPasswordLink = $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey();
+
+        $resp = array('exception' => false,
+            'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName(),
+            'message' => 'A user account with the '.$this->settings->getNameOfOrganization().' was created for you by. To set the password and activate your account please follow the link below.',
+            'link' => $resetPasswordLink,
+            'buttonLabel' => 'Create password and activate your account',
+            'nameOfOrganization' => $this->settings->getNameOfOrganization(),
+            'orgWebsite' => $this->settings->getOrgWebsite());
+
+        $template = $this->twig->loadTemplate('email/emailNotificationWithLink.html.twig');
+        $emailBody = $template->render($resp);
+
+
+        $this->message
+            ->setSubject('Activate your account')
+            ->setFrom(array( $this->settings->getEmail() =>  $this->from));
+        try{
+            $this->message->setTo(array($user->getEmail1()));
+            $this->message->setBody($emailBody, 'text/html');
+            $result = array('exception' => false,
+                'sent' => $this->mailer->send($this->message),
+                'message' => 'Email successfully sent to '.$user->getEmail1());
+        }
+catch (\Exception $e){
+
+    $result = array('exception' => true,
+        'sent' => false,
+        'message' => $e->getMessage());
+}
+        return $result;
+    }
+
     public function sendResetPasswordMail($user, $request)
     {
         $recoverPasswordLink = $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey();

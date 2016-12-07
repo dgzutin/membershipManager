@@ -24,6 +24,29 @@ class UtilsServices
             ->getOneOrNullResult();
     }
 
+    //implements binary search to find membership by ownerId in array: ARRAY MUST BE SORTED BY ownerId !!!
+    public function searchMembershipsByOwnerId($sortedArray, $id)
+    {
+        $l = 0;
+        $r = count($sortedArray) - 1;
+
+        while ($l <= $r){
+
+            $m = round(($l + $r)/ 2);
+            if ($sortedArray[$m]->getOwnerId() < $id){
+                $l = $m +1;
+            }
+            elseif ($sortedArray[$m]->getOwnerId() > $id){
+                $r = $m - 1;
+            }
+            elseif ($sortedArray[$m]->getOwnerId() == $id){
+
+                return $sortedArray[$m];
+            }
+        }
+        return null;
+    }
+
     public function processFilterForMembersTable($filter_form)
     {
 
