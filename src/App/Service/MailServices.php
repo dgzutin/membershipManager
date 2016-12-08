@@ -124,7 +124,7 @@ catch (\Exception $e){
 
         $resp = array('exception' => false,
                       'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
-                      'message' => 'To reset your password follow the link below. If you have not not requested a password reset please ignore this message.',
+                      'message' => 'To reset your password follow the link below. If you have not requested a password reset please ignore this message.',
                       'link' => $recoverPasswordLink,
                       'buttonLabel' => 'Reset password',
                       'nameOfOrganization' => $this->settings->getNameOfOrganization(),
