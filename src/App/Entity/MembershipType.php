@@ -50,7 +50,7 @@ class MembershipType
     /** @Column(type="string", length=500, nullable=true) **/
     protected $description;
 
-    /** @Column(type="string", length=2000, nullable=true) **/
+    /** @Column(type="text", nullable=true) **/
     protected $terms;
 
     /** @Column(type="integer", nullable=false) **/
