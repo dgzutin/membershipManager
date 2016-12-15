@@ -33,13 +33,7 @@ class UserController {
         //$this->systemInfo = $this->userServices->getSystemInfo();
 
     }
-
-    public function usersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-
-
-    }
-
+    
     public function homeAction(ServerRequestInterface $request, ResponseInterface $response)
     {
 
@@ -50,10 +44,6 @@ class UserController {
         $memberships = $this->membershipServices->getMembershipsForUser($user->getId());
         $openInvoiceResult = $this->userServices->getOpenInvoicesForUser($_SESSION['user_id']);
 
-        if ($this->systemInfo['exception'] == true){
-
-            $systemInfo = null;
-        }
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
             'invoiceInfo' => $openInvoiceResult,
             'userName' => $userName,
