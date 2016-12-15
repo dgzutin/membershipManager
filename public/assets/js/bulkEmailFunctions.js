@@ -133,6 +133,7 @@ function fillTableMembers(tableId)
 
 function sendBulkEmails(membersSend)
 {
+    console.log('Sending mails now... ');
     var request = {
         members : membersSend,
         mailSubject: $('#subject').val(),
@@ -143,13 +144,13 @@ function sendBulkEmails(membersSend)
     //console.log('Request: ');
     //console.log(JSON.stringify(request));
 
-    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendBulkMail",
+    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendBulkMailMembers",
         data: JSON.stringify(request),
         type: 'POST',
         success: function(responseJson){
 
-            //console.log(responseJson);
-            // var responseJson = JSON.parse(response);
+            console.log(responseJson);
+            //var responseJson = JSON.parse(response);
             var resultJson = responseJson.results;
 
             var n = 0;
