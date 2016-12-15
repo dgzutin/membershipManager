@@ -89,9 +89,7 @@ class ApiController {
         /*
          * Example of request body:
          * {
-	         "group": "users/members",
-	         "memberType": "Name of membership type",
-	         "memberStatus": "status",
+         * ...
             }
         */
 
@@ -99,8 +97,8 @@ class ApiController {
         $body_json = json_decode($body);
 
         $userService = $this->container->get('userServices');
-        $resp = $userService->findUsersFiltered(null);
-        
+        $resp = $userService->findUsersFiltered(array());
+
         $result = json_encode($resp['users']);
 
         $newResponse = $response->withJson($resp['users']);
@@ -108,7 +106,7 @@ class ApiController {
         return $newResponse;
     }
 
-    //Route /api/v1/getFilteredMembersAction
+    //Route /api/v1/getFilteredMembers
     public function getFilteredMembersAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         /*
@@ -126,15 +124,83 @@ class ApiController {
 
         $resp = $this->utilsServices->processFilterForMembersTable((array)$body_json);
 
-        $typeAndGrade_Filter = $resp['typeAndGradeFilter'];
+        $membership_filter = $resp['membership_filter'];
+        $user_filter = $resp['user_filter'];
         $validity_filter = $resp['ValidityFilter'];
 
         //get the list of members based on the filter
-        $membersResp = $this->membershipServices->getMembers($typeAndGrade_Filter, $validity_filter['validity'], $validity_filter['onlyValid'], $validity_filter['onlyExpired'], $validity_filter['never_validated']);
+        $membersResp = $this->membershipServices->getMembers($membership_filter, $user_filter, $validity_filter['validity'], $validity_filter['onlyValid'], $validity_filter['onlyExpired'], $validity_filter['never_validated']);
 
 
         $newResponse = $response->withJson($membersResp);
         return $newResponse;
     }
-    
+
+    //Route /api/v1/membershipQuickRenew
+    public function membershipQuickRenewAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+         * Example of request body:
+         * {
+         *  "memberhipId": id
+            }
+        */
+
+        $body = $request->getBody();
+        $body_json = json_decode($body);
+        $membershipId = (int)$body_json->membershipId;
+
+        $result = $this->membershipServices->addNewMembershipValidity($membershipId, NULL, NULL);
+
+        return $response->withJson($result);
+    }
+
+    //Route /api/v1/renewMembership
+    public function renewMembershipAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+        * Example of request body:
+        * {
+        *  "memberhipId": id
+         * "from": "mm/dd/yyyy",
+         * "until": "mm/dd/yyyy"
+           }
+       */
+        $body = $request->getBody();
+        $body_json = json_decode($body);
+        $membershipId = (int)$body_json->membershipId;
+
+        try{
+            $from = new \DateTime($body_json->from.'T23:59:59');
+            $until = new \DateTime($body_json->until.'T23:59:59');
+        }
+        catch (\Exception $e){
+
+            return  $response->withJson(array('exception' => true,
+                                              'message' => 'Could not parse date string. The format should be  MM/DD/YYYY. Renewal not added.'));
+        }
+        return $response->withJson($this->membershipServices->addNewMembershipValidity($membershipId, $from, $until));
+    }
+
+    //Route /api/v1/ deleteValidities
+    public function deleteValiditiesAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+       * Example of request body:
+       * {
+       *  "ids": [1, 2, 3, ..]
+          }
+      */
+        $body_json = json_decode($request->getBody());
+        $ids = $body_json->ids;
+
+        $i = 0;
+        foreach ($ids as $id){
+            $ids[$i] = (int)$id;
+            $i++;
+        }
+
+        return $response->withJson($this->membershipServices->deleteValidities($ids));
+    }
+
 }

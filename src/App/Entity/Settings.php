@@ -46,6 +46,10 @@ class Settings
     /** @Column(type="string", length=50, nullable=true) **/
     protected $registrationNumber;
 
+    /** @Column(type="text", nullable=true) **/
+    protected $disclaimer;
+    
+
     // Payment Settings
 
     /** @Column(type="string", length=10, nullable=false) * */
@@ -513,5 +517,29 @@ class Settings
     public function getAcronym()
     {
         return $this->acronym;
+    }
+
+    /**
+     * Set disclaimer
+     *
+     * @param string $disclaimer
+     *
+     * @return Settings
+     */
+    public function setDisclaimer($disclaimer)
+    {
+        $this->disclaimer = $disclaimer;
+
+        return $this;
+    }
+
+    /**
+     * Get disclaimer
+     *
+     * @return string
+     */
+    public function getDisclaimer()
+    {
+        return $this->disclaimer;
     }
 }

@@ -120,16 +120,17 @@
 
                     <div class="well">
 
-                        <br><strong>Data Privacy Agreement:</strong>
-                        <br>A user account with your personal details will be created. Your user data, your actions and the results of your actions will be stored within the system.
-                        <br><strong>Use and Disclosure of Personal Data:</strong>
-                        <br>Information stored in this membership system will exclusively be used in relation to this event or a subsequent event. Your personal data will not be distributed or sold to other parties.
+                        {% if systemInfo.settings.disclaimer != null %}
 
-                        <div class="checkbox">
-                            <label>
-                                <input name="consent" id="consent" type="checkbox" value="" required>I agree with the data privacy terms.
-                            </label>
-                        </div>
+                            {{ systemInfo.settings.disclaimer|raw }}
+                            <div class="checkbox">
+                                <label>
+                                    <input name="consent" id="consent" type="checkbox" value="" required>I agree with the data privacy terms.
+                                </label>
+                            </div>
+
+                        {% endif %}
+
 
                     </div>
 

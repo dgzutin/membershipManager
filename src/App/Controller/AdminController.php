@@ -22,7 +22,6 @@ class AdminController {
         $this->membershipServices = $container->get('membershipServices');
         $this->mailServices = $container->get('mailServices');
         $this->utilsServices = $container->get('utilsServices');
-        $this->systemInfo = $this->userServices->getSystemInfo();
     }
 
 
@@ -99,12 +98,16 @@ class AdminController {
 
     public function viewUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-
-
         $userId = $args['userId'];
         $resp =  $this->userServices->getUserById($userId);
         //$resultMemberships = $this->membershipServices->getMembershipsForUser($userId);
 
+        if ($resp['exception'] == false){
+            $resetPasswordLink = $request->getUri()->getBaseUrl(). '/resetPassword/'.$resp['user']->getProfileKey();
+        }
+        else{
+            $resetPasswordLink = null;
+        }
 
         //convert the data to be shown in the form
         foreach ($resp['user'] as $key =>$data){
@@ -119,6 +122,7 @@ class AdminController {
             'form_submission' => false,
             'exception' => $resp['exception'],
             'message' => $resp['message'],
+            'resetPasswordLink' => $resetPasswordLink,
             'form' => $user));
     }
 
@@ -170,7 +174,7 @@ class AdminController {
 
     public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $userId = $args['userId'];
+        $userId = (int)$args['userId'];
 
         $resp = $this->userServices->getUserById($userId);
         $mailServices = $this->container->get('mailServices');
@@ -189,17 +193,12 @@ class AdminController {
     public function verifyBulkMailUsersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $form_data = $request->getParsedBody();
-        $mailServices = $this->container->get('mailServices');
-        $respMail = $mailServices->highlightPlaceholders($form_data['subject'], $form_data['emailBody']);
-        $userService = $this->container->get('userServices');
-        $resp = $userService->findUsersFiltered(null);
-
+        $respMail = $this->mailServices->highlightPlaceholders($form_data['subject'], $form_data['emailBody']);
 
         return $this->container->view->render($response, 'admin/adminVerifyBulkMail.html.twig', array(
-            'users' => $resp['users'],
             'highlightedBody' => $respMail['body'],
             'highlightedSubject' => $respMail['subject'],
-            'submited_form' => $form_data));
+            'form' => $form_data));
 
     }
 
@@ -207,19 +206,22 @@ class AdminController {
     {
 
         $post_data = $request->getParsedBody();
+
+        //var_dump($post_data);
+        
         $resp = $this->utilsServices->processFilterForMembersTable($post_data);
 
-        $typeAndGrade_Filter = $resp['typeAndGradeFilter'];
+        $membership_filter = $resp['membership_filter'];
+        $user_filter = $resp['user_filter'];
         $validity_filter = $resp['ValidityFilter'];
         $filter_form = $resp['filter_form'];
 
         //get the list of members based on the filter
-        $membersResp = $this->membershipServices->getMembers($typeAndGrade_Filter, $validity_filter['validity'], $validity_filter['onlyValid'], $validity_filter['onlyExpired'], $validity_filter['never_validated']);
+        $membersResp = $this->membershipServices->getMembers($membership_filter, $user_filter, $validity_filter['validity'], $validity_filter['onlyValid'], $validity_filter['onlyExpired'], $validity_filter['never_validated']);
 
         if ($membersResp['exception']){
 
-            return $this->container->view->render($response, 'userNotification.twig', array('systemInfo' => $this->systemInfo,
-                                                                                            'message' => $membersResp['message']));
+            return $this->container->view->render($response, 'userNotification.twig', array('message' => $membersResp['message']));
         }
         
         return $this->container->view->render($response, 'admin/membersTable.html.twig', array(
@@ -233,16 +235,32 @@ class AdminController {
         ));
     }
 
+    public function memberAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $memberId = (int)$args['memberId'];
+
+        $resp = $this->membershipServices->getMemberByMemberId($memberId);
+
+        $membershipTypesResp = $this->membershipServices->getAllMembershipTypes();
+        $memberGradesResp = $this->membershipServices->getAllMemberGrades();
+
+        // get membership types and grades to populate select boxes
+        $resp['membershipTypes'] = $membershipTypesResp['membershipTypes'];
+        $resp['memberGrades'] = $memberGradesResp['memberGrades'];
+
+        if ($resp['exception']){
+
+            return $this->container->view->render($response, 'userNotification.twig', $resp);
+        }
+        return $this->container->view->render($response, 'admin/adminEditMembership.html.twig', $resp);
+    }
+
+
     public function createBulkMailMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args) 
     {
         $post_data = $request->getParsedBody();
-        $resp = $this->utilsServices->processFilterForMembersTable($post_data);
-
-        $typeAndGrade_Filter = $resp['typeAndGradeFilter'];
-        $validity_filter = $resp['ValidityFilter'];
-        $filter_form = $resp['filter_form'];
-
-
+        $resp_process_filter = $this->utilsServices->processFilterForMembersTable($post_data);
+        $filter_form = $resp_process_filter['filter_form'];
 
         return $this->container->view->render($response, 'admin/adminWriteBulkMailMembers.html.twig', array(
             'membershipTypes' => $filter_form['membershipTypes'],
@@ -254,27 +272,30 @@ class AdminController {
     public function verifyBulkMailMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $form_data = $request->getParsedBody();
-        $resp = $this->utilsServices->processFilterForMembersTable($form_data);
+        $resp_process_filter = $this->utilsServices->processFilterForMembersTable($form_data);
+        $filter_form = $resp_process_filter['filter_form'];
 
-        $typeAndGrade_Filter = $resp['typeAndGradeFilter'];
-        $validity_filter = $resp['ValidityFilter'];
-        $filter_form = $resp['filter_form'];
-
-        $mailServices = $this->container->get('mailServices');
-        $respMail = $mailServices->highlightPlaceholders($form_data['subject'], $form_data['emailBody']);
-        $userService = $this->container->get('userServices');
-        $resp = $userService->findUsersFiltered(null);
-
+        $respMail = $this->mailServices->highlightPlaceholders($form_data['subject'], $form_data['emailBody']);
 
         return $this->container->view->render($response, 'admin/adminVerifyBulkMailMembers.html.twig', array(
-            'users' => $resp['users'],
             'highlightedBody' => $respMail['body'],
             'highlightedSubject' => $respMail['subject'],
             'membershipTypes' => $filter_form['membershipTypes'],
             'memberGrades' => $filter_form['memberGrades'],
             'validity' => $filter_form['validity'],
             'form' => $form_data));
+    }
+
+    public function manageRenewalsAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $membershipId = (int)$args['membershipId'];
+        $renewalsRes = $this->membershipServices->getValiditiesForMembershipId($membershipId);
+
+        return $this->container->view->render($response, 'admin/adminManageRenewals.html.twig', $renewalsRes);
 
     }
+
+
 
 }

@@ -42,6 +42,9 @@ class MembershipType
     protected $fee;
 
     /** @Column(type="string", length=10, nullable=true) * */
+    protected $renewal_threshold;
+
+    /** @Column(type="string", length=10, nullable=true) * */
     protected $currency;
 
     /** @Column(type="string", length=20, nullable=true) * */
@@ -382,5 +385,29 @@ class MembershipType
     public function getListingOrder()
     {
         return $this->listingOrder;
+    }
+
+    /**
+     * Set renewalThreshold
+     *
+     * @param string $renewalThreshold
+     *
+     * @return MembershipType
+     */
+    public function setRenewalThreshold($renewalThreshold)
+    {
+        $this->renewal_threshold = $renewalThreshold;
+
+        return $this;
+    }
+
+    /**
+     * Get renewalThreshold
+     *
+     * @return string
+     */
+    public function getRenewalThreshold()
+    {
+        return $this->renewal_threshold;
     }
 }

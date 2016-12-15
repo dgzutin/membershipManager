@@ -28,7 +28,9 @@ class UserController {
         $this->membershipServices = $container->get('membershipServices');
         $this->shoppingCartServices = $container->get('shoppingCartServices');
         $this->mailServices = $container->get('mailServices');
-        $this->systemInfo = $this->userServices->getSystemInfo();
+        $this->siteManagementServices = $container->get('siteManagementServices');
+
+        //$this->systemInfo = $this->userServices->getSystemInfo();
 
     }
 
@@ -439,14 +441,28 @@ class UserController {
     {
         $userId = $_SESSION['user_id'];
 
-        $user = $this->userServices->getUserById($userId);
+        //$user = $this->userServices->getUserById($userId);
 
         //$validUntil = new \DateTime('2018-12-31 23:59:59');
-        //$result = $this->membershipServices->addNewMembershipValidity(58, 'year', '10-30', NULL, NULL);
+        //$result = $this->membershipServices->addNewMembershipValidity(68, 'year', '10-30', NULL, NULL);
        // $result = $this->membershipServices->getMembershipTypeAndStatusOfUser($user['user'], NULL, true);
-
+       // $result = $this->membershipServices->getMemberByMemberId(10003);
         //$result = $this->membershipServices->getMembershipValidity(58);
         //$Result = $this->userServices->getInvoiceDataForUser(135, 2);
+
+        //$result = $this->siteManagementServices->addMembershipGrade('Super duper Member', 'for vip only');
+
+       // $result = $this->membershipServices->getMembershipType(68);
+        //$result = $this->membershipServices->getValiditiesForMembershipId(68);
+
+        $j = 0;
+        for ($i=135; $i <= 157; $i++){
+
+            $ids[$j] = $i;
+            $j++;
+        }
+
+        $result = $this->membershipServices->deleteValidities([169, 170, 174, 175, 176]);
 
         /*
         $em = $this->container->get('em');
@@ -480,19 +496,7 @@ class UserController {
 
         //
 
-        try{
-            $repository = $this->em->getRepository('App\Entity\Membership');
-            $memberships = $repository->findBy(array(), array('ownerId' => 'ASC'));
-        }
-        catch (\Exception $e){
-            return array('exception' => true,
-                'message' => $e->getMessage());
-        }
-
-        $result = $this->utilsServices->searchMembershipsByOwnnerId($memberships, 2);
-
-        var_dump($result);
-       // echo 'ok';
+       var_dump($result);
     }
     
 }

@@ -9,6 +9,32 @@
             <div class="panel-body">
 
                 <div class="well">
+
+                    <div class="row">
+
+                        <div class="col-xs-6 col-md-8">
+                            <h3>User ID: {{ form.id.value }}</h3>
+                            <strong>{{ form.title.value }} {{ form.first_name.value }} {{ form.last_name.value }}</strong>
+                            <br>{{ form.institution.value }}
+                            <br>{{ form.street.value }}
+                            <br>{{ form.city.value }} {{ form.zip.value }}
+                            <br><span class="bfh-countries" data-country="{{ form.country.value }}" data-flags="true"></span>
+                            <br>E-mail: <a href="mailto:{{ form.email_1.value }}">{{ form.email_1.value }}</a>
+                            <br>
+                            <br><strong>Reset password link:</strong> <a href="{{ resetPasswordLink }}" target="_blank">{{ resetPasswordLink }}</a>
+                        </div>
+
+                        <div class="col-xs-6 col-md-4">
+                            <ul>
+                                <li><a href="{{ path_for('documentsUser')}}"> Create/edit membership(s)</a></li>
+                                <li><a href="{{ path_for('documentsUser')}}"></spam> Remove user</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="well">
                     <form data-toggle="validator" role="form" method="post">
 
                         {% if form_submission == true %}
@@ -234,11 +260,6 @@
 
                     </form>
                 </div>
-
-
-                <h4>Membership(s) of  {{ form.first_name.value }} {{ form.last_name.value }}:</h4>
-
-
             </div>
         </div>
 

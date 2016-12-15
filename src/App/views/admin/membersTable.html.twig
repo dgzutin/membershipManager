@@ -78,12 +78,42 @@
 
                     <div class="col-xs-6 col-sm-3">
                         <div class="form-group">
-                            <label for="member_grade"></label>
-                            <button type="submit" class="btn btn-lg btn-success btn-block">Apply filter</button>
+                            <label for="country">Country:</label>
+                            <div id="country" class="bfh-selectbox bfh-countries" data-country="{{ form.country }}" data-flags="true" data-name="country">
+                                <input type="hidden" value="" onchange="this.form.submit()">
+                                <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+                                    <span class="bfh-selectbox-option input-medium" data-option=""></span>
+                                    <b class="caret"></b>
+                                </a>
+                                <div class="bfh-selectbox-options">
+                                    <input type="text" class="bfh-selectbox-filter">
+                                    <div role="listbox">
+                                        <ul role="option">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-9">
+                            <p class="text-info">
+                                This table shows only registered members. Use the select boxes above to change the filter properties.
+                                Additionally you can search the table for any keyword and the matching rows will be selected on the fly.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+
+                                <button class="btn btn-lg btn-success btn-block" type="submit">Apply Filter</button>
+
+                            </div>
+                        </div>
+
+                    </div>
                 </form>
 
                 <hr>
@@ -119,7 +149,7 @@
                             <td>{{ member.membershipTypePrefix }} {{ member.memberGrade }}</td>
                             <td>{{ member.user.title }} {{ member.user.firstName }} {{ member.user.lastName }}</td>
                             <td>{{ member.user.email1 }}</td>
-                            <td><a href="{{ path_for('adminViewUserProfile', { 'userId': member.user.id }) }}">view</a></td>
+                            <td><a href="{{ path_for('adminMember', { 'memberId': member.membership.memberId }) }}">view</a></td>
                         </tr>
                     {% endfor %}
 

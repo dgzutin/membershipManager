@@ -57,6 +57,7 @@ $container['view'] = function ($container) {
     $systemInfo = $container['userServices']->getSystemInfo();
     $twigEnv = $view->getEnvironment();
     $twigEnv->addGlobal('systemInfo', $systemInfo);
+    $twigEnv->addGlobal('base_url',$container['request']->getUri()->getBaseUrl());
 
     return $view;
 };
@@ -100,6 +101,11 @@ $container['membershipServices'] = function($container){
     return new Service\MembershipServices($container);
 };
 
+$container['siteManagementServices'] = function($container){
+    return new Service\SiteManagementServices($container);
+};
+
+
 
 
 
@@ -138,6 +144,8 @@ $app->group('/admin', function () use ($app) {
     $app->post('/verifyBulkMailMembers', '\AdminController:verifyBulkMailMembersAction')->setName('verifyBulkMailMembersAdmin');
     $app->map(['GET', 'POST'], '/registerNewUser', '\AdminController:registerNewUserAction')->setName('registerNewUser');
     $app->map(['GET', 'POST'], '/members', '\AdminController:membersAction')->setName('members');
+    $app->map(['GET', 'POST'], '/member/{memberId}', '\AdminController:memberAction')->setName('adminMember');
+    $app->get('/manageRenewals/{membershipId}', '\AdminController:manageRenewalsAction')->setName('manageRenewals');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
@@ -179,6 +187,9 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/sendBulkMailMembers', '\ApiController:sendBulkMailMembersAction' )->setName('sendBulkMailMembers');
     $app->get('/getFilteredUsers', '\ApiController:getFilteredUsersAction' )->setName('getFilteredUsers');
     $app->post('/getFilteredMembers', '\ApiController:getFilteredMembersAction' )->setName('getFilteredMembers');
+    $app->post('/membershipQuickRenew', '\ApiController:membershipQuickRenewAction' )->setName('membershipQuickRenew');
+    $app->post('/renewMembership', '\ApiController:renewMembershipAction' )->setName('renewMembership');
+    $app->post('/deleteValidities', '\ApiController:deleteValiditiesAction' )->setName('deleteValidities');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));

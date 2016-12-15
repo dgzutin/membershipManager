@@ -94,6 +94,7 @@
                             <th><input type="checkbox" id="checkbox_all" checked class="select_all_recipient"></th>
                             <th>ID</th>
                             <th>Name</th>
+                            <th>Country</th>
                             <th>Email</th>
                             <th></th>
 
@@ -140,16 +141,18 @@
                 users[i].selected = true;
 
                 userId = users[i].id;
-                name = users[i].last_name + ', ' + users[i].first_name;
-                email_1 = users[i].email_1;
+                name = users[i].lastName + ', ' + users[i].firstName;
+                email_1 = users[i].email1;
+                country = users[i].country;
 
                 var row = table.insertRow(table.rows.length); //can start at the beginning, argument = 0
 
                 row.insertCell(0).innerHTML = '<input type="checkbox" id="checkbox_'+i+'" checked onchange="updateSelectedUser('+i+')" class="select_recipient">';
                 row.insertCell(1).innerHTML = userId;
                 row.insertCell(2).innerHTML = name;
-                row.insertCell(3).innerHTML = email_1;
-                row.insertCell(4).innerHTML = '<div id="message_'+userId+'"></div>';
+                row.insertCell(3).innerHTML = '<span class="bfh-countries" data-country="'+country+'" data-flags="true">'+country+'</span>';
+                row.insertCell(4).innerHTML = email_1;
+                row.insertCell(5).innerHTML = '<div id="message_'+userId+'"></div>';
             }
         }
 

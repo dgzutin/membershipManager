@@ -51,13 +51,19 @@ class UtilsServices
     {
 
         //sanitize post variables, just to be sure
-        $typeAndGradeFilter = array();
+        $membership_filter = array();
         if (isset($filter_form['membershipTypeId']) AND $filter_form['membershipTypeId'] != -1){
-            $typeAndGradeFilter['membershipTypeId'] = (int)$filter_form['membershipTypeId'];
+            $membership_filter['membershipTypeId'] = (int)$filter_form['membershipTypeId'];
         }
         if (isset($filter_form['membershipGrade']) AND $filter_form['membershipGrade'] != -1){
-            $typeAndGradeFilter['membershipGrade'] = (int)$filter_form['membershipGrade'];
+            $membership_filter['membershipGrade'] = (int)$filter_form['membershipGrade'];
         }
+
+        $user_filter = array();
+        if (isset($filter_form['country']) AND $filter_form['country'] != ''){
+            $user_filter['country'] = $filter_form['country'];
+        }
+
 
         if (!isset($filter_form['validity'])){
             $validity = -1;
@@ -160,7 +166,8 @@ class UtilsServices
 
         return array('exception' => false,
                      'ValidityFilter' => $validity_filter,
-                     'typeAndGradeFilter' => $typeAndGradeFilter,
+                     'membership_filter' => $membership_filter,
+                     'user_filter' => $user_filter,
                      'filter_form' => array('membershipTypes' => $membershipTypesResp['membershipTypes'],
                                             'memberGrades' => $memberGradesResp['memberGrades'],
                                             'validity' => $validity_form));

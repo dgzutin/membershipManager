@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>{{ member.membershipTypeName }} - Member ID {{ member.membership.memberId }}</strong></div>
+            <div class="panel-body">
+
+                <!-- Form starts here -->
+                <form method="post">
+
+                <div class="well">
+
+                    <div class="row show-grid">
+                        <div class="col-md-8">
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><strong>Member ID:</strong></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    {{  member.membership.memberId }}
+                                    <input id="membershipId" type="hidden" value="{{  member.membership.id}}">
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><strong>Valid until:</strong></p></div>
+                                <div class="col-xs-12 col-md-6">
+
+                                    {% if member.valid == true %}
+
+                                        {% if member.validity.validUntil != null %}
+                                            <div id="validUntil">{{ member.validity.validUntil | date('jS F Y') }}</div>
+                                        {% else %}
+                                            <div id="validUntil"> n/a </div>
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if member.validity.validUntil != null %}
+                                            <div id="validUntil">This membership expired on {{ member.validity.validUntil | date('jS F Y') }}</div>
+                                        {% else %}
+                                            <div id="validUntil"> This membership is not active</div>
+                                        {% endif %}
+                                    {% endif %}
+
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label>Quick renew: </label></p></div>
+                                <div class="col-xs-12 col-md-6">
+
+                                    <span class="btn btn-warning btn-xs" onclick="membershipQuickRenew()">Quick Renew (one period)</span>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="membershipGrade">Member grade:</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+
+                                    <select class="form-control" id="membershipGrade" name="membershipGrade">
+
+                                        <option value="">None</option>
+                                        {% for memberGrade in memberGrades %}
+                                            <option value="{{ memberGrade.id }}" {% if member.memberGrade.id == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="membershipTypeId">Type</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <select class="form-control" id="membershipTypeId" name="membershipTypeId">
+
+                                        {% for membershipType in membershipTypes %}
+                                            <option value="{{ membershipType.id }}" {% if member.membership.membershipTypeId == membershipType.id  %}selected{% endif %}>{{ membershipType.typeName }}</option>
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="comments">Comments</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <textarea class="form-control" rows="3" id="comments"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <p class="text-right">
+
+                                <a href="{{ path_for('adminViewUserProfile', { 'userId': member.user.id }) }}">{{ member.user.title }} {{ member.user.first_name }} {{ member.user.last_name }}</a><br>
+                                {{ member.user.institution }} <br>
+                                {{ member.user.street }} <br>
+                                {{ member.user.city }} {{ member.user.zip }} <br>
+                                <span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span><br>
+                                <a href="mailto:{{ member.user.email_1 }}">{{ member.user.email_1 }}</a><br>
+                                <strong>Registration date:</strong> {{ member.membership.memberRegDate | date('jS F Y') }}
+
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Wells ends here -->
+                    </div>
+
+                    <div class="row show-grid">
+                        <div class="col-md-8">
+
+                            <p class="text-primary">Actions:</p>
+                            <ul>
+                                <li><a href="{{ path_for('manageRenewals', { 'membershipId': member.membership.id }) }}"> Manage Membership Renewals</a></li>
+                            </ul>
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <p class="text-right"><button class="btn btn-success btn-md" type="submit">Save</button></p>
+                        </div>
+                    </div>
+                    <!-- Form ends here -->
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS file  ============================================== -->
+    <script src="{{ base_url() }}/assets/js/memberhipManager.js"></script>
+
+
+{% endblock %}

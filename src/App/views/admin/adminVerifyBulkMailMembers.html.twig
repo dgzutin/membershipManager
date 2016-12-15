@@ -19,70 +19,83 @@
 
                 <fieldset disabled>
 
-                <div class="row">
-                    <div class="col-xs-6 col-sm-4">
-                        <div class="form-group">
-                            <label for="membershipTypeId">Membership Type</label>
-                            <select class="form-control" id="membershipTypeId" name="membershipTypeId">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+                                <label for="membershipTypeId">Membership Type</label>
+                                <select class="form-control" id="membershipTypeId" name="membershipTypeId">
 
-                                <option value="-1">All Membership Types</option>
-                                {% for membershipType in membershipTypes %}
-                                    <option value="{{ membershipType.id }}" {% if form.membershipTypeId == membershipType.id  %}selected{% endif %}>{{ membershipType.typeName }}</option>
-                                {% endfor %}
+                                    <option value="-1">All Membership Types</option>
+                                    {% for membershipType in membershipTypes %}
+                                        <option value="{{ membershipType.id }}" {% if form.membershipTypeId == membershipType.id  %}selected{% endif %}>{{ membershipType.typeName }}</option>
+                                    {% endfor %}
 
-                            </select>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+                                <label for="membershipGrade">Member Grade</label>
+                                <select class="form-control" id="membershipGrade" name="membershipGrade">
+
+                                    <option value="-1">All Grades</option>
+                                    {% for memberGrade in memberGrades %}
+                                        <option value="{{ memberGrade.id }}" {% if form.membershipGrade == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-xs-6 col-sm-3">
+
+                            <div class="form-group">
+                                <label for="validity">Validity:</label>
+                                <select class="form-control" id="validity" name="validity">
+
+                                    <option value="-1" {% if form.validity == '-1'  %}selected{% endif %}>All</option>
+                                    <option value="0" {% if form.validity == '0'  %}selected{% endif %}>Only Valid Memberships</option>
+                                    <option value="1" {% if form.validity == '1'  %}selected{% endif %}>Valid until {{ validity.current_period }}</option>
+                                    <option value="2" {% if form.validity == '2'  %}selected{% endif %}>Valid until {{ validity.next_period }}</option>
+                                    <option value="3" {% if form.validity == '3'  %}selected{% endif %}>Valid until {{ validity.one_period_ago }}</option>
+                                    <option value="4" {% if form.validity == '4'  %}selected{% endif %}>Valid until {{ validity.two_periods_ago }}</option>
+                                    <option value="5" {% if form.validity == '5'  %}selected{% endif %}>All Expired</option>
+                                    <option value="6" {% if form.validity == '6'  %}selected{% endif %}>Never validated memberships</option>
+
+                                </select>
+                            </div>
+
+                            <!--
+                            <div class="form-group">
+                                <label for="expiry_date">Expiry date</label>
+                                <select class="form-control" id="expiry_date" name="expiry_date">
+                                    <option value="valid">Valid memberships</option>
+                                    <option value="expired">All expired memberships</option>
+                                    <option value="expired_1year">Expired memberships (1 year or less)</option>
+                                    <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
+                                </select>
+                            </div>
+    -->
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+                                <label for="country">Country:</label>
+                                <br>
+                                {% if form.country != null %}
+                                    <span class="bfh-countries" data-country="{{ form.country }}" data-flags="true"></span>
+                                {% else %}
+                                    All
+                                {% endif %}
+                                <input type="hidden" id="country" value="{{ form.country }}">
+
+                            </div>
                         </div>
 
                     </div>
-
-                    <div class="col-xs-6 col-sm-4">
-                        <div class="form-group">
-                            <label for="membershipGrade">Member Grade</label>
-                            <select class="form-control" id="membershipGrade" name="membershipGrade">
-
-                                <option value="-1">All Grades</option>
-                                {% for memberGrade in memberGrades %}
-                                    <option value="{{ memberGrade.id }}" {% if form.membershipGrade == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-                    </div>
-
-
-                    <div class="col-xs-6 col-sm-4">
-
-                        <div class="form-group">
-                            <label for="validity">Validity:</label>
-                            <select class="form-control" id="validity" name="validity">
-
-                                <option value="-1" {% if form.validity == '-1'  %}selected{% endif %}>All</option>
-                                <option value="0" {% if form.validity == '0'  %}selected{% endif %}>Only Valid Memberships</option>
-                                <option value="1" {% if form.validity == '1'  %}selected{% endif %}>Valid until {{ validity.current_period }}</option>
-                                <option value="2" {% if form.validity == '2'  %}selected{% endif %}>Valid until {{ validity.next_period }}</option>
-                                <option value="3" {% if form.validity == '3'  %}selected{% endif %}>Valid until {{ validity.one_period_ago }}</option>
-                                <option value="4" {% if form.validity == '4'  %}selected{% endif %}>Valid until {{ validity.two_periods_ago }}</option>
-                                <option value="5" {% if form.validity == '5'  %}selected{% endif %}>All Expired</option>
-                                <option value="6" {% if form.validity == '6'  %}selected{% endif %}>Never validated memberships</option>
-
-                            </select>
-                        </div>
-
-                        <!--
-                        <div class="form-group">
-                            <label for="expiry_date">Expiry date</label>
-                            <select class="form-control" id="expiry_date" name="expiry_date">
-                                <option value="valid">Valid memberships</option>
-                                <option value="expired">All expired memberships</option>
-                                <option value="expired_1year">Expired memberships (1 year or less)</option>
-                                <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
-                            </select>
-                        </div>
--->
-                    </div>
-
-
-                </div>
 
 
                     <div class="form-group">
@@ -124,6 +137,7 @@
                         <tr>
                             <th><input type="checkbox" id="checkbox_all" checked class="select_all_recipient"></th>
                             <th>Member ID (type)</th>
+                            <th>Country</th>
                             <th>Expiry date</th>
                             <th>Representative</th>
                             <th>Email</th>
@@ -140,192 +154,8 @@
         </div>
     </div>
 
-    <script>
-
-        //var users;
-
-        $(document).ready(getFilteredMembers());
-
-        function getFilteredMembers()
-        {
-            var filter = {
-                membershipTypeId: $('#membershipTypeId').val(),
-                membershipGrade: $('#membershipGrade').val(),
-                validity: $('#validity').val()
-            };
-
-            $.ajax({url: "{{ path_for('getFilteredMembers')}}",
-                data: JSON.stringify(filter),
-                type: 'POST',
-                success: function(result){
-                    //console.log(JSON.stringify(result[0]));
-                    members = result.members;
-                    console.log(result);
-                    fillTableMembers('recipients');
-                //$("#div1").html(result);
-            }});
-
-        }
-
-        function getFilteredUsers()
-        {
-            $.ajax({url: "{{ path_for('getFilteredUsers')}}", success: function(result){
-                //console.log(JSON.stringify(result[0]));
-                users = result;
-                console.log(users);
-                fillTable('recipients');
-                //$("#div1").html(result);
-            }});
-
-        }
-
-        function updateSelectedUser(updateIndex)
-        {
-
-            members[updateIndex].selected = $('#checkbox_'+updateIndex).prop("checked");
-            console.log('Item '+updateIndex+' select was set to '+members[updateIndex].selected);
-
-        }
-
-        function fillTableMembers(tableId)
-        {
-            var table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
-
-            for (i=0; i<members.length; i++) {
-
-                members[i].selected = true;
-
-                userId = members[i].user.id;
-                memberId = members[i].membership.memberId;
-                membershipId = members[i].membership.id;
-                type = members[i].membershipTypeName;
-                prefix = members[i].membershipTypePrefix;
-                expiryDate = members[i].validity_string;
-                name = members[i].user.last_name + ', ' + members[i].user.first_name;
-                email_1 = members[i].user.email_1;
-
-                var row = table.insertRow(table.rows.length); //can start at the beginning, argument = 0
-
-                row.insertCell(0).innerHTML = '<input type="checkbox" id="checkbox_'+i+'" checked onchange="updateSelectedUser('+i+')" class="select_recipient">';
-                row.insertCell(1).innerHTML = memberId+' ('+prefix+')';
-                row.insertCell(2).innerHTML = expiryDate;
-                row.insertCell(3).innerHTML = name;
-                row.insertCell(4).innerHTML = '<div id="message_'+membershipId+'">'+email_1+'</div>';
-               // row.insertCell(5).innerHTML = '<div id="message_'+membershipId+'"></div>';
-            }
-        }
-
-        //Event Listeners
-        $("#checkbox_all").change(function () {
-            $("input:checkbox").prop('checked', $(this).prop("checked"));
-
-            for (i=0; i<members.length; i++){
-                members[i].selected = $(this).prop("checked");
-            }
-        });
-
-        //Send emails
-        $("#button_sendMail").click(function(){
-
-
-            //disable checkboxes and send button
-            for (i=0; i<members.length; i++){
-               $('#checkbox_'+i).prop('disabled', true);
-            }
-            $("#button_sendMail").prop('disabled', true);
-            $("#checkbox_all").prop('disabled', true);
-            //===========================================
-
-            //Notify user
-            $("#message").html('Sending e-mails. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
-            $("#message").show();
-
-            var membersSend = [];
-            var j = 0;
-            var k = 1;
-
-            for (i = 0; i<members.length; i++){
-
-                if (members[i].selected == true){
-
-                    membersSend[j] = members[i];
-                    j++;
-                    if (k % 2 == 0){
-                        /*
-                         console.log('Sending: ');
-                         console.log(userIds);
-                         sendBulkEmails(userIds);
-                         userIds = [];
-                         j = 0;
-                         */
-                    }
-                    k++;
-                }
-            }
-
-            sendBulkEmails(membersSend);
-
-            });
-
-        function sendBulkEmails(membersSend)
-        {
-            var request = {
-                members : membersSend,
-                mailSubject: $('#subject').val(),
-                mailBody: $('#emailBody').val(),
-                replyTo: $('#replyTo').val()
-            };
-
-            //console.log('Request: ');
-            //console.log(JSON.stringify(request));
-
-            $.ajax({url: "{{ path_for('sendBulkMailMembers')}}",
-                data: JSON.stringify(request),
-                type: 'POST',
-                success: function(responseJson){
-
-                    //console.log(responseJson);
-                   // var responseJson = JSON.parse(response);
-                    var resultJson = responseJson.results;
-
-                    var n = 0;
-                    if (responseJson.exception == false){
-
-                        for (i=0; i<resultJson.length; i++){
-                            //console.log(result[i].userId);
-                            if (resultJson[i].exception == true){
-                                document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-danger">'+resultJson[i].message+'</p>';
-                            }
-                            else{
-                                document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
-                                n++;
-                            }
-
-                            $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
-                            // Set return button to visible
-                            //===============================================
-                            $('#button_return').css('visibility', 'visible');
-                            //===============================================
-                        }
-                        console.log('Result: ');
-                        console.log(resultJson);
-                    }
-                    else{
-
-                        console.log(responseJson.message);
-                        $("#message").toggleClass('alert-info');
-                        $("#message").toggleClass('alert-danger');
-                        $("#message").html('An exception occurred while trying to send the e-mail(s). <strong>'+responseJson.message+'</strong>');
-                        // Set return button to visible
-                        //===============================================
-                        $('#button_return').css('visibility', 'visible');
-                        //===============================================
-                    }
-
-                }});
-        }
-
-    </script>
+    <!-- Bulk email functions  ============================================== -->
+    <script src="{{ base_url() }}/assets/js/bulkEmailFunctions.js"></script>
 
 
 {% endblock %}

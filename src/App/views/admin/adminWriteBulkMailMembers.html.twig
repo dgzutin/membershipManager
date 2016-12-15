@@ -27,7 +27,7 @@
                 <form data-toggle="validator" role="form" method="post" action="{{ path_for('verifyBulkMailMembersAdmin') }}">
 
                     <div class="row">
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-xs-6 col-sm-3">
                             <div class="form-group">
                                 <label for="membershipTypeId">Membership Type</label>
                                 <select class="form-control" id="membershipTypeId" name="membershipTypeId">
@@ -42,7 +42,7 @@
 
                         </div>
 
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-xs-6 col-sm-3">
                             <div class="form-group">
                                 <label for="membershipGrade">Member Grade</label>
                                 <select class="form-control" id="membershipGrade" name="membershipGrade">
@@ -57,7 +57,7 @@
                         </div>
 
 
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-xs-6 col-sm-3">
 
                             <div class="form-group">
                                 <label for="validity">Validity:</label>
@@ -75,6 +75,37 @@
                                 </select>
                             </div>
 
+                            <!--
+                            <div class="form-group">
+                                <label for="expiry_date">Expiry date</label>
+                                <select class="form-control" id="expiry_date" name="expiry_date">
+                                    <option value="valid">Valid memberships</option>
+                                    <option value="expired">All expired memberships</option>
+                                    <option value="expired_1year">Expired memberships (1 year or less)</option>
+                                    <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
+                                </select>
+                            </div>
+    -->
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+                                <label for="country">Country:</label>
+                                <div id="country" class="bfh-selectbox bfh-countries" data-country="{{ form.country }}" data-flags="true" data-name="country">
+                                    <input type="hidden" value="" >
+                                    <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+                                        <span class="bfh-selectbox-option input-medium" data-option=""></span>
+                                        <b class="caret"></b>
+                                    </a>
+                                    <div class="bfh-selectbox-options">
+                                        <input type="text" class="bfh-selectbox-filter">
+                                        <div role="listbox">
+                                            <ul role="option">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -98,6 +129,7 @@
 
                 <button type="submit" class="btn btn-primary">Next</button>
 
+                </form>
                     <div class="form-group">
                         <p class="text-info">Supported placeholders:</p>
                         <strong>{resetPasswordLink}: </strong>Send link to reset password<br>
@@ -110,7 +142,6 @@
                         <strong>{memberGrade}:</strong> Member's grade
                     </div>
 
-                </form>
             </div>
         </div>
 
