@@ -63,8 +63,6 @@
                 <br>{{ form.vat }}
                 <br>{{ form.reference }}
 
-
-
                 <h4>Your order:</h4>
 
                 <div class="well">
@@ -111,14 +109,15 @@
 
                 <form id="form_billing_info" data-toggle="validator" role="form" method="post" action="{{ path_for('processOrder')}}">
 
-                    <input type="hidden" name="name" id="first_name" class="form-control" placeholder="Name" value="{{ form.name }}" tabindex="1">
-                    <input type="hidden" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution }}" tabindex="3">
-                    <input required type="hidden" name="street" id="street" class="form-control " placeholder="street" value="{{ form.street }}" tabindex="3">
+                    <input type="hidden" name="name" id="first_name" class="form-control" placeholder="Name" value="{{ form.name }}">
+                    <input type="hidden" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution }}">
+                    <input required type="hidden" name="street" id="street" class="form-control " placeholder="street" value="{{ form.street }}">
                     <input type="hidden" name="country" id="country" value="{{ form.country }}">
-                    <input required="required" type="hidden" name="city" id="city" class="form-control " placeholder="" value="{{ form.city }}" tabindex="5">
-                    <input type="hidden" name="zip" id="zip" class="form-control " placeholder="" value="{{ form.zip }}" tabindex="6">
-                    <input type="hidden" name="vat" id="vat" class="form-control " placeholder="" value="{{ form.vat }}" tabindex="5" data-error="" />
-                    <input type="hidden" name="reference" id="reference" class="form-control " placeholder="" value="{{ form.reference }}" tabindex="6" data-error="">
+                    <input required="required" type="hidden" name="city" id="city" class="form-control " placeholder="" value="{{ form.city }}" >
+                    <input type="hidden" name="zip" id="zip" class="form-control " placeholder="" value="{{ form.zip }}">
+                    <input type="hidden" name="vat" id="vat" class="form-control " placeholder="" value="{{ form.vat }}">
+                    <input type="hidden" name="reference" id="reference" class="form-control " placeholder="" value="{{ form.reference }}">
+                    <input type="hidden" name="comments" id="comments" class="form-control " placeholder="" value="{{ membershipData.comments }}" >
 
                     <h4>Invoice terms:</h4>
                     {{ invoiceTerms }}
@@ -129,6 +128,7 @@
                         <a id="place_order_button" class="btn btn-success" data-toggle="modal" data-target="#place_order">Confirm Purchase</a>
 
                     </p>
+
 
                     <!-- Dialog with terms and conditions -->
                     <div class="modal fade" id="place_order" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -142,7 +142,7 @@
                                     I confirm that I have read and agree with the invoice and membership terms.
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Disagree</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-primary" form="form_billing_info">Agree and place order</button>
                                 </div>
                             </div>

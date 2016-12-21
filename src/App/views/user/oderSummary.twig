@@ -187,23 +187,21 @@
                         </div>
                     </div>
 
-
-                    <div class="input-group">
-
+                    <div class="form-group">
+                        <label for="comments">Comments:</label>
+                        <textarea  class="form-control" rows="2" id="comments" name="comments"></textarea>
                     </div>
+
                     <p class="text-right">
-                        <a class="btn btn-primary btn-md" href="{{ path_for('yourMembershipUser')}}" role="button">Back to Memberships</a>
+                        <a class="btn btn-primary btn-md" href="{{ path_for('selectMembership') }}" role="button">Back to Memberships</a>
                         <button type="submit" class="btn btn-success">Next Step: Confirm Member Registration</button>
                     </p>
 
                     <hr style="margin-top:10px;margin-bottom:10px;" >
 
-                    <div class="form-group">
 
 
-                    </div>
                 </form>
-
 
             </div>
         </div>

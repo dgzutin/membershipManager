@@ -30,7 +30,7 @@ function membershipQuickRenew()
                       result.message,
                       {
                           position:"top center",
-                          className: "warning" }
+                          className: "warn" }
                 );
             }
 
@@ -69,7 +69,7 @@ function deleteValidities(ids)
                         result.results[i].message,
                         {
                             position:"top center",
-                            className: "warning" }
+                            className: "warn" }
                     );
                 }
 

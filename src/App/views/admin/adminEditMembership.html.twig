@@ -6,7 +6,7 @@
     <div class="panel-group">
 
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>{{ member.membershipTypeName }} - Member ID {{ member.membership.memberId }}</strong></div>
+            <div class="panel-heading"><strong>{{ member.membershipTypeName }} - Member ID {{ member.membership.memberId }}</strong><div id="notification"></div></div>
             <div class="panel-body">
 
                 <!-- Form starts here -->
@@ -90,7 +90,7 @@
                             <div class="row show-grid">
                                 <div class="col-xs-12 col-md-3"><p class="text-right"><label for="comments">Comments</label></p></div>
                                 <div class="col-xs-12 col-md-6">
-                                    <textarea class="form-control" rows="3" id="comments"></textarea>
+                                    <textarea class="form-control" rows="3" id="comments">{{ member.membership.comments }}</textarea>
                                 </div>
                             </div>
 

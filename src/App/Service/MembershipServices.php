@@ -36,7 +36,7 @@ class MembershipServices
     }
 
    // If $representativeUserIdsArray is NULL, only owner will be associated with membership
-    public function addMember($ownerUserId, $representativeUserIdsArray, $membershipTypeId)
+    public function addUpdateMember($ownerUserId, $representativeUserIdsArray, $membershipTypeId, $membershipData)
     {
         //retrieve information about membership type
         try{
@@ -78,11 +78,24 @@ class MembershipServices
         }
 
         if ($Membership != NULL){
-            // In this case it is a renewal
+
+            if ($membershipData != null){
+                $Membership->setComments($membershipData['comments']);
+            }
+            $this->em->persist($Membership);
+            try{
+                $this->em->flush();
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                             'message' => $e->getMessage());
+            }
+
+            // In this case it is an update,
                return  array('exception' => false,
                              'renewal' => true,
                              'membership' => $Membership,
-                             'message' => "Membership renew request processed.");
+                             'message' => "Membership updated.");
         }
 
         // Determine the MEMBER ID of the new member
@@ -135,6 +148,10 @@ class MembershipServices
         $newMembership->setOwnerId($ownerUserId);
         $newMembership->setCancelled(false);
         $newMembership->setMembershipGrade(NULL);
+
+        if ($membershipData != null){
+            $newMembership->setComments($membershipData['comments']);
+        }
 
         $this->em->persist($newMembership);
         try{

@@ -33,13 +33,16 @@ class Membership
     /** @Column(type="boolean", nullable=false) * */
     protected $cancelled;
 
+    /** @Column(type="text", length=500, nullable=true) **/
+    protected $reasonForCancel;
+
     /** @Column(type="string", length=50, nullable=true) * */
     protected $dateCancelled;
 
     /** @Column(type="integer", nullable=true) * */
     public $membershipGrade;
 
-    /** @Column(type="string", length=500, nullable=true) **/
+    /** @Column(type="text", nullable=true) **/
     protected $comments;
 
 
@@ -318,5 +321,29 @@ class Membership
     public function getMembershipGrade()
     {
         return $this->membershipGrade;
+    }
+
+    /**
+     * Set reasonForCancel
+     *
+     * @param string $reasonForCancel
+     *
+     * @return Membership
+     */
+    public function setReasonForCancel($reasonForCancel)
+    {
+        $this->reasonForCancel = $reasonForCancel;
+
+        return $this;
+    }
+
+    /**
+     * Get reasonForCancel
+     *
+     * @return string
+     */
+    public function getReasonForCancel()
+    {
+        return $this->reasonForCancel;
     }
 }

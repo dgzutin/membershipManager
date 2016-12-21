@@ -161,7 +161,7 @@ $app->group('/user', function () use ($app) {
     $app->map(['GET', 'POST'], '/elFinderConnector', '\MembersAreaController:elFinderConnectorAction')->setName('elFinderConnector');
     $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsUser');
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsUser');
-    $app->get('/selectMembership', '\UserController:yourMembershipAction')->setName('yourMembershipUser');
+    $app->get('/selectMembership', '\UserController:selectMembershipAction')->setName('selectMembership');
     $app->get('/membershipData/{membershipTypeId}', '\UserController:membershipDataAction')->setName('membershipData');
     $app->get('/orderSummary', '\UserController:orderSummaryAction')->setName('orderSummaryUser');
     $app->get('/addMembershipToCart/{membershipTypeId}', '\UserController:addMembershipToCartAction')->setName('addMembershipToCartUser');
@@ -169,8 +169,7 @@ $app->group('/user', function () use ($app) {
     $app->post('/processOrder', '\UserController:processMembershipOrderAction')->setName('processOrder');
     $app->get('/singleInvoice/{invoiceId}', '\UserController:singleInvoiceAction')->setName('singleInvoice');
     $app->post('/confirmOrder', '\UserController:confirmOrderAction')->setName('confirmOrder');
-
-    $app->get('/manageMembership/{membershipTypeId}', '\UserController:membershipDataAction')->setName('membershipData');
+    $app->map(['GET', 'POST'], '/manageMembership/{memberId}', '\UserController:manageMembershipAction')->setName('manageMembership');
 
     $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
 

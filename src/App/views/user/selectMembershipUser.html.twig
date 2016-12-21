@@ -68,7 +68,7 @@
                                         <div class="row show-grid">
                                             <div class="col-xs-12 col-md-8">
                                                 <a class="btn btn-success btn-md" href="{{ path_for('membershipData', { 'membershipTypeId': membershipType.id }) }}" role="button"><spam class="fa fa-recycle"></spam> Renew Membership</a>
-                                                <a class="btn btn-primary btn-md" href="#" role="button">Manage Membership</a>
+                                                <a class="btn btn-primary btn-md" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
                                             </div>
                                             <div class="col-xs-6 col-md-4">
                                                 <p class="text-right"><a class="btn btn-warning btn-md" data-toggle="modal" data-target="#terms_{{ membershipType.id }}">Terms and Conditions</a></p>
@@ -81,12 +81,12 @@
 
                                                 {% if membershipType.free == true %}
 
-                                                <a class="btn btn-primary btn-md" href="#" role="button">Manage Membership</a>
+                                                <a class="btn btn-primary btn-md" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
 
                                                 {% else %}
 
                                                     <a class="btn btn-success btn-md disabled" href="{{ path_for('membershipData', { 'membershipTypeId': membershipType.id }) }}" role="button"><spam class="fa fa-recycle"></spam> Renew Membership</a>
-                                                    <a class="btn btn-primary btn-md disabled" href="#" role="button">Manage Membership</a>
+                                                    <a class="btn btn-primary btn-md disabled" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
                                                     <p class="text-danger">This membership is not active. <a href="{{ path_for('homeUser')}}">Home</a></p>
 
                                                 {% endif %}
