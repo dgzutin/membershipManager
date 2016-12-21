@@ -60,7 +60,7 @@ class MembershipServices
                         'message' => 'Invalid membershipTypeId ('.$membershipTypeId.')');
         }
 
-        //verify if user is already a member of the same membership type
+        //verify if user is already a member of the same membership type or has a cancelled membership
         try{
             $repository = $this->em->getRepository('App\Entity\Membership');
             $Membership = $repository->createQueryBuilder('Membership')
@@ -82,6 +82,10 @@ class MembershipServices
             if ($membershipData != null){
                 $Membership->setComments($membershipData['comments']);
             }
+            $Membership->setCancelled(false);
+            $Membership->setDateCancelled(NULL);
+            $Membership->setReasonForCancel(NULL);
+
             $this->em->persist($Membership);
             try{
                 $this->em->flush();
@@ -91,11 +95,11 @@ class MembershipServices
                              'message' => $e->getMessage());
             }
 
-            // In this case it is an update,
+            // In this case it is an update.
                return  array('exception' => false,
                              'renewal' => true,
                              'membership' => $Membership,
-                             'message' => "Membership updated.");
+                             'message' => "Membership with member ID ".$Membership->getMemberId()." was updated");
         }
 
         // Determine the MEMBER ID of the new member
@@ -268,8 +272,10 @@ class MembershipServices
                 ->select('Membership')
                 ->where('Membership.ownerId = :ownerId')
                 ->andWhere('Membership.membershipTypeId = :membershipTypeId')
+                ->andWhere('Membership.cancelled = :cancelled')
                 ->setParameter('ownerId', $user->getId())
                 ->setParameter('membershipTypeId', $membershipType->getId())
+                ->setParameter('cancelled', false)
                 ->getQuery()
                 ->getOneOrNullResult();
 
@@ -566,7 +572,9 @@ class MembershipServices
         $memberships = $repository->createQueryBuilder('Membership')
             ->select('Membership')
             ->where('Membership.ownerId = :ownerId')
+            ->andWhere('Membership.cancelled = :cancelled')
             ->setParameter('ownerId', $userId)
+            ->setParameter('cancelled', false)
             ->getQuery()
             ->getResult();
 
@@ -787,7 +795,7 @@ class MembershipServices
                     $validity_string = 'n/a';
                 }
 
-                //if condition is match, consider the filter
+                //if condition is matched, consider the filter
                 if ($filter_validity != null AND $onlyValid == false AND $onlyexpired == false AND $never_validated == false){
 
                     if ($validityResp['validity'] != null){
@@ -1087,6 +1095,32 @@ class MembershipServices
         return array('exception' => false,
                      'results' => $results,
                      'message' => $deletedCount.' item(s) deleted');
+    }
+
+    public function cancelMembership($memberId, $data)
+    {
+        $member = $this->getMemberByMemberId($memberId);
+
+        if ($member['exception']){
+            return $member;
+        }
+
+        $membership = $member['member']['membership'];
+        $membership->setCancelled(true);
+        $membership->setReasonForCancel($data['reasonForCancel']);
+        $membership->setDateCancelled(new DateTime());
+
+        $this->em->persist($membership);
+        try{
+            $this->em->flush();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'message' => $e->getMessage());
+        }
+
+        return array('exception' => false,
+                     'message' => 'Membership of member '.$memberId.' was cancelled');
     }
     
 

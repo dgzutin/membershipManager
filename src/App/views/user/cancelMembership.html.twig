@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Cancel Membership</strong></div>
+            <div class="panel-body">
+
+                <div class="alert alert-danger">
+                    <span class="fa fa-warning"></span> You are about to cancel your <strong>{{  member.membershipTypeName }}</strong>.
+
+                    Cancellations will take effect immediately.
+
+                    {% if member.valid == true %}
+
+                        {% if member.validity.validUntil != null %}
+                            Please note that your membership is still valid and expires on <strong>{{ member.validity.validUntil | date('jS F Y') }}</strong>
+                        {% else %}
+
+                        {% endif %}
+
+                    {% else %}
+
+                        {% if member.validity.validUntil != null %}
+                            This membership expired on {{ member.validity.validUntil | date('jS F Y') }}.
+                        {% else %}
+                            This membership is not active
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+
+                {% if form_submission == true %}
+
+                    {% if exception == true %}
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                        </div>
+                    {% endif %}
+
+                {% else %}
+
+                    {% if exception == true %}
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                    <div class="well">
+                        <div class="media">
+                            <div class="media-left">
+                                <img class="media-object" src="{{ baseUrl }}/assets/images/membership_logo.png" alt="membership">
+                            </div>
+                            <div class="media-body">
+
+                                <h3 class="media-heading"><strong>Member ID: </strong>{{  member.membership.memberId }}</h3>
+
+                                {%  if member.memberGrade.gradeName != null %}
+
+                                    <h3><img src="{{ baseUrl }}/assets/images/memberStatus_small.png" alt="..."> {{ member.memberGrade.gradeName }}</h3>
+
+                                {% endif %}
+
+                                <h4 class="media-heading"><strong>Type: </strong>{{  member.membershipTypeName }}</h4>
+
+
+                                {% if member.valid == true %}
+
+                                    {% if member.validity.validUntil != null %}
+                                        <p class="text-info"><strong>Valid Until: </strong>{{ member.validity.validUntil | date('jS F Y') }}</p>
+                                    {% else %}
+                                       <p class="text-info"><strong>Valid Until: </strong> n/a</p>
+                                    {% endif %}
+
+                                {% else %}
+
+                                    {% if member.validity.validUntil != null %}
+                                        <p class="text-danger">This membership expired on {{ member.validity.validUntil | date('jS F Y') }}</p>
+                                    {% else %}
+                                        <p class="text-danger"> This membership is not active</p>
+                                    {% endif %}
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                <form  data-toggle="validator" id="cancelMembership" role="form" method="post" action="{{ path_for('cancelMembership', {'memberId': member.membership.memberId}) }}">
+
+                <div class="row show-grid">
+                    <div class="col-xs-6 col-md-9">
+
+                        <div class="row show-grid">
+                            <div class="col-xs-6 col-md-3"><p class="text-right"><label for="reasonForCancel">Please tell us the reason why you decided to cancel your membership:</label></p></div>
+                            <div class="col-xs-12 col-md-9">
+                                <textarea  class="form-control" rows="4" id="reasonForCancel" name="reasonForCancel"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-xs-12 col-md-3">
+
+
+
+                    </div>
+                </div>
+
+                    <p class="text-right"><a class="btn btn-success btn-md">Back</a> <a class="btn btn-danger btn-md" type="submit" data-toggle="modal" data-target="#confirm_cancel">Cancel Membership</a></p>
+
+
+                    <!-- Modal Confirmation -->
+                    <div class="modal fade" id="confirm_cancel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">Cancel Membership?</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert alert-danger">
+                                        Are you sure you want to proceed and cancel your membership?
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Back</button>
+                                    <button type="submit" class="btn btn-danger" form="cancelMembership">Yes, cancel my membership</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+{% endblock %}

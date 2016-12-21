@@ -36,7 +36,7 @@ class Membership
     /** @Column(type="text", length=500, nullable=true) **/
     protected $reasonForCancel;
 
-    /** @Column(type="string", length=50, nullable=true) * */
+    /** @Column(type="datetime", nullable=true) * */
     protected $dateCancelled;
 
     /** @Column(type="integer", nullable=true) * */
@@ -45,8 +45,6 @@ class Membership
     /** @Column(type="text", nullable=true) **/
     protected $comments;
 
-
-    
 
     /**
      * Get id

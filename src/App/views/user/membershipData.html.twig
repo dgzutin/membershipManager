@@ -174,7 +174,7 @@
                     </div>
 
 
-                    <form id="process_order" data-toggle="validator" role="form" method="post" action="{{ path_for('orderSummaryUser')}}">
+                    <form id="process_order" data-toggle="validator" role="form" method="post" action="{{ path_for('processOrder')}}">
 
                         <input type="hidden" name="free_membership" id="free_membership" class="form-control " placeholder="" value="free" tabindex="6" data-error="">
                         <input type="hidden" name="membershipTypeId" id="membershipTypeId" class="form-control " placeholder="" value="{{  membershipType.id }}" tabindex="6" data-error="">

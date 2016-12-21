@@ -38,37 +38,46 @@
 
                                 <h3 class="media-heading"><strong>Member ID: </strong>{{  member.membership.memberId }}</h3>
 
-                                {%  if member.memberGrade.gradeName != null %}
+                                {% if member.membership.cancelled %}
 
-                                    <h3><img src="{{ baseUrl }}/assets/images/memberStatus_small.png" alt="..."> {{ member.memberGrade.gradeName }}</h3>
-
-                                {% endif %}
-
-                                <h4 class="media-heading"><strong>Type: </strong>{{  member.membershipTypeName }}</h4>
-
-
-                                {% if member.valid == true %}
-
-                                    {% if member.validity.validUntil != null %}
-                                        <p class="text-info"><strong>Valid Until: </strong>{{ member.validity.validUntil | date('jS F Y') }}</p>
-                                    {% else %}
-                                       <p class="text-info"><strong>Valid Until: </strong> n/a</p>
-                                    {% endif %}
+                                    <p class="text-danger">This membership has been cancelled. You can reactivate your membership by renewing it.</p>
 
                                 {% else %}
 
-                                    {% if member.validity.validUntil != null %}
-                                        <p class="text-danger">This membership expired on {{ member.validity.validUntil | date('jS F Y') }}</p>
-                                    {% else %}
-                                        <p class="text-danger"> This membership is not active</p>
+                                    {%  if member.memberGrade.gradeName != null %}
+
+                                        <h3><img src="{{ baseUrl }}/assets/images/memberStatus_small.png" alt="..."> {{ member.memberGrade.gradeName }}</h3>
+
                                     {% endif %}
+
+                                    <h4 class="media-heading"><strong>Type: </strong>{{  member.membershipTypeName }}</h4>
+
+
+                                    {% if member.valid == true %}
+
+                                        {% if member.validity.validUntil != null %}
+                                            <p class="text-info"><strong>Valid Until: </strong>{{ member.validity.validUntil | date('jS F Y') }}</p>
+                                        {% else %}
+                                            <p class="text-info"><strong>Valid Until: </strong> n/a</p>
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if member.validity.validUntil != null %}
+                                            <p class="text-danger">This membership expired on {{ member.validity.validUntil | date('jS F Y') }}</p>
+                                        {% else %}
+                                            <p class="text-danger"> This membership is not active</p>
+                                        {% endif %}
+                                    {% endif %}
+
                                 {% endif %}
+
 
                             </div>
                         </div>
                     </div>
 
-                <form id="form_billing_info" data-toggle="validator" role="form" method="post" action="{{ path_for('manageMembership', {'memberId': member.membership.memberId}) }}">
+                <form data-toggle="validator" role="form" method="post" action="{{ path_for('manageMembership', {'memberId': member.membership.memberId}) }}">
 
                 <div class="row show-grid">
                     <div class="col-xs-6 col-md-9">
@@ -110,7 +119,7 @@
                         <div class="row show-grid">
                             <div class="col-xs-6 col-md-3"><p class="text-right"><label for="comments">Comments:</label></p></div>
                             <div class="col-xs-12 col-md-9">
-                                <textarea  class="form-control" rows="2" id="comments" name="comments">{{ member.membership.comments }}</textarea>
+                                <textarea  class="form-control" rows="2" id="comments" name="comments" disabled>{{ member.membership.comments }}</textarea>
                             </div>
                         </div>
 
@@ -120,38 +129,34 @@
 
                         <ul>
                             <li><a href="{{ path_for('membershipData', { 'membershipTypeId': member.membership.membershipTypeId }) }}">Renew Membership</a></li>
-                            <li><a href="#">Cancel Membership</a></li>
-                            <li><a href="#">Manage Representatives</a></li>
+                            {% if member.membership.cancelled %}
+
+
+                            {% else %}
+
+                                <li><a href="{{ path_for('cancelMembership', { 'memberId': member.membership.memberId }) }}">Cancel Membership</a></li>
+                                <li><a href="#">Manage Representatives</a></li>
+
+                            {% endif %}
                         </ul>
 
                     </div>
                 </div>
 
                     <input type="hidden" id="membershipTypeId" name="membershipTypeId" value="{{ member.membership.membershipTypeId }}">
-                    <p class="text-right"><button class="btn btn-success btn-md" type="submit">Save</button></p>
+
+                    {% if member.membership.cancelled %}
+
+                        <p class="text-right"><button class="btn btn-success btn-md" type="submit" disabled>Save</button></p>
+
+                    {% else %}
+
+                        <p class="text-right"><button class="btn btn-success btn-md" type="submit">Save</button></p>
+
+                    {% endif %}
 
                 </form>
 
-                    <!-- Modal Confirmation -->
-                    <div class="modal fade" id="place_order" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title" id="myModalLabel">Confirm order?</h4>
-                                </div>
-                                <div class="modal-body">
-                                    I confirm that I have read and agree with the membership terms.
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Disagree</button>
-                                    <button type="submit" class="btn btn-primary" form="process_order">Agree and become a member</button>
-                                </div>
-                            </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
 
             </div>
         </div>

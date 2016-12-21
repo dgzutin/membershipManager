@@ -5,11 +5,11 @@
 
                 {% if exception == true %}
                     <div class="alert alert-danger">
-                       {{ message }}
+                       {{ message }}. <a href="{{ path_for('homeUser')}}">Return to main page</a>
                     </div>
                 {% else %}
                     <div class="alert alert-success">
-                        {{ message }}
+                        {{ message }}. <a href="{{ path_for('homeUser')}}">Return to main page</a>
                     </div>
                 {% endif %}
 

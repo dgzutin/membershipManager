@@ -316,7 +316,7 @@ class UserController {
         }
 
         //add Membership to the database and link it to user. Active is set to false
-        $addMemberResult = $this->membershipServices->addMember($userId, NULL, $form_data['membershipTypeId']);
+        $addMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $form_data['membershipTypeId']);
 
         if ($addMemberResult['exception'] == true){
             return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
@@ -461,9 +461,32 @@ class UserController {
             $result['form_submission'] = true;
             $result['message'] = $updateMemberResult['message'];
         }
-        
+
         return $this->container->view->render($response, 'user/manageMembership.html.twig', $result);
 
+    }
+
+    public function cancelMembershipAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $result = $this->membershipServices->getMemberByMemberId((int)$args['memberId']);
+
+        if ($result['exception'] OR $result['member']['membership']->getCancelled()){
+
+            return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
+                                                                                            'message' => 'This membership has already been cancelled'));
+        }
+
+        if ($request->isPost()){
+
+            $form_data = $request->getParsedBody();
+            $data['reasonForCancel'] = $form_data['reasonForCancel'];
+            $cancelResult = $this->membershipServices->cancelMembership((int)$args['memberId'], $data);
+
+            return $this->container->view->render($response, 'userNotification.twig', $cancelResult);
+        }
+
+        return $this->container->view->render($response, 'user/cancelMembership.html.twig', $result);
     }
 
     public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)

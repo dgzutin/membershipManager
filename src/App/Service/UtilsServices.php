@@ -59,6 +59,9 @@ class UtilsServices
             $membership_filter['membershipGrade'] = (int)$filter_form['membershipGrade'];
         }
 
+        //get only memberships that have not been cancelled, if not stated otherwise
+        $membership_filter['cancelled'] = false;
+
         $user_filter = array();
         if (isset($filter_form['country']) AND $filter_form['country'] != ''){
             $user_filter['country'] = $filter_form['country'];
@@ -133,6 +136,15 @@ class UtilsServices
                 $validity_filter['never_validated'] = true;
                 $validity_filter['validity'] = null;
                 break;
+            case 7:
+                $validity_filter['onlyValid'] = false;
+                $validity_filter['onlyExpired'] = false;
+                $validity_filter['never_validated'] = false;
+                $validity_filter['validity'] = null;
+
+                $membership_filter['cancelled'] = true;
+                break;
+
             default:
                 $validity_filter['onlyValid'] = false;
                 $validity_filter['onlyExpired'] = false;
