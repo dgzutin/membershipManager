@@ -17,42 +17,6 @@
 
     <!--        <form role="form" method="post"> -->
 
-                    <div class="row">
-
-                        <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label for="filter1">Send Mail to</label>
-                                <select class="form-control" id="filter1" name="filter1">
-                                    <option>All registered users</option>
-                                    <option>Members only</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label for="filter2">Membership Type</label>
-                                <select class="form-control" id="filter2" name="filter2">
-                                    <option>Type one</option>
-                                    <option>Type two</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label for="filter3">Membership Status</label>
-                                <select class="form-control" id="filter3" name="filter3">
-                                    <option value="valid">Valid memberships</option>
-                                    <option value="expired">Expired memberships</option>
-                                    <option value="expired_1year">Expired memberships (1 year or less)</option>
-                                    <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
 
                     <div class="form-group">
                         <label for="subject">Subject:</label>
@@ -171,7 +135,7 @@
 
 
             //disable checkboxes and send button
-            for (i=0; i<members.length; i++){
+            for (i=0; i<users.length; i++){
                $('#checkbox_'+i).prop('disabled', true);
             }
             $("#button_sendMail").prop('disabled', true);
@@ -204,11 +168,11 @@
                     k++;
                 }
             }
-            sendBulkEmails(userIds);
+            sendBulkEmailsToUsers(userIds);
 
             });
 
-        function sendBulkEmails(userIds)
+        function sendBulkEmailsToUsers(userIds)
         {
             var request = {
                 userIds : userIds,
@@ -221,13 +185,14 @@
             console.log(request);
 
 
-            $.ajax({url: "{{ path_for('sendBulkMail')}}",
+            $.ajax({url: "{{ path_for('sendBulkMailUsers')}}",
                 data: JSON.stringify(request),
                 type: 'POST',
-                success: function(result){
+                success: function(resp){
 
-                    var resultJson = JSON.parse(result);
+                    console.log(resp);
 
+                    resultJson = resp.results;
                     var n = 0;
                     if (resultJson != null){
 
@@ -254,7 +219,6 @@
                     //===============================================
                     $('#button_return').css('visibility', 'visible');
                     //===============================================
-
                 }});
         }
 

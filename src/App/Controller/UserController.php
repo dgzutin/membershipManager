@@ -481,7 +481,7 @@ class UserController {
 
             $form_data = $request->getParsedBody();
             $data['reasonForCancel'] = $form_data['reasonForCancel'];
-            $cancelResult = $this->membershipServices->cancelMembership((int)$args['memberId'], $data);
+            $cancelResult = $this->membershipServices->cancelMembership((int)$args['memberId'], $data, true, $request);
 
             return $this->container->view->render($response, 'userNotification.twig', $cancelResult);
         }
@@ -541,7 +541,13 @@ class UserController {
 
         //
 
-        return $this->container->view->render($response, 'user/manageMembership.html.twig');
+        $data['reasonForCancel'] = 'no reason why..';
+        
+        $result = $this->membershipServices->cancelMembership(10000, $data, true, $request);
+        
+        var_dump($result);
+
+        //return $this->container->view->render($response, 'user/manageMembership.html.twig');
 
 
     }

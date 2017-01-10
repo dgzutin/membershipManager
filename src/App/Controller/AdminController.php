@@ -239,20 +239,45 @@ class AdminController {
     {
         $memberId = (int)$args['memberId'];
 
-        $resp = $this->membershipServices->getMemberByMemberId($memberId);
+        $form_submission = false;
+        if ($request->isPost()){
+
+            $memberResp = $this->membershipServices->getMemberByMemberId($memberId);
+            $userId = $memberResp['member']['user']->getId();
+            $membershipTypeId = $memberResp['member']['membership']->getMembershipTypeId();
+
+            $form_data = $request->getParsedBody();
+            $membershipData['comments'] = $form_data['comments'];
+            $membershipData['membershipTypeId'] = $form_data['membershipTypeId'];
+            $membershipData['membershipGrade'] = $form_data['membershipGrade'];
+            $membershipData['cancelled'] = $form_data['cancelled'];
+            $membershipData['reasonForCancel'] = $form_data['reasonForCancel'];
+
+            $form_submission = true;
+            $updateMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $membershipTypeId , $membershipData);
+
+        }
 
         $membershipTypesResp = $this->membershipServices->getAllMembershipTypes();
         $memberGradesResp = $this->membershipServices->getAllMemberGrades();
 
+        $memberResp = $this->membershipServices->getMemberByMemberId($memberId);
+
         // get membership types and grades to populate select boxes
-        $resp['membershipTypes'] = $membershipTypesResp['membershipTypes'];
-        $resp['memberGrades'] = $memberGradesResp['memberGrades'];
+        $memberResp['membershipTypes'] = $membershipTypesResp['membershipTypes'];
+        $memberResp['memberGrades'] = $memberGradesResp['memberGrades'];
 
-        if ($resp['exception']){
+        if ($memberResp['exception']){
 
-            return $this->container->view->render($response, 'userNotification.twig', $resp);
+            return $this->container->view->render($response, 'userNotification.twig', $memberResp);
         }
-        return $this->container->view->render($response, 'admin/adminEditMembership.html.twig', $resp);
+
+        if ($form_submission){
+            $memberResp['form_submission'] = true;
+            $memberResp['message'] = $updateMemberResult['message'];
+        }
+
+        return $this->container->view->render($response, 'admin/adminEditMembership.html.twig', $memberResp);
     }
 
 

@@ -183,7 +183,7 @@ $app->group('/user', function () use ($app) {
 $app->group('/api/v1', function () use ($app) {
 
     $app->post('/sendSingleMail', '\ApiController:sendSingleMailAction' )->setName('sendSingleMail');
-    $app->post('/sendBulkMail', '\ApiController:sendBulkMailAction' )->setName('sendBulkMail');
+    $app->post('/sendBulkMailUsers', '\ApiController:sendBulkMailUsersAction' )->setName('sendBulkMailUsers');
     $app->post('/sendBulkMailMembers', '\ApiController:sendBulkMailMembersAction' )->setName('sendBulkMailMembers');
     $app->get('/getFilteredUsers', '\ApiController:getFilteredUsersAction' )->setName('getFilteredUsers');
     $app->post('/getFilteredMembers', '\ApiController:getFilteredMembersAction' )->setName('getFilteredMembers');

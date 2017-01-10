@@ -50,16 +50,17 @@ class ApiController {
         
     }
 
-    //Route /api/v1/sendBulkMail
-    public function sendBulkMailAction(ServerRequestInterface $request, ResponseInterface $response)
+    //Route /api/v1/sendBulkMailUsers
+    public function sendBulkMailUsersAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         $body = $request->getBody();
         $req = json_decode($body);
 
         $mailServices = $this->container->get('mailServices');
         $results = $mailServices->sendBulkEmails($req->userIds, $req->mailSubject, $req->mailBody, $req->replyTo, $request);
-        
-        echo json_encode($results);
+
+        return $response->withJson(array('exception' => false,
+                                         'results' => $results));
     }
 
     //Route /api/v1/sendBulkMail

@@ -80,11 +80,35 @@ class MembershipServices
         if ($Membership != NULL){
 
             if ($membershipData != null){
-                $Membership->setComments($membershipData['comments']);
+
+                if (isset($membershipData['comments'])){
+                    $Membership->setComments($membershipData['comments']);
+                }
+                if (isset($membershipData['membershipTypeId'])){
+                    $Membership->setMembershipTypeId($membershipData['membershipTypeId']);
+                }
+                if (isset($membershipData['membershipGrade'])){
+
+                    if ($membershipData['membershipGrade'] == '-1'){
+                        $Membership->setMembershipGrade(null);
+                    }
+                    else{
+                        $Membership->setMembershipGrade($membershipData['membershipGrade']);
+                    }
+                }
+                if (($Membership->getCancelled() == false) AND ($membershipData['cancelled'] == 1)){
+                    $Membership->setDateCancelled(new DateTime());
+                }
+                elseif (($Membership->getCancelled() == true) AND ($membershipData['cancelled'] == 0)){
+                    $Membership->setDateCancelled(null);
+                }
+                if ($membershipData['cancelled'] != null){
+                    $Membership->setCancelled($membershipData['cancelled']);
+                }
+                if ( isset($membershipData['reasonForCancel'])){
+                    $Membership->setReasonForCancel($membershipData['reasonForCancel']);
+                }
             }
-            $Membership->setCancelled(false);
-            $Membership->setDateCancelled(NULL);
-            $Membership->setReasonForCancel(NULL);
 
             $this->em->persist($Membership);
             try{
@@ -397,14 +421,16 @@ class MembershipServices
         $membership = $repository->createQueryBuilder('Membership')
             ->select('Membership')
             ->where('Membership.id = :id')
+            ->andWhere('Membership.cancelled = :cancelled')
             ->setParameter('id', $membershipId)
+            ->setParameter('cancelled', false)
             ->getQuery()
             ->getOneOrNullResult();
 
         //Check if members exists. Throw an exception if it does not.
         if ($membership == NULL){
             return array('exception' => true,
-                         'message' => 'Membership ID '.$membershipId.' does not exist');
+                         'message' => 'Membership ID '.$membershipId.' does not exist or has been terminated');
         }
 
 
@@ -1097,7 +1123,7 @@ class MembershipServices
                      'message' => $deletedCount.' item(s) deleted');
     }
 
-    public function cancelMembership($memberId, $data)
+    public function cancelMembership($memberId, $data, $mailNotification, $request)
     {
         $member = $this->getMemberByMemberId($memberId);
 
@@ -1118,9 +1144,20 @@ class MembershipServices
             return array('exception' => true,
                          'message' => $e->getMessage());
         }
+        
+        if ($mailNotification == true){
+
+            $members = json_encode(array($member['member']));
+            $members_json = json_decode($members);
+            $mailSendResult = $this->mailService->sendCancelMembershipEmail($members_json, $request);
+
+            return array('exception' => false,
+                'message' => 'Your membership with member ID'.$memberId.' was terminated. An e-mail confirmation was sent to '.$members_json[0]->user->email_1);
+        }
 
         return array('exception' => false,
-                     'message' => 'Membership of member '.$memberId.' was cancelled');
+                     'message' => 'Your membership with member ID'.$memberId.' was terminated');
+
     }
     
 

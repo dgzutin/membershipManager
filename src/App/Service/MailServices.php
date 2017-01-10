@@ -199,7 +199,7 @@ catch (\Exception $e){
         return $results;
     }
 
-    // $members is an array of users and memberships
+    // $members is a JSON array of users and memberships
     public function sendBulkEmailsMembers($members, $emailSubject, $emailBody, $replyTo, $request)
     {
 
@@ -246,6 +246,18 @@ catch (\Exception $e){
         return $results;
     }
 
+    public function sendCancelMembershipEmail($members_json, $request)
+    {
+        $subject = 'Membership termination confirmation';
+        $body = "<strong>{formalSalutation_en},</strong> <br><br> We are sorry that you decided to leave us and confirm that the following membership has been terminated:<br><br>
+                  <strong>Membership Type: </strong> {membershipType} <br>
+                  <strong>Member ID:</strong> {memberId} <br><br>
+                  Best Regards, <br><br>
+                  {nameOfOrganization} - {orgAcronym}";
+
+        return $this->sendBulkEmailsMembers($members_json, $subject, $body, 'offige@igip.org', $request);
+    }
+
 
     public function highlightPlaceholders($emailSubject, $emailBodyText)
     {
@@ -258,6 +270,8 @@ catch (\Exception $e){
             "{membershipExpiryDate}" =>  '<mark>{membershipExpiryDate}</mark>',
             "{membershipType}" =>  '<mark>{membershipType}</mark>',
             "{memberGrade}" =>  '<mark>{memberGrade}</mark>',
+            "{nameOfOrganization}" => '<mark>{nameOfOrganization}</mark>',
+            "{orgAcronym}" => '<mark>{orgAcronym}</mark>',
         );
 
         $body_mod = strtr($emailBodyText, $placeholders);
@@ -277,7 +291,9 @@ catch (\Exception $e){
             "{memberId}" => $member->membership->memberId,
             "{membershipExpiryDate}" => $member->validity_string,
             "{membershipType}" => $member->membershipTypeName,
-            "{memberGrade}" => $member->memberGrade
+            "{memberGrade}" => $member->memberGrade,
+            "{nameOfOrganization}" => $this->settings->getNameOfOrganization(),
+            "{orgAcronym}" => $this->settings->getAcronym()
         );
 
         $body_mod = strtr($emailBodyText, $placeholders);

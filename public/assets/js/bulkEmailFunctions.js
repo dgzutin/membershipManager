@@ -16,7 +16,7 @@ $("#checkbox_all").change(function () {
 });
 
 //Send emails
-$("#button_sendMail").click(function(){
+$("#button_sendMailMembers").click(function(){
 
 
     //disable checkboxes and send button
@@ -54,7 +54,7 @@ $("#button_sendMail").click(function(){
         }
     }
 
-    sendBulkEmails(membersSend);
+    sendBulkEmailsMembers(membersSend);
 
 });
 
@@ -75,19 +75,6 @@ function getFilteredMembers()
             members = result.members;
             console.log(result);
             fillTableMembers('recipients');
-            //$("#div1").html(result);
-        }});
-
-}
-
-function getFilteredUsers()
-{
-    $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/v1/getFilteredUsers",
-        success: function(result){
-            //console.log(JSON.stringify(result[0]));
-            users = result;
-            console.log(users);
-            fillTable('recipients');
             //$("#div1").html(result);
         }});
 
@@ -131,7 +118,7 @@ function fillTableMembers(tableId)
     }
 }
 
-function sendBulkEmails(membersSend)
+function sendBulkEmailsMembers(membersSend)
 {
     console.log('Sending mails now... ');
     var request = {

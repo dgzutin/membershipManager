@@ -9,8 +9,29 @@
             <div class="panel-heading"><strong>{{ member.membershipTypeName }} - Member ID {{ member.membership.memberId }}</strong><div id="notification"></div></div>
             <div class="panel-body">
 
+                {% if form_submission == true %}
+
+                    {% if exception == true %}
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                        </div>
+                    {% endif %}
+
+                {% else %}
+
+                    {% if exception == true %}
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
                 <!-- Form starts here -->
-                <form method="post">
+                <form data-toggle="validator" role="form" method="post" action="{{ path_for('adminMember', {'memberId': member.membership.memberId}) }}">
 
                 <div class="well">
 
@@ -63,7 +84,7 @@
 
                                     <select class="form-control" id="membershipGrade" name="membershipGrade">
 
-                                        <option value="">None</option>
+                                        <option value="-1">None</option>
                                         {% for memberGrade in memberGrades %}
                                             <option value="{{ memberGrade.id }}" {% if member.memberGrade.id == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
                                         {% endfor %}
@@ -90,9 +111,37 @@
                             <div class="row show-grid">
                                 <div class="col-xs-12 col-md-3"><p class="text-right"><label for="comments">Comments</label></p></div>
                                 <div class="col-xs-12 col-md-6">
-                                    <textarea class="form-control" rows="3" id="comments">{{ member.membership.comments }}</textarea>
+                                    <textarea class="form-control" rows="3" id="comments" name="comments">{{ member.membership.comments }}</textarea>
                                 </div>
                             </div>
+
+                            <hr>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="cancelled">Status:</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <select class="form-control" id="cancelled" name="cancelled">
+                                        <option value="1" {% if member.membership.cancelled == true  %}selected{% endif %}>Cancelled</option>
+                                        <option value="0" {% if member.membership.cancelled == false  %}selected{% endif %}>Continued</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label>Date cancelled:</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <p class="text-danger">{% if  member.membership.dateCancelled != null %} {{ member.membership.dateCancelled | date('jS F Y') }} {% endif %}</p>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="reasonForCancel">Reason for cancelling membership:</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <textarea class="form-control" rows="3" id="reasonForCancel" name="reasonForCancel">{{ member.membership.reasonForCancel }}</textarea>
+                                </div>
+                            </div>
+
+
 
                         </div>
                         <div class="col-md-4">

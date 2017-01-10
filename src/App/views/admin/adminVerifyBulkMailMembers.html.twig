@@ -64,6 +64,7 @@
                                     <option value="4" {% if form.validity == '4'  %}selected{% endif %}>Valid until {{ validity.two_periods_ago }}</option>
                                     <option value="5" {% if form.validity == '5'  %}selected{% endif %}>All Expired</option>
                                     <option value="6" {% if form.validity == '6'  %}selected{% endif %}>Never validated memberships</option>
+                                    <option value="7" {% if form.validity == '7'  %}selected{% endif %}>Cancelled memberships</option>
 
                                 </select>
                             </div>
@@ -128,7 +129,7 @@
                     <!-- Table Starts here  -->
                     <div class="alert alert-info" id="message" hidden="true"></div>
 
-                    <button id="button_sendMail" type="submit" class="btn btn-success">Send e-mail(s) now</button>
+                    <button id="button_sendMailMembers" type="submit" class="btn btn-success">Send e-mail(s) now</button>
 
                     <a href="{{ path_for('createBulkMailMembersAdmin') }}"><button id="button_return" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
 
