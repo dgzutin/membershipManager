@@ -321,9 +321,9 @@
                                         <div class="address">{{ invoiceData.institution }}</div>
                                         <div class="address">{{ invoiceData.street }} {{ invoiceData.zip }} {{ invoiceData.city }}, <span class="bfh-countries" data-country="{{ invoiceData.country }}" data-flags="false"></span></div>
                                         <div class="email"><a href="mailto:{{ user.email1 }}">{{ user.email1 }}</a></div>
+                                        <div><strong>Date:</strong> {{ invoiceDate }}</div>
+                                        <div><strong>Due date:</strong> {{ invoiceDueDate }}</div>
                                         {{ invoiceData.vat }} | {{ invoiceData.reference }}
-                                        <div>Date: {{ invoiceDate }}</div>
-                                        <div>Due Date: {{ invoiceDueDate }}</div>
                                     </td>
                                 </tr>
                                 <tr>
