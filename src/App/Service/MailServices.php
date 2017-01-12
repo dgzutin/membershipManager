@@ -292,9 +292,8 @@ class MailServices
             'amountPaid' => $amountPaid_formatted,
             'outstandingAmount' => $outstandingAmount_formatted,
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
-            'paypal_ipn' =>  $resetPasswordLink = $request->getUri()->getBaseUrl(). '/paypal_ipn',
             'logo' =>  $resetPasswordLink = $request->getUri()->getBaseUrl(). '/assets/images/logo_invoice.png',
-            'pay_now_button' =>  $resetPasswordLink = $request->getUri()->getBaseUrl(). '/assets/images/pay_now_button.png',
+            'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoice', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
             'message' => $respInvoiceData['message']);
 
         $template = $this->twig->loadTemplate('email/eMailInvoice.html.twig');

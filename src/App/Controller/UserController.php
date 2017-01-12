@@ -365,7 +365,7 @@ class UserController {
         }
 
         // END Convert all prices to locale settings ---------------------
-        return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
+        return $this->container->view->render($response, 'email/eMailInvoice.html.twig', array(
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],
@@ -378,6 +378,7 @@ class UserController {
             'outstandingAmount' => $outstandingAmount_formatted,
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
             'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
+            'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoice', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
             'message' => $respInvoiceData['message']));
 
     }

@@ -384,65 +384,9 @@
 
                                         {% if issuerData.paypalActive == true %}
 
-                                            <div class="col-md-6">
+                                            <br><br>
+                                            <a href="{{ invoiceLink }}" class="btn-primary">Pay now with credit card</a>
 
-
-                                                {% if issuerData.paypalSandboxMode == true %}
-
-                                                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method='post' name='paypal'>
-
-                                                    {% else %}
-
-                                                    <form action="https://www.paypal.com/cgi-bin/webscr" method='post' name='paypal'>
-
-                                                        {% endif %}
-
-                                                        <input type='hidden' name="notify_url" value="{{ paypal_ipn }}">
-                                                        <input type='hidden' name="notify_url" value="{{ paypal_ipn }}">
-
-                                                        <input type='hidden' name="return" value="">
-                                                        <input type='hidden' name="cancel_return" value="">
-                                                        <input type='hidden' name="rm" value="2">
-                                                        <input type='hidden' name="ah" value="0">
-                                                        <input type='hidden' name="amount" value="{{ outstandingAmount_paypal }}">
-                                                        <input type='hidden' name="currency_code" value="{{ invoiceData.currency }}">
-
-                                                        {% if items|length == 1 %}
-
-                                                            <input type='hidden' name="item_name" value="Invoice Nr. {{ invoiceData.id }} - {{items[0].name}}">
-
-                                                        {% else %}
-
-                                                            <input type='hidden' name="item_name" value="Invoice Nr. {{ invoiceData.id }}, {{ issuerData.nameOfOrganization }} ">
-
-                                                        {% endif %}
-
-
-                                                        <input type='hidden' name="invoice" value="{{ invoiceData.id }}">
-                                                        <input type='hidden' name="no_note" value="1">
-                                                        <input type='hidden' name="no_shipping" value="1">
-                                                        <input type='hidden' name="charset" value="UTF-8">
-                                                        <input type='hidden' name="cmd" value="_ext-enter">
-                                                        <input type='hidden' name="redirect_cmd" value="_xclick">
-                                                        <input type='hidden' name="business" value="{{ issuerData.paypalEmail }}">
-                                                        <input type='hidden' name="custom" value="2299">
-
-                                                        <input type='hidden' name="email" value="{{ user.email_1 }}">
-                                                        <input type='hidden' name="first_name" value="{{ user.first_name }}">
-                                                        <input type='hidden' name="last_name" value="{{ user.last_name }}">
-                                                        <input type='hidden' name="address1" value="{{ invoiceData.institution }}">
-                                                        <input type='hidden' name="address2" value="{{ invoiceData.street }}">
-                                                        <input type='hidden' name="city" value="{{ invoiceData.city }}">
-                                                        <input type='hidden' name="state" value="">
-                                                        <input type='hidden' name="zip" value="{{ invoiceData.zip }}">
-                                                        <input type='hidden' name="country" value="{{ invoiceData.country }}">
-
-                                                        <input type='hidden' name="lc" value="US">
-                                                        <input type="image" name="submit" border="0" src="{{ pay_now_button }}" alt="Please select to make your payment with PayPal - it's fast, free and secure!">
-                                                        <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                                                    </form>
-
-                                            </div>
 
                                         {% endif %}
 
