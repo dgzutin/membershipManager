@@ -3,127 +3,109 @@
 
 {% block mainPanel %}
 
-                <div class="well">
+    <link href="{{ baseUrl }}/assets/css/invoice.css" rel="stylesheet">
 
-                <div class="row show-grid">
-                    <div class="col-md-6">
+    <header class="clearfix">
+        <div id="logo">
+            <img src="{{ baseUrl }}/assets/images/logo_invoice.png">
+        </div>
 
-                            <address>
-                                <strong>{{ invoiceData.name }}
-                                    <br>{{ invoiceData.institution }}
-                                    <br>{{ invoiceData.street }}
-                                    <br>{{ invoiceData.city }}, {{ invoiceData.zip }}
-                                    <br><span class="bfh-countries" data-country="{{ invoiceData.country }}" data-flags="true"></span>
-                                </strong>
-                                <br>
-                                <br>{{ invoiceData.vat }}
-                                <br>{{ invoiceData.reference }}
-                            </address>
-                        </div>
+        <div id="company">
+            <h2 class="name">{{ issuerData.nameOfOrganization }}</h2>
+            <div>{{ issuerData.street }} - {{ issuerData.city }} {{ issuerData.zip }}, {{ issuerData.country }}</div>
+            <div>{{ issuerData.vat }}</div>
+            <div>{{ issuerData.registrationNumber }}</div>
+            <div>{{ issuerData.phone }}</div>
+            <div><a href="mailto:{{ issuerData.email }}">{{ issuerData.email }}</a></div>
+        </div>
+    </header>
+    <hr>
+    <main>
+        <div id="details" class="clearfix">
+            <div id="client">
+                <div class="to">INVOICE TO:</div>
+                <h2 class="name">{{ invoiceData.name }}</h2>
+                <div class="address">{{ invoiceData.institution }}</div>
+                <div class="address">{{ invoiceData.street }} {{ invoiceData.zip }} {{ invoiceData.city }}, <span class="bfh-countries" data-country="{{ invoiceData.country }}" data-flags="false"></span></div>
+                <div class="email"><a href="mailto:{{ user.email1 }}">{{ user.email1 }}</a></div>
+                {{ invoiceData.vat }}
+                <br>{{ invoiceData.reference }}
+            </div>
 
-                    <div class="col-md-6">
+            <div id="invoice">
+                <h1>INVOICE #{{ invoiceData.id }}</h1>
+                <div class="date">Date of Invoice: {{ invoiceDate }}</div>
+                <div class="date">Due Date: {{ invoiceDueDate }}</div>
+            </div>
+        </div>
+        <table border="0" cellspacing="0" cellpadding="0">
+            <thead>
+            <tr>
+                <th class="no">#</th>
+                <th class="desc">DESCRIPTION</th>
+                <th class="unit">UNIT PRICE</th>
+                <th class="qty">QUANTITY</th>
+                <th class="total">TOTAL</th>
+            </tr>
+            </thead>
+            <tbody>
 
-                        <p class="text-right">
-                            {{ issuerData.nameOfOrganization }}
-                            <br>{{ issuerData.street }}
-                            <br>{{ issuerData.city }} {{ issuerData.zip }}
-                            <br>{{ issuerData.country }}
-                            <br>{{ issuerData.vat }}
-                            <br>{{ issuerData.registrationNumber }}
-                            <br>E-mail: <a href="mailto:{{ issuerData.email }}">{{ issuerData.email }}</a>
-                            <br>
-                            <br>Invoice date: <strong>{{ invoiceDate }}</strong>
-                        </p>
-                    </div>
-                </div>
+            {%  for item in items %}
 
-                 <div class="row show-grid">
-                     <div class="col-md-12"><h3><strong>Invoice Nr. {{ invoiceData.id }}</strong></h3></div>
-                     </div>
+                <tr>
+                    <td class="no">{{ loop.index }}</td>
+                    <td class="desc"><h3>{{ item.name }}</h3></td>
+                    <td class="unit">{{ invoiceData.currency }} {{ item.unitPrice }}</td>
+                    <td class="qty">{{ item.quantity }}</td>
+                    <td class="total">{{ invoiceData.currency }} {{ item.totalPrice }}</td>
+                </tr>
 
+            {% endfor %}
 
-                <br>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">SUBTOTAL</td>
+                <td>{{ invoiceData.currency }} {{ totalPrice }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">TAX 0%</td>
+                <td></td>
+            </tr>
 
-                    <table class="table table-condensed" id="items" cellspacing="0" width="100%">
-                        <thead>
-                        <tr>
-                            <th>Description</th>
-                            <th></th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th>Amount</th>
-                            <th>Included VAT</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {%  for item in items %}
-                            <tr class="">
-                                <td style="width: 400px;">{{ item.name }}</td>
-                                <td></td>
-                                <td>{{ item.quantity }}</td>
-                                <td>{{ item.unitPrice }}</td>
-                                <td>{{ item.totalPrice }}</td>
-                                <td>0.0%</td>
-                            </tr>
-                        {% endfor %}
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">Amount paid</td>
+                <td>{{ invoiceData.currency }} {{ amountPaid }}</td>
+            </tr>
 
-                        <tr class="">
-                            <td><br></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">AMOUNT DUE</td>
+                <td>{{ invoiceData.currency }} {{ outstandingAmount }}</td>
+            </tr>
+            </tfoot>
+        </table>
 
-                        <tr class="">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><strong>Invoice Total:</strong></td>
-                            <td>{{ invoiceData.currency }} {{ totalPrice }}</td>
-                            <td></td>
-                        </tr>
-
-                        <tr class="">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><strong>Amount paid:</strong></td>
-                            <td>{{ invoiceData.currency }} {{ amountPaid }}</td>
-                            <td></td>
-                        </tr>
-
-                        <tr class="">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><strong>TOTAL DUE:</strong></td>
-                            <td><strong>{{ invoiceData.currency }} {{ outstandingAmount }}</strong></td>
-                            <td></td>
-                        </tr>
-
-                        </tbody>
-                    </table>
-
-
-                <br>
-
+        <div id="notices">
+            <div>NOTICE:</div>
+            <div class="notice">
                 <strong>{{ message }}</strong>
+            </div>
+        </div>
+    </main>
 
-                <br>
 
               <!-- Display payment options if oustanding amount is greater that 0  -->
              {% if outstandingAmount > 0 %}
 
-                <hr>
-                <p class="text-danger"><strong>Terms and conditions:</strong></p>
-                Payment is due on  <strong>{{ invoiceDueDate }}</strong>.
-                <br>
-
-                 <hr>
-                 <p class="text-danger"><strong>Payment options:</strong></p>
-
+                 <div id="notices">
+                     <div class="notice">
+                         The following payment methods are possible:
+                     </div>
+                 </div>
 
                 <div class="row show-grid">
 
@@ -134,9 +116,8 @@
 
                     <div class="col-md-6">
 
-                        <br><strong>Wire transfer:</strong>
-                        <br>
-                        <br>{{ issuerData.nameOfOrganization }}
+                        <h3>Wire transfer:</h3>
+                        <br><strong>Account holder: </strong>{{ issuerData.nameOfOrganization }}
                         <br><strong>Bank: </strong>{{ issuerData.bankAddress }}
                         <br><strong>IBAN: </strong>{{ issuerData.iban }}
                         <br><strong>BIC/SWIFT: </strong> {{ issuerData.bic }}
@@ -152,8 +133,7 @@
 
                     <div class="col-md-6">
 
-                        <br><strong>Pay with credit card via Paypal:</strong>
-                        <br><br>
+                        <h3>Credit card via Paypal:</h3>
 
 
                         {% if issuerData.paypalSandboxMode == true %}
@@ -210,24 +190,19 @@
                             <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                         </form>
 
-                                <p class="text-right"><img src="{{ baseUrl }}/assets/images/PDF_downlaod.png"></p>
-
-
                     </div>
 
                     {% endif %}
                 </div>
 
-                 </div>
 
              {% else %}
 
                 <p class="text-right"><img src="{{ baseUrl }}/assets/images/paid.png"></p>
-                 <p class="text-right"><img src="{{ baseUrl }}/assets/images/PDF_download.png"></p>
 
              {% endif %}
 
-
+    <hr>
 
 {% endblock %}
 

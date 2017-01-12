@@ -20,7 +20,7 @@ class UserServices
 {
     public function __construct($container)
     {
-        $this->mailService = $container['mailServices'];
+        //$this->mailService = $container['mailServices'];
         $this->utilsServices = $container->get('utilsServices');
         $this->shoppingCartServices = $container['shoppingCartServices'];
         $this->em = $container['em'];

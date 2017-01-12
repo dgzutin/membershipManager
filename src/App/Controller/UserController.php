@@ -365,7 +365,7 @@ class UserController {
         }
 
         // END Convert all prices to locale settings ---------------------
-        return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
+        return $this->container->view->render($response, 'email/eMailInvoice.html.twig', array(
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],
@@ -493,7 +493,7 @@ class UserController {
     {
         $userId = $_SESSION['user_id'];
 
-        //$user = $this->userServices->getUserById($userId);
+        $user = $this->userServices->getUserById($userId);
 
         //$validUntil = new \DateTime('2018-12-31 23:59:59');
         //$result = $this->membershipServices->addNewMembershipValidity(68, 'year', '10-30', NULL, NULL);
@@ -541,9 +541,9 @@ class UserController {
 
         //
 
-        $data['reasonForCancel'] = 'no reason why..';
+
         
-        $result = $this->membershipServices->cancelMembership(10000, $data, true, $request);
+        $result = $this->mailServices->sendInvoiceToUser(24, $user['user'], $request);
         
         var_dump($result);
 

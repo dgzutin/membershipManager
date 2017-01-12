@@ -10,12 +10,13 @@ namespace App\Service;
 
 class MailServices
 {
-    public function __construct($mailer, $message, $twig, $em)
+    public function __construct($mailer, $message, $twig, $container)
     {
         $this->mailer = $mailer;
         $this->message = $message;
         $this->twig = $twig;
-        $this->em = $em;
+        $this->em = $container['em'];
+        $this->container = $container;
 
         $repository = $this->em->getRepository('App\Entity\Settings');
         $this->settings = $repository->createQueryBuilder('settings')
@@ -109,11 +110,10 @@ class MailServices
                 'sent' => $this->mailer->send($this->message),
                 'message' => 'Email successfully sent to '.$user->getEmail1());
         }
-catch (\Exception $e){
-
-    $result = array('exception' => true,
-        'sent' => false,
-        'message' => $e->getMessage());
+        catch (\Exception $e){
+            $result = array('exception' => true,
+                            'sent' => false,
+                            'message' => $e->getMessage());
 }
         return $result;
     }
@@ -256,6 +256,67 @@ catch (\Exception $e){
                   {nameOfOrganization} - {orgAcronym}";
 
         return $this->sendBulkEmailsMembers($members_json, $subject, $body, 'offige@igip.org', $request);
+    }
+
+    public function sendInvoiceToUser($invoiceId, $user, $request)
+    {
+
+        $userServices = $this->container->get('userServices');
+
+        $respInvoiceData = $userServices->getInvoiceDataForUser($invoiceId, $user->getId());
+
+        // Convert all prices to locale settings ---------------------
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $totalPrice_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['totalPrice']);
+        $amountPaid_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['amountPaid']);
+        $outstandingAmount_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['outstandingAmount']);
+        $items = $respInvoiceData['invoiceItems'];
+
+        $i = 0;
+        foreach ($items as $item){
+            $items[$i]->setUnitPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getUnitPrice()));
+            $items[$i]->setTotalPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getTotalPrice()));
+            $i++;
+        }
+        // END Convert all prices to locale settings ---------------
+
+        $resp = array(
+            'user' => $user,
+            'exception' => $respInvoiceData['exception'],
+            'invoiceData' => $respInvoiceData['invoice'],
+            'invoiceDate' => $respInvoiceData['invoiceDate'],
+            'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
+            'items' => $respInvoiceData['invoiceItems'],
+            'issuerData' => $respInvoiceData['issuerData'],
+            'totalPrice' =>  $totalPrice_formatted,
+            'amountPaid' => $amountPaid_formatted,
+            'outstandingAmount' => $outstandingAmount_formatted,
+            'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
+            'paypal_ipn' =>  $resetPasswordLink = $request->getUri()->getBaseUrl(). '/paypal_ipn',
+            'logo' =>  $resetPasswordLink = $request->getUri()->getBaseUrl(). '/assets/images/logo_invoice.png',
+            'pay_now_button' =>  $resetPasswordLink = $request->getUri()->getBaseUrl(). '/assets/images/pay_now_button.png',
+            'message' => $respInvoiceData['message']);
+
+        $template = $this->twig->loadTemplate('email/eMailInvoice.html.twig');
+        $emailBody = $template->render($resp);
+
+        $this->message
+            ->setSubject($this->settings->getAcronym().': Invoice Nr.'.$respInvoiceData['invoice']->getId())
+            ->setFrom(array( $this->settings->getEmail() =>  $this->from));
+        try{
+            $this->message->setTo(array($user->getEmail1()));
+            $this->message->setBody($emailBody, 'text/html');
+            $result = array('exception' => false,
+                'sent' => $this->mailer->send($this->message),
+                'message' => 'Email successfully sent to '.$user->getEmail1());
+        }
+        catch (\Exception $e){
+            $result = array('exception' => true,
+                'sent' => false,
+                'message' => $e->getMessage());
+        }
+        return $result;
+
     }
 
 
