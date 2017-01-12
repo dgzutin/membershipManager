@@ -365,7 +365,7 @@ class UserController {
         }
 
         // END Convert all prices to locale settings ---------------------
-        return $this->container->view->render($response, 'email/eMailInvoice.html.twig', array(
+        return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],
