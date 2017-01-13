@@ -198,28 +198,23 @@ class PublicController {
 
     public function paypalIPnAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        //$paypalVariables = $request->getParsedBody();
-
+        
         $myfile = fopen('webservice.txt','w') or die("Unable to open file");
         fwrite($myfile, $request->getBody());
         fclose($myfile);
 
-        echo '';
-
-        
+        return $response->withStatus(200);
 
         $uri_sandbox = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
         $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 
         //verify IPN
-
-        /*
-        $verify_body = 'cmd=_notify-validate&'.$request->getBody();
+        $verify_uri = $uri_sandbox.'?cmd=_notify-validate&'.$request->getBody();
 
         try{
-            $response= Request::post($uri_sandbox)
+            $response= Request::post($verify_uri)
                 ->addHeader('User-Agent','PHP-IPN-VerificationScript')
-                ->body($verify_body)
+                ->body('')
                 ->send();
         }
         catch (Exception $e) {
@@ -228,15 +223,9 @@ class PublicController {
         }
 
 
-        //$invoiceId = $paypalVariables['invoice'];
-        //$paymentStatus = $paypalVariables['payment_status'];
 
-        $myfile = fopen('ipnver.txt','w') or die("Unable to open file");
-        fwrite($myfile, $response->raw_body);
-        fclose($myfile);
-        //var_dump('test');
-
-        */
+        $invoiceId = $paypalVariables['invoice'];
+        $paymentStatus = $paypalVariables['payment_status'];
     }
 
 }
