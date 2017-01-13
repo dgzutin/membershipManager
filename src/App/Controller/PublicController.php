@@ -24,6 +24,7 @@ class PublicController {
 
         $this->container = $container;
         $this->systemInfo = $container->get('userServices')->getSystemInfo();
+        $this->billingServices = $container->get('billingServices');
     }
 
     public function loginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -198,13 +199,28 @@ class PublicController {
 
     public function paypalIPnAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        
-        $myfile = fopen('webservice.txt','w') or die("Unable to open file");
-        fwrite($myfile, $request->getBody());
-        fclose($myfile);
+        $parsedBody = $request->getParsedBody();
+
+        $body = $request->getBody();
+
+
+        //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
+        //fwrite($myfile, $request->getBody());
+        //fclose($myfile);
+
+        $verified = $this->billingServices->verifyPaypalIpn($parsedBody, true);
+
+        if ($verified == true){
+
+            $myfile = fopen('webservice.txt','w') or die("Unable to open file");
+            fwrite($myfile, 'VERIFIED');
+            fclose($myfile);
+        }
 
         return $response->withStatus(200);
 
+
+        /*
         $uri_sandbox = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
         $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 
@@ -226,6 +242,8 @@ class PublicController {
 
         $invoiceId = $paypalVariables['invoice'];
         $paymentStatus = $paypalVariables['payment_status'];
+
+        */
     }
 
 }

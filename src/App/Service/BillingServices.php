@@ -7,15 +7,61 @@
  */
 namespace App\Service;
 
-use App\Entity\User;
-use App\Entity\Invoice;
-use App\Entity\InvoiceItem;
-use App\Entity\Billing;
-use App\Entity\ShoppingCartItem;
-use DateTime;
-use DateInterval;
+
+use \Httpful\Request;
+use \Exception;
 
 class BillingServices
 {
+
+    public function __construct($container)
+    {
+
+    }
+    
+    
+    public function verifyPaypalIpn($parsedBody, $sandbox)
+    {
+        
+        
+        $req = 'cmd=_notify-validate';
+        $get_magic_quotes_exists = false;
+        if (function_exists('get_magic_quotes_gpc')) {
+            $get_magic_quotes_exists = true;
+        }
+        foreach ($parsedBody as $key => $value) {
+            if ($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
+                $value = urlencode(stripslashes($value));
+            } else {
+                $value = urlencode($value);
+            }
+            $req .= "&$key=$value";
+        }
+
+        if ($sandbox == true){
+            $uri_ipn = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
+        }
+        else{
+            $uri_ipn = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+        }
+
+
+        try{
+            $response= Request::post($uri_ipn)
+                ->addHeader('User-Agent','PHP-IPN-VerificationScript')
+                ->body($req)
+                ->send();
+        }
+        catch (Exception $e) {
+            return array('is_Exception' => true,
+                'error_message' => $e->getMessage());
+        }
+
+        if ($response->body == 'VERIFIED'){
+            return true;
+        }
+        return false;
+
+    }
         
 }

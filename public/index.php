@@ -84,6 +84,10 @@ $container['siteManagementServices'] = function($container){
     return new Service\SiteManagementServices($container);
 };
 
+$container['billingServices'] = function($container){
+    return new Service\BillingServices($container);
+};
+
 $container['mailServices'] = function ($container) {
 
     $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
