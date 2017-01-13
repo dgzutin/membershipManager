@@ -204,7 +204,9 @@ class PublicController {
         fwrite($myfile, $request->getBody());
         fclose($myfile);
 
-        return $response->withStatus(200);
+        echo '';
+
+        
 
         $uri_sandbox = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
         $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
@@ -224,9 +226,13 @@ class PublicController {
         }
 
 
+        //$invoiceId = $paypalVariables['invoice'];
+        //$paymentStatus = $paypalVariables['payment_status'];
 
-        $invoiceId = $paypalVariables['invoice'];
-        $paymentStatus = $paypalVariables['payment_status'];
+        $myfile = fopen('ipnver.txt','w') or die("Unable to open file");
+        fwrite($myfile, $response->raw_body);
+        fclose($myfile);
+        //var_dump('test');
     }
 
 }

@@ -1,1 +1,6 @@
-jnljnlj
+{
+"userIds": [2, 38],
+"mailSubject": "test",
+"mailBody": "body test",
+"replyTo": "dgzutin@gmail.com"
+}
