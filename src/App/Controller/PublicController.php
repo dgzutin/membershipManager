@@ -212,6 +212,8 @@ class PublicController {
         $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 
         //verify IPN
+
+        /*
         $verify_body = 'cmd=_notify-validate&'.$request->getBody();
 
         try{
@@ -233,6 +235,8 @@ class PublicController {
         fwrite($myfile, $response->raw_body);
         fclose($myfile);
         //var_dump('test');
+
+        */
     }
 
 }
