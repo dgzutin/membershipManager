@@ -6,3 +6,5 @@ composer.phar
 .idea
 src/App/config/config.json
 public/assets/images/logo_invoice.png
+public/ipnver.txt
+public/webservice.txt

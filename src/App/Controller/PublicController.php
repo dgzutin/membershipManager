@@ -198,7 +198,7 @@ class PublicController {
 
     public function paypalIPnAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $paypalVariables = $request->getParsedBody();
+        //$paypalVariables = $request->getParsedBody();
 
         $myfile = fopen('webservice.txt','w') or die("Unable to open file");
         fwrite($myfile, $request->getBody());
@@ -212,20 +212,12 @@ class PublicController {
         $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 
         //verify IPN
-
-        $req = 'cmd=_notify-validate';
-        foreach ($paypalVariables as $key => $value) {
-            $value = urlencode(stripslashes($value));
-            $req .= "&$key=$value";
-        }
-
-
-        //$verify_body = 'cmd=_notify-validate&'.$request->getBody();
+        $verify_body = 'cmd=_notify-validate&'.$request->getBody();
 
         try{
             $response= Request::post($uri_sandbox)
                 ->addHeader('User-Agent','PHP-IPN-VerificationScript')
-                ->body($req)
+                ->body($verify_body)
                 ->send();
         }
         catch (Exception $e) {
