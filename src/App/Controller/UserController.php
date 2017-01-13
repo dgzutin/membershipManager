@@ -367,6 +367,15 @@ class UserController {
         }
 
         // END Convert all prices to locale settings ---------------------
+
+        $messagePaypal = '';
+        $isPost = false;
+
+        if ($request->isPost()){
+            $messagePaypal = $request->getBody();
+            $isPost = true;
+        }
+
         return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
@@ -381,7 +390,9 @@ class UserController {
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
             'paypal_ipn_url' => $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn')),
             'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoice', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
-            'message' => $respInvoiceData['message']));
+            'message' => $respInvoiceData['message'],
+            'isPost' =>$isPost,
+            'messagePaypal' => $messagePaypal));
 
     }
 

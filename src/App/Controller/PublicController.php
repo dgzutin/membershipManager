@@ -201,9 +201,6 @@ class PublicController {
     {
         $parsedBody = $request->getParsedBody();
 
-        $body = $request->getBody();
-
-
         //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
         //fwrite($myfile, $request->getBody());
         //fclose($myfile);
@@ -216,38 +213,12 @@ class PublicController {
             $invoiceId = (int)$resp['paypalVars']['invoice'];
             $amountPaid = $resp['paypalVars']['mc_gross'];
 
-            $this->billingServices->addPaymentPaypal($invoiceId, $amountPaid, null, 'Paypal', $resp['paypalVars']);
+            $this->billingServices->addPayment($invoiceId, $amountPaid, null, 'Paypal', $resp['paypalVars']);
 
             //TODO: log results;
         }
 
         return $response->withStatus(200);
-
-
-        /*
-        $uri_sandbox = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
-        $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
-
-        //verify IPN
-        $verify_uri = $uri_sandbox.'?cmd=_notify-validate&'.$request->getBody();
-
-        try{
-            $response= Request::post($verify_uri)
-                ->addHeader('User-Agent','PHP-IPN-VerificationScript')
-                ->body('')
-                ->send();
-        }
-        catch (Exception $e) {
-            return array('is_Exception' => true,
-                'error_message' => $e->getMessage());
-        }
-
-
-
-        $invoiceId = $paypalVariables['invoice'];
-        $paymentStatus = $paypalVariables['payment_status'];
-
-        */
     }
 
 }

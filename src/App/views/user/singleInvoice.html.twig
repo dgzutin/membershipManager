@@ -5,6 +5,14 @@
 
     <link href="{{ baseUrl }}/assets/css/invoice.css" rel="stylesheet">
 
+    {% if isPost == true %}
+
+        <div class="alert alert-success">
+            <a class="close" data-dismiss="alert" href="#">×</a>{{ messagePaypal }}
+        </div>
+
+    {% endif %}
+
     <header class="clearfix">
         <div id="logo">
             <img src="{{ baseUrl }}/assets/images/logo_invoice.png">

@@ -19,6 +19,9 @@ class BillingServices
     {
         $this->em = $container->get('em');
 
+        $this->Paypal_sandbox_ipn = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
+        $this->Paypal_ipn = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+
     }
     
     
@@ -41,10 +44,10 @@ class BillingServices
         }
 
         if ($sandbox == true){
-            $uri_ipn = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
+            $uri_ipn = $this->Paypal_sandbox_ipn;
         }
         else{
-            $uri_ipn = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+            $uri_ipn = $this->Paypal_ipn;
         }
 
 
@@ -70,7 +73,7 @@ class BillingServices
                     'paypalVars' => $parsedBody);
     }
 
-    public function addPaymentPaypal($invoiceId, $amountPaid, $note, $paymentMode, $paypalVars)
+    public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paypalVars)
     {
 
         $newInvoicePayment = new InvoicePayment();
@@ -94,7 +97,7 @@ class BillingServices
         }
         catch (\Exception $e){
             return array('exception' => true,
-                'message' => $e->getMessage());
+                         'message' => $e->getMessage());
         }
 
         return array('exception' => false,
