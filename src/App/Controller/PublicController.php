@@ -13,6 +13,8 @@ use App\Entity\User;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use \Httpful\Request;
+use \Exception;
 
 
 class PublicController {
@@ -196,11 +198,32 @@ class PublicController {
 
     public function paypalIPnAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $paypalVariables = $request->getParsedBody();
+        //$paypalVariables = $request->getParsedBody();
 
         $myfile = fopen('webservice.txt','w') or die("Unable to open file");
         fwrite($myfile, $request->getBody());
         fclose($myfile);
+
+        return $response->withStatus(200);
+
+        $uri_sandbox = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
+        $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+
+        //verify IPN
+        $verify_uri = $uri_sandbox.'?cmd=_notify-validate&'.$request->getBody();
+
+        try{
+            $response= Request::post($verify_uri)
+                ->addHeader('User-Agent','PHP-IPN-VerificationScript')
+                ->body('')
+                ->send();
+        }
+        catch (Exception $e) {
+            return array('is_Exception' => true,
+                'error_message' => $e->getMessage());
+        }
+
+
 
         $invoiceId = $paypalVariables['invoice'];
         $paymentStatus = $paypalVariables['payment_status'];

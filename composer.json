@@ -5,7 +5,8 @@
         "doctrine/orm": "^2.5",
         "tecnickcom/tcpdf": "^6.2",
         "swiftmailer/swiftmailer": "^5.4",
-        "studio-42/elfinder": "^2.1"
+        "studio-42/elfinder": "^2.1",
+        "nategood/httpful": "^0.2.20"
     },
 
 

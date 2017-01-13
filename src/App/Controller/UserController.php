@@ -14,6 +14,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use App\Entity\Billing;
 use App\Entity\ShoppingCartItem;
+use \Httpful\Request;
+use \Exception;
 
 
 class UserController {
@@ -554,9 +556,23 @@ class UserController {
 
 
         
-        $result = $this->mailServices->sendInvoiceToUser(1, $user['user'], $request);
+        //$result = $this->mailServices->sendInvoiceToUser(1, $user['user'], $request);
+
+        $uri = 'https://www.paypal.com/cgi-bin/webscr';
         
-        var_dump($result);
+
+        try{
+            $response= Request::post($uri)
+                ->body('')
+                ->send();
+        }
+        catch (Exception $e) {
+            return array('is_Exception' => true,
+                'error_message' => $e->getMessage());
+        }
+
+
+        echo $response->body;
 
         //return $this->container->view->render($response, 'user/manageMembership.html.twig');
 
