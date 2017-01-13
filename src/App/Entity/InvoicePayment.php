@@ -34,8 +34,19 @@ class InvoicePayment
     /** @Column(type="string", length=20, nullable=false) * */
     protected $paymentMode; //PAYPAL and WIRE_TRANSFER are supported
 
-    /** @Column(type="integer", nullable=true) * */
+    /** @Column(type="string", length=100, nullable=true) * */
     protected $paypalTransactionId;
+
+    /** @Column(type="string", length=100, nullable=true) * */
+    protected $paypalPayerId;
+
+    /** @Column(type="string", length=50, nullable=true) * */
+    protected $paypalReceiver_email;
+
+    /** @Column(type="string", length=50, nullable=true) * */
+    protected $paypalIpnTrackId;
+
+
 
     /**
      * Get id
@@ -189,5 +200,77 @@ class InvoicePayment
     public function getPaypalTransactionId()
     {
         return $this->paypalTransactionId;
+    }
+
+    /**
+     * Set paypalPayerId
+     *
+     * @param string $paypalPayerId
+     *
+     * @return InvoicePayment
+     */
+    public function setPaypalPayerId($paypalPayerId)
+    {
+        $this->paypalPayerId = $paypalPayerId;
+
+        return $this;
+    }
+
+    /**
+     * Get paypalPayerId
+     *
+     * @return string
+     */
+    public function getPaypalPayerId()
+    {
+        return $this->paypalPayerId;
+    }
+
+    /**
+     * Set paypalReceiverEmail
+     *
+     * @param string $paypalReceiverEmail
+     *
+     * @return InvoicePayment
+     */
+    public function setPaypalReceiverEmail($paypalReceiverEmail)
+    {
+        $this->paypalReceiver_email = $paypalReceiverEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get paypalReceiverEmail
+     *
+     * @return string
+     */
+    public function getPaypalReceiverEmail()
+    {
+        return $this->paypalReceiver_email;
+    }
+
+    /**
+     * Set paypalIpnTrackId
+     *
+     * @param string $paypalIpnTrackId
+     *
+     * @return InvoicePayment
+     */
+    public function setPaypalIpnTrackId($paypalIpnTrackId)
+    {
+        $this->paypalIpnTrackId = $paypalIpnTrackId;
+
+        return $this;
+    }
+
+    /**
+     * Get paypalIpdTrackId
+     *
+     * @return string
+     */
+    public function getPaypalIpnTrackId()
+    {
+        return $this->paypalIpnTrackId;
     }
 }

@@ -208,13 +208,17 @@ class PublicController {
         //fwrite($myfile, $request->getBody());
         //fclose($myfile);
 
-        $verified = $this->billingServices->verifyPaypalIpn($parsedBody, true);
+        $resp = $this->billingServices->verifyPaypalIpn($parsedBody, true);
 
-        if ($verified == true){
+        if ($resp['verified'] == true){
 
-            $myfile = fopen('webservice.txt','w') or die("Unable to open file");
-            fwrite($myfile, 'VERIFIED');
-            fclose($myfile);
+            //Process actions
+            $invoiceId = (int)$resp['paypalVars']['invoice'];
+            $amountPaid = $resp['paypalVars']['mc_gross'];
+
+            $this->billingServices->addPaymentPaypal($invoiceId, $amountPaid, null, 'Paypal', $resp['paypalVars']);
+
+            //TODO: log results;
         }
 
         return $response->withStatus(200);

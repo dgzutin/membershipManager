@@ -8,6 +8,7 @@
 namespace App\Service;
 
 
+use App\Entity\InvoicePayment;
 use \Httpful\Request;
 use \Exception;
 
@@ -16,6 +17,7 @@ class BillingServices
 
     public function __construct($container)
     {
+        $this->em = $container->get('em');
 
     }
     
@@ -53,15 +55,51 @@ class BillingServices
                 ->send();
         }
         catch (Exception $e) {
-            return array('is_Exception' => true,
-                'error_message' => $e->getMessage());
+            return array('exception' => true,
+                         'verified' => false,
+                         'message' => $e->getMessage());
         }
 
         if ($response->body == 'VERIFIED'){
-            return true;
+            return array('exception' => false,
+                         'verified' => true,
+                         'paypalVars' => $parsedBody);
         }
-        return false;
+        return array('exception' => false,
+                    'verified' => false,
+                    'paypalVars' => $parsedBody);
+    }
 
+    public function addPaymentPaypal($invoiceId, $amountPaid, $note, $paymentMode, $paypalVars)
+    {
+
+        $newInvoicePayment = new InvoicePayment();
+        $newInvoicePayment->setInvoiceId($invoiceId);
+        $newInvoicePayment->setDatePaid(new \DateTime());
+        $newInvoicePayment->setPaymentNote($note);
+        $newInvoicePayment->setAmountPaid($amountPaid);
+        $newInvoicePayment->setPaymentMode($paymentMode);
+
+        if ($paypalVars != null){
+            $newInvoicePayment->setPaypalTransactionId($paypalVars['txn_id']);
+            $newInvoicePayment->setPaypalPayerId($paypalVars['payer_id']);
+            $newInvoicePayment->setPaypalReceiverEmail($paypalVars['receiver_email']);
+            $newInvoicePayment->setPaypalIpnTrackId($paypalVars['ipn_track_id']);
+        }
+
+        
+        $this->em->persist($newInvoicePayment);
+        try{
+            $this->em->flush();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        return array('exception' => false,
+                     'message' => 'New payment was saved');
+        
     }
         
 }
