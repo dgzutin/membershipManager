@@ -368,7 +368,6 @@ class UserController {
 
         // END Convert all prices to locale settings ---------------------
 
-        $messagePaypal = '';
         $isPost = false;
 
         if ($request->isPost()){
@@ -391,8 +390,7 @@ class UserController {
             'paypal_ipn_url' => $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn')),
             'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoice', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
             'message' => $respInvoiceData['message'],
-            'isPost' =>$isPost,
-            'messagePaypal' => $messagePaypal));
+            'isPost' =>$isPost));
 
     }
 
