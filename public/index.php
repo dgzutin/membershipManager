@@ -171,7 +171,7 @@ $app->group('/user', function () use ($app) {
     $app->get('/addMembershipToCart/{membershipTypeId}', '\UserController:addMembershipToCartAction')->setName('addMembershipToCartUser');
     $app->get('/removeItemfromCart/{itemId}', '\UserController:removeItemfromCartAction')->setName('removeItemfromCartUser');
     $app->post('/processOrder', '\UserController:processMembershipOrderAction')->setName('processOrder');
-    $app->get('/singleInvoice/{invoiceId}', '\UserController:singleInvoiceAction')->setName('singleInvoice');
+    $app->map(['GET', 'POST'], '/singleInvoice/{invoiceId}', '\UserController:singleInvoiceAction')->setName('singleInvoice');
     $app->post('/confirmOrder', '\UserController:confirmOrderAction')->setName('confirmOrder');
     $app->map(['GET', 'POST'], '/manageMembership/{memberId}', '\UserController:manageMembershipAction')->setName('manageMembership');
     $app->map(['GET', 'POST'], '/cancelMembership/{memberId}', '\UserController:cancelMembershipAction')->setName('cancelMembership');
