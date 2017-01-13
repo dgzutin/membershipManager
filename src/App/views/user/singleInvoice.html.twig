@@ -146,10 +146,10 @@
 
                         {% endif %}
 
-                            <input type='hidden' name="notify_url" value="{{ path_for('paypal_ipn')}}">
+                            <input type='hidden' name="notify_url" value="{{ paypal_ipn_url }}">
 
-                            <input type='hidden' name="return" value="">
-                            <input type='hidden' name="cancel_return" value="">
+                            <input type='hidden' name="return" value="{{ invoiceLink }}">
+                            <input type='hidden' name="cancel_return" value="{{ invoiceLink }}">
                             <input type='hidden' name="rm" value="2">
                             <input type='hidden' name="ah" value="0">
                             <input type='hidden' name="amount" value="{{ outstandingAmount_paypal }}">

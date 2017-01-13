@@ -198,6 +198,10 @@ class PublicController {
     {
         $paypalVariables = $request->getParsedBody();
 
+        $myfile = fopen('webservice.txt','w') or die("Unable to open file");
+        fwrite($myfile, $request->getBody());
+        fclose($myfile);
+
         $invoiceId = $paypalVariables['invoice'];
         $paymentStatus = $paypalVariables['payment_status'];
     }
