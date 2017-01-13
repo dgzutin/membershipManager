@@ -326,6 +326,12 @@
                                         {{ invoiceData.vat }} | {{ invoiceData.reference }}
                                     </td>
                                 </tr>
+
+                                <tr>
+                                    Thank you for your purchase. Here you find your invoice. If you have any questions feel free to contact us. <br><br>
+                                    Best regards,
+                                    <p style="font-size:85%;">{{ issuerData.nameOfOrganization }}</p>
+                                </tr>
                                 <tr>
                                     <td class="content-block">
                                         <table class="invoice">
@@ -399,7 +405,7 @@
                 <div class="footer">
                     <table width="100%">
                         <tr>
-                            <td class="aligncenter content-block">Questions? Email <a href="mailto:">support@acme.inc</a></td>
+                            <td class="aligncenter content-block"><a href="{{ orgWebsite }}">{{ nameOfOrganization }}</a></td>
                         </tr>
                     </table>
                 </div>

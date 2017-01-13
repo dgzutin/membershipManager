@@ -171,6 +171,7 @@ $app->group('/user', function () use ($app) {
     $app->post('/confirmOrder', '\UserController:confirmOrderAction')->setName('confirmOrder');
     $app->map(['GET', 'POST'], '/manageMembership/{memberId}', '\UserController:manageMembershipAction')->setName('manageMembership');
     $app->map(['GET', 'POST'], '/cancelMembership/{memberId}', '\UserController:cancelMembershipAction')->setName('cancelMembership');
+    $app->get('/sendInvoiceToUser/{invoiceId}', '\UserController:sendInvoiceToUserAction')->setName('sendInvoiceToUser');
 
     $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
 

@@ -195,6 +195,8 @@
                     {% endif %}
                 </div>
 
+                 <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Mail me this invoice<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+
 
              {% else %}
 

@@ -24,6 +24,7 @@ class UserServices
         $this->utilsServices = $container->get('utilsServices');
         $this->shoppingCartServices = $container['shoppingCartServices'];
         $this->em = $container['em'];
+        $this->mailServices = $container['mailServices'];
 
         $repository = $this->em->getRepository('App\Entity\Settings');
         $this->settings = $repository->createQueryBuilder('settings')
@@ -419,7 +420,7 @@ class UserServices
         }
     }
 
-    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems, $onPaymentActions)
+    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems, $onPaymentActions, $notifyUser, $request)
     {
 
         $newInvoice = new Invoice();
@@ -484,8 +485,22 @@ class UserServices
 
         }
 
+        //if notify user is true send invoice to user's email
+
+        if ($notifyUser == true){
+
+            $result = $this->mailServices->sendInvoiceToUser($newInvoice->getId(), $user, $request);
+
+            return array('exception' => false,
+                         'invoiceId' => $newInvoice->getId(),
+                         'userNotified' => $result['sent'],
+                         'message' => 'Invoice created. Invoice ID: '.$newInvoice->getId().'. '.$result['message']);
+
+        }
+
         return array('exception' => false,
                      'invoiceId' => $newInvoice->getId(),
+                     'userNotified' => false,
                      'message' => 'Invoice created. Invoice ID: '.$newInvoice->getId());
 
     }

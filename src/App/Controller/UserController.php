@@ -298,7 +298,7 @@ class UserController {
                 }
             }
             //Generate invoice if member is succesfully added
-            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingResp['billingInfo'], $itemsResp['items'], NULL);
+            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingResp['billingInfo'], $itemsResp['items'], NULL, true, $request);
 
             if ($resultsGenInvoice['exception'] == false){
                 //delete shopping cart items if invoice is generated
@@ -490,11 +490,21 @@ class UserController {
         return $this->container->view->render($response, 'user/cancelMembership.html.twig', $result);
     }
 
+    public function sendInvoiceToUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $user = $this->userServices->getUserById($_SESSION['user_id']);
+        $invoiceId = (int)$args['invoiceId'];
+        $result = $this->mailServices->sendInvoiceToUser($invoiceId, $user['user'], $request);
+
+        return $this->container->view->render($response, 'userNotification.twig', $result);
+    }
+
     public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $userId = $_SESSION['user_id'];
 
-        $user = $this->userServices->getUserById($userId);
+        $invoiceId = (int)$args['invoiceId'];
+        $user = $this->userServices->getUserById($_SESSION['user_id']);
 
         //$validUntil = new \DateTime('2018-12-31 23:59:59');
         //$result = $this->membershipServices->addNewMembershipValidity(68, 'year', '10-30', NULL, NULL);
