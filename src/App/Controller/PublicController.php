@@ -212,12 +212,12 @@ class PublicController {
         $uri = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 
         //verify IPN
-        $verify_uri = $uri_sandbox.'?cmd=_notify-validate&'.$request->getBody();
+        $verify_body = 'cmd=_notify-validate&'.$request->getBody();
 
         try{
-            $response= Request::post($verify_uri)
+            $response= Request::post($uri_sandbox)
                 ->addHeader('User-Agent','PHP-IPN-VerificationScript')
-                ->body('')
+                ->body($verify_body)
                 ->send();
         }
         catch (Exception $e) {
