@@ -25,6 +25,7 @@ class UserController {
 
         $this->container = $container;
         $this->em = $container['em'];
+        $this->systemInfo = $container->get('userServices')->getSystemInfo();
         $this->userServices = $container->get('userServices');
         $this->utilsServices = $container->get('utilsServices');
         $this->membershipServices = $container->get('membershipServices');
@@ -567,22 +568,7 @@ class UserController {
         
         //$result = $this->mailServices->sendInvoiceToUser(1, $user['user'], $request);
 
-        $uri = 'https://www.paypal.com/cgi-bin/webscr';
-        
-
-        try{
-            $response= Request::post($uri)
-                ->body('')
-                ->send();
-        }
-        catch (Exception $e) {
-            return array('is_Exception' => true,
-                'error_message' => $e->getMessage());
-        }
-
-
-        echo $response->body;
-
+        echo $this->systemInfo['settings']->getPaypalSandboxModeActive();
         //return $this->container->view->render($response, 'user/manageMembership.html.twig');
 
 

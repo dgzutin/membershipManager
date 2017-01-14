@@ -43,13 +43,10 @@ class BillingServices
             $req .= "&$key=$value";
         }
 
+        $uri_ipn = $this->Paypal_ipn;
         if ($sandbox == true){
             $uri_ipn = $this->Paypal_sandbox_ipn;
         }
-        else{
-            $uri_ipn = $this->Paypal_ipn;
-        }
-
 
         try{
             $response= Request::post($uri_ipn)
@@ -62,15 +59,17 @@ class BillingServices
                          'verified' => false,
                          'message' => $e->getMessage());
         }
-
+        
         if ($response->body == 'VERIFIED'){
             return array('exception' => false,
                          'verified' => true,
-                         'paypalVars' => $parsedBody);
+                         'paypalVars' => $parsedBody,
+                         'message' => 'Payment successfully verified');
         }
         return array('exception' => false,
                     'verified' => false,
-                    'paypalVars' => $parsedBody);
+                    'paypalVars' => $parsedBody,
+                    'message' => 'Payment is invalid');
     }
 
     public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paypalVars)

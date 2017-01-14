@@ -205,9 +205,9 @@ class PublicController {
         //fwrite($myfile, $request->getBody());
         //fclose($myfile);
 
-        $resp = $this->billingServices->verifyPaypalIpn($parsedBody,  $this->systemInfo->getPaypalSandboxModeActive());
+        $resp = $this->billingServices->verifyPaypalIpn($parsedBody,  $this->systemInfo['settings']->getPaypalSandboxModeActive());
 
-        if ($resp['verified'] == true){
+        if ($resp['exception'] == false AND $resp['verified'] == true){
 
             //Process actions
             $invoiceId = (int)$resp['paypalVars']['invoice'];
