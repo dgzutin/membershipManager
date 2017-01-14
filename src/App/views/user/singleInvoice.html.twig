@@ -23,7 +23,7 @@
     <main>
         <div id="details" class="clearfix">
             <div id="client">
-                <div class="to">INVOICE TO:</div>
+                <div class="to">BILLING ADDRESS:</div>
                 <h2 class="name">{{ invoiceData.name }}</h2>
                 <div class="address">{{ invoiceData.institution }}</div>
                 <div class="address">{{ invoiceData.street }} {{ invoiceData.zip }} {{ invoiceData.city }}, <span class="bfh-countries" data-country="{{ invoiceData.country }}" data-flags="false"></span></div>
@@ -32,11 +32,24 @@
                 <br>{{ invoiceData.reference }}
             </div>
 
-            <div id="invoice">
-                <h1>INVOICE #{{ invoiceData.id }}</h1>
-                <div class="date">Date of Invoice: {{ invoiceDate }}</div>
-                <div class="date">Due Date: {{ invoiceDueDate }}</div>
-            </div>
+            {% if outstandingAmount > 0 %}
+
+                <div id="invoice">
+                    <h1>INVOICE #{{ invoiceData.id }}</h1>
+                    <div class="date">Date of Invoice: {{ invoiceDate }}</div>
+                    <div class="date">Due Date: {{ invoiceDueDate }}</div>
+                </div>
+
+            {% else %}
+
+                <div id="invoice">
+                    <h1>RECEIPT for Invoice #{{ invoiceData.id }}</h1>
+                    <div class="date">Date issued: {{ invoiceDate }}</div>
+                    <div class="date">Due Date: {{ invoiceDueDate }}</div>
+                </div>
+
+            {% endif %}
+
         </div>
         <table border="0" cellspacing="0" cellpadding="0">
             <thead>
