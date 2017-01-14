@@ -46,6 +46,10 @@ class InvoicePayment
     /** @Column(type="string", length=50, nullable=true) * */
     protected $paypalIpnTrackId;
 
+    /** @Column(type="string", length=50, nullable=true) * */
+    protected $paypalPaymentStatus;
+
+
 
 
     /**
@@ -272,5 +276,29 @@ class InvoicePayment
     public function getPaypalIpnTrackId()
     {
         return $this->paypalIpnTrackId;
+    }
+
+    /**
+     * Set paypalPaymentStatus
+     *
+     * @param string $paypalPaymentStatus
+     *
+     * @return InvoicePayment
+     */
+    public function setPaypalPaymentStatus($paypalPaymentStatus)
+    {
+        $this->paypalPaymentStatus = $paypalPaymentStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get paypalPaymentStatus
+     *
+     * @return string
+     */
+    public function getPaypalPaymentStatus()
+    {
+        return $this->paypalPaymentStatus;
     }
 }

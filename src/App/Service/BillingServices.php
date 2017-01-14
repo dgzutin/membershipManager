@@ -88,6 +88,7 @@ class BillingServices
             $newInvoicePayment->setPaypalPayerId($paypalVars['payer_id']);
             $newInvoicePayment->setPaypalReceiverEmail($paypalVars['receiver_email']);
             $newInvoicePayment->setPaypalIpnTrackId($paypalVars['ipn_track_id']);
+            $newInvoicePayment->setPaypalPaymentStatus($paypalVars['payment_status']);
         }
 
         
