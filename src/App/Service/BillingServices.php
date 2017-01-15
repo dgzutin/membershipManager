@@ -19,6 +19,7 @@ class BillingServices
     {
         $this->em = $container->get('em');
         $this->userServices = $container->get('userServices');
+        $this->membershipServices = $container->get('membershipServices');
 
         $this->Paypal_sandbox_ipn = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
         $this->Paypal_ipn = 'https://ipnpb.paypal.com/cgi-bin/webscr';
@@ -89,17 +90,32 @@ class BillingServices
 
                     //RUN here the on payment actions =========================================
 
+                    $result = $this->processOnPaymentActions($invoice->getOnPaymentActions());
 
+                    if ($result['exception'] == false){
 
-
-
-
+                        $invoice->setActionsExecuted(true);
+                        $message = array('exception' => false,
+                                         'actionExecuted' => true,
+                                         'newOutstandingAmount' => $newOutstandingAmount,
+                                         'actionResult' => $result['result'],
+                                         'actionMessage' => $result['message']);
+                    }
+                    else{
+                        $message = array('exception' => true,
+                                         'actionExecuted' => false,
+                                         'newOutstandingAmount' => $newOutstandingAmount,
+                                         'actionResult' => $result['result'],
+                                         'message' => $result['message']);
+                    }
                     //=========================================================================
-                    $invoice->setActionsExecuted(true);
-                    $message = 'New payment was saved and actions were performed. The outstanding amount is '.$invoiceData['invoiceCurrency'].' '.$newOutstandingAmount;
                 }
                 else{
-                    $message = 'New payment was saved, no action(s) executed. The outstanding amount is '.$invoiceData['invoiceCurrency'].' '.$newOutstandingAmount;
+                    $message = array('exception' => false,
+                                     'actionExecuted' => false,
+                                     'newOutstandingAmount' => $newOutstandingAmount,
+                                     'actionResult' => NULL,
+                                     'actionMessage' => NULL);
                 }
 
                 $invoice->setPaid(true);
@@ -110,7 +126,11 @@ class BillingServices
                 //else do nothing
                 $invoice->setPaid(false);
                 $exception = false;
-                $message = 'New payment was saved, no action(s) executed. The outstanding amount is '.$invoiceData['invoiceCurrency'].' '.$newOutstandingAmount;
+                $message = array('exception' => false,
+                                 'actionExecuted' => false,
+                                 'newOutstandingAmount' => $newOutstandingAmount,
+                                 'actionResult' => NULL,
+                                 'actionMessage' => NULL);
             }
             
         }
@@ -125,7 +145,7 @@ class BillingServices
         $newInvoicePayment->setPaymentNote($note);
         $newInvoicePayment->setAmountPaid($amountPaid);
         $newInvoicePayment->setPaymentMode($paymentMode);
-        $newInvoicePayment->setSystemMessage($message);
+        $newInvoicePayment->setSystemMessage(json_encode($message));
 
         if ($paypalVars != null){
             $newInvoicePayment->setPaypalTransactionId($paypalVars['txn_id']);
@@ -158,6 +178,41 @@ class BillingServices
 
         return array('exception' => $exception,
                      'message' => $message);
+    }
+
+    public function processOnPaymentActions($actions)
+    {
+
+        $actionsJson = json_decode($actions);
+
+        if ($actionsJson != null){
+            $actionName = $actionsJson->actionName;
+
+            $result = null;
+            switch ($actionName){
+
+                case 'addValidityForOnePeriod':
+
+                    $membershipIds = $actionsJson->membershipIds;
+                    $i = 0;
+                    foreach ($membershipIds as $membershipId){
+                        $result[$i] = $this->membershipServices->addNewMembershipValidity($membershipId, NULL, NULL);
+                        $i++;
+                    }
+                    break;
+                default:
+                    //do nothing
+
+                    break;
+            }
+
+            return array('exception' => false,
+                        'result' => $result,
+                        'message' => 'Action(s) executed');
+        }
+        return array('exception' => true,
+                     'result' => null,
+                     'message' => 'Could not parse OnPaymentActions');
     }
         
 }

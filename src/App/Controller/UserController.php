@@ -572,7 +572,10 @@ class UserController {
         //echo $this->systemInfo['settings']->getPaypalSandboxModeActive();
         //return $this->container->view->render($response, 'user/manageMembership.html.twig');
 
-        $result = $this->billingServices->addPayment(31, -75.00, NULL, 'WIRE_TRANSFER', NULL);
+        $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
+        
+        
+        
 
         var_dump($result);
 
