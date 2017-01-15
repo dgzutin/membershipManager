@@ -97,25 +97,27 @@ class BillingServices
                         $invoice->setActionsExecuted(true);
                         $message = array('exception' => false,
                                          'actionExecuted' => true,
-                                         'newOutstandingAmount' => $newOutstandingAmount,
+                                         'action' => $result['action'],
                                          'actionResult' => $result['result'],
-                                         'actionMessage' => $result['message']);
+                                         'actionMessage' => $result['message'],
+                                         'newOutstandingAmount' => $newOutstandingAmount);
                     }
                     else{
                         $message = array('exception' => true,
                                          'actionExecuted' => false,
-                                         'newOutstandingAmount' => $newOutstandingAmount,
+                                         'action' => $result['action'],
                                          'actionResult' => $result['result'],
-                                         'message' => $result['message']);
+                                         'message' => $result['message'],
+                                         'newOutstandingAmount' => $newOutstandingAmount);
                     }
                     //=========================================================================
                 }
                 else{
                     $message = array('exception' => false,
                                      'actionExecuted' => false,
-                                     'newOutstandingAmount' => $newOutstandingAmount,
                                      'actionResult' => NULL,
-                                     'actionMessage' => NULL);
+                                     'actionMessage' => NULL,
+                                     'newOutstandingAmount' => $newOutstandingAmount);
                 }
 
                 $invoice->setPaid(true);
@@ -208,10 +210,12 @@ class BillingServices
 
             return array('exception' => false,
                         'result' => $result,
+                        'action' => $actionsJson,
                         'message' => 'Action(s) executed');
         }
         return array('exception' => true,
                      'result' => null,
+                     'action' => $actionsJson,
                      'message' => 'Could not parse OnPaymentActions');
     }
         

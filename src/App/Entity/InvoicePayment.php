@@ -49,7 +49,7 @@ class InvoicePayment
     /** @Column(type="string", length=50, nullable=true) * */
     protected $paypalPaymentStatus;
 
-    /** @Column(type="string", length=500, nullable=true) * */
+    /** @Column(type="text",  nullable=true) * */
     protected $systemMessage;
     
 
