@@ -439,16 +439,27 @@ class UserServices
 
 
         $newInvoice->setCurrency($this->settings->getSystemCurrency());
-        $newInvoice->setName($billingInfo->getName());
-        $newInvoice->setInstitution($billingInfo->getInstitution());
-        $newInvoice->setStreet($billingInfo->getStreet());
-        $newInvoice->setCity($billingInfo->getCity());
-        $newInvoice->setZip($billingInfo->getZip());
-        $newInvoice->setCountry($billingInfo->getCountry());
-        $newInvoice->setVat($billingInfo->getVat());
-        $newInvoice->setReference($billingInfo->getReference());
+        $newInvoice->setInvVat($this->settings->getVat());
+        $newInvoice->setInvRegistrationNumber($this->settings->getRegistrationNumber());
+        $newInvoice->setInvOrganization($this->settings->getNameOfOrganization());
+        $newInvoice->setInvStreet($this->settings->getStreet());
+        $newInvoice->setInvCity($this->settings->getCity());
+        $newInvoice->setInvZip($this->settings->getZip());
+        $newInvoice->setInvCountry($this->settings->getCountry());
+        $newInvoice->setInvEmail($this->settings->getEmail());
+        $newInvoice->setInvPhone($this->settings->getPhone());
+        $newInvoice->setVatRate($this->settings->getVatRate());
+        $newInvoice->setBillingName($billingInfo->getName());
+        $newInvoice->setBillingInstitution($billingInfo->getInstitution());
+        $newInvoice->setBillingStreet($billingInfo->getStreet());
+        $newInvoice->setBillingCity($billingInfo->getCity());
+        $newInvoice->setBillingZip($billingInfo->getZip());
+        $newInvoice->setBillingCountry($billingInfo->getCountry());
+        $newInvoice->setBillingVat($billingInfo->getVat());
+        $newInvoice->setBillingReference($billingInfo->getReference());
         $newInvoice->setPaid(false);
         $newInvoice->setOnPaymentActions($onPaymentActions);
+        $newInvoice->setActionsExecuted(false);
 
         $this->em->persist($newInvoice);
 
@@ -509,14 +520,25 @@ class UserServices
     {
 
         $repository = $this->em->getRepository('App\Entity\Invoice');
-        $invoice = $repository->createQueryBuilder('invoice')
-            ->select('invoice')
-            ->where('invoice.id = :invoiceId')
-            ->andWhere('invoice.userId = :userId')
-            ->setParameter('invoiceId', $invoiceId)
-            ->setParameter('userId', $userId)
-            ->getQuery()
-            ->getOneOrNullResult();
+        
+        if ($userId != null){
+            $invoice = $repository->createQueryBuilder('invoice')
+                ->select('invoice')
+                ->where('invoice.id = :invoiceId')
+                ->andWhere('invoice.userId = :userId')
+                ->setParameter('invoiceId', $invoiceId)
+                ->setParameter('userId', $userId)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+        else{
+            $invoice = $repository->createQueryBuilder('invoice')
+                ->select('invoice')
+                ->where('invoice.id = :invoiceId')
+                ->setParameter('invoiceId', $invoiceId)
+                ->getQuery()
+                ->getOneOrNullResult();            
+        }
 
         if ($invoice != NULL){
 
@@ -567,18 +589,19 @@ class UserServices
                 $message = 'No payment received until the preset moment.';
             }
 
-            $issuerData = array('nameOfOrganization' => $this->settings->getNameOfOrganization(),
-                                'acronym' => $this->settings->getNameOfOrganization(),
-                                'street' => $this->settings->getStreet(),
-                                'city' => $this->settings->getCity(),
-                                'zip' => $this->settings->getZip(),
-                                'country' => $this->settings->getCountry(),
-                                'email' => $this->settings->getEmail(),
-                                'orgWebsite' => $this->settings->getOrgWebsite(),
-                                'vat' => $this->settings->getVat(),
-                                'registrationNumber' => $this->settings->getRegistrationNumber(),
+            $issuerData = array('nameOfOrganization' => $invoice->getInvOrganization(),
+                                'street' => $invoice->getInvStreet(),
+                                'city' => $invoice->getInvCity(),
+                                'zip' => $invoice->getInvZip(),
+                                'country' => $invoice->getInvCountry(),
+                                'email' => $invoice->getInvEmail(),
+                                'phone' => $invoice->getInvPhone(),
+                                'vat' => $invoice->getInvVat(),
+                                'vat_rate' => $invoice->getVatRate(),
+                                'registrationNumber' => $invoice->getInvRegistrationNumber(),
                                 'iban' => $this->settings->getIban(),
                                 'bic' => $this->settings->getBic(),
+                                'bankName' => $this->settings->getBankName(),
                                 'bankAddress' => $this->settings->getBankAddress(),
                                 'paypalEmail' => $this->settings->getPaypalEmail(),
                                 'paypalActive' => $this->settings->getPaypalActive(),

@@ -49,8 +49,9 @@ class InvoicePayment
     /** @Column(type="string", length=50, nullable=true) * */
     protected $paypalPaymentStatus;
 
-
-
+    /** @Column(type="string", length=250, nullable=true) * */
+    protected $systemMessage;
+    
 
     /**
      * Get id
@@ -300,5 +301,29 @@ class InvoicePayment
     public function getPaypalPaymentStatus()
     {
         return $this->paypalPaymentStatus;
+    }
+
+    /**
+     * Set systemMessage
+     *
+     * @param string $systemMessage
+     *
+     * @return InvoicePayment
+     */
+    public function setSystemMessage($systemMessage)
+    {
+        $this->systemMessage = $systemMessage;
+
+        return $this;
+    }
+
+    /**
+     * Get systemMessage
+     *
+     * @return string
+     */
+    public function getSystemMessage()
+    {
+        return $this->systemMessage;
     }
 }

@@ -26,6 +26,9 @@ class Settings
     protected $email;
 
     /** @Column(type="string", length=50, nullable=false) * */
+    protected $phone;
+
+    /** @Column(type="string", length=50, nullable=false) * */
     protected $orgWebsite;
 
     /** @Column(type="string", length=50, nullable=true) **/
@@ -42,6 +45,9 @@ class Settings
 
     /** @Column(type="string", length=50, nullable=true) **/
     protected $vat;
+
+    /** @Column(type="decimal", nullable=true) **/
+    protected $vat_rate;
 
     /** @Column(type="string", length=50, nullable=true) **/
     protected $registrationNumber;
@@ -74,6 +80,9 @@ class Settings
     protected $bic;
 
     /** @Column(type="string", length=300, nullable=true) **/
+    protected $bankName;
+
+    /** @Column(type="string", length=100, nullable=true) **/
     protected $bankAddress;
 
 
@@ -541,5 +550,77 @@ class Settings
     public function getDisclaimer()
     {
         return $this->disclaimer;
+    }
+
+    /**
+     * Set vatRate
+     *
+     * @param string $vatRate
+     *
+     * @return Settings
+     */
+    public function setVatRate($vatRate)
+    {
+        $this->vat_rate = $vatRate;
+
+        return $this;
+    }
+
+    /**
+     * Get vatRate
+     *
+     * @return string
+     */
+    public function getVatRate()
+    {
+        return $this->vat_rate;
+    }
+
+    /**
+     * Set bankName
+     *
+     * @param string $bankName
+     *
+     * @return Settings
+     */
+    public function setBankName($bankName)
+    {
+        $this->bankName = $bankName;
+
+        return $this;
+    }
+
+    /**
+     * Get bankName
+     *
+     * @return string
+     */
+    public function getBankName()
+    {
+        return $this->bankName;
+    }
+
+    /**
+     * Set phone
+     *
+     * @param string $phone
+     *
+     * @return Settings
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get phone
+     *
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
     }
 }

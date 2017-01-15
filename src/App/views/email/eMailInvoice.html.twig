@@ -317,14 +317,14 @@
                                     <td class="content-block">
                                         <strong>Invoice #{{ invoiceData.id }}</strong>
 
-                                        <div class="name">{{ invoiceData.name }}</div>
-                                        <div class="address">{{ invoiceData.institution }}</div>
-                                        <div class="address">{{ invoiceData.street }} {{ invoiceData.zip }} {{ invoiceData.city }}, <span class="bfh-countries" data-country="{{ invoiceData.country }}" data-flags="false"></span></div>
+                                        <div class="name">{{ invoiceData.billingName }}</div>
+                                        <div class="address">{{ invoiceData.billingInstitution }}</div>
+                                        <div class="address">{{ invoiceData.billingStreet }} {{ invoiceData.billingZip }} {{ invoiceData.billingCity }}, {{ invoiceData.billingCountry }}</div>
                                         <div class="email"><a href="mailto:{{ user.email1 }}">{{ user.email1 }}</a></div>
                                         <div><strong>Date:</strong> {{ invoiceDate }}</div>
                                         <div><strong>Due date:</strong> {{ invoiceDueDate }}</div>
-                                        {{ invoiceData.vat }}
-                                        {{ invoiceData.reference }}
+                                        {{ invoiceData.billingVat }}
+                                        <br>{{ invoiceData.billingReference }}
                                     </td>
                                 </tr>
 
@@ -383,7 +383,8 @@
                                     <td class="content-block">
                                         {% if issuerData.wireTransferActive == true %}
                                                 <br><strong>Account holder: </strong>{{ issuerData.nameOfOrganization }}
-                                                <br><strong>Bank: </strong>{{ issuerData.bankAddress }}
+                                                <br><strong>Bank: </strong>{{ issuerData.bankName }}
+                                                <br><strong>Bank address: </strong>{{ issuerData.bankAddress }}
                                                 <br><strong>IBAN: </strong>{{ issuerData.iban }} | <strong>BIC/SWIFT: </strong> {{ issuerData.bic }}
                                                 <br><strong>Reason for transfer: </strong> Invoice Nr. {{ invoiceData.id }}
 

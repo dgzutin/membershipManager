@@ -18,6 +18,7 @@ class BillingServices
     public function __construct($container)
     {
         $this->em = $container->get('em');
+        $this->userServices = $container->get('userServices');
 
         $this->Paypal_sandbox_ipn = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
         $this->Paypal_ipn = 'https://ipnpb.paypal.com/cgi-bin/webscr';
@@ -74,6 +75,49 @@ class BillingServices
 
     public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paypalVars)
     {
+        //verify if full amount was paid to execute OnPayment Actions
+        $invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, NULL);
+
+        if ($invoiceData['exception'] == false){
+
+            $newOutstandingAmount = $invoiceData['outstandingAmount'] - $amountPaid;
+            $invoice = $invoiceData['invoice'];
+
+            if ($newOutstandingAmount <= 0){
+
+                if ($invoice->getActionsExecuted() == false AND $invoice->getOnPaymentActions() != null){
+
+                    //RUN here the on payment actions =========================================
+
+
+
+
+
+
+                    //=========================================================================
+                    $invoice->setActionsExecuted(true);
+                    $message = 'New payment was saved and actions were performed. The outstanding amount is '.$invoiceData['invoiceCurrency'].' '.$newOutstandingAmount;
+                }
+                else{
+                    $message = 'New payment was saved, no action(s) executed. The outstanding amount is '.$invoiceData['invoiceCurrency'].' '.$newOutstandingAmount;
+                }
+
+                $invoice->setPaid(true);
+                $invoice->setPaidDate(new \DateTime());
+                $exception = false;
+            }
+            else{
+                //else do nothing
+                $invoice->setPaid(false);
+                $exception = false;
+                $message = 'New payment was saved, no action(s) executed. The outstanding amount is '.$invoiceData['invoiceCurrency'].' '.$newOutstandingAmount;
+            }
+            
+        }
+        else{
+            return array('exception' => true,
+                         'message' => $invoiceData['exception']);
+        }
 
         $newInvoicePayment = new InvoicePayment();
         $newInvoicePayment->setInvoiceId($invoiceId);
@@ -81,6 +125,7 @@ class BillingServices
         $newInvoicePayment->setPaymentNote($note);
         $newInvoicePayment->setAmountPaid($amountPaid);
         $newInvoicePayment->setPaymentMode($paymentMode);
+        $newInvoicePayment->setSystemMessage($message);
 
         if ($paypalVars != null){
             $newInvoicePayment->setPaypalTransactionId($paypalVars['txn_id']);
@@ -100,9 +145,19 @@ class BillingServices
                          'message' => $e->getMessage());
         }
 
-        return array('exception' => false,
-                     'message' => 'New payment was saved');
-        
+        //modify Invoice ------------
+        $this->em->persist($invoice);
+        try{
+            $this->em->flush();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+
+        return array('exception' => $exception,
+                     'message' => $message);
     }
         
 }

@@ -32,6 +32,7 @@ class UserController {
         $this->shoppingCartServices = $container->get('shoppingCartServices');
         $this->mailServices = $container->get('mailServices');
         $this->siteManagementServices = $container->get('siteManagementServices');
+        $this->billingServices = $container->get('billingServices');
 
         //$this->systemInfo = $this->userServices->getSystemInfo();
 
@@ -568,9 +569,12 @@ class UserController {
         
         //$result = $this->mailServices->sendInvoiceToUser(1, $user['user'], $request);
 
-        echo $this->systemInfo['settings']->getPaypalSandboxModeActive();
+        //echo $this->systemInfo['settings']->getPaypalSandboxModeActive();
         //return $this->container->view->render($response, 'user/manageMembership.html.twig');
 
+        $result = $this->billingServices->addPayment(31, -75.00, NULL, 'WIRE_TRANSFER', NULL);
+
+        var_dump($result);
 
     }
     

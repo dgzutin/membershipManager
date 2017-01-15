@@ -13,9 +13,9 @@
         <div id="company">
             <h2 class="name">{{ issuerData.nameOfOrganization }}</h2>
             <div>{{ issuerData.street }} - {{ issuerData.city }} {{ issuerData.zip }}, {{ issuerData.country }}</div>
-            <div>{{ issuerData.vat }}</div>
+            <div>{{  issuerData.vat }}</div>
             <div>{{ issuerData.registrationNumber }}</div>
-            <div>{{ issuerData.phone }}</div>
+            <div>P. {{ issuerData.phone }}</div>
             <div><a href="mailto:{{ issuerData.email }}">{{ issuerData.email }}</a></div>
         </div>
     </header>
@@ -24,12 +24,12 @@
         <div id="details" class="clearfix">
             <div id="client">
                 <div class="to">BILLING ADDRESS:</div>
-                <h2 class="name">{{ invoiceData.name }}</h2>
-                <div class="address">{{ invoiceData.institution }}</div>
-                <div class="address">{{ invoiceData.street }} {{ invoiceData.zip }} {{ invoiceData.city }}, <span class="bfh-countries" data-country="{{ invoiceData.country }}" data-flags="false"></span></div>
+                <h2 class="name">{{ invoiceData.billingName }}</h2>
+                <div class="address">{{ invoiceData.billingInstitution }}</div>
+                <div class="address">{{ invoiceData.street }} {{ invoiceData.billingZip }} {{ invoiceData.billingCity }}, <span class="bfh-countries" data-country="{{ invoiceData.billingCountry }}" data-flags="false"></span></div>
                 <div class="email"><a href="mailto:{{ user.email1 }}">{{ user.email1 }}</a></div>
-                {{ invoiceData.vat }}
-                <br>{{ invoiceData.reference }}
+                {{ invoiceData.billingVat }}
+                <br>{{ invoiceData.billingReference }}
             </div>
 
             {% if outstandingAmount > 0 %}
@@ -131,7 +131,8 @@
 
                         <h3>Wire transfer:</h3>
                         <br><strong>Account holder: </strong>{{ issuerData.nameOfOrganization }}
-                        <br><strong>Bank: </strong>{{ issuerData.bankAddress }}
+                        <br><strong>Bank: </strong>{{ issuerData.bankName }}
+                        <br><strong>Bank address: </strong>{{ issuerData.bankAddress }}
                         <br><strong>IBAN: </strong>{{ issuerData.iban }}
                         <br><strong>BIC/SWIFT: </strong> {{ issuerData.bic }}
                         <br><strong>Reason for transfer: </strong> Invoice Nr. {{ invoiceData.id }}
@@ -191,14 +192,14 @@
                             <input type='hidden' name="email" value="{{ user.email_1 }}">
                             <input type='hidden' name="first_name" value="{{ user.first_name }}">
                             <input type='hidden' name="last_name" value="{{ user.last_name }}">
-                            <input type='hidden' name="address1" value="{{ invoiceData.institution }}">
-                            <input type='hidden' name="address2" value="{{ invoiceData.street }}">
-                            <input type='hidden' name="city" value="{{ invoiceData.city }}">
+                            <input type='hidden' name="address1" value="{{ invoiceData.billingInstitution }}">
+                            <input type='hidden' name="address2" value="{{ invoiceData.billingStreet }}">
+                            <input type='hidden' name="city" value="{{ invoiceData.billingCity }}">
                             <input type='hidden' name="state" value="">
-                            <input type='hidden' name="zip" value="{{ invoiceData.zip }}">
-                            <input type='hidden' name="country" value="{{ invoiceData.country }}">
+                            <input type='hidden' name="zip" value="{{ invoiceData.billingZip }}">
+                            <input type='hidden' name="country" value="{{ invoiceData.billingCountry }}">
 
-                            <input type='hidden' name="lc" value="US">
+                            <input type='hidden' name="lc" value="en_US">
                             <input type="image" name="submit" border="0" src="{{ baseUrl }}/assets/images/pay_now_button.png" alt="Please select to make your payment with PayPal - it's fast, free and secure!">
                             <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                         </form>
