@@ -290,8 +290,8 @@ class UserController {
                 return $this->container->view->render($response, 'userNotification.twig', $itemsResp);
             }
 
+            $i = 0;
             foreach ($itemsResp['items'] as $item){
-
                 //add Membership to the database and link it to user.
                 $addMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $item->getTypeId(), $membershipData);
 
@@ -300,9 +300,15 @@ class UserController {
                         array('exception' => true,
                               'message' => $addMemberResult['message']));
                 }
+                $membershipIds[$i] = $addMemberResult['membership']->getId();
+                $i++;
             }
-            //Generate invoice if member is succesfully added
-            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingResp['billingInfo'], $itemsResp['items'], NULL, true, $request);
+            //Generate invoice if member is succesfully added AND create on payment actions
+
+            $onPaymentActions = array ('actionName' => 'addValidityForOnePeriod',
+                                       'membershipIds' => $membershipIds);
+
+            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingResp['billingInfo'], $itemsResp['items'], json_encode($onPaymentActions), true, $request);
 
             if ($resultsGenInvoice['exception'] == false){
                 //delete shopping cart items if invoice is generated
