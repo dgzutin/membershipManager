@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Invoices and receipts for {{ user.first_name }} {{ user.last_name }}</div>
+            <div class="panel-body">
+
+                {% if exception == true %}
+                    <div class="alert alert-danger">
+                        <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-xs-6 col-sm-9">
+                            <strong>{{ user.title }} {{ user.first_name }} {{ user.last_name }}</strong>
+                            <br>{{ user.institution }}
+                            <br>{{ user.street }} {{ user.zip }} {{ user.city }}, <span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
+                            <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
+                        <p class="text-info">Manage invoices, receipts and payments for a single user.</p>
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+
+                            <button class="btn btn-lg btn-success btn-block" type="submit"><span class="fa fa-plus"></span> New Invoice</button>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h4>Open invoices:</h4>
+
+                <table class="display" id="openInvoices" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Invoice ID</th>
+                        <th>Date issued</th>
+                        <th>Date due</th>
+                        <th>AmountPaid</th>
+                        <th>Outstanding amount</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {%  for invoices in openInvoicesArray %}
+
+                        <tr class="">
+                            <td>{{ invoices.invoiceId }}</td>
+                            <td>{{ invoices.invoiceDate }}</td>
+                            <td>{{ invoices.invoice.dueDate | date('jS F Y') }}</td>
+                            <td>{{ invoices.invoiceCurrency }} {{ invoices.amountPaid }}</td>
+                            <td>{{ invoices.invoiceCurrency }} {{ invoices.outstandingAmount }}</td>
+                            <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
+                            <td><a href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <hr>
+                <h4>Receipts:</h4>
+
+                <table class="display" id="closedInvoices" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Invoice ID</th>
+                        <th>Date issued</th>
+                        <th>Date due</th>
+                        <th>AmountPaid</th>
+                        <th>Outstanding amount</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {%  for invoices in closedInvoicesArray %}
+
+                        <tr class="">
+                            <td>{{ invoices.invoiceId }}</td>
+                            <td>{{ invoices.invoiceDate }}</td>
+                            <td>{{ invoices.invoice.dueDate | date('jS F Y') }}</td>
+                            <td>{{ invoices.invoiceCurrency }} {{ invoices.amountPaid }}</td>
+                            <td>{{ invoices.invoiceCurrency }} {{ invoices.outstandingAmount }}</td>
+                            <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
+                            <td><a href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#openInvoices').DataTable();
+            $('#closedInvoices').DataTable();
+        } );
+
+    </script>
+
+
+{% endblock %}

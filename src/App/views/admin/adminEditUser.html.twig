@@ -3,21 +3,16 @@
 {% block mainPanel %}
 
     <div class="panel-group">
-
         <div class="panel panel-primary">
             <div class="panel-heading"><strong>User Data</strong></div>
             <div class="panel-body">
-
-                <div class="well">
-
                     <div class="row">
-
                         <div class="col-xs-6 col-md-8">
-                            <h3>User ID: {{ form.id.value }}</h3>
-                            <strong>{{ form.title.value }} {{ form.first_name.value }} {{ form.last_name.value }}</strong>
+                            <br>User ID: {{ form.id.value }}
+                            <br><strong>{{ form.title.value }} {{ form.first_name.value }} {{ form.last_name.value }}</strong>
                             <br>{{ form.institution.value }}
                             <br>{{ form.street.value }}
-                            <br>{{ form.city.value }} {{ form.zip.value }}
+                            <br>{{ form.zip.value }} {{ form.city.value }}
                             <br><span class="bfh-countries" data-country="{{ form.country.value }}" data-flags="true"></span>
                             <br>E-mail: <a href="mailto:{{ form.email_1.value }}">{{ form.email_1.value }}</a>
                             <br>
@@ -26,13 +21,14 @@
 
                         <div class="col-xs-6 col-md-4">
                             <ul>
-                                <li><a href="{{ path_for('documentsUser')}}"> Create/edit membership(s)</a></li>
-                                <li><a href="{{ path_for('documentsUser')}}"></spam> Remove user</a></li>
+                                <li><a href=""> Create/edit membership(s)</a></li>
+                                <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': form.id.value }) }}"> Manage user invoices</a></li>
+                                <li><a href=""> Create new invoice for user</a></li>
+                                <li><a href=""> Edit billing address</a></li>
+                                <li><a href=""> Delete user account</a></li>
                             </ul>
                         </div>
                     </div>
-
-                </div>
 
                 <div class="well">
                     <form data-toggle="validator" role="form" method="post">

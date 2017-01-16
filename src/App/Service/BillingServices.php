@@ -74,7 +74,7 @@ class BillingServices
                     'message' => 'Payment is invalid');
     }
 
-    public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paypalVars)
+    public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paymentGatewayData)
     {
         //verify if full amount was paid to execute OnPayment Actions
         $invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, NULL);
@@ -148,15 +148,8 @@ class BillingServices
         $newInvoicePayment->setAmountPaid($amountPaid);
         $newInvoicePayment->setPaymentMode($paymentMode);
         $newInvoicePayment->setSystemMessage(json_encode($message));
-
-        if ($paypalVars != null){
-            $newInvoicePayment->setPaypalTransactionId($paypalVars['txn_id']);
-            $newInvoicePayment->setPaypalPayerId($paypalVars['payer_id']);
-            $newInvoicePayment->setPaypalReceiverEmail($paypalVars['receiver_email']);
-            $newInvoicePayment->setPaypalIpnTrackId($paypalVars['ipn_track_id']);
-            $newInvoicePayment->setPaypalPaymentStatus($paypalVars['payment_status']);
-        }
-
+        $newInvoicePayment->setPaymentGatewayData(json_encode($paymentGatewayData));
+        
         
         $this->em->persist($newInvoicePayment);
         try{
@@ -217,6 +210,28 @@ class BillingServices
                      'result' => null,
                      'action' => $actionsJson,
                      'message' => 'Could not parse OnPaymentActions');
+    }
+
+    public function getPaymentsForInvoice($invoiceId)
+    {
+        $repository = $this->em->getRepository('App\Entity\InvoicePayment');
+
+        try{
+            $payments = $repository->createQueryBuilder('payment')
+                ->select('payment')
+                ->where('payment.invoiceId = :invoiceId')
+                ->setParameter('invoiceId', $invoiceId)
+                ->getQuery()
+                ->getResult();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                         'message' => $e->getMessage());
+        }
+
+        return array('exception' => false,
+                     'count' => count($payments),
+                     'payments' => $payments);
     }
         
 }

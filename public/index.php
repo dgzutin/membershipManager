@@ -150,6 +150,8 @@ $app->group('/admin', function () use ($app) {
     $app->map(['GET', 'POST'], '/members', '\AdminController:membersAction')->setName('members');
     $app->map(['GET', 'POST'], '/member/{memberId}', '\AdminController:memberAction')->setName('adminMember');
     $app->get('/manageRenewals/{membershipId}', '\AdminController:manageRenewalsAction')->setName('manageRenewals');
+    $app->get('/userInvoices/{userId}', '\AdminController:userInvoicesAction')->setName('userInvoicesAdmin');
+    $app->get('/invoicePayments/{invoiceId}', '\AdminController:invoicePaymentsAction')->setName('invoicePayments');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

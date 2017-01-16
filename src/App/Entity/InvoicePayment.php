@@ -33,21 +33,10 @@ class InvoicePayment
 
     /** @Column(type="string", length=20, nullable=false) * */
     protected $paymentMode; //PAYPAL and WIRE_TRANSFER are supported
+    
 
-    /** @Column(type="string", length=100, nullable=true) * */
-    protected $paypalTransactionId;
-
-    /** @Column(type="string", length=100, nullable=true) * */
-    protected $paypalPayerId;
-
-    /** @Column(type="string", length=50, nullable=true) * */
-    protected $paypalReceiver_email;
-
-    /** @Column(type="string", length=50, nullable=true) * */
-    protected $paypalIpnTrackId;
-
-    /** @Column(type="string", length=50, nullable=true) * */
-    protected $paypalPaymentStatus;
+    /** @Column(type="text",  nullable=true) * */
+    protected $paymentGatewayData;
 
     /** @Column(type="text",  nullable=true) * */
     protected $systemMessage;
@@ -90,7 +79,7 @@ class InvoicePayment
     /**
      * Set datePaid
      *
-     * @param string $datePaid
+     * @param \DateTime $datePaid
      *
      * @return InvoicePayment
      */
@@ -104,35 +93,11 @@ class InvoicePayment
     /**
      * Get datePaid
      *
-     * @return string
+     * @return \DateTime
      */
     public function getDatePaid()
     {
         return $this->datePaid;
-    }
-
-    /**
-     * Set paymentNote
-     *
-     * @param string $paymentNote
-     *
-     * @return InvoicePayment
-     */
-    public function setPaymentNote($paymentNote)
-    {
-        $this->paymentNote = $paymentNote;
-
-        return $this;
-    }
-
-    /**
-     * Get paymentNote
-     *
-     * @return string
-     */
-    public function getPaymentNote()
-    {
-        return $this->paymentNote;
     }
 
     /**
@@ -160,6 +125,30 @@ class InvoicePayment
     }
 
     /**
+     * Set paymentNote
+     *
+     * @param string $paymentNote
+     *
+     * @return InvoicePayment
+     */
+    public function setPaymentNote($paymentNote)
+    {
+        $this->paymentNote = $paymentNote;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentNote
+     *
+     * @return string
+     */
+    public function getPaymentNote()
+    {
+        return $this->paymentNote;
+    }
+
+    /**
      * Set paymentMode
      *
      * @param string $paymentMode
@@ -184,123 +173,27 @@ class InvoicePayment
     }
 
     /**
-     * Set paypalTransactionId
+     * Set paymentGatewayData
      *
-     * @param integer $paypalTransactionId
+     * @param string $paymentGatewayData
      *
      * @return InvoicePayment
      */
-    public function setPaypalTransactionId($paypalTransactionId)
+    public function setPaymentGatewayData($paymentGatewayData)
     {
-        $this->paypalTransactionId = $paypalTransactionId;
+        $this->paymentGatewayData = $paymentGatewayData;
 
         return $this;
     }
 
     /**
-     * Get paypalTransactionId
-     *
-     * @return integer
-     */
-    public function getPaypalTransactionId()
-    {
-        return $this->paypalTransactionId;
-    }
-
-    /**
-     * Set paypalPayerId
-     *
-     * @param string $paypalPayerId
-     *
-     * @return InvoicePayment
-     */
-    public function setPaypalPayerId($paypalPayerId)
-    {
-        $this->paypalPayerId = $paypalPayerId;
-
-        return $this;
-    }
-
-    /**
-     * Get paypalPayerId
+     * Get paymentGatewayData
      *
      * @return string
      */
-    public function getPaypalPayerId()
+    public function getPaymentGatewayData()
     {
-        return $this->paypalPayerId;
-    }
-
-    /**
-     * Set paypalReceiverEmail
-     *
-     * @param string $paypalReceiverEmail
-     *
-     * @return InvoicePayment
-     */
-    public function setPaypalReceiverEmail($paypalReceiverEmail)
-    {
-        $this->paypalReceiver_email = $paypalReceiverEmail;
-
-        return $this;
-    }
-
-    /**
-     * Get paypalReceiverEmail
-     *
-     * @return string
-     */
-    public function getPaypalReceiverEmail()
-    {
-        return $this->paypalReceiver_email;
-    }
-
-    /**
-     * Set paypalIpnTrackId
-     *
-     * @param string $paypalIpnTrackId
-     *
-     * @return InvoicePayment
-     */
-    public function setPaypalIpnTrackId($paypalIpnTrackId)
-    {
-        $this->paypalIpnTrackId = $paypalIpnTrackId;
-
-        return $this;
-    }
-
-    /**
-     * Get paypalIpdTrackId
-     *
-     * @return string
-     */
-    public function getPaypalIpnTrackId()
-    {
-        return $this->paypalIpnTrackId;
-    }
-
-    /**
-     * Set paypalPaymentStatus
-     *
-     * @param string $paypalPaymentStatus
-     *
-     * @return InvoicePayment
-     */
-    public function setPaypalPaymentStatus($paypalPaymentStatus)
-    {
-        $this->paypalPaymentStatus = $paypalPaymentStatus;
-
-        return $this;
-    }
-
-    /**
-     * Get paypalPaymentStatus
-     *
-     * @return string
-     */
-    public function getPaypalPaymentStatus()
-    {
-        return $this->paypalPaymentStatus;
+        return $this->paymentGatewayData;
     }
 
     /**

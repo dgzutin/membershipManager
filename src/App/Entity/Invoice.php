@@ -31,9 +31,6 @@ class Invoice
     /** @Column(type="string", length=500, nullable=true) * */
     protected $invoiceNote;
 
-    /** @Column(type="datetime", nullable=true) * */
-    protected $paidDate;
-
     /** @Column(type="string", length=100, nullable=true) **/
     protected $inv_organization;
 
@@ -66,6 +63,9 @@ class Invoice
 
     /** @Column(type="boolean", nullable=true) * */
     protected $paid;
+
+    /** @Column(type="datetime", nullable=true) * */
+    protected $paidDate;
 
     /** @Column(type="string", length=500, nullable=true) * */
     protected $onPaymentActions;

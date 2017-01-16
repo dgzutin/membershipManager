@@ -22,6 +22,7 @@ class AdminController {
         $this->membershipServices = $container->get('membershipServices');
         $this->mailServices = $container->get('mailServices');
         $this->utilsServices = $container->get('utilsServices');
+        $this->billingServices = $container->get('billingServices');
     }
 
 
@@ -321,6 +322,32 @@ class AdminController {
 
     }
 
+    public function userInvoicesAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $user = $this->userServices->getUserById((int)$args['userId']);
+
+        if ($user['exception'] == true){
+
+            return $this->container->view->render($response, 'userNotification.twig', $user);
+
+        }
+        $result = $this->userServices-> getInvoicesForUser($user['user']->getId());
+        $result['user'] = $user['user'];
+
+        return $this->container->view->render($response, 'admin/adminUserInvoicesReceipts.html.twig', $result);
+    }
+
+    public function invoicePaymentsAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $invoiceId = (int)$args['invoiceId'];
+      //  $renewalsRes = $this->membershipServices->getValiditiesForMembershipId($membershipId);
+
+        $result = $this->billingServices->getPaymentsForInvoice($invoiceId);
+        
+        return $this->container->view->render($response, 'admin/adminManagePayments.html.twig', $result);
+    }
 
 
 }

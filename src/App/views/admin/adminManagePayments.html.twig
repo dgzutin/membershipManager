@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Membership Renewals</strong></div>
+            <div class="panel-body">
+
+                <form data-toggle="validator" role="form" method="post">
+
+                    {% if exception == true %}
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                        </div>
+
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group">
+
+                                <label>From:</label>
+                                <input id="from" name="from" type="date" placeholder="MM/DD/YYYY ">
+
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group">
+
+                                <label>Until:</label>
+                                <input id="until" name="until" type="date" placeholder="MM/DD/YYYY ">
+
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="form-group">
+                                <span class="btn btn-success btn-md btn-block" onclick="renewMembership()">Add renewal</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" value="{{ membershipId }}" id="membershipId" name="membershipId">
+
+                </form>
+
+                <table class="table table-condensed" id="renewals" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="checkbox_all" ></th>
+                        <th>id</th>
+                        <th>Date paid</th>
+                        <th>Amount paid</th>
+                        <th>Mode</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for payment in payments %}
+                        <tr class="" id="tableRow_{{ payment.id }}">
+                            <td><input type="checkbox" id="checkbox_{{ payment.id }}" ></td>
+                            <td>{{ payment.id }}</td>
+                            <td>{{ payment.datePaid | date('jS F Y') }}</td>
+                            <td>{{ payment.amountPaid }}</td>
+                            <td>{{ payment.paymentMode }}</td>
+                            <td width="30px">{{ payment.systemMessage }}</td>
+                            <td><a href="" onclick="deleteValidities([{{ validity.id }}])"><span class="fa fa-trash-o"> </span></a></td>
+
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JS file  ============================================== -->
+    <script src="{{ base_url() }}/assets/js/memberhipManager.js"></script>
+
+    <script type="application/javascript">
+
+        function deleteValidities(ids)
+        {
+            var params = {
+                ids: ids
+            };
+
+            $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/"+api_version+"/deleteValidities",
+                data: JSON.stringify(params),
+                type: 'POST',
+                success: function(result){
+
+
+                    for (i=0; i<result.results.length; i++) {
+
+                        console.log(result.results[i]);
+
+                        if( result.results[i].exception == false){
+                            $("#validUntil").notify(
+                                    result.results[i].message,
+                                    {
+                                        position:"top center",
+                                        className: "success" }
+                            );
+                            //delete table row
+                            $('#tableRow_'+result.results[i].validityId).remove();
+
+                        }
+                        else{
+                            $("#validUntil").notify(
+                                    result.results[i].message,
+                                    {
+                                        position:"top center",
+                                        className: "warn" }
+                            );
+                        }
+
+                    }
+                    // location.reload();
+
+
+                }});
+        }
+
+        function renewMembership()
+        {
+            var params = {
+                membershipId:  $('#membershipId').val(),
+                from:  $('#from').val(),
+                until:  $('#until').val()
+
+            };
+
+            $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/"+api_version+"/renewMembership",
+                data: JSON.stringify(params),
+                type: 'POST',
+                success: function(result){
+
+                    console.log(result);
+
+                    if( result.exception == false){
+                        $("#validUntil").notify(
+                                result.message,
+                                {
+                                    position:"top center",
+                                    className: "success" }
+                        );
+                        //add table row
+                        $('#renewals').append('<tr class="" id="tableRow_'+result.id+'">' +
+                                '<td><input type="checkbox" id="checkbox_'+result.id+'"></td>' +
+                                '<td>'+result.id+'</td>' +
+                                '<td>'+result.validFrom+'</td>' +
+                                '<td><div id="validUntil_'+result.id+'">'+result.validUntil+'</div></td>' +
+                                '<td>'+result.dateCreated+'</td>' +
+                                '<td><a href="#" onclick="deleteValidities(['+result.id+'])"><span class="fa fa-trash-o"> </span></a></td>' +
+                                ' </tr>');
+                    }
+                    else{
+                        $("#validUntil").notify(
+                                result.message,
+                                {
+                                    position:"top center",
+                                    className: "warn" }
+                        );
+                    }
+
+                }});
+
+        }
+
+    </script>
+
+
+
+{% endblock %}

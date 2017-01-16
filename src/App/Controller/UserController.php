@@ -46,7 +46,7 @@ class UserController {
         $userName = $user->getFirstName().' '.$user->getLastName();
 
         $memberships = $this->membershipServices->getMembershipsForUser($user->getId());
-        $openInvoiceResult = $this->userServices->getOpenInvoicesForUser($_SESSION['user_id']);
+        $openInvoiceResult = $this->userServices->getInvoicesForUser($_SESSION['user_id']);
 
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
             'invoiceInfo' => $openInvoiceResult,
@@ -388,6 +388,7 @@ class UserController {
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],
             'invoiceDate' => $respInvoiceData['invoiceDate'],
+            'paidDate' => $respInvoiceData['paidDate'],
             'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
@@ -517,6 +518,7 @@ class UserController {
 
         return $this->container->view->render($response, 'userNotification.twig', $result);
     }
+    
 
     public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {

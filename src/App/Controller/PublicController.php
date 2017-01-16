@@ -213,7 +213,13 @@ class PublicController {
             $invoiceId = (int)$resp['paypalVars']['invoice'];
             $amountPaid = $resp['paypalVars']['mc_gross'];
 
-            $this->billingServices->addPayment($invoiceId, $amountPaid, null, 'Paypal', $resp['paypalVars']);
+            $paymentGatewayData['txn_id'] = $resp['paypalVars']['txn_id'];
+            $paymentGatewayData['payer_id'] = $resp['paypalVars']['payer_id'];
+            $paymentGatewayData['receiver_email'] = $resp['paypalVars']['receiver_email'];
+            $paymentGatewayData['ipn_track_id'] = $resp['paypalVars']['ipn_track_id'];
+            $paymentGatewayData['payment_status'] = $resp['paypalVars']['payment_status'];
+
+            $this->billingServices->addPayment($invoiceId, $amountPaid, null, 'PAYPAL', $paymentGatewayData);
 
             //TODO: log results;
         }

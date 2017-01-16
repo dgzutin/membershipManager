@@ -424,9 +424,7 @@ class UserServices
     {
 
         $newInvoice = new Invoice();
-
         $newInvoice->setUserId($user->getId());
-
         $date_create = new DateTime();
         $newInvoice->setCreateDate($date_create);
 
@@ -561,6 +559,12 @@ class UserServices
             $invoiceDueDate = $invoice->getDueDate();
             $invoiceDueDate_string = $invoiceDueDate->format('l jS F Y');
 
+            $invoicePaidDate = $invoice->getPaidDate();
+            $invoicePaidDate_string = null;
+            if ($invoicePaidDate != null){
+                $invoicePaidDate_string = $invoicePaidDate->format('l jS F Y');
+            }
+
             //Retrieve invoice payment (if any)
             $repository = $this->em->getRepository('App\Entity\InvoicePayment');
             $invoicePayments = $repository->createQueryBuilder('payment')
@@ -614,6 +618,7 @@ class UserServices
                          'invoice' => $invoice,
                          'invoiceDate' => $invoiceDate_string,
                          'invoiceDueDate' => $invoiceDueDate_string,
+                         'paidDate' => $invoicePaidDate_string,
                          'invoiceItems' => $invoiceItems,
                          'issuerData' => $issuerData,
                          'totalPrice' => $totalPrice,
@@ -694,7 +699,7 @@ class UserServices
                      'message' => 'New Billing info for user '.$user->getId().' added/updated.');
     }
 
-    public function getOpenInvoicesForUser($userId)
+    public function getInvoicesForUser($userId)
     {
         $repository = $this->em->getRepository('App\Entity\Invoice');
         $invoices = $repository->createQueryBuilder('invoice')
@@ -705,8 +710,9 @@ class UserServices
             ->getResult();
 
         $openInvoicesArray = null;
-
+        $closedInvoicesArray = null;
             $i = 0;
+            $j = 0;
             foreach ($invoices as $invoice){
 
                 $invoiceData = $this->getInvoiceDataForUser($invoice->getId(), $userId);
@@ -715,11 +721,16 @@ class UserServices
                     $openInvoicesArray[$i] = $invoiceData;
                     $i++;
                 }
+                else{
+                    $closedInvoicesArray[$j] = $invoiceData;
+                    $j++;
+                }
             }
 
         return array ('exception' => false,
-                      'numberOfInvoices' => count($openInvoicesArray),
-                      'openInvoicesArray' => $openInvoicesArray);
+                      'numberOfInvoices' => count($openInvoicesArray) + count($closedInvoicesArray),
+                      'openInvoicesArray' => $openInvoicesArray,
+                      'closedInvoicesArray' => $closedInvoicesArray);
     }
     
 
