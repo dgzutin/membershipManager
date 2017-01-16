@@ -2,6 +2,7 @@
 
 {% block mainPanel %}
 
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
     <div class="panel-group">
 
@@ -19,27 +20,13 @@
                     {% endif %}
 
                     <div class="row">
-                        <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group">
-
-                                <label>From:</label>
-                                <input id="from" name="from" type="date" placeholder="MM/DD/YYYY ">
-
-                            </div>
+                        <div class="col-xs-12 col-sm-8 col-md-8">
+                            <p class="text-info">Manage payments for an invoice.</p>
                         </div>
 
                         <div class="col-xs-12 col-sm-4 col-md-4">
                             <div class="form-group">
-
-                                <label>Until:</label>
-                                <input id="until" name="until" type="date" placeholder="MM/DD/YYYY ">
-
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <span class="btn btn-success btn-md btn-block" onclick="renewMembership()">Add renewal</span>
+                                <span class="btn btn-success btn-md btn-block" onclick=""><span class="fa fa-plus"></span> Add new payment</span>
                             </div>
                         </div>
 
@@ -52,26 +39,31 @@
                 <table class="table table-condensed" id="renewals" cellspacing="0" width="100%">
                     <thead>
                     <tr>
-                        <th><input type="checkbox" id="checkbox_all" ></th>
                         <th>id</th>
                         <th>Date paid</th>
                         <th>Amount paid</th>
                         <th>Mode</th>
                         <th></th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     {%  for payment in payments %}
-                        <tr class="" id="tableRow_{{ payment.id }}">
-                            <td><input type="checkbox" id="checkbox_{{ payment.id }}" ></td>
+                        <tr class="" id="tableRow_{{ payment.id }}" style="background-color: #cccccc ">
                             <td>{{ payment.id }}</td>
                             <td>{{ payment.datePaid | date('jS F Y') }}</td>
                             <td>{{ payment.amountPaid }}</td>
                             <td>{{ payment.paymentMode }}</td>
-                            <td width="30px">{{ payment.systemMessage }}</td>
                             <td><a href="" onclick="deleteValidities([{{ validity.id }}])"><span class="fa fa-trash-o"> </span></a></td>
-
+                        </tr>
+                        <tr style="border: hidden">
+                            {% if payment.systemMessage != NULL %}
+                            <td colspan="6"><strong>Actions log:</strong><pre class="prettyprint"><code>{{ payment.systemMessage }}</code></pre></td>
+                            {% endif %}
+                        </tr>
+                        <tr style="border: hidden">
+                            {% if payment.paymentGatewayData != NULL %}
+                            <td colspan="6"><strong>Payment gateway log:</strong><pre class="prettyprint"><code>{{ payment.paymentGatewayData }}</code></pre></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
 
