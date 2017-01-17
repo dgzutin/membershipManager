@@ -47,7 +47,7 @@
 
 
 
-    {% if invoiceInfo.numberOfInvoices > 0 %}
+    {% if invoiceInfo.numberOfOpenInvoices > 0 %}
 
         <div class="alert alert-warning">
         <h4><strong>You have the following open invoices:</strong></h4>
@@ -67,10 +67,10 @@
                 <ul>
                 <li class="active"><a href="{{ path_for('userProfile')}}"><spam class="fa fa-user"></spam> Edit your user account</a></li>
                 <li><a href="{{ path_for('selectMembership')}}"><spam class="fa fa-star"></spam> Your Membership(s)</a></li>
+                <li><a href="{{ path_for('selectMembership')}}"><spam class="fa fa-history"></spam> Payments and Receipts</a></li>
                 </ul>
             </div>
         </div>
-
 
 
     {% if memberships.memberships != null %}

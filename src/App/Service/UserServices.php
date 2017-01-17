@@ -729,6 +729,8 @@ class UserServices
 
         return array ('exception' => false,
                       'numberOfInvoices' => count($openInvoicesArray) + count($closedInvoicesArray),
+                      'numberOfOpenInvoices' => count($openInvoicesArray),
+                      'numberOfClosedInvoices' => count($closedInvoicesArray),
                       'openInvoicesArray' => $openInvoicesArray,
                       'closedInvoicesArray' => $closedInvoicesArray);
     }

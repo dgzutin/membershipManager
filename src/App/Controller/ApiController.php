@@ -226,4 +226,27 @@ class ApiController {
         return $response->withJson($this->billingServices->deletePayments($ids));
     }
 
+    //Route /api/v1/ deletePayments
+    public function addPaymentAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+       * Example of request body:
+       * {
+       *  "invoiceId": 1,
+       *  "note": ".....",
+       *  "amount": 1.55
+       *  "paymentMode": PAYPAL
+          }
+      */
+        $body_json = json_decode($request->getBody());
+        $invoiceId = (int)$body_json->invoiceId;
+        $amountPaid = (double)$body_json->amountPaid;
+        $note = $body_json->note;
+        $paymentMode = $body_json->paymentMode;
+
+        $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL);
+
+        return $response->withJson($result);
+    }
+
 }
