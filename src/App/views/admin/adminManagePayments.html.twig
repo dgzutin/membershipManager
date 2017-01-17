@@ -7,10 +7,8 @@
     <div class="panel-group">
 
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Membership Renewals</strong></div>
+            <div class="panel-heading"><strong>Payments for Invoice #{{ invoiceData.invoice.id }}</strong></div>
             <div class="panel-body">
-
-                <form data-toggle="validator" role="form" method="post">
 
                     {% if exception == true %}
                         <div class="alert alert-danger">
@@ -20,21 +18,30 @@
                     {% endif %}
 
                     <div class="row">
-                        <div class="col-xs-12 col-sm-8 col-md-8">
-                            <p class="text-info">Manage payments for an invoice.</p>
+
+                        <div class="col-xs-12 col-sm-5 col-md-5">
+                            <div class="form-group">
+                                <label for="note">Internal note:</label>
+                                <textarea class="form-control" rows="2" id="note" name="reasonForCancel"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-3 col-md-3">
+                            <div class="form-group">
+                                <label for="amountPaid">Amount in {{ invoiceData.invoice.currency }}:</label>
+                                <p class="text-muted" style="font-size: smaller">(use "." as decimal separator)</p>
+                                <input id="amountPaid" name="amountPaid" type="text">
+                            </div>
                         </div>
 
                         <div class="col-xs-12 col-sm-4 col-md-4">
                             <div class="form-group">
                                 <span class="btn btn-success btn-md btn-block" onclick=""><span class="fa fa-plus"></span> Add new payment</span>
+                                <div id="notification"></div>
                             </div>
                         </div>
 
                     </div>
-
-                    <input type="hidden" value="{{ membershipId }}" id="membershipId" name="membershipId">
-
-                </form>
 
                 <table class="table table-condensed" id="renewals" cellspacing="0" width="100%">
                     <thead>
@@ -48,21 +55,26 @@
                     </thead>
                     <tbody>
                     {%  for payment in payments %}
-                        <tr class="" id="tableRow_{{ payment.id }}" style="background-color: #cccccc ">
+                        <tr id="mainRow_{{ payment.id }}" style="background-color: #cccccc ">
                             <td>{{ payment.id }}</td>
                             <td>{{ payment.datePaid | date('jS F Y') }}</td>
-                            <td>{{ payment.amountPaid }}</td>
+                            <td>{{ invoiceData.invoice.currency }} {{ payment.amountPaid }}</td>
                             <td>{{ payment.paymentMode }}</td>
-                            <td><a href="" onclick="deleteValidities([{{ validity.id }}])"><span class="fa fa-trash-o"> </span></a></td>
+                            <td><a href="" onclick="deletePayments([{{ payment.id }}])"><span class="fa fa-trash-o"> </span></a></td>
                         </tr>
-                        <tr style="border: hidden">
+                        <tr id="actionsRow_{{ payment.id }}"style="border: hidden">
                             {% if payment.systemMessage != NULL %}
                             <td colspan="6"><strong>Actions log:</strong><pre class="prettyprint"><code>{{ payment.systemMessage }}</code></pre></td>
                             {% endif %}
                         </tr>
-                        <tr style="border: hidden">
+                        <tr id="gatewayInfoRow_{{ payment.id }}" style="border: hidden">
                             {% if payment.paymentGatewayData != NULL %}
                             <td colspan="6"><strong>Payment gateway log:</strong><pre class="prettyprint"><code>{{ payment.paymentGatewayData }}</code></pre></td>
+                            {% endif %}
+                        </tr>
+                        <tr id="noteRow_{{ payment.id }}" style="border: hidden">
+                            {% if payment.paymentNote != NULL %}
+                            <td colspan="6"><strong>Internal note:</strong><p class="text-muted" style="font-size: smaller">{{ payment.paymentNote }}</p></td>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -79,13 +91,13 @@
 
     <script type="application/javascript">
 
-        function deleteValidities(ids)
+        function deletePayments(ids)
         {
             var params = {
                 ids: ids
             };
 
-            $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/"+api_version+"/deleteValidities",
+            $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/"+api_version+"/deletePayments",
                 data: JSON.stringify(params),
                 type: 'POST',
                 success: function(result){
@@ -96,18 +108,21 @@
                         console.log(result.results[i]);
 
                         if( result.results[i].exception == false){
-                            $("#validUntil").notify(
+                            $("#notification").notify(
                                     result.results[i].message,
                                     {
                                         position:"top center",
                                         className: "success" }
                             );
-                            //delete table row
-                            $('#tableRow_'+result.results[i].validityId).remove();
+                            //delete table rows
+                            $('#mainRow_'+result.results[i].validityId).remove();
+                            $('#actionsRow_'+result.results[i].validityId).remove();
+                            $('#gatewayInfoRow_'+result.results[i].validityId).remove();
+                            $('#noteRow_'+result.results[i].validityId).remove();
 
                         }
                         else{
-                            $("#validUntil").notify(
+                            $("#notification").notify(
                                     result.results[i].message,
                                     {
                                         position:"top center",

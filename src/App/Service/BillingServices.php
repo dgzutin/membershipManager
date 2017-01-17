@@ -149,7 +149,7 @@ class BillingServices
         $newInvoicePayment->setPaymentMode($paymentMode);
         $newInvoicePayment->setSystemMessage(json_encode($message));
         $newInvoicePayment->setPaymentGatewayData(json_encode($paymentGatewayData));
-        
+
         
         $this->em->persist($newInvoicePayment);
         try{
@@ -214,6 +214,13 @@ class BillingServices
 
     public function getPaymentsForInvoice($invoiceId)
     {
+        //verify if full amount was paid to execute OnPayment Actions
+        $invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, NULL);
+
+        if ($invoiceData['exception'] == true){
+            return $invoiceData;
+        }
+
         $repository = $this->em->getRepository('App\Entity\InvoicePayment');
 
         try{
@@ -230,8 +237,70 @@ class BillingServices
         }
 
         return array('exception' => false,
+                     'invoiceData' => $invoiceData,
                      'count' => count($payments),
                      'payments' => $payments);
+    }
+
+    public function deletePayments($ids)
+    {
+
+        $results = null;
+        $i = 0;
+        $deletedCount = 0;
+        foreach ($ids as $id){
+
+            try{
+                $repository = $this->em->getRepository('App\Entity\InvoicePayment');
+                $payment = $repository->createQueryBuilder('payment')
+                    ->select('payment')
+                    ->where('payment.id = :id')
+                    ->setParameter('id', $id)
+                    ->getQuery()
+                    ->getOneOrNullResult();
+            }
+            catch (\Exception $e){
+                $results[$i] = array('exception' => true,
+                                     'paymentId' => $id,
+                                     'message' => $e->getMessage());
+                $payment = -1;
+            }
+
+            if (($payment != null) AND ($payment != -1)){
+                //delete validity
+
+                try{
+                    $this->em->remove($payment);
+                    $this->em->flush();
+
+                    $results[$i] = array('exception' => false,
+                        'paymentId' => $id,
+                        'message' => 'Item successfully deleted');
+                    $deletedCount ++;
+                }
+                catch (\Exception $e){
+                    $results[$i] = array('exception' => true,
+                        'paymentId' => $id,
+                        'message' => $e->getMessage());
+                }
+            }
+            elseif ($payment == null){
+                      $results[$i] = array('exception' => true,
+                                          'paymentId' => $id,
+                                          'message' => 'Payment with id '.$id.' not found');
+            }
+            $i++;
+        }
+
+        if ($deletedCount == 0){
+
+            return array('exception' => true,
+                         'results' => $results,
+                         'message' => $deletedCount.' item(s) deleted');
+        }
+        return array('exception' => false,
+                     'results' => $results,
+                     'message' => $deletedCount.' item(s) deleted');
     }
         
 }

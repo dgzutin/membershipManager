@@ -24,6 +24,7 @@ class ApiController {
         $this->container = $container;
         $this->membershipServices = $this->container->get('membershipServices');
         $this->utilsServices = $this->container->get('utilsServices');
+        $this->billingServices = $this->container->get('billingServices');
 
     }
     
@@ -202,6 +203,27 @@ class ApiController {
         }
 
         return $response->withJson($this->membershipServices->deleteValidities($ids));
+    }
+
+    //Route /api/v1/ deletePayments
+    public function deletePaymentsAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+       * Example of request body:
+       * {
+       *  "ids": [1, 2, 3, ..]
+          }
+      */
+        $body_json = json_decode($request->getBody());
+        $ids = $body_json->ids;
+
+        $i = 0;
+        foreach ($ids as $id){
+            $ids[$i] = (int)$id;
+            $i++;
+        }
+
+        return $response->withJson($this->billingServices->deletePayments($ids));
     }
 
 }

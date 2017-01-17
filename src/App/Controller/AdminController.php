@@ -340,12 +340,8 @@ class AdminController {
 
     public function invoicePaymentsAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-
         $invoiceId = (int)$args['invoiceId'];
-      //  $renewalsRes = $this->membershipServices->getValiditiesForMembershipId($membershipId);
-
         $result = $this->billingServices->getPaymentsForInvoice($invoiceId);
-        
         return $this->container->view->render($response, 'admin/adminManagePayments.html.twig', $result);
     }
 
