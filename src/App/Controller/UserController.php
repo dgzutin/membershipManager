@@ -305,8 +305,8 @@ class UserController {
             }
             //Generate invoice if member is succesfully added AND create on payment actions
 
-            $onPaymentActions = array ('actionName' => 'addValidityForOnePeriod',
-                                       'membershipIds' => $membershipIds);
+            $onPaymentActions = array(array ('actionName' => 'renewForOnePeriod',
+                                             'membershipIds' => $membershipIds));
 
             $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingResp['billingInfo'], $itemsResp['items'], json_encode($onPaymentActions), true, $request);
 

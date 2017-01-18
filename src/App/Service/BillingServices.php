@@ -95,29 +95,23 @@ class BillingServices
                     if ($result['exception'] == false){
 
                         $invoice->setActionsExecuted(true);
-                        $message = array('exception' => false,
+                        $actionProtocol = array('exception' => false,
                                          'actionExecuted' => true,
-                                         'action' => $result['action'],
-                                         'actionResult' => $result['result'],
-                                         'actionMessage' => $result['message'],
-                                         'newOutstandingAmount' => $newOutstandingAmount);
+                                         'actionName' => $result['actionName'],
+                                         'actionResult' => $result['results']);
                     }
                     else{
-                        $message = array('exception' => true,
+                        $actionProtocol = array('exception' => true,
                                          'actionExecuted' => false,
-                                         'action' => $result['action'],
-                                         'actionResult' => $result['result'],
-                                         'message' => $result['message'],
-                                         'newOutstandingAmount' => $newOutstandingAmount);
+                                         'actionName' => $result['actionName'],
+                                         'actionResult' => $result['results']);
                     }
                     //=========================================================================
                 }
                 else{
-                    $message = array('exception' => false,
+                    $actionProtocol = array('exception' => false,
                                      'actionExecuted' => false,
-                                     'actionResult' => NULL,
-                                     'actionMessage' => NULL,
-                                     'newOutstandingAmount' => $newOutstandingAmount);
+                                     'actionResult' => NULL);
                 }
 
                 $invoice->setPaid(true);
@@ -128,17 +122,15 @@ class BillingServices
                 //else do nothing
                 $invoice->setPaid(false);
                 $exception = false;
-                $message = array('exception' => false,
+                $actionProtocol = array('exception' => false,
                                  'actionExecuted' => false,
-                                 'newOutstandingAmount' => $newOutstandingAmount,
-                                 'actionResult' => NULL,
-                                 'actionMessage' => NULL);
+                                 'actionResult' => NULL);
             }
             
         }
         else{
             return array('exception' => true,
-                         'message' => $invoiceData['exception']);
+                         'message' => $invoiceData['message']);
         }
 
         $newInvoicePayment = new InvoicePayment();
@@ -147,7 +139,7 @@ class BillingServices
         $newInvoicePayment->setPaymentNote($note);
         $newInvoicePayment->setAmountPaid($amountPaid);
         $newInvoicePayment->setPaymentMode($paymentMode);
-        $newInvoicePayment->setSystemMessage(json_encode($message));
+        $newInvoicePayment->setSystemMessage(json_encode($actionProtocol));
         $newInvoicePayment->setPaymentGatewayData(json_encode($paymentGatewayData));
 
         
@@ -170,9 +162,18 @@ class BillingServices
                 'message' => $e->getMessage());
         }
 
-
         return array('exception' => $exception,
-                     'message' => $message);
+                     'currency' => $invoiceData['invoiceCurrency'],
+                     'paymentId' => $newInvoicePayment->getId(),
+                     'amountPaid' => $newInvoicePayment->getAmountPaid(),
+                     'paymentMode' => $newInvoicePayment->getPaymentMode(),
+                     'datePaid' => $newInvoicePayment->getDatePaid()->format('jS F Y'),
+                     'systemMessage' => $newInvoicePayment->getSystemMessage(),
+                     'paymentGatewayData' => $newInvoicePayment->getPaymentGatewayData(),
+                     'paymentNote' => $newInvoicePayment->getPaymentNote(),
+                     'newOutstandingAmount' => $newOutstandingAmount,
+                     'actionProtocol' => $actionProtocol,
+                     'message' => 'A new payment was added');
     }
 
     public function processOnPaymentActions($actions)
@@ -181,34 +182,42 @@ class BillingServices
         $actionsJson = json_decode($actions);
 
         if ($actionsJson != null){
-            $actionName = $actionsJson->actionName;
 
-            $result = null;
-            switch ($actionName){
+            $i = 0;
+            $results = null;
+            foreach ($actionsJson as $action){
 
-                case 'addValidityForOnePeriod':
+                $actionName = $action->actionName;
+                switch ($actionName){
 
-                    $membershipIds = $actionsJson->membershipIds;
-                    $i = 0;
-                    foreach ($membershipIds as $membershipId){
-                        $result[$i] = $this->membershipServices->addNewMembershipValidity($membershipId, NULL, NULL);
-                        $i++;
-                    }
-                    break;
-                default:
-                    //do nothing
+                    case 'renewForOnePeriod':
 
-                    break;
+                        $membershipIds = $action->membershipIds;
+                        $j = 0;
+                        $actionsResults = NULL;
+                        foreach ($membershipIds as $membershipId){
+                            $actionsResults[$j] = $this->membershipServices->addNewMembershipValidity($membershipId, NULL, NULL);
+                            $j++;
+                        }
+
+                        break;
+                    default:
+                        //do nothing
+
+                        $actionsResults = null;
+                        break;
+                }
+                $results[$i] = array('actionName' => $actionName,
+                                     'result' => $actionsResults);
+                $i++;
             }
-
             return array('exception' => false,
-                        'result' => $result,
-                        'action' => $actionsJson,
-                        'message' => 'Action(s) executed');
+                         'actions' => $actionsJson,
+                         'results' => $results);
         }
         return array('exception' => true,
-                     'result' => null,
-                     'action' => $actionsJson,
+                     'results' => null,
+                     'actions' => $actionsJson,
                      'message' => 'Could not parse OnPaymentActions');
     }
 

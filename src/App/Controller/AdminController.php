@@ -341,7 +341,14 @@ class AdminController {
     public function invoicePaymentsAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $invoiceId = (int)$args['invoiceId'];
+        
         $result = $this->billingServices->getPaymentsForInvoice($invoiceId);
+        
+        if ($result['exception'] == false){
+            $onPaymentActions = json_decode($result['invoiceData']['invoice']->getOnPaymentActions());
+
+            $result['onPaymentActions'] = $onPaymentActions;
+        }
         return $this->container->view->render($response, 'admin/adminManagePayments.html.twig', $result);
     }
 

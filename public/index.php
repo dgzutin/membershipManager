@@ -198,6 +198,8 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/renewMembership', '\ApiController:renewMembershipAction' )->setName('renewMembership');
     $app->post('/deleteValidities', '\ApiController:deleteValiditiesAction' )->setName('deleteValidities');
     $app->post('/deletePayments', '\ApiController:deletePaymentsAction' )->setName('deletePayments');
+    $app->post('/addPayment', '\ApiController:addPaymentAction' )->setName('addPayment');
+
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

@@ -505,6 +505,7 @@ class MembershipServices
         }
 
         return array('exception' => false,
+                     'membershipId' => $membership->getId(),
                      'validity' => $validity,
                      'id' => $validity->getId(),
                      'validFrom' => $validity->getValidFrom()->format('jS F Y'),

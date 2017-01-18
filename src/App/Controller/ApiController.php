@@ -226,7 +226,7 @@ class ApiController {
         return $response->withJson($this->billingServices->deletePayments($ids));
     }
 
-    //Route /api/v1/ deletePayments
+    //Route /api/v1/ addPayment
     public function addPaymentAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         /*
@@ -234,19 +234,28 @@ class ApiController {
        * {
        *  "invoiceId": 1,
        *  "note": ".....",
-       *  "amount": 1.55
+       *  "amount": 1.55,
        *  "paymentMode": PAYPAL
           }
       */
         $body_json = json_decode($request->getBody());
-        $invoiceId = (int)$body_json->invoiceId;
-        $amountPaid = (double)$body_json->amountPaid;
-        $note = $body_json->note;
-        $paymentMode = $body_json->paymentMode;
 
-        $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL);
+        if ($body_json != null){
 
-        return $response->withJson($result);
+            $invoiceId = (int)$body_json->invoiceId;
+            $amountPaid = (double)$body_json->amountPaid;
+            $note = $body_json->note;
+            $paymentMode = $body_json->paymentMode;
+
+            //var_dump($amountPaid);
+
+            $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL);
+
+            return $response->withJson($result);
+        }
+
+        return $response->withJson(array('exception' => false,
+                                         'message' => 'Could not parse request body'));
     }
 
 }
