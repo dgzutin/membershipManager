@@ -4,7 +4,7 @@
 
     <div class="panel-group">
         <div class="panel panel-primary">
-            <div class="panel-heading">Invoices and receipts for {{ user.first_name }} {{ user.last_name }}</div>
+            <div class="panel-heading">Invoices and receipts</div>
             <div class="panel-body">
 
                 {% if exception == true %}
@@ -13,22 +13,42 @@
                     </div>
                 {% endif %}
 
-                <div class="row">
-                    <div class="col-xs-6 col-sm-9">
+                {% if user == NULL %}
+
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-9">
+
+                            <p class="text-info">Overview of all invoices and receipts.</p>
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+
+                                <button class="btn btn-lg btn-success btn-block" type="submit"><span class="fa fa-plus"></span> New Invoice</button>
+                            </div>
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-9">
                             <strong>{{ user.title }} {{ user.first_name }} {{ user.last_name }}</strong>
                             <br>{{ user.institution }}
                             <br>{{ user.street }} {{ user.zip }} {{ user.city }}, <span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
                             <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
-                        <p class="text-info">Manage invoices, receipts and payments for a single user.</p>
-                    </div>
+                            <p class="text-info">Manage invoices, receipts and payments for a single user.</p>
+                        </div>
 
-                    <div class="col-xs-6 col-sm-3">
-                        <div class="form-group">
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
 
-                            <button class="btn btn-lg btn-success btn-block" type="submit"><span class="fa fa-plus"></span> New Invoice</button>
+                                <button class="btn btn-lg btn-success btn-block" type="submit"><span class="fa fa-plus"></span> New Invoice</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                {% endif %}
 
                 <hr>
 
@@ -44,6 +64,7 @@
                         <th>Outstanding amount</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,7 +78,10 @@
                             <td>{{ invoices.invoiceCurrency }} {{ invoices.amountPaid }}</td>
                             <td>{{ invoices.invoiceCurrency }} {{ invoices.outstandingAmount }}</td>
                             <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
-                            <td><a href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                            <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                            <td>
+                                <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
+                            </td>
                         </tr>
 
                     {% endfor %}
@@ -77,6 +101,7 @@
                         <th>Outstanding amount</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -91,6 +116,9 @@
                             <td>{{ invoices.invoiceCurrency }} {{ invoices.outstandingAmount }}</td>
                             <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
                             <td><a href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                            <td>
+                                <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
+                            </td>
                         </tr>
 
                     {% endfor %}

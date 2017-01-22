@@ -324,16 +324,23 @@ class AdminController {
 
     public function userInvoicesAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+        $userId = (int)$args['userId'];
 
-        $user = $this->userServices->getUserById((int)$args['userId']);
-
-        if ($user['exception'] == true){
-
-            return $this->container->view->render($response, 'userNotification.twig', $user);
-
+        if ($userId == -1){
+            $userId = NULL;
+            $invoiceOwner = NULL;
         }
-        $result = $this->userServices-> getInvoicesForUser($user['user']->getId());
-        $result['user'] = $user['user'];
+        else{
+            $user = $this->userServices->getUserById($userId);
+            if ($user['exception'] == true){
+
+                return $this->container->view->render($response, 'userNotification.twig', $user);
+            }
+            $invoiceOwner =  $user['user'];
+        }
+
+        $result = $this->userServices-> getInvoices($userId);
+        $result['user'] =$invoiceOwner;
 
         return $this->container->view->render($response, 'admin/adminUserInvoicesReceipts.html.twig', $result);
     }
@@ -350,6 +357,70 @@ class AdminController {
             $result['onPaymentActions'] = $onPaymentActions;
         }
         return $this->container->view->render($response, 'admin/adminManagePayments.html.twig', $result);
+    }
+
+    public function singleInvoiceAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $invoiceId = $args['invoiceId'];
+        //Retrieve the user creating the invoice
+
+        $respInvoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, NULL);
+
+        if ($respInvoiceData['exception'] == true){
+
+            return $this->container->view->render($response, 'userNotification.twig', $respInvoiceData);
+        }
+
+        $userResp = $this->userServices->getUserById($respInvoiceData['invoice']->getUserId());
+
+        if ($userResp['exception'] == false){
+            $user =  $userResp['user'];
+        }
+        else{
+            return $this->container->view->render($response, 'userNotification.twig', $userResp);
+        }
+
+        // Convert all prices to locale settings ---------------------
+        $shoppingCartServices = $this->container->get('shoppingCartServices');
+        $totalPrice_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['totalPrice']);
+        $amountPaid_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['amountPaid']);
+        $outstandingAmount_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['outstandingAmount']);
+        $items = $respInvoiceData['invoiceItems'];
+
+        $i = 0;
+        foreach ($items as $item){
+            $items[$i]->setUnitPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getUnitPrice()));
+            $items[$i]->setTotalPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getTotalPrice()));
+            $i++;
+        }
+
+        // END Convert all prices to locale settings ---------------------
+
+        $isPost = false;
+
+        if ($request->isPost()){
+            $messagePaypal = $request->getBody();
+            $isPost = true;
+        }
+
+        return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
+            'user' => $user,
+            'exception' => $respInvoiceData['exception'],
+            'invoiceData' => $respInvoiceData['invoice'],
+            'invoiceDate' => $respInvoiceData['invoiceDate'],
+            'paidDate' => $respInvoiceData['paidDate'],
+            'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
+            'items' => $respInvoiceData['invoiceItems'],
+            'issuerData' => $respInvoiceData['issuerData'],
+            'totalPrice' =>  $totalPrice_formatted,
+            'amountPaid' => $amountPaid_formatted,
+            'outstandingAmount' => $outstandingAmount_formatted,
+            'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
+            'paypal_ipn_url' => $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn')),
+            'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoiceAdmin', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
+            'message' => $respInvoiceData['message'],
+            'isPost' =>$isPost));
+
     }
 
 

@@ -27,7 +27,10 @@
                             <td><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span></td>
                             <td>{{ user.email1 }}</td>
                             <td>{% if user.member == true %}<spam class="fa fa-star"> Member</spam> {% else %} not a member {% endif %}</td>
-                            <td><a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">view</a></td>
+                            <td>
+                                <p style="font-size: smaller"><a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">Edit user</a><br>
+                                    <a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"> Invoices and receipts</a></p>
+                            </td>
                         </tr>
                     {% endfor %}
 

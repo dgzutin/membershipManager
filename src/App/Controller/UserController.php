@@ -46,7 +46,7 @@ class UserController {
         $userName = $user->getFirstName().' '.$user->getLastName();
 
         $memberships = $this->membershipServices->getMembershipsForUser($user->getId());
-        $openInvoiceResult = $this->userServices->getInvoicesForUser($_SESSION['user_id']);
+        $openInvoiceResult = $this->userServices->getInvoices($_SESSION['user_id']);
 
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
             'invoiceInfo' => $openInvoiceResult,

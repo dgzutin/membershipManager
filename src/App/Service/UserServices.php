@@ -699,15 +699,29 @@ class UserServices
                      'message' => 'New Billing info for user '.$user->getId().' added/updated.');
     }
 
-    public function getInvoicesForUser($userId)
+    public function getInvoices($userId)
     {
         $repository = $this->em->getRepository('App\Entity\Invoice');
-        $invoices = $repository->createQueryBuilder('invoice')
-            ->select('invoice')
-            ->where('invoice.userId = :userId')
-            ->setParameter('userId', $userId)
-            ->getQuery()
-            ->getResult();
+
+        if ($userId != NULL){
+
+            try{
+                $invoices = $repository->findBy(array('userId' => $userId), array('id' => 'DESC'));
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                    'message' => $e->getMessage());
+            }
+        }
+        else{
+            try{
+                $invoices = $repository->findBy(array(), array('id' => 'DESC'));
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                    'message' => $e->getMessage());
+            }
+        }
 
         $openInvoicesArray = null;
         $closedInvoicesArray = null;

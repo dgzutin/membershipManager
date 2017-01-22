@@ -27,7 +27,6 @@
                 <h2 class="name">{{ invoiceData.billingName }}</h2>
                 <div class="address">{{ invoiceData.billingInstitution }}</div>
                 <div class="address">{{ invoiceData.street }} {{ invoiceData.billingZip }} {{ invoiceData.billingCity }}, <span class="bfh-countries" data-country="{{ invoiceData.billingCountry }}" data-flags="false"></span></div>
-                <div class="email"><a href="mailto:{{ user.email1 }}">{{ user.email1 }}</a></div>
                 {{ invoiceData.billingVat }}
                 <br>{{ invoiceData.billingReference }}
             </div>
@@ -209,9 +208,6 @@
                     {% endif %}
                 </div>
 
-                 <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Mail me this invoice<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
-
-
              {% else %}
 
                  <div id="notices">
@@ -223,6 +219,9 @@
                 <p class="text-right"><img src="{{ baseUrl }}/assets/images/paid.png"></p>
 
              {% endif %}
+
+    <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Mail this invoice to user<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+
 
     <hr>
 
