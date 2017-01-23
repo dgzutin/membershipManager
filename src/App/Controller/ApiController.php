@@ -258,4 +258,48 @@ class ApiController {
                                          'message' => 'Could not parse request body'));
     }
 
+    //Route /api-user/v1/saveImage
+    public function saveImageAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $req_json = json_decode($request->getBody());
+
+        if ($req_json != null){
+
+            $imageData = $req_json->imageData;
+            $image_content = base64_decode(str_replace("data:image/png;base64,","",$imageData)); // remove "data:image/png;base64,"
+
+            if ($req_json->fileName == NULL){
+                $fileName = sha1(microtime().rand()).'.png';
+            }
+            else{
+                $fileName = $req_json->fileName;
+            }
+
+            try{
+                $myfile = fopen('files/newsletter/uploads/'.$fileName,'w');
+                fwrite($myfile, $image_content);
+                fclose($myfile);
+            }
+            catch(\Exception $e){
+
+                return $response->withJson(array('exception' => true,
+                    'url' => null,
+                    'message' => $e->getMessage()));
+            }
+
+            $resp = array('exception' => false,
+                'url' => $request->getUri()->getBaseUrl().'/files/newsletter/uploads/'.$fileName,
+                'fileName' => $fileName,
+                'message' => 'Image saved');
+        }
+        else{
+            $resp = array('exception' => true,
+                          'url' => NULL,
+                          'message' => 'Invalid JSON');
+        }
+
+        return $response->withJson($resp);
+    }
+    
+
 }

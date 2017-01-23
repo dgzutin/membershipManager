@@ -179,6 +179,7 @@ $app->group('/user', function () use ($app) {
     $app->map(['GET', 'POST'], '/manageMembership/{memberId}', '\UserController:manageMembershipAction')->setName('manageMembership');
     $app->map(['GET', 'POST'], '/cancelMembership/{memberId}', '\UserController:cancelMembershipAction')->setName('cancelMembership');
     $app->get('/sendInvoiceToUser/{invoiceId}', '\UserController:sendInvoiceToUserAction')->setName('sendInvoiceToUser');
+    $app->map(['GET', 'POST'], '/newsletterArticle', '\UserController:newsletterArticleAction')->setName('newsletterArticle');
 
     $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
 
@@ -186,7 +187,7 @@ $app->group('/user', function () use ($app) {
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN'), $container));
 
-//Define the Routes for API
+//Define the Routes for admin API
 
 $app->group('/api/v1', function () use ($app) {
 
@@ -201,10 +202,17 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/deletePayments', '\ApiController:deletePaymentsAction' )->setName('deletePayments');
     $app->post('/addPayment', '\ApiController:addPaymentAction' )->setName('addPayment');
 
+    //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
+})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
+
+$app->group('/api-user/v1', function () use ($app) {
+
+    $app->post('/saveImage', '\ApiController:saveImageAction' )->setName('saveImage');
+    $app->post('/cropImage', '\ApiController:cropImageAction' )->setName('cropImage');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
+})->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN'), $container));
 
 // Define the public routes
 $app->get('/', '\PublicController:homeAction');

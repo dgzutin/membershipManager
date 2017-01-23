@@ -15,7 +15,7 @@ class NewsletterArticle
     /** @Id @Column(type="integer") @GeneratedValue * */
     protected $id;
 
-    /** @Column(type="integer", nullable=false) * */
+    /** @Column(type="integer", nullable=true) * */
     protected $newsletterId;
 
     /** @Column(type="integer", nullable=false) * */

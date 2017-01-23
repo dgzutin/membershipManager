@@ -7,4 +7,4 @@ composer.phar
 src/App/config/config.json
 public/assets/images/logo_invoice.png
 public/ipnver.txt
-public/webservice.txt
+public/files/newsletter/uploads/*

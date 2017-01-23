@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <style>
+        .cropit-preview {
+            background-color: #f8f8f8;
+            background-size: cover;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-top: 7px;
+            width: 200px;
+            height: 200px;
+        }
+        .cropit-preview-image-container {
+            cursor: move;
+        }
+        .image-size-label {
+            margin-top: 10px;
+        }
+        input, .export {
+            display: block;
+        }
+        button {
+            margin-top: 10px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+    </style>
+
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Submit an article for the Newsletter</strong></div>
+            <div class="panel-body">
+
+                    {% if form_submission == true %}
+
+                        {% if exception == true %}
+                            <div class="alert alert-danger">
+                                <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success">
+                                <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                            </div>
+                        {% endif %}
+
+                    {% else %}
+
+                        {% if exception == true %}
+                            <div class="alert alert-danger">
+                                <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                <div class="row">
+
+                    <div class="col-xs-12 col-md-12">
+
+                        <p class="text-primary text-left">
+                            Use this form to submit an article for the newsletter of the {{ systemInfo.settings.nameOfOrganization }}.
+                            Articles are selected during the editorial process. We do not guarantee that your submitted article will be published in any newsletter issue.
+                            For your article to be considered for publication, you <strong>must</strong> provide a title, a main text and upload an illustrative image.
+                        </p>
+                        <p class="text-danger text-left" style="font-size: smaller">
+                            <strong>Important: </strong><br>
+                            By submitting this article you agree to publish the submitted content in the newsletter of the {{ systemInfo.settings.nameOfOrganization }}
+                            and confirm that none of the provided content (including text and image) is copyright protected.
+                        </p>
+
+                        <hr>
+                    </div>
+                </div>
+
+                    <div class="row">
+
+                        <div class="col-xs-12 col-md-8">
+
+                            <form data-toggle="validator" role="form" method="post" id="article">
+
+                                <div class="form-group">
+                                    <label for="title">Article title:</label>
+                                    <input type="text" name="title" id="title" class="form-control " placeholder="" value="" tabindex="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="imageUrl">Image URL:</label>
+                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control " placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" required readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="text">Text (500 - 1500 characters):</label>
+                                    <textarea  class="form-control" rows="10" id="text" name="text" minlength="500" maxlength="1500" tabindex="3"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="moreInfoUrl">More info URL:</label>
+                                    <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="" tabindex="4">
+                                </div>
+
+                                <input type="hidden" name="fileName" id="fileName" class="form-control " placeholder="" value="">
+
+                                <div class="form-group">
+                                    <label for="comments">Internal comments (will not be published):</label>
+                                    <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5"></textarea>
+                                </div>
+
+                                <span class="btn btn-success" onclick="confirmSubmission()">Save Profile</span>
+                            </form>
+                        </div>
+
+                        <div class="col-xs-12 col-md-4">
+
+                            <div class="image-editor">
+
+                                <label>Select an image to upload:</label><br>
+                                <label class="btn btn-default btn-file">
+                                    Browse ... <input type="file" id='image_browse' class="cropit-image-input" style="display: none;">
+                                </label>
+
+                                <div class="cropit-preview"></div>
+                                <div class="image-size-label">
+                                    Resize image
+                                </div>
+
+                                <input type="range" class="cropit-image-zoom-input">
+                                <button id="rotate-ccw" class="btn btn-default"><span class="fa fa-rotate-left"></span></button>
+                                <button id="rotate-cw" class="btn btn-default"><span class="fa fa-rotate-right"></span></button>
+
+                                <button id="export" class="btn btn-primary">Save image</button>
+                            </div>
+
+                            <div id="notification"></div>
+
+                            <br><br>
+
+                        </div>
+
+                    </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="dialog-confirm" title="Submit article?" hidden>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Submitted articles cannot be edited. Are you sure you want to proceed?</p>
+    </div>
+
+    <script src="{{ baseUrl }}/assets/cropit/jquery.cropit.js"></script>
+
+    <script type="application/javascript">
+
+
+        var imageCropper = $('.image-editor').cropit();
+
+            $('#rotate-cw').click(function() {
+                imageCropper.cropit('rotateCW');
+            });
+            $('#rotate-ccw').click(function() {
+                imageCropper.cropit('rotateCCW');
+            });
+            $('#export').click(function() {
+
+                var imageData = imageCropper.cropit('export');
+                //imageData = 'blabla';
+
+                if (imageData != null){
+
+                    var params = {
+                        imageData: imageData,
+                        fileName: $('#fileName').val()
+                    };
+
+                    console.log(params);
+
+
+                    $.ajax({url: window.location.protocol + "//" + window.location.host + "/api-user/v1/saveImage",
+                        data: JSON.stringify(params),
+                        // data: imageData,
+                        type: 'POST',
+                        success: function(result){
+
+                            console.log(result);
+
+                            if( result.exception == false){
+                                $("#notification").notify(
+                                        result.message,
+                                        {
+                                            position:"bottom right",
+                                            className: "success" }
+                                );
+
+
+                                $('#imageUrl').val(result.url);
+                                $('#fileName').val(result.fileName);
+                            }
+                            else{
+                                $("#notification").notify(
+                                        result.message,
+                                        {
+                                            position:"bottom right",
+                                            className: "warn" }
+                                );
+                            }
+
+                        }});
+                }
+                else{
+                    $("#notification").notify(
+                            'Select an image first',
+                            {
+                                position:"bottom right",
+                                className: "warn" }
+                    );
+
+                }
+
+
+              //  window.open(imageData);
+            });
+        function confirmSubmission()
+        {
+
+            $( "#dialog-confirm" ).dialog({
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Submit Article": function() {
+
+                        $( "#article" ).submit();
+                        $( this ).dialog( "close" );
+                    },
+                    Cancel: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+        }
+
+
+    </script>
+
+{% endblock %}

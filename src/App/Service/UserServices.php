@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use App\Entity\NewsletterArticle;
 use App\Entity\User;
 use App\Entity\Invoice;
 use App\Entity\InvoiceItem;
@@ -748,6 +749,31 @@ class UserServices
                       'openInvoicesArray' => $openInvoicesArray,
                       'closedInvoicesArray' => $closedInvoicesArray);
     }
-    
 
+    public function addNewsletterArticle($article, $userId)
+    {
+        $newArticle = new NewsletterArticle();
+        $newArticle->setCreateDate(new DateTime());
+        $newArticle->setUserId($userId);
+        $newArticle->setText($article['text']);
+        $newArticle->setTitle($article['title']);
+        $newArticle->setImageUrl($article['imageUrl']);
+        $newArticle->setMoreInfoUrl($article['moreInfoUrl']);
+        $newArticle->setComments($article['comments']);
+
+        try{
+            $this->em->persist($newArticle);
+            $this->em->flush();
+
+        }
+        catch (\Exception $e){
+            return array(
+                'exception' => true,
+                'message' => 'Could not save article: '.$e->getMessage());
+        }
+        return array(
+            'exception' => false,
+            'message' => 'New article was submitted. Thank you!');
+
+    }
 }
