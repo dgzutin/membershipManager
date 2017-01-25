@@ -392,7 +392,7 @@ class UserController {
             'outstandingAmount' => $outstandingAmount_formatted,
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
             'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
-            'invoiceLink' =>  $this->utilsServices->getBaseUrl($request).'/user/sendInvoiceToUser/'.$respInvoiceData['invoice']->getId(),
+            'invoiceLink' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message'],
             'isPost' =>$isPost));
 
