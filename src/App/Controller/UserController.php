@@ -603,7 +603,7 @@ class UserController {
 
         $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
 
-        $result = $this->userServices->assemblePublicNewsletter('12345678900989765432');
+        $result = $request->getUri()->getBaseUrl();;
         
 
         var_dump($result);
