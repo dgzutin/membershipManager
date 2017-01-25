@@ -48,6 +48,13 @@ class PublicController {
             $_SESSION['user_role'] = $auth_result['user_role'];
 
             $redirect_url = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
+
+            if ($_SERVER['HTTPS'] != NULL){
+                $redirect_url = $request->getUri()->getScheme().'://'.$request->getUri()->getHost().'/user/home';
+            }
+            else{
+                $redirect_url = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
+            }
             if (isset($_SESSION['orig_uri'])){
 
                 $redirect_url = $_SESSION['orig_uri'];
@@ -232,6 +239,11 @@ class PublicController {
     {
         $key = $args['key'];
         $result = $this->userServices->assemblePublicNewsletter($key, false);
+
+        if ($result['exception'] == false){
+            $result['baseUrl'] = $request->getUri()->getBaseUrl();
+            $result['publicLink'] = $request->getUri()->withPath($this->container->router->pathFor('publicNewsletter', ['key' => $result['newsletter']->getPublicKey()]));
+        }
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 
