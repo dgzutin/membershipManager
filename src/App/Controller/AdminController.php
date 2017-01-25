@@ -104,7 +104,7 @@ class AdminController {
         //$resultMemberships = $this->membershipServices->getMembershipsForUser($userId);
 
         if ($resp['exception'] == false){
-            $resetPasswordLink = $request->getUri()->getBaseUrl(). '/resetPassword/'.$resp['user']->getProfileKey();
+            $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$resp['user']->getProfileKey();
         }
         else{
             $resetPasswordLink = null;
@@ -416,8 +416,8 @@ class AdminController {
             'amountPaid' => $amountPaid_formatted,
             'outstandingAmount' => $outstandingAmount_formatted,
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
-            'paypal_ipn_url' => $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn')),
-            'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoiceAdmin', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
+            'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
+            'invoiceLink' => $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message'],
             'isPost' =>$isPost));
     }
@@ -485,8 +485,8 @@ class AdminController {
     {
         $key = $args['key'];
         $result = $this->userServices->assemblePublicNewsletter($key, true);
-        $result['publicLink'] = $request->getUri()->withPath($this->container->router->pathFor('publicNewsletter', ['key' => $result['newsletter']->getPublicKey()]));
-        $result['baseUrl'] = $request->getUri()->getBaseUrl();
+        $result['publicLink'] =$this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
+        $result['baseUrl'] = $this->utilsServices->getBaseUrl($request);
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 
