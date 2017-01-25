@@ -603,7 +603,9 @@ class UserController {
 
         $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
 
-        $result = $request->getUri()->getBaseUrl();;
+        $result = $request->getUri()->getBaseUrl();
+
+        $result = $_SERVER['SERVER_NAME'];
         
 
         var_dump($result);
