@@ -603,12 +603,12 @@ class UserController {
 
         $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
 
-        $result = $request->getUri()->getBaseUrl();
+        $result = $request->getUri();
 
-        $result = $_SERVER['SERVER_NAME'];
 
-        $result = $_SERVER['HTTPS'];
-        
+        $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
+
+
 
         var_dump($result);
 
