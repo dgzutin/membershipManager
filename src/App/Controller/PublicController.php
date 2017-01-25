@@ -26,6 +26,7 @@ class PublicController {
         $this->systemInfo = $container->get('userServices')->getSystemInfo();
         $this->billingServices = $container->get('billingServices');
         $this->userServices = $container->get('userServices');
+        $this->utilsServices = $container->get('utilsServices');
     }
 
     public function loginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -47,14 +48,8 @@ class PublicController {
             $_SESSION['user_id'] = $auth_result['user_id'];
             $_SESSION['user_role'] = $auth_result['user_role'];
 
-            $redirect_url = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
+            $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/home';
 
-            if ($_SERVER['HTTPS'] != NULL){
-                $redirect_url = $request->getUri()->getScheme().'://'.$request->getUri()->getHost().'/user/home';
-            }
-            else{
-                $redirect_url = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
-            }
             if (isset($_SESSION['orig_uri'])){
 
                 $redirect_url = $_SESSION['orig_uri'];
@@ -71,7 +66,7 @@ class PublicController {
 
     public function homeAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $uri = $request->getUri()->withPath($this->container->router->pathFor('login'));
+        $uri = $this->utilsServices->getBaseUrl($request).'/login';
         return $response = $response->withRedirect($uri);
     }
 
@@ -80,7 +75,7 @@ class PublicController {
         session_start();
         session_destroy();
 
-        $uri = $request->getUri()->withPath($this->container->router->pathFor('login'));
+        $uri = $this->utilsServices->getBaseUrl($request).'/login';
         return $response = $response->withRedirect($uri, 200);
     }
 
@@ -241,8 +236,8 @@ class PublicController {
         $result = $this->userServices->assemblePublicNewsletter($key, false);
 
         if ($result['exception'] == false){
-            $result['baseUrl'] = $request->getUri()->getBaseUrl();
-            $result['publicLink'] = $request->getUri()->withPath($this->container->router->pathFor('publicNewsletter', ['key' => $result['newsletter']->getPublicKey()]));
+            $result['baseUrl'] = $this->utilsServices->getBaseUrl($request);
+            $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
         }
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
