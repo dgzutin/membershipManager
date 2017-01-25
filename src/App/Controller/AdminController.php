@@ -431,7 +431,7 @@ class AdminController {
 
             if ($result['exception'] == false){
 
-                $uri = $request->getUri()->withPath($this->container->router->pathFor('saveNewsletterAdmin', ['newsletterId' => $result['newsletter']->getId()]));
+                $uri = $request-> $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getId();
                 return $response = $response->withRedirect($uri, 200);
             }
             return $this->container->view->render($response, 'userNotification.twig', $result);
@@ -461,7 +461,7 @@ class AdminController {
             }
             $result = $this->userServices->getNewsletterArticles($newsletterId);
             $result['newsletter'] = $newsletterResult['newsletter'];
-            $result['publicLink'] = $request->getUri()->withPath($this->container->router->pathFor('publicNewsletter', ['key' => $result['newsletter']->getPublicKey()]));
+            $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
         }
         $result['newsletterId'] = $newsletterId;
 
@@ -485,7 +485,7 @@ class AdminController {
     {
         $key = $args['key'];
         $result = $this->userServices->assemblePublicNewsletter($key, true);
-        $result['publicLink'] =$this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
+        $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
         $result['baseUrl'] = $this->utilsServices->getBaseUrl($request);
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
