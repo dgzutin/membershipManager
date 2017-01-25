@@ -44,13 +44,12 @@ class UserAuthenticationMiddleware
 
         session_start();
 
-        // Save original URL for later redirection
-        $baseUrl = $request->getUri()->getBaseUrl();
-
         if ($_SERVER['HTTPS'] != NULL){
-            $loginUrl = $request->getUri()->getScheme().'://'.$request->getUri()->getHost().'/login';
+            $baseUrl = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
+            $loginUrl =$baseUrl.'/login';
         }
         else{
+            $baseUrl = $request->getUri()->getBaseUrl();
             $loginUrl = $request->getUri()->withPath($this->container->router->pathFor('login'));
         }
         $_SESSION['orig_uri'] = $baseUrl.$_SERVER['REQUEST_URI'];
