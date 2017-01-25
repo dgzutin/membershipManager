@@ -317,7 +317,7 @@ class ApiController {
             }
 
             $resp = array('exception' => false,
-                'url' => $request->getUri()->getBaseUrl().'/files/newsletter/uploads/'.$fileName,
+                'url' => $this->utilsServices->getBaseUrl($request).'/files/newsletter/uploads/'.$fileName,
                 'fileName' => $fileName,
                 'message' => 'Image saved');
         }
