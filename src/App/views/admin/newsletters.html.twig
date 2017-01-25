@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Manage Users and Members</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-xs-6 col-sm-9">
+                        <p class="text-info">Manage newsletters.</p>
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+
+                            <a href="{{ path_for('createNewsletter') }}" class="btn btn-lg btn-success btn-block" type="submit"><span class="fa fa-plus"></span> Create newsletter</a>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="display" id="newsletters" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Date created</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for newsletter in newsletters %}
+                        <tr class="">
+                            <td>{{ newsletter.id }}</td>
+                            <td>{{ newsletter.title }}</td>
+                            <td>
+                                {% if newsletter.published %}
+                                    <p class="text-success">Published on {{ newsletter.publishDate | date('jS F Y')}}</p>
+                                {% else %}
+                                    <p class="text-danger">Unpublished</p>
+                                {% endif %}
+                            </td>
+                            <td>{{ newsletter.createDate | date('jS F Y')}}</td>
+                            <td><a href="{{ path_for('newsletterAdmin', { 'newsletterId': newsletter.id }) }}">open</a></td>
+                            <td><a href="">preview</a></td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#newsletters').DataTable();
+        } );
+
+
+
+    </script>
+
+
+{% endblock %}

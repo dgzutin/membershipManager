@@ -25,6 +25,7 @@ class PublicController {
         $this->container = $container;
         $this->systemInfo = $container->get('userServices')->getSystemInfo();
         $this->billingServices = $container->get('billingServices');
+        $this->userServices = $container->get('userServices');
     }
 
     public function loginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -225,6 +226,13 @@ class PublicController {
         }
 
         return $response->withStatus(200);
+    }
+
+    public function publicNewsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $key = $args['key'];
+        $result = $this->userServices->assemblePublicNewsletter($key, false);
+        return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 
 }

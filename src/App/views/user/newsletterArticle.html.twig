@@ -110,7 +110,7 @@
                                     <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5"></textarea>
                                 </div>
 
-                                <span class="btn btn-success" onclick="confirmSubmission()">Save Profile</span>
+                                <span class="btn btn-success" onclick="confirmSubmission()">Submit article</span>
                             </form>
                         </div>
 
@@ -176,10 +176,7 @@
                         imageData: imageData,
                         fileName: $('#fileName').val()
                     };
-
-                    console.log(params);
-
-
+                   // console.log(params);
                     $.ajax({url: window.location.protocol + "//" + window.location.host + "/api-user/v1/saveImage",
                         data: JSON.stringify(params),
                         // data: imageData,
@@ -195,7 +192,6 @@
                                             position:"bottom right",
                                             className: "success" }
                                 );
-
 
                                 $('#imageUrl').val(result.url);
                                 $('#fileName').val(result.fileName);

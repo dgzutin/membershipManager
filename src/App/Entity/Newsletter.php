@@ -16,6 +16,9 @@ class Newsletter
     /** @Id @Column(type="integer") @GeneratedValue * */
     protected $id;
 
+    /** @Column @Column(type="integer") * */
+    protected $creatorId;
+
     /** @Column(type="boolean", nullable=false) * */
     protected $published;
 
@@ -26,13 +29,17 @@ class Newsletter
     protected $publishDate;
 
     /** @Column(type="text", nullable=true) **/
-    protected $introduction;
+    protected $foreword;
 
     /** @Column(type="string", length=200, nullable=false) **/
     public $title;
 
     /** @Column(type="text", nullable=true) **/
     protected $comments;
+
+    /** @Column(type="string", length=200, nullable=false) **/
+    public $publicKey;
+    
 
     /**
      * Get id
@@ -42,6 +49,30 @@ class Newsletter
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set creatorId
+     *
+     * @param string $creatorId
+     *
+     * @return Newsletter
+     */
+    public function setCreatorId($creatorId)
+    {
+        $this->creatorId = $creatorId;
+
+        return $this;
+    }
+
+    /**
+     * Get creatorId
+     *
+     * @return string
+     */
+    public function getCreatorId()
+    {
+        return $this->creatorId;
     }
 
     /**
@@ -117,27 +148,27 @@ class Newsletter
     }
 
     /**
-     * Set introduction
+     * Set foreword
      *
-     * @param string $introduction
+     * @param string $foreword
      *
      * @return Newsletter
      */
-    public function setIntroduction($introduction)
+    public function setForeword($foreword)
     {
-        $this->introduction = $introduction;
+        $this->foreword = $foreword;
 
         return $this;
     }
 
     /**
-     * Get introduction
+     * Get foreword
      *
      * @return string
      */
-    public function getIntroduction()
+    public function getForeword()
     {
-        return $this->introduction;
+        return $this->foreword;
     }
 
     /**
@@ -186,5 +217,29 @@ class Newsletter
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Set publicKey
+     *
+     * @param string $publicKey
+     *
+     * @return Newsletter
+     */
+    public function setPublicKey($publicKey)
+    {
+        $this->publicKey = $publicKey;
+
+        return $this;
+    }
+
+    /**
+     * Get publicKey
+     *
+     * @return string
+     */
+    public function getPublicKey()
+    {
+        return $this->publicKey;
     }
 }

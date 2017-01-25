@@ -420,7 +420,72 @@ class AdminController {
             'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoiceAdmin', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
             'message' => $respInvoiceData['message'],
             'isPost' =>$isPost));
+    }
 
+    public function createNewsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        if ($request->isPost()){
+
+            $data = $request->getParsedBody();
+            $result = $this->userServices->createUpdateNewsletter(-1, $data, $_SESSION['user_id']);
+
+            if ($result['exception'] == false){
+
+                $uri = $request->getUri()->withPath($this->container->router->pathFor('saveNewsletterAdmin', ['newsletterId' => $result['newsletter']->getId()]));
+                return $response = $response->withRedirect($uri, 200);
+            }
+            return $this->container->view->render($response, 'userNotification.twig', $result);
+        }
+
+        return $this->container->view->render($response, 'admin/newsletter.html.twig');
+
+    }
+
+    public function newslettersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $result = $this->userServices->getNewsletters();
+
+        return $this->container->view->render($response, 'admin/newsletters.html.twig', $result);
+    }
+
+    public function newsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $newsletterId = (int)$args['newsletterId'];
+
+        if ($newsletterId != -1){
+
+            $newsletterResult = $this->userServices->getNewsletter($newsletterId);
+
+            if ($newsletterResult['exception'] == true){
+                return $this->container->view->render($response, 'userNotification.twig', $newsletterResult);
+            }
+            $result = $this->userServices->getNewsletterArticles($newsletterId);
+            $result['newsletter'] = $newsletterResult['newsletter'];
+            $result['publicLink'] = $request->getUri()->withPath($this->container->router->pathFor('publicNewsletter', ['key' => $result['newsletter']->getPublicKey()]));
+        }
+        $result['newsletterId'] = $newsletterId;
+
+        return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
+    }
+
+    public function saveNewsletterAdminAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $newsletterId = (int)$args['newsletterId'];
+        $data = $request->getParsedBody();
+
+        $result = $this->userServices->createUpdateNewsletter($newsletterId, $data, $_SESSION['user_id']);
+        $articleResult = $this->userServices->getNewsletterArticles($newsletterId);
+        $result['articles'] = $articleResult['articles'];
+        $result['isPost'] = true;
+
+        return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
+    }
+
+    public function newsletterPreviewAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $key = $args['key'];
+        $result = $this->userServices->assemblePublicNewsletter($key, true);
+        return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 
 

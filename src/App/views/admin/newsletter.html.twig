@@ -1,0 +1,190 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Manage Users and Members</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+
+                    <div class="col-xs-12 col-sm-12">
+                        {% if isPost == true %}
+
+                            {% if exception == true %}
+
+                                <div class="alert alert-danger">
+                                  {{ message }}
+                                </div>
+
+                            {% else %}
+
+                                <div class="alert alert-success">
+                                    {{ message }}
+                                </div>
+
+                            {% endif %}
+
+                        {% else %}
+
+
+                        {% endif %}
+                        <p class="text-info">Create and/or edit a newsletter.</p>
+                    </div>
+                </div>
+
+                <form data-toggle="validator" role="form" method="post" id="newsletter">
+
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ newsletter.title }}" tabindex="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="text">Foreword:</label>
+                        <textarea  class="form-control" id="text" rows="5" id="foreword" name="foreword" minlength="50" maxlength="1500" tabindex="3">{{ newsletter.foreword }}</textarea>
+                    </div>
+
+                {% if newsletterId != -1 %}
+
+                    <div class="row">
+
+                        <div class="col-xs-12 col-sm-3">
+                            Created on {{ newsletter.createDate | date('jS F Y')}}
+                            <select name="published" id="published" class="form-control" onchange="this.form.submit()">
+                                <option value="0" {% if newsletter.published == false %}selected{% endif %}>Unpublished</option>
+                                <option value="1" {% if newsletter.published %}selected{% endif %}>Published</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-5">
+                        </div>
+
+                        <div class="col-xs-12 col-sm-4">
+                            <p class="text-info text-right"><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}">Preview Newsletter <span class="fa fa-eye"></span></a></p>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+
+                    </div>
+
+                    <table class="table" id="articles" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Date created</th>
+                            <th>Submitted by</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for article in articles %}
+                            <tr id="tr_{{ article.id }}" {% if article.newsletterId != -1 %} class="success" {% endif %}>
+                                <td><div id="notification_{{ article.id }}"></div>{{ article.id }}</td>
+                                <td>{{ article.title }}</td>
+                                <td>{{ article.createDate | date('jS F Y')}}</td>
+                                <td><a href="">{{ article.userId }}</a></td>
+                                <td><a href="">open</a></td>
+                                <td width="140px">
+                                    <select id="{{ article.id }}" class="form-control" onchange="assignRemoveArticle({{ newsletter.id }}, [{{ article.id }}])">
+                                        <option value="false"  {% if article.newsletterId == -1 %} selected {% endif %}><strong>Unassigned</strong></option>
+                                        <option  value="true" {% if article.newsletterId == newsletterId %} selected {% endif %}>Assigned</option>
+                                    </select>
+                                </td>
+                                <td><a href=""><span class="fa fa-trash-o"> </span></a></td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                {% else %}
+
+                {% endif %}
+                    <div class="form-group">
+                        <label for="comments">Internal comments (will not be published):</label>
+                        <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ newsletter.comments }}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Save Newsletter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+
+    <script>
+
+        tinymce.init({ selector:'#text' });
+
+        function assignRemoveArticle(newsletterId, articleIds)
+        {
+            var action = $("#"+articleIds[0]).val();
+
+            var params = {
+                assign: action == "true",
+                newsletterId: newsletterId,
+                articleIds: articleIds
+            };
+
+            console.log(params);
+
+            // console.log(params);
+            $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/v1/assignArticlesToNewsletter",
+                data: JSON.stringify(params),
+                // data: imageData,
+                type: 'POST',
+                success: function(response){
+
+                    console.log(response);
+
+                    if (response.exception == false){
+
+                        if (response.results[0].exception == false){
+
+                            if (response.results[0].assign){
+                                $("#tr_"+response.results[0].articleId).addClass('success');
+                            }
+                            else{
+                                $("#tr_"+response.results[0].articleId).removeClass('success');
+                            }
+                            $("#notification_"+response.results[0].articleId).notify(
+                                    response.results[0].message,
+                                    {
+                                        position:"left middle",
+                                        className: "success" }
+                            );
+                        }
+                        else{
+                            $("#notification_"+response.results[0].articleId).notify(
+                                    response.results[0].message,
+                                    {
+                                        position: "left middle",
+                                        className: "warn" }
+                            );
+                        }
+                    }
+                    else{
+                        $.notify(
+                                response.message,
+                                {
+                                    position: "left middle",
+                                    className: "warn" }
+                        );
+                    }
+
+                }});
+
+        }
+
+    </script>
+
+
+{% endblock %}

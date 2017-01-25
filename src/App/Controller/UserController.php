@@ -602,8 +602,8 @@ class UserController {
         //return $this->container->view->render($response, 'user/manageMembership.html.twig');
 
         $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
-        
-        
+
+        $result = $this->userServices->assemblePublicNewsletter('12345678900989765432');
         
 
         var_dump($result);

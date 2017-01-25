@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use App\Entity\Newsletter;
 use App\Entity\NewsletterArticle;
 use App\Entity\User;
 use App\Entity\Invoice;
@@ -760,6 +761,7 @@ class UserServices
         $newArticle->setImageUrl($article['imageUrl']);
         $newArticle->setMoreInfoUrl($article['moreInfoUrl']);
         $newArticle->setComments($article['comments']);
+        $newArticle->setNewsletterId(-1);
 
         try{
             $this->em->persist($newArticle);
@@ -775,5 +777,236 @@ class UserServices
             'exception' => false,
             'message' => 'New article was submitted. Thank you!');
 
+    }
+    
+    public function getNewsletters()
+    {
+        $repository = $this->em->getRepository('App\Entity\Newsletter');
+        $newsletters = $repository->createQueryBuilder('newsletter')
+            ->select('newsletter')
+            ->getQuery()
+            ->getResult();
+
+
+        return array ('exception' => false,
+                    'count' => count($newsletters),
+                    'newsletters' => $newsletters);
+    }
+
+    public function getNewsletter($id)
+    {
+        $repository = $this->em->getRepository('App\Entity\Newsletter');
+        $newsletter = $repository->createQueryBuilder('newsletter')
+            ->select('newsletter')
+            ->where('newsletter.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($newsletter == NULL){
+            return array ('exception' => true,
+                'newsletter' => NULL,
+                'message' => 'Newsletter with id '.$id.' does not exist');
+        }
+        else{
+            return array ('exception' => false,
+                'newsletter' => $newsletter);
+        }
+    }
+
+    public function getNewsletterArticles($newsletterId)
+    {
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $articles = $repository->createQueryBuilder('article')
+            ->select('article')
+            ->where('article.newsletterId = :newsletterId OR article.newsletterId =:unassigned')
+            ->setParameter('newsletterId', $newsletterId)
+            ->setParameter('unassigned', -1)
+            ->getQuery()
+            ->getResult();
+
+        return array ('exception' => false,
+            'count' => count($articles),
+            'articles' => $articles);
+    }
+
+    public function createUpdateNewsletter($newsletterId, $data, $creatorId)
+    {
+        if ($newsletterId != -1){
+            $repository = $this->em->getRepository('App\Entity\Newsletter');
+            $newsletter = $repository->createQueryBuilder('newsletter')
+                ->select('newsletter')
+                ->where('newsletter.id = :id')
+                ->setParameter('id', $newsletterId)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if ($newsletter == NULL){
+                return array ('exception' => true,
+                    'newsletter' => NULL,
+                    'message' => 'Newsletter with id '.$newsletterId.' does not exist');
+            }
+
+            $newsletter->setTitle($data['title']);
+            $newsletter->setForeword($data['foreword']);
+            $newsletter->setComments($data['comments']);
+            $newsletter->setCreatorId($creatorId);
+
+            if (!$newsletter->getPublished() AND $data['published']){
+
+                $newsletter->setPublishDate(new DateTime());
+            }
+            if (!$data['published']){
+                $newsletter->setPublishDate(NULL);
+            }
+            $newsletter->setPublished($data['published']);
+            $message = 'Newsletter updated';
+        }
+        else{
+            $newsletter = new Newsletter();
+            $newsletter->setTitle($data['title']);
+            $newsletter->setForeword($data['foreword']);
+            $newsletter->setComments($data['comments']);
+            $newsletter->setCreatorId($creatorId);
+            $newsletter->setPublished(false);
+            $newsletter->setCreateDate(new DateTime());
+            $newsletter->setPublicKey(sha1(microtime().rand()));
+
+            $this->em->persist($newsletter);
+            $message = 'New newsletter created';
+        }
+        try{
+            $this->em->flush();
+
+        }
+        catch (\Exception $e){
+            return array(
+                'exception' => true,
+                'message' => 'Could not save newsletter: '.$e->getMessage());
+        }
+
+        return array(
+            'exception' => false,
+            'newsletter' => $newsletter,
+            'message' => $message);
+    }
+    
+    public function assignRemoveArticlesOfNewsletter($newsletterId, $articlesIds, $assign)
+    {
+        $repository = $this->em->getRepository('App\Entity\Newsletter');
+        $newsletter = $repository->createQueryBuilder('newsletter')
+            ->select('newsletter')
+            ->where('newsletter.id = :id')
+            ->setParameter('id', $newsletterId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($newsletter == NULL){
+            return array ('exception' => true,
+                'newsletterId' => $newsletterId,
+                'message' => 'Newsletter with id '.$newsletterId.' does not exist');
+        }
+
+        if($newsletter->getPublished() == true){
+            return array ('exception' => true,
+                'newsletterId' => $newsletterId,
+                'message' => 'Newsletter #'.$newsletterId.' has already been published. Changes are not allowed');
+        }
+
+        $i = 0;
+        $results = NULL;
+        foreach ($articlesIds as $articlesId){
+
+            $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+            $article = $repository->createQueryBuilder('article')
+                ->select('article')
+                ->where('article.id = :id')
+                ->setParameter('id', $articlesId)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if ($article != NULL){
+
+                if ($assign){
+                    $article->setNewsletterId($newsletterId);
+                }
+                else{
+                    $article->setNewsletterId(-1);
+                }
+                $this->em->persist($article);
+
+                try{
+                    $this->em->flush();
+                    $results[$i] = array(
+                        'exception' => false,
+                        'assign' => $assign,
+                        'articleId' => $articlesId,
+                        'message' => 'Article '.$articlesId.' modified');
+                }
+                catch (\Exception $e){
+                    $results[$i] = array(
+                        'exception' => true,
+                        'assign' => $assign,
+                        'articleId' => $articlesId,
+                        'message' => 'Could not save article: '.$e->getMessage());
+                }
+            }
+            else{
+                $results[$i] = array(
+                    'exception' => true,
+                    'assign' => $assign,
+                    'articleId' => $articlesId,
+                    'message' => 'Article not found');
+            }
+            $i++;
+        }
+        return array (
+            'exception' => false,
+            'newsletterId' => $newsletterId,
+            'results' => $results,
+            'message' => 'Request was processed. Check results for more information on each action');
+    }
+
+    public function assemblePublicNewsletter($publicKey, $preview)
+    {
+        $repository = $this->em->getRepository('App\Entity\Newsletter');
+
+        if ($preview){
+
+            $newsletter = $repository->createQueryBuilder('newsletter')
+                ->select('newsletter')
+                ->where('newsletter.publicKey = :publicKey')
+                ->setParameter('publicKey', $publicKey)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+        else{
+            $newsletter = $repository->createQueryBuilder('newsletter')
+                ->select('newsletter')
+                ->where('newsletter.publicKey = :publicKey')
+                ->andWhere('newsletter.published = :published')
+                ->setParameter('publicKey', $publicKey)
+                ->setParameter('published', true)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+
+        if ($newsletter == NULL){
+            return array ('exception' => true,
+                'publicKey' => $publicKey,
+                'message' => 'Newsletter does not exist or has not been published yet');
+        }
+
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $articles = $repository->createQueryBuilder('article')
+            ->select('article')
+            ->where('article.newsletterId = :newsletterId')
+            ->setParameter('newsletterId', $newsletter->getId())
+            ->getQuery()
+            ->getResult();
+
+        return array('exception' => false,
+            'newsletter' => $newsletter,
+            'articles' => $articles);
     }
 }

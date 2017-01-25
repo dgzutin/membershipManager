@@ -82,7 +82,7 @@
                 <div class="panel-body">
                     <ul>
                         <li><a href="{{ path_for('documentsUser')}}"><spam class="fa fa-files-o"></spam> Documents for Members</a></li>
-                        <li><a href="{{ path_for('newsletterArticle')}}"><spam class="fa fa-share-alt"></spam> Submit article for Newsletter</a></li>
+                        <li><a href="{{ path_for('newsletterArticle')}}"><spam class="fa fa-share-alt"></spam> Submit article to the Newsletter</a></li>
                         <li><a href="{{ path_for('documentsUser')}}"><spam class="fa fa-envelope-o"></spam> Published Newsletters</a></li>
                     </ul>
                 </div>
@@ -115,13 +115,25 @@
             <p class="text-danger text-left"><strong>Options for System Administrators:</strong></p>
 
             <div class="panel panel-default">
+                <div class="panel-heading"><spam class="fa fa-share-alt"></spam> Newsletter management</div>
+                <div class="panel-body">
+                    <ul>
+                        <li><a href="{{ path_for('newsletterArticle')}}"></spam> Submit article to the Newsletter</a></li>
+                        <li><a href="{{ path_for('newslettersAdmin') }}"></spam> Manage Newsletters</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
                 <div class="panel-heading"><spam class="fa fa-group"></spam> Manage members and users</div>
                 <div class="panel-body">
                     <ul>
-                        <li><a href="{{ path_for('usersTableView')}}"><spam class="fa fa-group"></spam> Manage All Registered Users</a>, <a href="{{ path_for('registerNewUser')}}">Register new User</a></li>
                         <li><a href="{{ path_for('members')}}"><spam class="fa fa-group"></spam> Manage Members</a>
+                        <li><a href="{{ path_for('usersTableView')}}"><spam class="fa fa-group"></spam> All users</a>, <a href="{{ path_for('registerNewUser')}}">Register new User</a></li>
                         <li><a href="{{ path_for('createBulkMailMembersAdmin')}}"><spam class="fa fa-envelope"></spam> Send e-mail to members</a></li>
                         <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': '-1'}) }}"><spam class="fa fa-money"></spam> Overview of all invoices and receipts</a></li>
+
                     </ul>
                 </div>
             </div>

@@ -37,7 +37,7 @@
                             <br>{{ user.institution }}
                             <br>{{ user.street }} {{ user.zip }} {{ user.city }}, <span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
                             <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
-                            <p class="text-info">Manage invoices, receipts and payments for a single user.</p>
+                            <p class="text-info">Manage invoices, receipts and payments.</p>
                         </div>
 
                         <div class="col-xs-6 col-sm-3">
@@ -115,7 +115,7 @@
                             <td>{{ invoices.invoiceCurrency }} {{ invoices.amountPaid }}</td>
                             <td>{{ invoices.invoiceCurrency }} {{ invoices.outstandingAmount }}</td>
                             <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
-                            <td><a href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                            <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
                             <td>
                                 <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
                             </td>

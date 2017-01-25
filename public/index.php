@@ -110,9 +110,6 @@ $container['mailServices'] = function ($container) {
 };
 
 
-
-
-
 //Register Controllers
 $container['\AdminController'] = function ($container) {
     return new Controller\AdminController($container);
@@ -153,6 +150,13 @@ $app->group('/admin', function () use ($app) {
     $app->get('/userInvoices/{userId}', '\AdminController:userInvoicesAction')->setName('userInvoicesAdmin');
     $app->get('/invoicePayments/{invoiceId}', '\AdminController:invoicePaymentsAction')->setName('invoicePayments');
     $app->map(['GET', 'POST'],'/singleInvoice/{invoiceId}', '\AdminController:singleInvoiceAction')->setName('singleInvoiceAdmin');
+    $app->map(['GET', 'POST'], '/newsletterArticle/{articleId}', '\AdminController:newsletterArticleAction')->setName('newsletterArticleAdmin');
+    $app->map(['GET', 'POST'], '/newsletters', '\AdminController:newslettersAction')->setName('newslettersAdmin');
+    $app->get('/newsletter/{newsletterId}', '\AdminController:newsletterAction')->setName('newsletterAdmin');
+    $app->post('/newsletter/{newsletterId}', '\AdminController:saveNewsletterAdminAction')->setName('saveNewsletterAdmin');
+    $app->map(['GET', 'POST'], '/createNewsletter/', '\AdminController:createNewsletterAction')->setName('createNewsletter');
+    $app->get('/newsletterPreview/{key}', '\AdminController:newsletterPreviewAction')->setName('newsletterPreview');
+
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
@@ -201,6 +205,8 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/deleteValidities', '\ApiController:deleteValiditiesAction' )->setName('deleteValidities');
     $app->post('/deletePayments', '\ApiController:deletePaymentsAction' )->setName('deletePayments');
     $app->post('/addPayment', '\ApiController:addPaymentAction' )->setName('addPayment');
+    $app->post('/assignArticlesToNewsletter', '\ApiController:assignArticlesToNewsletterAction' )->setName('assignArticlesToNewsletter');
+
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
@@ -227,5 +233,7 @@ $app->post('/resetPassword/{key}', '\PublicController:processResetPasswordAction
 $app->get('/forgotPassword', '\PublicController:forgotPasswordAction')->setName('forgotPassword');
 $app->post('/forgotPassword', '\PublicController:processForgotPasswordAction')->setName('processForgotPassword');
 $app->post('/paypal_ipn', '\PublicController:paypalIPnAction')->setName('paypal_ipn');
+$app->get('/newsletter/{key}', '\PublicController:publicNewsletterAction')->setName('publicNewsletter');
+
 
 $app->run();

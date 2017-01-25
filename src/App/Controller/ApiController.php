@@ -25,6 +25,7 @@ class ApiController {
         $this->membershipServices = $this->container->get('membershipServices');
         $this->utilsServices = $this->container->get('utilsServices');
         $this->billingServices = $this->container->get('billingServices');
+        $this->userServices = $this->container->get('userServices');
 
     }
     
@@ -257,10 +258,38 @@ class ApiController {
         return $response->withJson(array('exception' => false,
                                          'message' => 'Could not parse request body'));
     }
+    //Route /api/v1/assignArticlesToNewsletter
+    public function assignArticlesToNewsletterAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+        * Example of request body:
+        * {
+         * "assign": true / false
+        *  "newsletterId": 1,
+        *  "articleIds": [1, 2, ..],
+             }
+        */
+        
+        $req_json = json_decode($request->getBody());
+
+        if ($req_json != null){
+
+            $assign = $req_json->assign;
+            $assignResult = $this->userServices->assignRemoveArticlesOfNewsletter($req_json->newsletterId, $req_json->articleIds, $assign);
+        }
+        else{
+            $assignResult = array('exception' => true,
+                'url' => NULL,
+                'message' => 'Invalid JSON');
+        }
+
+        return $response->withJson($assignResult);
+    }
 
     //Route /api-user/v1/saveImage
     public function saveImageAction(ServerRequestInterface $request, ResponseInterface $response)
     {
+
         $req_json = json_decode($request->getBody());
 
         if ($req_json != null){
@@ -300,6 +329,8 @@ class ApiController {
 
         return $response->withJson($resp);
     }
+    
+    
     
 
 }
