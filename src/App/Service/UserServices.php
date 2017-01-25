@@ -994,6 +994,7 @@ class UserServices
         if ($newsletter == NULL){
             return array ('exception' => true,
                 'publicKey' => $publicKey,
+                'systemInfo' => $this->settings,
                 'message' => 'Newsletter does not exist or has not been published yet');
         }
 
@@ -1006,6 +1007,7 @@ class UserServices
             ->getResult();
 
         return array('exception' => false,
+            'systemInfo' => $this->settings,
             'newsletter' => $newsletter,
             'articles' => $articles);
     }

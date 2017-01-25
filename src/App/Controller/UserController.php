@@ -142,10 +142,7 @@ class UserController {
 
         return $this->container->view->render($response, 'user/selectMembershipUser.html.twig', array(
             'membershipTypes' => $result['membershipTypes'],
-            'checkoutUrl' => $request->getUri()->withPath($this->container->router->pathFor('orderSummaryUser')),
-            'addMembershipToCartUrl' => $request->getUri()->getBaseUrl(). '/user/addMembershipToCart',
             'currency' => 'EUR',
-            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
             'message' => $result['message'],
             'form' => ''));
     }
@@ -153,8 +150,7 @@ class UserController {
 
     public function orderSummaryAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-
-
+        
         //retrive user data for billing information
         $userId = $_SESSION['user_id'];
         $userResp = $this->userServices->getUserById($userId);
@@ -214,7 +210,7 @@ class UserController {
         if (count($items) == 0){
 
             // If shopping cart is empty return to home
-            $uri = $request->getUri()->withPath($this->container->router->pathFor('homeUser'));
+            $uri = $this->utilsServices->getBaseUrl($request).'/user/home';
             return $response = $response->withRedirect($uri, 200);
         }
 
@@ -222,7 +218,7 @@ class UserController {
             'exception' => false,
             'items' => $items,
             'totalPrice' => $totalPrice,
-            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
+            'removeItemBaseUrl' => $this->utilsServices->getBaseUrl($request). '/user/removeItemfromCart',
             'message' => '',
             'form' => $billing));
 
@@ -254,7 +250,6 @@ class UserController {
             'items' => $items,
             'currency' => 'EUR',
             'totalPrice' => $totalPrice,
-            'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
             'message' => '',
             'membershipData' => $membershipData,
             'invoiceTerms' => 'Payment is due within 30 days after confirmation of purchase. For membership fee payments, the membership will only be be active after the full payment is received.',
@@ -396,8 +391,8 @@ class UserController {
             'amountPaid' => $amountPaid_formatted,
             'outstandingAmount' => $outstandingAmount_formatted,
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
-            'paypal_ipn_url' => $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn')),
-            'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoice', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
+            'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
+            'invoiceLink' =>  $this->utilsServices->getBaseUrl($request).'/user/sendInvoiceToUser/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message'],
             'isPost' =>$isPost));
 
@@ -414,7 +409,7 @@ class UserController {
 
             return $this->container->view->render($response, 'userNotification.twig', $resp);
         }
-        $uri = $request->getUri()->withPath($this->container->router->pathFor('selectMembership'));
+        $uri = $this->utilsServices->getBaseUrl($request).'/user/selectMembership';
         return $response = $response->withRedirect($uri, 200);
 
     }
@@ -425,7 +420,7 @@ class UserController {
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $res = $shoppingCartServices->addIMembershipToCart($membershipTypeId);
 
-        $uri = $request->getUri()->withPath($this->container->router->pathFor('orderSummaryUser'));
+        $uri = $this->utilsServices->getBaseUrl($request).'/user/orderSummary';
         return $response = $response->withRedirect($uri, 200);
     }
 
@@ -447,7 +442,7 @@ class UserController {
             return $this->container->view->render($response, 'user/membershipData.html.twig', array(
                 'user' => $resp['user'],
                 'membershipTypes' => $result['membershipTypes'],
-                'removeItemBaseUrl' => $request->getUri()->getBaseUrl(). '/user/removeItemfromCart',
+                'removeItemBaseUrl' => $this->utilsServices->getBaseUrl($request).'/user/removeItemfromCart',
                 'message' => '',
                 'form' => ''));
         }
@@ -603,11 +598,14 @@ class UserController {
 
         $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
 
-        $result = $request->getUri();
+        $result = $request->getUri()->getPort();
 
 
-        $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
+       // $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
 
+        $result = $this->utilsServices->getBaseUrl($request).'/user/home';
+
+        $result = $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn'));
 
 
         var_dump($result);

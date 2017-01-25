@@ -86,7 +86,7 @@
                                 <td>{{ item.unitPrice }}</td>
                                 <td>{{ item.totalPrice }}</td>
                                 <td>
-                                    <a href="{{ removeItemBaseUrl }}/{{ item.id }}">
+                                    <a href="{{ path_for('removeItemfromCartUser', { 'itemId': item.id }) }}">
                                         <span class="fa fa-trash-o"></span>
                                     </a>
                                 </td>

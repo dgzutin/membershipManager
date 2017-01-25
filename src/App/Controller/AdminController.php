@@ -485,6 +485,8 @@ class AdminController {
     {
         $key = $args['key'];
         $result = $this->userServices->assemblePublicNewsletter($key, true);
+        $result['publicLink'] = $request->getUri()->withPath($this->container->router->pathFor('publicNewsletter', ['key' => $result['newsletter']->getPublicKey()]));
+        $result['baseUrl'] = $request->getUri()->getBaseUrl();
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 

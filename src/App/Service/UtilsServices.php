@@ -185,6 +185,17 @@ class UtilsServices
                                             'validity' => $validity_form));
     }
 
+    public function getBaseUrl($request)
+    {
+        if ($_SERVER['HTTPS'] != NULL){
+            $baseUrl = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
+        }
+        else{
+            $baseUrl = $request->getUri()->getBaseUrl();
+        }
+        return $baseUrl;
+    }
+
 
 
 }
