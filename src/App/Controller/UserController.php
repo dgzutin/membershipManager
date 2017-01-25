@@ -606,6 +606,8 @@ class UserController {
         $result = $request->getUri()->getBaseUrl();
 
         $result = $_SERVER['SERVER_NAME'];
+
+        $result = $_SERVER['HTTPS'];
         
 
         var_dump($result);
