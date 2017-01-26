@@ -607,7 +607,32 @@ class UserController {
 
         //$result = $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn'));
 
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $articleIds = $repository->createQueryBuilder('article')
+            ->select('article.id')
+            ->orderBy('article.articleOrder', 'ASC')
+            ->where('article.newsletterId = :newsletterId')
+            ->setParameter('newsletterId', 8)
+            ->getQuery()
+            ->getResult();
 
+        foreach ($articleIds as $articleId){
+
+            $article = $this->em->getRepository('App\Entity\NewsletterArticle')->find($articleId['id']);
+            $article->setArticleOrder(2);
+
+            try {
+                $this->em->flush();
+
+
+            } catch (\Exception $e) {
+
+                $result =  array(
+                    'exception' => true,
+                    'message' => 'Could not save article order: ' . $e->getMessage());
+            }
+
+        }
         var_dump($result);
 
     }

@@ -38,7 +38,7 @@
 
                     <div class="form-group">
                         <label for="title">Title:</label>
-                        <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ newsletter.title }}" tabindex="1" required>
+                        <input type="text" name="title" id="title" class="form-control" placeholder="" value="{{ newsletter.title }}" tabindex="1" required>
                     </div>
 
                     <div class="form-group">
@@ -81,6 +81,7 @@
                             <th>Date</th>
                             <th>Submitted</th>
                             <th></th>
+                            <th>Order</th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -93,6 +94,11 @@
                                 <td>{{ article.createDate | date('jS F Y')}}</td>
                                 <td><a href="{{ path_for('adminViewUserProfile', { 'userId': article.userId }) }}">{{ article.user_name }}</a></td>
                                 <td><div id="notification_{{ article.id }}"><a href="{{ path_for('newsletterArticleAdmin', { 'articleId': article.id }) }}">open</a></div></td>
+                                <td>
+
+                                    <input class="form-control" type="number" name="articleOrder_{{ article.id }}" value="{{ article.articleOrder }}">
+
+                                </td>
                                 <td width="140px">
                                     <select id="{{ article.id }}" class="form-control" onchange="assignRemoveArticle({{ newsletter.id }}, [{{ article.id }}])">
                                         <option value="false"  {% if article.newsletterId == -1 %} selected {% endif %}><strong>Unassigned</strong></option>

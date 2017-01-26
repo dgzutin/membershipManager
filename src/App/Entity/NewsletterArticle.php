@@ -27,24 +27,27 @@ class NewsletterArticle
     /** @Column(type="datetime", nullable=true) * */
     protected $assignedDate;
 
-    /** @Column(type="string", length=200, nullable=false) **/
+    /** @Column(type="integer", nullable=true) * */
+    protected $articleOrder;
+
+    /** @Column(type="string", length=200, nullable=false) * */
     public $title;
 
-    /** @Column(type="text", nullable=true) **/
+    /** @Column(type="text", nullable=true) * */
     protected $text;
 
-    /** @Column(type="string", length=200, nullable=false) **/
+    /** @Column(type="string", length=200, nullable=false) * */
     public $imageUrl;
 
-    /** @Column(type="string", length=150, nullable=false) **/
+    /** @Column(type="string", length=150, nullable=false) * */
     public $imageFileName;
 
-    /** @Column(type="string", length=200, nullable=false) **/
+    /** @Column(type="string", length=200, nullable=false) * */
     public $moreInfoUrl;
 
-    /** @Column(type="text", nullable=true) **/
+    /** @Column(type="text", nullable=true) * */
     protected $comments;
-    
+
 
     /**
      * Get id
@@ -294,5 +297,29 @@ class NewsletterArticle
     public function getImageFileName()
     {
         return $this->imageFileName;
+    }
+
+    /**
+     * Set articleOrder
+     *
+     * @param integer $articleOrder
+     *
+     * @return NewsletterArticle
+     */
+    public function setArticleOrder($articleOrder)
+    {
+        $this->articleOrder = $articleOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get articleOrder
+     *
+     * @return integer
+     */
+    public function getArticleOrder()
+    {
+        return $this->articleOrder;
     }
 }

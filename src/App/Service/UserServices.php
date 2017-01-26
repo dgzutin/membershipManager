@@ -866,6 +866,7 @@ class UserServices
         $repository = $this->em->getRepository('App\Entity\Newsletter');
         $newsletters = $repository->createQueryBuilder('newsletter')
             ->select('newsletter')
+            ->orderBy('newsletter.id', 'DESC')
             ->getQuery()
             ->getResult();
 
@@ -923,6 +924,7 @@ class UserServices
             $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
             $articles = $repository->createQueryBuilder('article')
                 ->select('article')
+                ->orderBy('article.articleOrder', 'ASC')
                 ->where('article.newsletterId = :newsletterId')
                 ->setParameter('newsletterId', $newsletterId)
                 ->getQuery()
@@ -933,6 +935,7 @@ class UserServices
             $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
             $articles = $repository->createQueryBuilder('article')
                 ->select('article')
+                ->orderBy('article.articleOrder', 'ASC')
                 ->where('article.newsletterId = :newsletterId OR article.newsletterId =:unassigned')
                 ->setParameter('newsletterId', $newsletterId)
                 ->setParameter('unassigned', -1)
@@ -951,6 +954,7 @@ class UserServices
                 $articlesArray[$i]['id'] = $article->getId();
                 $articlesArray[$i]['title'] = $article->getTitle();
                 $articlesArray[$i]['createDate'] = $article->getCreateDate();
+                $articlesArray[$i]['articleOrder'] = $article->getArticleOrder();
                 $articlesArray[$i]['userId'] = $article->getUserId();
                 $articlesArray[$i]['newsletterId'] = $article->getNewsletterId();
                 $articlesArray[$i]['user_name'] = $userResp['user']->getFirstName().' '.$userResp['user']->getLastName();
@@ -992,6 +996,7 @@ class UserServices
             if (!$data['published']){
                 $newsletter->setPublishDate(NULL);
             }
+
             $newsletter->setPublished($data['published']);
             $message = 'Newsletter updated';
         }
@@ -1010,12 +1015,38 @@ class UserServices
         }
         try{
             $this->em->flush();
-
         }
         catch (\Exception $e){
             return array(
                 'exception' => true,
                 'message' => 'Could not save newsletter: '.$e->getMessage());
+        }
+
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $articles = $repository->createQueryBuilder('article')
+            ->select('article')
+            ->orderBy('article.articleOrder', 'ASC')
+            ->where('article.newsletterId = :newsletterId')
+            ->setParameter('newsletterId', $newsletterId)
+            ->getQuery()
+            ->getResult();
+
+        foreach ($articles as $article){
+
+            $this->em->persist($article);
+            $article->setArticleOrder((int)$data['articleOrder_'.$article->getId()]);
+
+            try {
+                $this->em->flush();
+
+
+            } catch (\Exception $e) {
+
+                return array(
+                    'exception' => true,
+                    'newsletter' => $newsletter,
+                    'message' => 'Could not save article order: ' . $e->getMessage());
+            }
         }
 
         return array(
@@ -1048,6 +1079,7 @@ class UserServices
 
         $i = 0;
         $results = NULL;
+
         foreach ($articlesIds as $articlesId){
 
             $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
@@ -1134,6 +1166,7 @@ class UserServices
         $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
         $articles = $repository->createQueryBuilder('article')
             ->select('article')
+            ->orderBy('article.articleOrder', 'ASC')
             ->where('article.newsletterId = :newsletterId')
             ->setParameter('newsletterId', $newsletter->getId())
             ->getQuery()
