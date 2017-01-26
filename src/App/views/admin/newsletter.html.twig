@@ -173,7 +173,7 @@
                         }
                     }
                     else{
-                        $.notify(
+                        $("#notification_"+response.results[0].articleId).notify(
                                 response.message,
                                 {
                                     position: "left middle",
