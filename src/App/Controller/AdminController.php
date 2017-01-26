@@ -428,10 +428,11 @@ class AdminController {
 
             $data = $request->getParsedBody();
             $result = $this->userServices->createUpdateNewsletter(-1, $data, $_SESSION['user_id']);
+            $result['createNewsletter'] = true;
 
             if ($result['exception'] == false){
 
-                $uri = $request-> $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getId();
+                $uri = $this->utilsServices->getBaseUrl($request).'/admin/newsletter/'.$result['newsletter']->getId();
                 return $response = $response->withRedirect($uri, 200);
             }
             return $this->container->view->render($response, 'userNotification.twig', $result);

@@ -46,17 +46,20 @@
                         <textarea  class="form-control" id="text" rows="5" id="foreword" name="foreword" minlength="50" maxlength="1500" tabindex="3">{{ newsletter.foreword }}</textarea>
                     </div>
 
-                {% if newsletterId != -1 %}
-
                     <div class="row">
 
-                        <div class="col-xs-12 col-sm-3">
-                            Created on {{ newsletter.createDate | date('jS F Y')}}
-                            <select name="published" id="published" class="form-control" onchange="this.form.submit()">
-                                <option value="0" {% if newsletter.published == false %}selected{% endif %}>Unpublished</option>
-                                <option value="1" {% if newsletter.published %}selected{% endif %}>Published</option>
-                            </select>
-                        </div>
+                        {% if createNewsletter == false %}
+
+                            <div class="col-xs-12 col-sm-3">
+                                Created on {{ newsletter.createDate | date('jS F Y')}}
+                                <select style="background-color: lightgray" name="published" id="published" class="form-control" onchange="this.form.submit()">
+                                    <option value="0" {% if newsletter.published == false %}selected{% endif %}>Unpublished</option>
+                                    <option value="1" {% if newsletter.published %}selected{% endif %}>Published</option>
+                                </select>
+                            </div>
+
+                        {% endif %}
+
                         <div class="col-xs-12 col-sm-5">
                         </div>
 
@@ -86,15 +89,15 @@
                         <tbody>
                         {%  for article in articles %}
                             <tr id="tr_{{ article.id }}" {% if article.newsletterId != -1 %} class="success" {% endif %}>
-                                <td><div id="notification_{{ article.id }}"></div>{{ article.id }}</td>
+                                <td>{{ article.id }}</td>
                                 <td>{{ article.title }}</td>
                                 <td>{{ article.createDate | date('jS F Y')}}</td>
                                 <td><a href="">{{ article.userId }}</a></td>
-                                <td><a href="">open</a></td>
+                                <td><div id="notification_{{ article.id }}"><a href="">open</a></div></td>
                                 <td width="140px">
                                     <select id="{{ article.id }}" class="form-control" onchange="assignRemoveArticle({{ newsletter.id }}, [{{ article.id }}])">
                                         <option value="false"  {% if article.newsletterId == -1 %} selected {% endif %}><strong>Unassigned</strong></option>
-                                        <option  value="true" {% if article.newsletterId == newsletterId %} selected {% endif %}>Assigned</option>
+                                        <option  value="true" {% if article.newsletterId == newsletter.id %} selected {% endif %}>Assigned</option>
                                     </select>
                                 </td>
                                 <td><a href=""><span class="fa fa-trash-o"> </span></a></td>
@@ -104,9 +107,6 @@
                         </tbody>
                     </table>
 
-                {% else %}
-
-                {% endif %}
                     <div class="form-group">
                         <label for="comments">Internal comments (will not be published):</label>
                         <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ newsletter.comments }}</textarea>
