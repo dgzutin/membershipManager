@@ -525,7 +525,7 @@ class UserController {
                 $result = $this->userServices->addNewsletterArticle($request->getParsedBody(), $_SESSION['user_id']);
                 return $this->container->view->render($response, 'userNotification.twig', $result);
             }
-            return $this->container->view->render($response, 'user/newsletterArticle.twig', array(
+            return $this->container->view->render($response, 'user/newsletterArticle.html.twig', array(
                 'exception' => true,
                 'message' => 'One or more fields are not correct or missing'
                 ));
@@ -603,9 +603,9 @@ class UserController {
 
        // $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
 
-        $result = $this->utilsServices->getBaseUrl($request).'/user/home';
+        $result = $this->userServices->deleteNewsletterArticle(7);
 
-        $result = $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn'));
+        //$result = $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn'));
 
 
         var_dump($result);

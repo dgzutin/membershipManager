@@ -759,6 +759,7 @@ class UserServices
         $newArticle->setText($article['text']);
         $newArticle->setTitle($article['title']);
         $newArticle->setImageUrl($article['imageUrl']);
+        $newArticle->setImageFileName($article['fileName']);
         $newArticle->setMoreInfoUrl($article['moreInfoUrl']);
         $newArticle->setComments($article['comments']);
         $newArticle->setNewsletterId(-1);
@@ -776,6 +777,87 @@ class UserServices
         return array(
             'exception' => false,
             'message' => 'New article was submitted. Thank you!');
+    }
+
+    public function updateNewsletterArticle($articleId, $data)
+    {
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $article = $repository->createQueryBuilder('article')
+            ->select('article')
+            ->where('article.id = :id')
+            ->setParameter('id', $articleId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($article == null){
+
+            return array ('exception' => true,
+                'article' => $article,
+                'message' => 'Article with id '.$articleId.' does not exist');
+        }
+
+        $article->setText($data['text']);
+        $article->setTitle($data['title']);
+        $article->setImageUrl($data['imageUrl']);
+        $article->setMoreInfoUrl($data['moreInfoUrl']);
+        $article->setComments($data['comments']);
+
+        try{
+            $this->em->flush();
+
+        }
+        catch (\Exception $e){
+            return array(
+                'exception' => true,
+                'article' => null,
+                'message' => 'Could not save article: '.$e->getMessage());
+        }
+        return array(
+            'exception' => false,
+            'article' => $article,
+            'message' => 'Article was successfully updated');
+
+    }
+
+    public function deleteNewsletterArticle($articleId)
+    {
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $article = $repository->createQueryBuilder('article')
+            ->select('article')
+            ->where('article.id = :id')
+            ->setParameter('id', $articleId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($article == null){
+
+            return array ('exception' => true,
+                'article' => $article,
+                'message' => 'Article with id '.$articleId.' does not exist');
+        }
+
+        //delete the file
+        if (unlink('files/newsletter/uploads/'.$article->getImageFileName())){
+
+            try{
+                $this->em->remove($article);
+                $this->em->flush();
+
+            }
+            catch (\Exception $e){
+                return array(
+                    'exception' => true,
+                    'message' => 'Could not save article: '.$e->getMessage());
+            }
+        }
+        else{
+            return array(
+                'exception' => true,
+                'message' => 'Could not delete image file');
+        }
+        return array(
+            'exception' => false,
+            'message' => 'Article was updated. Thank you!');
 
     }
     
@@ -791,6 +873,26 @@ class UserServices
         return array ('exception' => false,
                     'count' => count($newsletters),
                     'newsletters' => $newsletters);
+    }
+
+    public function getSingleArticle($articleId)
+    {
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $article = $repository->createQueryBuilder('article')
+            ->select('article')
+            ->where('article.id = :id')
+            ->setParameter('id', $articleId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($article == null){
+
+            return array ('exception' => true,
+                'article' => $article,
+                'message' => 'Article with id '.$articleId.' does not exist');
+        }
+        return array ('exception' => false,
+            'article' => $article);
     }
 
     public function getNewsletter($id)
@@ -838,9 +940,27 @@ class UserServices
                 ->getResult();
         }
 
+        $i = 0;
+        $articlesArray = null;
+        foreach ($articles as $article){
+
+            $userResp = $this->getUserById($article->getUserId());
+
+            if ($userResp['exception'] == false){
+
+                $articlesArray[$i]['id'] = $article->getId();
+                $articlesArray[$i]['title'] = $article->getTitle();
+                $articlesArray[$i]['createDate'] = $article->getCreateDate();
+                $articlesArray[$i]['userId'] = $article->getUserId();
+                $articlesArray[$i]['newsletterId'] = $article->getNewsletterId();
+                $articlesArray[$i]['user_name'] = $userResp['user']->getFirstName().' '.$userResp['user']->getLastName();
+            }
+            $i++;
+        }
+
         return array ('exception' => false,
             'count' => count($articles),
-            'articles' => $articles);
+            'articles' => $articlesArray);
     }
 
     public function createUpdateNewsletter($newsletterId, $data, $creatorId)

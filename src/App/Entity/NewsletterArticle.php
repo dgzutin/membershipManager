@@ -36,6 +36,9 @@ class NewsletterArticle
     /** @Column(type="string", length=200, nullable=false) **/
     public $imageUrl;
 
+    /** @Column(type="string", length=150, nullable=false) **/
+    public $imageFileName;
+
     /** @Column(type="string", length=200, nullable=false) **/
     public $moreInfoUrl;
 
@@ -267,5 +270,29 @@ class NewsletterArticle
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Set imageFileName
+     *
+     * @param string $imageFileName
+     *
+     * @return NewsletterArticle
+     */
+    public function setImageFileName($imageFileName)
+    {
+        $this->imageFileName = $imageFileName;
+
+        return $this;
+    }
+
+    /**
+     * Get imageFileName
+     *
+     * @return string
+     */
+    public function getImageFileName()
+    {
+        return $this->imageFileName;
     }
 }

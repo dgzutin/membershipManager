@@ -78,8 +78,8 @@
                         <tr>
                             <th>ID</th>
                             <th>Title</th>
-                            <th>Date created</th>
-                            <th>Submitted by</th>
+                            <th>Date</th>
+                            <th>Submitted</th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -91,8 +91,8 @@
                                 <td>{{ article.id }}</td>
                                 <td>{{ article.title }}</td>
                                 <td>{{ article.createDate | date('jS F Y')}}</td>
-                                <td><a href="">{{ article.userId }}</a></td>
-                                <td><div id="notification_{{ article.id }}"><a href="">open</a></div></td>
+                                <td><a href="{{ path_for('adminViewUserProfile', { 'userId': article.userId }) }}">{{ article.user_name }}</a></td>
+                                <td><div id="notification_{{ article.id }}"><a href="{{ path_for('newsletterArticleAdmin', { 'articleId': article.id }) }}">open</a></div></td>
                                 <td width="140px">
                                     <select id="{{ article.id }}" class="form-control" onchange="assignRemoveArticle({{ newsletter.id }}, [{{ article.id }}])">
                                         <option value="false"  {% if article.newsletterId == -1 %} selected {% endif %}><strong>Unassigned</strong></option>

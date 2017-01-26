@@ -35,10 +35,10 @@
     <div class="panel-group">
 
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Submit an article for the Newsletter</strong></div>
+            <div class="panel-heading"><strong>Edit newsletter article</strong></div>
             <div class="panel-body">
 
-                    {% if form_submission == true %}
+                    {% if isPost == true %}
 
                         {% if exception == true %}
                             <div class="alert alert-danger">
@@ -59,24 +59,6 @@
                         {% endif %}
                     {% endif %}
 
-                <div class="row">
-
-                    <div class="col-xs-12 col-md-12">
-
-                        <p class="text-primary text-left">
-                            Use this form to submit an article for the newsletter of the {{ systemInfo.settings.nameOfOrganization }}.
-                            Articles are selected during the editorial process. We do not guarantee that your submitted article will be published in any newsletter issue.
-                            For your article to be considered for publication, you <strong>must</strong> provide a title, a main text and upload an illustrative image.
-                        </p>
-                        <p class="text-danger text-left" style="font-size: smaller">
-                            <strong>Important: </strong><br>
-                            By submitting this article you agree to publish the submitted content in the newsletter of the {{ systemInfo.settings.nameOfOrganization }}
-                            and confirm that none of the provided content (including text and image) is copyright protected.
-                        </p>
-
-                        <hr>
-                    </div>
-                </div>
 
                     <div class="row">
 
@@ -86,37 +68,40 @@
 
                                 <div class="form-group">
                                     <label for="title">Article title:</label>
-                                    <input type="text" name="title" id="title" class="form-control " placeholder="" value="" tabindex="1" required>
+                                    <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ article.title }}" tabindex="1" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="imageUrl">Image URL:</label>
-                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control " placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
+                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control " value="{{ article.imageUrl }}" placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="moreInfoUrl">Image file name:</label>
+                                    <input type="text" name="fileName" id="fileName" class="form-control " placeholder="" value="{{ article.imageFileName }}" readonly>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="text">Text (500 - 1500 characters):</label>
-                                    <textarea  class="form-control" rows="10" id="text" name="text" minlength="500" maxlength="1500" tabindex="3"></textarea>
+                                    <textarea  class="form-control" rows="10" id="text" name="text" tabindex="3">{{ article.text }}</textarea>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="moreInfoUrl">More info URL:</label>
-                                    <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="" tabindex="4">
+                                    <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="{{ article.moreInfoUrl }}" tabindex="4">
                                 </div>
-
-                                <input type="hidden" name="fileName" id="fileName" class="form-control " placeholder="" value="">
 
                                 <div class="form-group">
                                     <label for="comments">Internal comments (will not be published):</label>
-                                    <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5"></textarea>
+                                    <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ article.comments }}</textarea>
                                 </div>
 
-                                <span class="btn btn-success" onclick="confirmSubmission()">Submit article</span>
+                                <span class="btn btn-success" onclick="confirmSubmission()">Save article</span>
                             </form>
                         </div>
 
                         <div class="col-xs-12 col-md-4">
 
-                            <div id="image_preview" class="image-editor">
+                            <div class="image-editor">
 
                                 <label>Select an image to upload:</label><br>
                                 <label class="btn btn-default btn-file">
@@ -131,7 +116,10 @@
                                 <input type="range" class="cropit-image-zoom-input">
                                 <button id="rotate-ccw" class="btn btn-primary"><span class="fa fa-rotate-left"></span></button>
                                 <button id="rotate-cw" class="btn btn-primary"><span class="fa fa-rotate-right"></span></button>
+
                             </div>
+
+                            <div id="notification"></div>
 
                             <br><br>
 
@@ -144,14 +132,12 @@
 
     </div>
 
-    <div id="dialog-confirm" title="Submit article?" hidden>
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Submitted articles cannot be edited. Are you sure you want to proceed?</p>
+    <div id="dialog-confirm" title="Save article?" hidden>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This article will be modified. Are you sure you want to proceed?</p>
     </div>
 
     <script src="{{ baseUrl }}/assets/cropit/jquery.cropit.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/jquery.validate.min.js"></script>
     <script src="{{ baseUrl }}/assets/js/newsletterManagement.js"></script>
-
-
 
 {% endblock %}

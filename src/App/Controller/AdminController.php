@@ -466,6 +466,7 @@ class AdminController {
         return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
     }
 
+    //save existing newsletter
     public function saveNewsletterAdminAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $newsletterId = (int)$args['newsletterId'];
@@ -487,6 +488,36 @@ class AdminController {
         $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
         $result['baseUrl'] = $this->utilsServices->getBaseUrl($request);
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
+    }
+
+    //save existing newsletter article
+    public function newsletterArticleAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $articleId = (int)$args['articleId'];
+
+        if ($request->isPost()){
+
+            $parsedBody = $request->getParsedBody();
+
+            if ($parsedBody['title'] != NULL AND $parsedBody['imageUrl'] != NULL AND $parsedBody['text'] != NULL){
+
+                $resultUpdate = $this->userServices->updateNewsletterArticle($articleId, $parsedBody);
+                $resultUpdate['isPost'] = true;
+                return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig', $resultUpdate);
+            }
+            else{
+                return $this->container->view->render($response, 'user/newsletterArticle.twig', array(
+                    'exception' => true,
+                    'message' => 'One or more fields are not correct or missing'));
+            }
+        }
+
+        $articleResult = $this->userServices->getSingleArticle($articleId);
+        if ($articleResult['exception'] == true){
+            return $this->container->view->render($response, 'userNotification.twig', $articleResult);
+        }
+
+        return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig', $articleResult);
     }
 
 

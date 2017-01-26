@@ -45,7 +45,8 @@
                             </td>
                             <td>{{ newsletter.createDate | date('jS F Y')}}</td>
                             <td><a href="{{ path_for('newsletterAdmin', { 'newsletterId': newsletter.id }) }}">open</a></td>
-                            <td><a href="">preview</a></td>
+                            <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-eye"></span></a></td>
+                            <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-trash"></span></a></td>
                         </tr>
                     {% endfor %}
 
