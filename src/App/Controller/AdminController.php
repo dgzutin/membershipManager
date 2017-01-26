@@ -424,11 +424,11 @@ class AdminController {
 
     public function createNewsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+        $result['createNewsletter'] = true;
         if ($request->isPost()){
 
             $data = $request->getParsedBody();
             $result = $this->userServices->createUpdateNewsletter(-1, $data, $_SESSION['user_id']);
-            $result['createNewsletter'] = true;
 
             if ($result['exception'] == false){
 
@@ -438,7 +438,7 @@ class AdminController {
             return $this->container->view->render($response, 'userNotification.twig', $result);
         }
 
-        return $this->container->view->render($response, 'admin/newsletter.html.twig');
+        return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
 
     }
 
@@ -453,18 +453,15 @@ class AdminController {
     {
         $newsletterId = (int)$args['newsletterId'];
 
-        if ($newsletterId != -1){
+        $newsletterResult = $this->userServices->getNewsletter($newsletterId);
 
-            $newsletterResult = $this->userServices->getNewsletter($newsletterId);
-
-            if ($newsletterResult['exception'] == true){
-                return $this->container->view->render($response, 'userNotification.twig', $newsletterResult);
-            }
-            $result = $this->userServices->getNewsletterArticles($newsletterId);
-            $result['newsletter'] = $newsletterResult['newsletter'];
-            $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
+        if ($newsletterResult['exception'] == true){
+            return $this->container->view->render($response, 'userNotification.twig', $newsletterResult);
         }
-        $result['newsletterId'] = $newsletterId;
+        $result = $this->userServices->getNewsletterArticles($newsletterId, $newsletterResult['newsletter']->getPublished());
+        $result['newsletter'] = $newsletterResult['newsletter'];
+        $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
+        $result['createNewsletter'] = false;
 
         return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
     }
@@ -475,9 +472,10 @@ class AdminController {
         $data = $request->getParsedBody();
 
         $result = $this->userServices->createUpdateNewsletter($newsletterId, $data, $_SESSION['user_id']);
-        $articleResult = $this->userServices->getNewsletterArticles($newsletterId);
+        $articleResult = $this->userServices->getNewsletterArticles($newsletterId,  $result['newsletter']->getPublished());
         $result['articles'] = $articleResult['articles'];
         $result['isPost'] = true;
+        $result['createNewsletter'] = false;
 
         return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
     }

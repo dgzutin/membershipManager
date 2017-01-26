@@ -4,7 +4,7 @@
 
     <div class="panel-group">
         <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Manage Users and Members</strong></div>
+            <div class="panel-heading"><strong>Create/Edit Newsletter</strong></div>
             <div class="panel-body">
 
                 <div class="row">
@@ -46,10 +46,8 @@
                         <textarea  class="form-control" id="text" rows="5" id="foreword" name="foreword" minlength="50" maxlength="1500" tabindex="3">{{ newsletter.foreword }}</textarea>
                     </div>
 
+                    {% if createNewsletter == false %}
                     <div class="row">
-
-                        {% if createNewsletter == false %}
-
                             <div class="col-xs-12 col-sm-3">
                                 Created on {{ newsletter.createDate | date('jS F Y')}}
                                 <select style="background-color: lightgray" name="published" id="published" class="form-control" onchange="this.form.submit()">
@@ -58,20 +56,21 @@
                                 </select>
                             </div>
 
-                        {% endif %}
-
                         <div class="col-xs-12 col-sm-5">
+
                         </div>
 
                         <div class="col-xs-12 col-sm-4">
                             <p class="text-info text-right"><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}">Preview Newsletter <span class="fa fa-eye"></span></a></p>
+                            <p class="text-info text-right"><a target="_blank" href="{{ path_for('publicNewsletter', { 'key': newsletter.publicKey }) }}">Public link <span class="fa fa-share-alt"></span></a></p>
                         </div>
 
                     </div>
 
                     <div class="row">
-
-
+                        <div class="col-xs-12 col-sm-12">
+                            <h4>Newsletter articles:</h4>
+                        </div>
                     </div>
 
                     <table class="table" id="articles" cellspacing="0" width="100%">
@@ -106,6 +105,8 @@
 
                         </tbody>
                     </table>
+
+                    {% endif %}
 
                     <div class="form-group">
                         <label for="comments">Internal comments (will not be published):</label>

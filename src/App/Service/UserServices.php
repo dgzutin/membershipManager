@@ -814,16 +814,29 @@ class UserServices
         }
     }
 
-    public function getNewsletterArticles($newsletterId)
+    public function getNewsletterArticles($newsletterId, $published)
     {
-        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
-        $articles = $repository->createQueryBuilder('article')
-            ->select('article')
-            ->where('article.newsletterId = :newsletterId OR article.newsletterId =:unassigned')
-            ->setParameter('newsletterId', $newsletterId)
-            ->setParameter('unassigned', -1)
-            ->getQuery()
-            ->getResult();
+        if ($published){
+
+            $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+            $articles = $repository->createQueryBuilder('article')
+                ->select('article')
+                ->where('article.newsletterId = :newsletterId')
+                ->setParameter('newsletterId', $newsletterId)
+                ->getQuery()
+                ->getResult();
+        }
+        else{
+
+            $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+            $articles = $repository->createQueryBuilder('article')
+                ->select('article')
+                ->where('article.newsletterId = :newsletterId OR article.newsletterId =:unassigned')
+                ->setParameter('newsletterId', $newsletterId)
+                ->setParameter('unassigned', -1)
+                ->getQuery()
+                ->getResult();
+        }
 
         return array ('exception' => false,
             'count' => count($articles),
