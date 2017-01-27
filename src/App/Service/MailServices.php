@@ -17,7 +17,6 @@ class MailServices
         $this->twig = $twig;
         $this->em = $container['em'];
         $this->container = $container;
-        $this->utilsServices = $container->get('utilsServices');
 
         $repository = $this->em->getRepository('App\Entity\Settings');
         $this->settings = $repository->createQueryBuilder('settings')
@@ -52,7 +51,8 @@ class MailServices
     
     public function sendActivateAccountMail($user, $request)
     {
-        $activateAccountLink = $this->utilsServices->getBaseUrl($request). '/activateAccount/'.$user->getProfileKey();
+        $utilsServices = $this->container->get('utilsServices');
+        $activateAccountLink = $utilsServices->getBaseUrl($request). '/activateAccount/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
             'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
@@ -87,7 +87,8 @@ class MailServices
 
     public function sendUserAddedByAdminEmail($user, $request)
     {
-        $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey();
+        $utilsServices = $this->container->get('utilsServices');
+        $resetPasswordLink = $utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
             'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
@@ -121,7 +122,8 @@ class MailServices
 
     public function sendResetPasswordMail($user, $request)
     {
-        $recoverPasswordLink = $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey();
+        $utilsServices = $this->container->get('utilsServices');
+        $recoverPasswordLink = $utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
                       'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
@@ -320,6 +322,7 @@ class MailServices
             $i++;
         }
         // END Convert all prices to locale settings ---------------
+        $utilsServices = $this->container->get('utilsServices');
 
         $resp = array(
             'user' => $user,
@@ -333,8 +336,8 @@ class MailServices
             'amountPaid' => $amountPaid_formatted,
             'outstandingAmount' => $outstandingAmount_formatted,
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
-            'logo' =>  $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/assets/images/logo_invoice.png',
-            'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoice', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
+            'logo' =>  $resetPasswordLink = $utilsServices->getBaseUrl($request). '/assets/images/logo_invoice.png',
+            'invoiceLink' =>  $utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message']);
 
         $template = $this->twig->loadTemplate('email/eMailInvoice.html.twig');
@@ -393,8 +396,9 @@ class MailServices
 
     private function replacePlaceholdersMembers($emailSubject, $emailBodyText, $member, $request)
     {
+        $utilsServices = $this->container->get('utilsServices');
         //Replace all placeholdes by the actual data
-        $placeholders = array("{resetPasswordLink}" => $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$member->user->profileKey,
+        $placeholders = array("{resetPasswordLink}" => $utilsServices->getBaseUrl($request). '/resetPassword/'.$member->user->profileKey,
             "{formalSalutation_en}" => 'Dear '.$member->user->title.' '.$member->user->first_name.' '.$member->user->last_name,
             "{firstName}" => $member->user->first_name,
             "{lastName}" => $member->user->last_name,
@@ -415,8 +419,10 @@ class MailServices
 
     private function replacePlaceholders($emailSubject, $emailBodyText, $user, $membership, $request)
     {
+        $utilsServices = $this->container->get('utilsServices');
+
         //Replace all placeholdes by the actual data
-        $placeholders = array("{resetPasswordLink}" => $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey(),
+        $placeholders = array("{resetPasswordLink}" => $utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey(),
             "{formalSalutation_en}" => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName(),
             "{firstName}" => $user->getFirstName(),
             "{lastName}" => $user->getLastName()
