@@ -38,7 +38,7 @@
                             <td>{{ newsletter.title }}</td>
                             <td>
                                 {% if newsletter.published %}
-                                    <p class="text-success">Published on {{ newsletter.publishDate | date('jS F Y')}}</p>
+                                    <p class="text-success">Published}</p>
                                 {% else %}
                                     <p class="text-danger">Unpublished</p>
                                 {% endif %}
@@ -47,10 +47,9 @@
                             <td>
                                 {% if newsletter.published %}
                                     <a href="{{ path_for('createBulkMailNewsletter', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a>
-                                {% else %}
-
                                 {% endif %}
                             </td>
+                            <td><a target="_blank" href="{{ path_for('newsletterAdmin', { 'newsletterId': newsletter.id }) }}">Edit</a></td>
                             <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-eye"></span></a></td>
                             <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-trash"></span></a></td>
                         </tr>

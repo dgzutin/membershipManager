@@ -3,8 +3,14 @@
 {% block mainPanel %}
 
     <div class="panel panel-primary">
-        <div class="panel-heading"><strong>Bulk Email function</strong></div>
+        <div class="panel-heading"><strong>Send Newsletters to members</strong></div>
         <div class="panel-body">
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-12">
+                    <div class="" id="message" hidden></div>
+                </div>
+            </div>
 
                <div class="row">
                     <div class="col-xs-6 col-sm-3">
@@ -104,7 +110,7 @@
 
                 <div class="row">
                     <div class="col-xs-12 col-sm-12">
-                        <strong>Preview:</strong> <a href="{{ newsletter.publicLink }}">{{ newsletter.publicLink }}</a>
+                        <label>Preview newsletter:</label> <a href="{{ newsletter.publicLink }}">{{ newsletter.publicLink }}</a>
                     </div>
                 </div>
 
@@ -117,7 +123,7 @@
                 </div>
 
             <!-- Table Starts here  -->
-            <div class="alert alert-info" id="message" hidden></div>
+
 
 
             <table class="table table-condensed" id="recipients" cellspacing="0" width="100%">

@@ -81,3 +81,48 @@ function confirmSubmission()
         }
     });
 }
+
+function assignRemoveArticle(newsletterId, articleIds)
+{
+    var action = $("#"+articleIds[0]).val();
+
+    var params = {
+        assign: action == "true",
+        newsletterId: newsletterId,
+        articleIds: articleIds
+    };
+
+    console.log(params);
+
+    // console.log(params);
+    $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/v1/assignArticlesToNewsletter",
+        data: JSON.stringify(params),
+        // data: imageData,
+        type: 'POST',
+        success: function(response){
+
+            console.log(response);
+
+            if (response.exception == false){
+
+                if (response.results[0].exception == false){
+
+                    if (response.results[0].assign){
+                        $("#tr_"+response.results[0].articleId).addClass('success');
+                    }
+                    else{
+                        $("#tr_"+response.results[0].articleId).removeClass('success');
+                    }
+                    notify('alert-info', response.results[0].message);
+
+                }
+                else{
+                    notify('alert-warning', response.results[0].message);
+                }
+            }
+            else{
+                notify('alert-warning', response.message);
+            }
+        }});
+
+}

@@ -10,18 +10,27 @@
                 <div class="row">
 
                     <div class="col-xs-12 col-sm-12">
+                        <div class="" id="message" hidden></div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-xs-12 col-sm-12">
                         {% if isPost == true %}
 
                             {% if exception == true %}
 
-                                <div class="alert alert-danger">
-                                  {{ message }}
+                                <div class="alert alert-danger alert-dismissable fade in">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    <strong>{{ message }}</strong>
                                 </div>
 
                             {% else %}
 
-                                <div class="alert alert-success">
-                                    {{ message }}
+                                <div class="alert alert-success alert-dismissable fade in">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    <strong>{{ message }}</strong>
                                 </div>
 
                             {% endif %}
@@ -126,70 +135,10 @@
     </div>
 
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-
+    <script src="{{ baseUrl }}/assets/js/newsletterManagement.js"></script>
     <script>
 
         tinymce.init({ selector:'#text' });
-
-        function assignRemoveArticle(newsletterId, articleIds)
-        {
-            var action = $("#"+articleIds[0]).val();
-
-            var params = {
-                assign: action == "true",
-                newsletterId: newsletterId,
-                articleIds: articleIds
-            };
-
-            console.log(params);
-
-            // console.log(params);
-            $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/v1/assignArticlesToNewsletter",
-                data: JSON.stringify(params),
-                // data: imageData,
-                type: 'POST',
-                success: function(response){
-
-                    console.log(response);
-
-                    if (response.exception == false){
-
-                        if (response.results[0].exception == false){
-
-                            if (response.results[0].assign){
-                                $("#tr_"+response.results[0].articleId).addClass('success');
-                            }
-                            else{
-                                $("#tr_"+response.results[0].articleId).removeClass('success');
-                            }
-                            $("#notification_"+response.results[0].articleId).notify(
-                                    response.results[0].message,
-                                    {
-                                        position:"left middle",
-                                        className: "success" }
-                            );
-                        }
-                        else{
-                            $("#notification_"+response.results[0].articleId).notify(
-                                    response.results[0].message,
-                                    {
-                                        position: "left middle",
-                                        className: "warn" }
-                            );
-                        }
-                    }
-                    else{
-                        $.notify(
-                                response.message,
-                                {
-                                    position: "left middle",
-                                    className: "warn" }
-                        );
-                    }
-
-                }});
-
-        }
 
     </script>
 

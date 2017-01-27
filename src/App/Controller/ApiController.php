@@ -93,6 +93,10 @@ class ApiController {
 
         $baseUrl = $this->utilsServices->getBaseUrl($request);
         $newsletterRes = $this->userServices->assemblePublicNewsletter($req->key, false, $baseUrl);
+
+        if ($newsletterRes['exception'] == true){
+            return $response->withJson($newsletterRes);
+        }
         $htmlNewsletter = $this->mailServices->createHtmlNewsletter($newsletterRes);
 
         try{

@@ -37,7 +37,9 @@ $("#button_sendNewsletterMembers").click(function(){
 
 function prepareMembersListToSend()
 {
-    //disable checkboxes and send button
+    if (members == null){
+        notify('alert-danger', 'No members selected');
+    }
     for (i=0; i<members.length; i++){
         $('#checkbox_'+i).prop('disabled', true);
     }
@@ -46,8 +48,7 @@ function prepareMembersListToSend()
     //===========================================
 
     //Notify user
-    $("#message").html('Sending e-mails. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
-    $("#message").show();
+    notify('alert-info', 'Sending e-mails. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
 
     var membersSend = [];
     var j = 0;
@@ -90,7 +91,7 @@ function getFilteredMembers()
             //console.log(JSON.stringify(result[0]));
             members = result.members;
             console.log(result);
-            fillTableMembers('recipients');
+            fillTableMembers('recipients', members);
             
 
             // Set return button to visible
@@ -104,42 +105,45 @@ function getFilteredMembers()
 
 }
 
+function fillTableMembers(tableId, members)
+{
+    var table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+
+    if (members != null){
+
+        for (i=0; i<members.length; i++) {
+
+            members[i].selected = true;
+
+            userId = members[i].user.id;
+            memberId = members[i].membership.memberId;
+            country = members[i].user.country;
+            membershipId = members[i].membership.id;
+            type = members[i].membershipTypeName;
+            prefix = members[i].membershipTypePrefix;
+            expiryDate = members[i].validity_string;
+            name = members[i].user.last_name + ', ' + members[i].user.first_name;
+            email_1 = members[i].user.email_1;
+
+            var row = table.insertRow(table.rows.length); //can start at the beginning, argument = 0
+
+            row.insertCell(0).innerHTML = '<input type="checkbox" id="checkbox_'+i+'" checked onchange="updateSelectedUser('+i+')" class="select_recipient">';
+            row.insertCell(1).innerHTML = memberId+' ('+prefix+')';
+            row.insertCell(2).innerHTML = country;
+            row.insertCell(3).innerHTML = expiryDate;
+            row.insertCell(4).innerHTML = name;
+            row.insertCell(5).innerHTML = '<div id="message_'+membershipId+'">'+email_1+'</div>';
+            // row.insertCell(5).innerHTML = '<div id="message_'+membershipId+'"></div>';
+        }
+    }
+}
+
 function updateSelectedUser(updateIndex)
 {
 
     members[updateIndex].selected = $('#checkbox_'+updateIndex).prop("checked");
     console.log('Item '+updateIndex+' select was set to '+members[updateIndex].selected);
 
-}
-
-function fillTableMembers(tableId)
-{
-    var table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
-
-    for (i=0; i<members.length; i++) {
-
-        members[i].selected = true;
-
-        userId = members[i].user.id;
-        memberId = members[i].membership.memberId;
-        country = members[i].user.country;
-        membershipId = members[i].membership.id;
-        type = members[i].membershipTypeName;
-        prefix = members[i].membershipTypePrefix;
-        expiryDate = members[i].validity_string;
-        name = members[i].user.last_name + ', ' + members[i].user.first_name;
-        email_1 = members[i].user.email_1;
-
-        var row = table.insertRow(table.rows.length); //can start at the beginning, argument = 0
-
-        row.insertCell(0).innerHTML = '<input type="checkbox" id="checkbox_'+i+'" checked onchange="updateSelectedUser('+i+')" class="select_recipient">';
-        row.insertCell(1).innerHTML = memberId+' ('+prefix+')';
-        row.insertCell(2).innerHTML = country;
-        row.insertCell(3).innerHTML = expiryDate;
-        row.insertCell(4).innerHTML = name;
-        row.insertCell(5).innerHTML = '<div id="message_'+membershipId+'">'+email_1+'</div>';
-        // row.insertCell(5).innerHTML = '<div id="message_'+membershipId+'"></div>';
-    }
 }
 
 function sendBulkEmailsMembers(membersSend)
@@ -198,31 +202,31 @@ function processSendMailResults(responseJson)
     var n = 0;
     if (responseJson.exception == false){
 
-        for (i=0; i<resultJson.length; i++){
-            //console.log(result[i].userId);
-            if (resultJson[i].exception == true){
-                document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-danger">'+resultJson[i].message+'</p>';
-            }
-            else{
-                document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
-                n++;
-            }
+        if (resultJson != null){
 
-            $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
-            // Set return button to visible
-            //===============================================
-            $('#button_return').css('visibility', 'visible');
-            //===============================================
+            for (i=0; i<resultJson.length; i++){
+                //console.log(result[i].userId);
+                if (resultJson[i].exception == true){
+                    document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-danger">'+resultJson[i].message+'</p>';
+                }
+                else{
+                    document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
+                    n++;
+                }
+
+                $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
+                // Set return button to visible
+                //===============================================
+                $('#button_return').css('visibility', 'visible');
+                //===============================================
+            }
         }
         console.log('Result: ');
         console.log(resultJson);
     }
     else{
 
-        console.log(responseJson.message);
-        $("#message").toggleClass('alert-info');
-        $("#message").toggleClass('alert-danger');
-        $("#message").html('An exception occurred while trying to send the e-mail(s). <strong>'+responseJson.message+'</strong>');
+        notify('alert-danger', responseJson.message);
         // Set return button to visible
         //===============================================
         $('#button_return').css('visibility', 'visible');

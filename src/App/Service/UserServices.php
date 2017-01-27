@@ -1074,7 +1074,7 @@ class UserServices
         if($newsletter->getPublished() == true){
             return array ('exception' => true,
                 'newsletterId' => $newsletterId,
-                'message' => 'Newsletter #'.$newsletterId.' has already been published. Changes are not allowed');
+                'message' => 'Newsletter #'.$newsletterId.' has already been published. Adding/removing articles is not allowed.');
         }
 
         $i = 0;
