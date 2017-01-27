@@ -110,16 +110,15 @@
 
                 <div class="row">
                     <div class="col-xs-12 col-sm-12">
-                        <button id="button_verify_recipients" class="btn btn-primary" onclick="getFilteredMembers()">Next: verify recipients</button>
-                        <button id="button_sendNewsletterMembers"  class="btn btn-success" onclick="sendNewsletterToMembers()">Send e-mail(s) now</button>
+                        <button id="button_verify_recipients" class="btn btn-primary">Next: verify recipients</button>
+                        <button id="button_sendNewsletterMembers"  class="btn btn-success" disabled>Send e-mail(s) now</button>
+                        <a href="{{ path_for('createBulkMailNewsletter', { 'key': newsletter.newsletter.publicKey }) }}"><button id="button_return" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
                     </div>
                 </div>
 
             <!-- Table Starts here  -->
             <div class="alert alert-info" id="message" hidden></div>
 
-
-            <a href="{{ path_for('createBulkMailMembersAdmin') }}"><button id="button_return" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
 
             <table class="table table-condensed" id="recipients" cellspacing="0" width="100%">
                 <thead>

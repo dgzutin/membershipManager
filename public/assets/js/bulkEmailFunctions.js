@@ -14,17 +14,26 @@ $("#checkbox_all").change(function () {
 });
 
 //Send emails
+$("#button_verify_recipients").click(function(){
+
+    getFilteredMembers();
+});
+
 $("#button_sendBulkMailMembers").click(function(){
-    
+
+    $("#button_sendBulkMailMembers").prop('disabled', true);
     sendBulkEmailsMembers(prepareMembersListToSend());
 });
 //Send newsletters
 $("#button_sendNewsletterMembers").click(function(){
 
+    $("#button_sendNewsletterMembers").prop('disabled', true);
     sendNewsletterToMembers(prepareMembersListToSend());
+
 });
 
 //========================================================================
+
 
 function prepareMembersListToSend()
 {
@@ -83,13 +92,14 @@ function getFilteredMembers()
             console.log(result);
             fillTableMembers('recipients');
             
-            $("#button_verify_recipients").attr("disabled","disabled");
 
             // Set return button to visible
             //===============================================
             $('#button_return').css('visibility', 'visible');
             //===============================================
-            $("#button_verify_recipients").attr("disabled","disabled");
+            $('#button_verify_recipients').prop('disabled', true);
+            $('#button_sendBulkMailMembers').prop('disabled', false);
+            $('#button_sendNewsletterMembers').prop('disabled', false);
         }});
 
 }
