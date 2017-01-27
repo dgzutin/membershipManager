@@ -17,6 +17,7 @@ class MailServices
         $this->twig = $twig;
         $this->em = $container['em'];
         $this->container = $container;
+        $this->utilsServices = $container->get('utilsServices');
 
         $repository = $this->em->getRepository('App\Entity\Settings');
         $this->settings = $repository->createQueryBuilder('settings')
@@ -51,7 +52,7 @@ class MailServices
     
     public function sendActivateAccountMail($user, $request)
     {
-        $activateAccountLink = $request->getUri()->getBaseUrl(). '/activateAccount/'.$user->getProfileKey();
+        $activateAccountLink = $this->utilsServices->getBaseUrl($request). '/activateAccount/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
             'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
@@ -86,7 +87,7 @@ class MailServices
 
     public function sendUserAddedByAdminEmail($user, $request)
     {
-        $resetPasswordLink = $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey();
+        $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
             'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
@@ -120,7 +121,7 @@ class MailServices
 
     public function sendResetPasswordMail($user, $request)
     {
-        $recoverPasswordLink = $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey();
+        $recoverPasswordLink = $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey();
 
         $resp = array('exception' => false,
                       'salutation' => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName().',',
@@ -332,7 +333,7 @@ class MailServices
             'amountPaid' => $amountPaid_formatted,
             'outstandingAmount' => $outstandingAmount_formatted,
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
-            'logo' =>  $resetPasswordLink = $request->getUri()->getBaseUrl(). '/assets/images/logo_invoice.png',
+            'logo' =>  $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/assets/images/logo_invoice.png',
             'invoiceLink' =>  $request->getUri()->withPath($this->container->router->pathFor('singleInvoice', ['invoiceId' => $respInvoiceData['invoice']->getId()])),
             'message' => $respInvoiceData['message']);
 
@@ -393,7 +394,7 @@ class MailServices
     private function replacePlaceholdersMembers($emailSubject, $emailBodyText, $member, $request)
     {
         //Replace all placeholdes by the actual data
-        $placeholders = array("{resetPasswordLink}" => $request->getUri()->getBaseUrl(). '/resetPassword/'.$member->user->profileKey,
+        $placeholders = array("{resetPasswordLink}" => $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$member->user->profileKey,
             "{formalSalutation_en}" => 'Dear '.$member->user->title.' '.$member->user->first_name.' '.$member->user->last_name,
             "{firstName}" => $member->user->first_name,
             "{lastName}" => $member->user->last_name,
@@ -415,7 +416,7 @@ class MailServices
     private function replacePlaceholders($emailSubject, $emailBodyText, $user, $membership, $request)
     {
         //Replace all placeholdes by the actual data
-        $placeholders = array("{resetPasswordLink}" => $request->getUri()->getBaseUrl(). '/resetPassword/'.$user->getProfileKey(),
+        $placeholders = array("{resetPasswordLink}" => $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$user->getProfileKey(),
             "{formalSalutation_en}" => 'Dear '.$user->getTitle().' '.$user->getFirstName().' '.$user->getLastName(),
             "{firstName}" => $user->getFirstName(),
             "{lastName}" => $user->getLastName()
