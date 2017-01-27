@@ -39,6 +39,7 @@ class Newsletter
 
     /** @Column(type="string", length=200, nullable=false) **/
     public $publicKey;
+
     
 
     /**
@@ -242,4 +243,5 @@ class Newsletter
     {
         return $this->publicKey;
     }
+    
 }
