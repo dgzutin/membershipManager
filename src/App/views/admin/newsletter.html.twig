@@ -2,6 +2,12 @@
 
 {% block mainPanel %}
 
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('newslettersAdmin')}}">Newsletters</a></li>
+        <li class="breadcrumb-item active">Edit newsletter</li>
+    </ol>
+
     <div class="panel-group">
         <div class="panel panel-primary">
             <div class="panel-heading"><strong>Create/Edit Newsletter</strong></div>
@@ -114,7 +120,7 @@
                                         <option  value="true" {% if article.newsletterId == newsletter.id %} selected {% endif %}>Assigned</option>
                                     </select>
                                 </td>
-                                <td><a href=""><span class="fa fa-trash-o"> </span></a></td>
+                                <td><span class="fa fa-trash-o" onclick="confirmArticleDelete({{ article.id }})"> </span></td>
                             </tr>
                         {% endfor %}
 
@@ -132,6 +138,10 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <div id="dialog-confirm_deleteArticle" title="Delete article?" hidden>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Deleted articles cannot be recovered Are you sure you want to proceed?</p>
     </div>
 
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>

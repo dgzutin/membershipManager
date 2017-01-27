@@ -3,6 +3,11 @@
 
 {% block mainPanel %}
 
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item active">Invoice #{{ invoiceData.id }}</li>
+    </ol>
+
     <link href="{{ baseUrl }}/assets/css/invoice.css" rel="stylesheet">
 
     <header class="clearfix">

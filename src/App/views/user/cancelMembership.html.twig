@@ -2,6 +2,13 @@
 
 {% block mainPanel %}
 
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('selectMembership')}}">Memberships</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('manageMembership', { 'memberId': member.membership.memberId }) }}">Manage Membership</a></li>
+        <li class="breadcrumb-item active">Cancel Membership</li>
+    </ol>
+
     <div class="panel-group">
 
         <div class="panel panel-primary">
