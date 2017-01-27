@@ -233,12 +233,9 @@ class PublicController {
     public function publicNewsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $key = $args['key'];
-        $result = $this->userServices->assemblePublicNewsletter($key, false);
-
-        if ($result['exception'] == false){
-            $result['baseUrl'] = $this->utilsServices->getBaseUrl($request);
-            $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
-        }
+        $baseUrl = $this->utilsServices->getBaseUrl($request);
+        $result = $this->userServices->assemblePublicNewsletter($key, false, $baseUrl);
+        
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 

@@ -30,7 +30,6 @@ function confirmSubmission()
                 if (form_valid){
 
                     var imageData = imageCropper.cropit('export');
-                    //imageData = 'blabla';
 
                     if (imageData != null){
 
@@ -62,7 +61,6 @@ function confirmSubmission()
                                             className: "warn" }
                                     );
                                 }
-
                             }});
                     }
                     else{
@@ -76,7 +74,6 @@ function confirmSubmission()
                 }//end validation
 
                 $( this ).dialog( "close" );
-
             },
             Cancel: function() {
                 $( this ).dialog( "close" );

@@ -4,9 +4,7 @@
  */
 
 
-$(document).ready(getFilteredMembers());
-
-//Event Listeners
+// =============   Event Listeners ====================================
 $("#checkbox_all").change(function () {
     $("input:checkbox").prop('checked', $(this).prop("checked"));
 
@@ -16,9 +14,20 @@ $("#checkbox_all").change(function () {
 });
 
 //Send emails
-$("#button_sendMailMembers").click(function(){
+$("#button_sendBulkMailMembers").click(function(){
+    
+    sendBulkEmailsMembers(prepareMembersListToSend());
+});
+//Send newsletters
+$("#button_sendNewsletterMembers").click(function(){
 
+    sendNewsletterToMembers(prepareMembersListToSend());
+});
 
+//========================================================================
+
+function prepareMembersListToSend()
+{
     //disable checkboxes and send button
     for (i=0; i<members.length; i++){
         $('#checkbox_'+i).prop('disabled', true);
@@ -53,10 +62,8 @@ $("#button_sendMailMembers").click(function(){
             k++;
         }
     }
-
-    sendBulkEmailsMembers(membersSend);
-
-});
+    return membersSend;
+}
 
 function getFilteredMembers()
 {
@@ -75,7 +82,14 @@ function getFilteredMembers()
             members = result.members;
             console.log(result);
             fillTableMembers('recipients');
-            //$("#div1").html(result);
+            
+            $("#button_verify_recipients").attr("disabled","disabled");
+
+            // Set return button to visible
+            //===============================================
+            $('#button_return').css('visibility', 'visible');
+            //===============================================
+            $("#button_verify_recipients").attr("disabled","disabled");
         }});
 
 }
@@ -128,7 +142,7 @@ function sendBulkEmailsMembers(membersSend)
         replyTo: $('#replyTo').val()
     };
 
-    //console.log('Request: ');
+    console.log('Request: ');
     //console.log(JSON.stringify(request));
 
     $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendBulkMailMembers",
@@ -136,43 +150,72 @@ function sendBulkEmailsMembers(membersSend)
         type: 'POST',
         success: function(responseJson){
 
-            console.log(responseJson);
-            //var responseJson = JSON.parse(response);
-            var resultJson = responseJson.results;
+            processSendMailResults(responseJson);
+        }});
+}
 
-            var n = 0;
-            if (responseJson.exception == false){
+function sendNewsletterToMembers(membersSend)
+{
+    console.log('Sending mails now... ');
+    var request = {
+        members : membersSend,
+        mailSubject: $("#subject").val(),
+        key: $("#publicKey").val(),
+        replyTo: $("#replyTo").val()
+    };
 
-                for (i=0; i<resultJson.length; i++){
-                    //console.log(result[i].userId);
-                    if (resultJson[i].exception == true){
-                        document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-danger">'+resultJson[i].message+'</p>';
-                    }
-                    else{
-                        document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
-                        n++;
-                    }
+     console.log('Request: ');
+     console.log(JSON.stringify(request));
 
-                    $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
-                    // Set return button to visible
-                    //===============================================
-                    $('#button_return').css('visibility', 'visible');
-                    //===============================================
-                }
-                console.log('Result: ');
-                console.log(resultJson);
+    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendNewsletter",
+        data: JSON.stringify(request),
+        type: 'POST',
+        success: function(responseJson){
+
+            processSendMailResults(responseJson);
+        }});
+}
+
+
+
+function processSendMailResults(responseJson)
+{
+    console.log('Response:');
+    console.log(responseJson);
+    //var responseJson = JSON.parse(response);
+    var resultJson = responseJson.results;
+
+    var n = 0;
+    if (responseJson.exception == false){
+
+        for (i=0; i<resultJson.length; i++){
+            //console.log(result[i].userId);
+            if (resultJson[i].exception == true){
+                document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-danger">'+resultJson[i].message+'</p>';
             }
             else{
-
-                console.log(responseJson.message);
-                $("#message").toggleClass('alert-info');
-                $("#message").toggleClass('alert-danger');
-                $("#message").html('An exception occurred while trying to send the e-mail(s). <strong>'+responseJson.message+'</strong>');
-                // Set return button to visible
-                //===============================================
-                $('#button_return').css('visibility', 'visible');
-                //===============================================
+                document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
+                n++;
             }
 
-        }});
+            $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
+            // Set return button to visible
+            //===============================================
+            $('#button_return').css('visibility', 'visible');
+            //===============================================
+        }
+        console.log('Result: ');
+        console.log(resultJson);
+    }
+    else{
+
+        console.log(responseJson.message);
+        $("#message").toggleClass('alert-info');
+        $("#message").toggleClass('alert-danger');
+        $("#message").html('An exception occurred while trying to send the e-mail(s). <strong>'+responseJson.message+'</strong>');
+        // Set return button to visible
+        //===============================================
+        $('#button_return').css('visibility', 'visible');
+        //===============================================
+    }
 }

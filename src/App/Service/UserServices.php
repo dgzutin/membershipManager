@@ -1132,7 +1132,7 @@ class UserServices
             'message' => 'Request was processed. Check results for more information on each action');
     }
 
-    public function assemblePublicNewsletter($publicKey, $preview)
+    public function assemblePublicNewsletter($publicKey, $preview, $baseUrl)
     {
         $repository = $this->em->getRepository('App\Entity\Newsletter');
 
@@ -1174,6 +1174,8 @@ class UserServices
 
         return array('exception' => false,
             'systemInfo' => $this->settings,
+            'publicLink' => $baseUrl.'/newsletter/'.$newsletter->getPublicKey(),
+            'baseUrl' => $baseUrl,
             'newsletter' => $newsletter,
             'articles' => $articles);
     }

@@ -284,15 +284,13 @@ class AdminController {
 
     public function createBulkMailMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args) 
     {
-        $post_data = $request->getParsedBody();
-        $resp_process_filter = $this->utilsServices->processFilterForMembersTable($post_data);
+        $resp_process_filter = $this->utilsServices->processFilterForMembersTable(NULL);
         $filter_form = $resp_process_filter['filter_form'];
 
         return $this->container->view->render($response, 'admin/adminWriteBulkMailMembers.html.twig', array(
             'membershipTypes' => $filter_form['membershipTypes'],
             'memberGrades' => $filter_form['memberGrades'],
-            'validity' => $filter_form['validity'],
-            'form' => $post_data));
+            'validity' => $filter_form['validity']));
     }
 
     public function verifyBulkMailMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -484,9 +482,10 @@ class AdminController {
     public function newsletterPreviewAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $key = $args['key'];
-        $result = $this->userServices->assemblePublicNewsletter($key, true);
-        $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
-        $result['baseUrl'] = $this->utilsServices->getBaseUrl($request);
+
+        $baseUrl = $this->utilsServices->getBaseUrl($request);
+        $result = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl);
+
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 
@@ -518,6 +517,24 @@ class AdminController {
         }
 
         return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig', $articleResult);
+    }
+
+    public function createBulkMailNewsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $key = $args['key'];
+        $baseUrl = $this->utilsServices->getBaseUrl($request);
+        $resultNewsletter = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl);
+        $htmlNewsletter = $this->mailServices->createHtmlNewsletter($resultNewsletter);
+
+        $resp_process_filter = $this->utilsServices->processFilterForMembersTable(NULL);
+        $filter_form = $resp_process_filter['filter_form'];
+
+        return $this->container->view->render($response, 'admin/adminSendNewsletter.html.twig', array(
+            'membershipTypes' => $filter_form['membershipTypes'],
+            'memberGrades' => $filter_form['memberGrades'],
+            'validity' => $filter_form['validity'],
+            'newsletter' => $resultNewsletter,
+            'htmlNewsletter' => $htmlNewsletter));
     }
 
 

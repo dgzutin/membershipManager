@@ -156,27 +156,19 @@
                                 <a href="mailto:{{ member.user.email_1 }}">{{ member.user.email_1 }}</a><br>
                                 <strong>Registration date:</strong> {{ member.membership.memberRegDate | date('jS F Y') }}
 
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Wells ends here -->
-                    </div>
-
-                    <div class="row show-grid">
-                        <div class="col-md-8">
-
-                            <p class="text-primary">Actions:</p>
                             <ul>
                                 <li><a href="{{ path_for('manageRenewals', { 'membershipId': member.membership.id }) }}"> Manage Membership Renewals</a></li>
                             </ul>
 
-                        </div>
-                        <div class="col-md-4">
-
-                            <p class="text-right"><button class="btn btn-success btn-md" type="submit">Save</button></p>
+                            </p>
                         </div>
                     </div>
+
+                    <p class="text-right"><button class="btn btn-success btn-md" type="submit">Save membership</button></p>
+
+                    <!-- Wells ends here -->
+                    </div>
+
                     <!-- Form ends here -->
                 </form>
 

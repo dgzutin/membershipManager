@@ -156,6 +156,8 @@ $app->group('/admin', function () use ($app) {
     $app->post('/newsletter/{newsletterId}', '\AdminController:saveNewsletterAdminAction')->setName('saveNewsletterAdmin');
     $app->map(['GET', 'POST'], '/createNewsletter/', '\AdminController:createNewsletterAction')->setName('createNewsletter');
     $app->get('/newsletterPreview/{key}', '\AdminController:newsletterPreviewAction')->setName('newsletterPreview');
+    $app->get('/createBulkMailNewsletter/{key}', '\AdminController:createBulkMailNewsletterAction')->setName('createBulkMailNewsletter');
+
 
 
 
@@ -206,6 +208,7 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/deletePayments', '\ApiController:deletePaymentsAction' )->setName('deletePayments');
     $app->post('/addPayment', '\ApiController:addPaymentAction' )->setName('addPayment');
     $app->post('/assignArticlesToNewsletter', '\ApiController:assignArticlesToNewsletterAction' )->setName('assignArticlesToNewsletter');
+    $app->post('/sendNewsletter', '\ApiController:sendNewsletterAction' )->setName('sendNewsletter');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

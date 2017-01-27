@@ -26,6 +26,7 @@ class ApiController {
         $this->utilsServices = $this->container->get('utilsServices');
         $this->billingServices = $this->container->get('billingServices');
         $this->userServices = $this->container->get('userServices');
+        $this->mailServices = $this->container->get('mailServices');
 
     }
     
@@ -85,7 +86,27 @@ class ApiController {
                                          'results' => $results));
     }
 
+    //Route /api/v1/sendNewsletter
+    public function sendNewsletterAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $req = json_decode($request->getBody());
 
+        $baseUrl = $this->utilsServices->getBaseUrl($request);
+        $newsletterRes = $this->userServices->assemblePublicNewsletter($req->key, false, $baseUrl);
+        $htmlNewsletter = $this->mailServices->createHtmlNewsletter($newsletterRes);
+
+        try{
+            $results = $this->mailServices->sendGenericMassMailMembers($req->members,  $newsletterRes['newsletter']->getTitle(), $htmlNewsletter, $req->replyTo, $request);
+        }
+        catch (\Exception $e){
+
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+        return $response->withJson(array('exception' => false,
+            'results' => $results));
+    }
+    
     //Route /api/v1/getFilteredUsers
     public function getFilteredUsersAction(ServerRequestInterface $request, ResponseInterface $response)
     {

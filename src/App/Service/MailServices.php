@@ -200,6 +200,7 @@ class MailServices
     }
 
     // $members is a JSON array of users and memberships
+    //Send personalised e-mails
     public function sendBulkEmailsMembers($members, $emailSubject, $emailBody, $replyTo, $request)
     {
 
@@ -208,12 +209,11 @@ class MailServices
         foreach ($members as $member){
 
             $newMail = $this->replacePlaceholdersMembers($emailSubject, $emailBody, $member, $request);
-
             $template = $this->twig->loadTemplate('email/bulkEmail.html.twig');
             $htmlMail = $template->render(array('mailSubject' => $newMail['subject'],
-                                                'mailBody' => $newMail['body'],
-                                                'nameOfOrganization' => $this->settings->getNameOfOrganization(),
-                                                'orgWebsite' => $this->settings->getOrgWebsite()));
+                'mailBody' => $newMail['body'],
+                'nameOfOrganization' => $this->settings->getNameOfOrganization(),
+                'orgWebsite' => $this->settings->getOrgWebsite()));
 
             $this->message
                 ->setSubject($newMail['subject'])
@@ -222,6 +222,46 @@ class MailServices
             try{
                 $this->message->setTo(array($member->user->email_1 => $member->user->first_name.' '.$member->user->last_name));
                 $this->message->setBody($htmlMail, 'text/html');
+                $this->message->setReplyTo($replyTo);
+
+                $result = array('exception' => false,
+                    'userId' => $member->user->id,
+                    'membershipId' => $member->membership->id,
+                    'memberId' => $member->membership->memberId,
+                    'sent' => $this->mailer->send($this->message),
+                    'message' => 'Email successfully sent to '.$member->user->email_1);
+            }
+            catch (\Exception $e){
+
+                $result = array('exception' => true,
+                    'userId' => $member->user->id,
+                    'membershipId' => $member->membership->id,
+                    'memberId' => $member->membership->memberId,
+                    'sent' => $this->mailer->send($this->message),
+                    'message' => $e->getMessage());
+            }
+            $results[$i] = $result;
+            $i++;
+        }
+        return $results;
+    }
+
+    //Send newsletter e-mail
+    public function sendGenericMassMailMembers($members, $emailSubject, $emailHtmlBody, $replyTo)
+    {
+
+        $results = NULL;
+        $i = 0;
+        foreach ($members as $member){
+
+
+            $this->message
+                ->setSubject($emailSubject)
+                ->setFrom(array( $this->settings->getEmail() => $this->from));
+
+            try{
+                $this->message->setTo(array($member->user->email_1 => $member->user->first_name.' '.$member->user->last_name));
+                $this->message->setBody($emailHtmlBody, 'text/html');
                 $this->message->setReplyTo($replyTo);
 
                 $result = array('exception' => false,
@@ -340,6 +380,15 @@ class MailServices
         return array('body' => $body_mod,
             'subject' => $subject_mod);
     }
+
+    public function createHtmlNewsletter($newsletterData)
+    {
+        $template = $this->twig->loadTemplate('newsletter/newsletter.html.twig');
+        $htmlNewsletter = $template->render($newsletterData);
+
+        return $htmlNewsletter;
+    }
+
 
     private function replacePlaceholdersMembers($emailSubject, $emailBodyText, $member, $request)
     {

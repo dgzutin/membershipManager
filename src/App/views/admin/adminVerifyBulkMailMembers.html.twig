@@ -129,7 +129,7 @@
                     <!-- Table Starts here  -->
                     <div class="alert alert-info" id="message" hidden="true"></div>
 
-                    <button id="button_sendMailMembers" type="submit" class="btn btn-success">Send e-mail(s) now</button>
+                    <button id="button_sendBulkMailMembers" type="submit" class="btn btn-success">Send e-mail(s) now</button>
 
                     <a href="{{ path_for('createBulkMailMembersAdmin') }}"><button id="button_return" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
 
@@ -157,6 +157,10 @@
 
     <!-- Bulk email functions  ============================================== -->
     <script src="{{ baseUrl }}/assets/js/bulkEmailFunctions.js"></script>
+
+    <script type="application/javascript">
+        $(document).ready(getFilteredMembers());
+    </script>
 
 
 {% endblock %}

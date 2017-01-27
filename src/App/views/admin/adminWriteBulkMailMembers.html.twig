@@ -1,24 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block mainPanel %}
-    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-    <script>
-
-        tinymce.init({
-            selector: 'textarea',
-            height: 500,
-            plugins: [
-                'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                'searchreplace wordcount visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table contextmenu directionality',
-                'emoticons paste textcolor colorpicker textpattern imagetools codesample toc'
-            ],
-            toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-            toolbar2: 'print preview media | forecolor backcolor emoticons | codesample'
-        });
-
-    </script>
-
 
         <div class="panel panel-primary">
             <div class="panel-heading"><strong>Bulk Email function</strong></div>
@@ -146,8 +128,21 @@
             </div>
         </div>
 
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script>
 
+        tinymce.init({
+            selector: 'textarea',
+            height: 500,
+            plugins: [
+                'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons paste textcolor colorpicker textpattern imagetools codesample toc'
+            ],
+            toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+            toolbar2: 'print preview media | forecolor backcolor emoticons | codesample'
+        });
 
     </script>
 
