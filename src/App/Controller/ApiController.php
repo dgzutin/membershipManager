@@ -311,6 +311,25 @@ class ApiController {
         return $response->withJson($assignResult);
     }
 
+    //Route /api/v1/deleteNewsletterArticle
+    public function deleteNewsletterArticleAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+         * {
+         * "articleId": [id]
+         * }
+         */
+        $req_json = json_decode($request->getBody());
+
+        if ($req_json != null){
+            $resp = $this->userServices->deleteNewsletterArticle($req_json->articleIds);
+
+            return $response->withJson($resp);
+        }
+        return $response->withJson(array('exception' => true,
+            'message' => 'Could not parse Json request'));
+    }
+
     //Route /api-user/v1/saveImage
     public function saveImageAction(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -354,8 +373,7 @@ class ApiController {
 
         return $response->withJson($resp);
     }
-    
-    
+
     
 
 }

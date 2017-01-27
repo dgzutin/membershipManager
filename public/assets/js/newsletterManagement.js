@@ -126,3 +126,58 @@ function assignRemoveArticle(newsletterId, articleIds)
         }});
 
 }
+
+function deleteArticle(articleId)
+{
+    var params = {
+        articleIds: [articleId]
+    };
+
+    console.log(params);
+
+    // console.log(params);
+    $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/v1/deleteNewsletterArticle",
+        data: JSON.stringify(params),
+        // data: imageData,
+        type: 'POST',
+        success: function(response){
+
+            console.log(response);
+
+            if (response.exception == false){
+
+                if (response.results[0].exception == false){
+
+                    $("#tr_"+response.results[0].articleId).remove();
+                    notify('alert-info', response.results[0].message);
+
+                }
+                else{
+                    notify('alert-warning', response.results[0].message);
+                }
+            }
+            else{
+                notify('alert-warning', response.message);
+            }
+        }});
+}
+
+function confirmArticleDelete(id){
+    $( "#dialog-confirm_deleteArticle" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+            "Delete article": function() {
+
+                //delete article
+                deleteArticle(id);
+                $( this ).dialog( "close" );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+}

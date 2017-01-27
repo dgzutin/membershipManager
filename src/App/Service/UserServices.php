@@ -819,45 +819,58 @@ class UserServices
 
     }
 
-    public function deleteNewsletterArticle($articleId)
+    public function deleteNewsletterArticle($articleIds)
     {
-        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
-        $article = $repository->createQueryBuilder('article')
-            ->select('article')
-            ->where('article.id = :id')
-            ->setParameter('id', $articleId)
-            ->getQuery()
-            ->getOneOrNullResult();
+        $i = 0;
+        $results = null;
+        foreach ($articleIds as $articleId){
 
-        if ($article == null){
+            $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+            $article = $repository->createQueryBuilder('article')
+                ->select('article')
+                ->where('article.id = :id')
+                ->setParameter('id', $articleId)
+                ->getQuery()
+                ->getOneOrNullResult();
 
-            return array ('exception' => true,
-                'article' => $article,
-                'message' => 'Article with id '.$articleId.' does not exist');
-        }
+            if ($article == null){
 
-        //delete the file
-        if (unlink('files/newsletter/uploads/'.$article->getImageFileName())){
-
-            try{
-                $this->em->remove($article);
-                $this->em->flush();
-
+                $results[$i] =  array ('exception' => true,
+                    'articleId' => $articleId,
+                    'message' => 'Article with id '.$articleId.' does not exist');
             }
-            catch (\Exception $e){
-                return array(
-                    'exception' => true,
-                    'message' => 'Could not save article: '.$e->getMessage());
+            else{
+                //delete the file
+                if (unlink('files/newsletter/uploads/'.$article->getImageFileName())){
+
+                    try{
+                        $this->em->remove($article);
+                        $this->em->flush();
+
+                    }
+                    catch (\Exception $e){
+                        $results[$i] = array(
+                            'exception' => true,
+                            'articleId' => $articleId,
+                            'message' => 'Could not save article: '.$e->getMessage());
+                    }
+                }
+                else{
+                    $results[$i] = array(
+                        'exception' => true,
+                        'articleId' => $articleId,
+                        'message' => 'Article not removed. Could not delete image file');
+                }
+                $results[$i] = array(
+                    'exception' => false,
+                    'articleId' => $articleId,
+                    'message' => 'Article was updated. Thank you!');
             }
-        }
-        else{
-            return array(
-                'exception' => true,
-                'message' => 'Could not delete image file');
-        }
-        return array(
-            'exception' => false,
-            'message' => 'Article was updated. Thank you!');
+            $i++;
+            }
+
+        return array('exception' => false,
+            'results' =>  $results);
 
     }
     
@@ -1178,5 +1191,10 @@ class UserServices
             'baseUrl' => $baseUrl,
             'newsletter' => $newsletter,
             'articles' => $articles);
+    }
+    
+    public function deleteNewsletter()
+    {
+        
     }
 }

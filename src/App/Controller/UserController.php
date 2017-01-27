@@ -596,43 +596,18 @@ class UserController {
         //echo $this->systemInfo['settings']->getPaypalSandboxModeActive();
         //return $this->container->view->render($response, 'user/manageMembership.html.twig');
 
-        $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
+       // $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
 
         $result = $request->getUri()->getPort();
 
 
        // $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
 
-        $result = $this->userServices->deleteNewsletterArticle(7);
+        $result = $this->userServices->deleteNewsletterArticle([14, 15, 16]);
 
         //$result = $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn'));
 
-        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
-        $articleIds = $repository->createQueryBuilder('article')
-            ->select('article.id')
-            ->orderBy('article.articleOrder', 'ASC')
-            ->where('article.newsletterId = :newsletterId')
-            ->setParameter('newsletterId', 8)
-            ->getQuery()
-            ->getResult();
 
-        foreach ($articleIds as $articleId){
-
-            $article = $this->em->getRepository('App\Entity\NewsletterArticle')->find($articleId['id']);
-            $article->setArticleOrder(2);
-
-            try {
-                $this->em->flush();
-
-
-            } catch (\Exception $e) {
-
-                $result =  array(
-                    'exception' => true,
-                    'message' => 'Could not save article order: ' . $e->getMessage());
-            }
-
-        }
         var_dump($result);
 
     }
