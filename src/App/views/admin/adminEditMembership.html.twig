@@ -2,6 +2,12 @@
 
 {% block mainPanel %}
 
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('members') }}">Members</a></li>
+        <li class="breadcrumb-item active">Member {{ member.membership.memberId }}</li>
+    </ol>
+
 
     <div class="panel-group">
 

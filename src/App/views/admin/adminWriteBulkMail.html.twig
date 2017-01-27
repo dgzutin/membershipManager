@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+    <li class="breadcrumb-item active">Bulk e-mail users</li>
+</ol>
+
 {% block mainPanel %}
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script>tinymce.init({ selector:'textarea' });</script>
