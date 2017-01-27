@@ -44,7 +44,13 @@
                                 {% endif %}
                             </td>
                             <td>{{ newsletter.createDate | date('jS F Y')}}</td>
-                            <td><a href="{{ path_for('createBulkMailNewsletter', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a></td>
+                            <td>
+                                {% if newsletter.published %}
+                                    <a href="{{ path_for('createBulkMailNewsletter', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a>
+                                {% else %}
+
+                                {% endif %}
+                            </td>
                             <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-eye"></span></a></td>
                             <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-trash"></span></a></td>
                         </tr>
