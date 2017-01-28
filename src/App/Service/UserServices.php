@@ -762,6 +762,7 @@ class UserServices
         $newArticle->setImageFileName($article['fileName']);
         $newArticle->setMoreInfoUrl($article['moreInfoUrl']);
         $newArticle->setComments($article['comments']);
+        $newArticle->setAuthor($article['author']);
         $newArticle->setNewsletterId(-1);
 
         try{
@@ -800,6 +801,7 @@ class UserServices
         $article->setTitle($data['title']);
         $article->setImageUrl($data['imageUrl']);
         $article->setMoreInfoUrl($data['moreInfoUrl']);
+        $article->setAuthor($data['author']);
         $article->setComments($data['comments']);
 
         try{

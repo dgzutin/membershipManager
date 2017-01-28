@@ -94,6 +94,11 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="author">Author (optional, when published will appear under the title):</label>
+                                    <input type="text" name="author" id="moreInfoUrl" class="form-control " placeholder="" value="{{ article.author }}" tabindex="5">
+                                </div>
+
+                                <div class="form-group">
                                     <label for="comments">Internal comments (will not be published):</label>
                                     <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ article.comments }}</textarea>
                                 </div>

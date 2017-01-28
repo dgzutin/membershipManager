@@ -151,10 +151,9 @@
 
                                     <tr>
                                         <td colspan="2">
-                                            <p style="font-size: large; color: #045c83"><strong>{{ article.title }}</strong></p>
-
+                                            <div style="font-size: large; color: #045c83"><strong>{{ article.title }}</strong></div>
                                             {% if article.author != NULL %}
-                                            <p style="font-size: smaller">By <strong>{{ article.author }}</strong></p>
+                                                <div style="font-size: smaller">By <strong>{{ article.author }}</strong></div>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -168,7 +167,7 @@
                                             {{ article.text }}
 
                                             {% if article.moreInfoUrl != NULL %}
-                                            <br><strong>For more information visit:</strong> <a target="_blank" href="{{ article.moreInfoUrl }}">{{ article.moreInfoUrl }}</a>
+                                                <br><strong>For more information:</strong> <a target="_blank" href="{{ article.moreInfoUrl }}">click here</a>
                                             {% endif %}
                                         </td>
                                     </tr>
