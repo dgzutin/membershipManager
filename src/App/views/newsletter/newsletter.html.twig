@@ -152,6 +152,10 @@
                                     <tr>
                                         <td colspan="2">
                                             <p style="font-size: large; color: #045c83"><strong>{{ article.title }}</strong></p>
+
+                                            {% if article.author != NULL %}
+                                            <p style="font-size: smaller">By <strong>{{ article.author }}</strong></p>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     <tr>

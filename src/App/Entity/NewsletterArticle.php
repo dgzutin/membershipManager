@@ -30,8 +30,11 @@ class NewsletterArticle
     /** @Column(type="integer", nullable=true) * */
     protected $articleOrder;
 
-    /** @Column(type="string", length=200, nullable=false) * */
+    /** @Column(type="string", length=200, nullable=true) * */
     public $title;
+
+    /** @Column(type="string", length=200, nullable=false) * */
+    public $author;
 
     /** @Column(type="text", nullable=true) * */
     protected $text;
@@ -321,5 +324,29 @@ class NewsletterArticle
     public function getArticleOrder()
     {
         return $this->articleOrder;
+    }
+
+    /**
+     * Set author
+     *
+     * @param string $author
+     *
+     * @return NewsletterArticle
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }
