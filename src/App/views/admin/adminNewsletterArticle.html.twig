@@ -63,48 +63,35 @@
                     {% endif %}
 
 
+                <form data-toggle="validator" role="form" method="post" id="article">
                     <div class="row">
 
                         <div class="col-xs-12 col-md-8">
 
-                            <form data-toggle="validator" role="form" method="post" id="article">
+                            <div class="form-group">
+                                <label for="title">Article title:</label>
+                                <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ article.title }}" tabindex="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imageUrl">Image URL:</label>
+                                <input type="text" name="imageUrl" id="imageUrl" class="form-control " value="{{ article.imageUrl }}" placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="title">Article title:</label>
-                                    <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ article.title }}" tabindex="1" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="imageUrl">Image URL:</label>
-                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control " value="{{ article.imageUrl }}" placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
-                                </div>
+                            <div class="form-group">
+                                <label for="moreInfoUrl">Image file name:</label>
+                                <input type="text" name="imageFileName" id="imageFileName" class="form-control " placeholder="" value="{{ article.imageFileName }}" readonly>
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="moreInfoUrl">Image file name:</label>
-                                    <input type="text" name="imageFileName" id="imageFileName" class="form-control " placeholder="" value="{{ article.imageFileName }}" readonly>
-                                </div>
+                            <div class="form-group">
+                                <label for="author">Author (optional, when published will appear under the title):</label>
+                                <input type="text" name="author" id="moreInfoUrl" class="form-control " placeholder="" value="{{ article.author }}" tabindex="5">
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="text">Text:</label>
-                                    <textarea  class="form-control" rows="10" id="text" name="text" tabindex="3">{{ article.text }}</textarea>
-                                </div>
+                            <div class="form-group">
+                                <label for="moreInfoUrl">More info URL:</label>
+                                <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="{{ article.moreInfoUrl }}" tabindex="4">
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="moreInfoUrl">More info URL:</label>
-                                    <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="{{ article.moreInfoUrl }}" tabindex="4">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="author">Author (optional, when published will appear under the title):</label>
-                                    <input type="text" name="author" id="moreInfoUrl" class="form-control " placeholder="" value="{{ article.author }}" tabindex="5">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="comments">Internal comments (will not be published):</label>
-                                    <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ article.comments }}</textarea>
-                                </div>
-
-                                <span class="btn btn-success" onclick="confirmSubmission()">Save article</span>
-                            </form>
                         </div>
 
                         <div class="col-xs-12 col-md-4">
@@ -135,6 +122,26 @@
 
                     </div>
 
+                <div class="row">
+
+                    <div class="col-xs-12 col-md-12">
+
+                        <div class="form-group">
+                            <label for="text">Text:</label>
+                            <textarea  class="form-control" rows="10" id="text" name="text" tabindex="3">{{ article.text }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comments">Internal comments (will not be published):</label>
+                            <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ article.comments }}</textarea>
+                        </div>
+
+                        <span class="btn btn-success" onclick="confirmSubmission()">Save article</span>
+
+                    </div>
+                </div>
+            </form>
+
             </div>
         </div>
 
@@ -144,8 +151,16 @@
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This article will be modified. Are you sure you want to proceed?</p>
     </div>
 
+    <script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
     <script src="{{ baseUrl }}/assets/cropit/jquery.cropit.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/jquery.validate.min.js"></script>
     <script src="{{ baseUrl }}/assets/js/newsletterManagement.js"></script>
+
+    <script>
+
+        tinymce.init({ selector:'#text',
+            plugins: "link"});
+
+    </script>
 
 {% endblock %}

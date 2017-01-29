@@ -83,44 +83,31 @@
                     </div>
                 </div>
 
+                <form data-toggle="validator" role="form" method="post" id="article">
                     <div class="row">
 
                         <div class="col-xs-12 col-md-8">
 
-                            <form data-toggle="validator" role="form" method="post" id="article">
+                            <div class="form-group">
+                                <label for="title">Article title:</label>
+                                <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ form.title }}" tabindex="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imageUrl">Image URL:</label>
+                                <input type="text" name="imageUrl" id="imageUrl" class="form-control " value="{{ form.imageUrl }}" placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
+                                <input type="hidden" name="imageFileName" id="imageFileName" class="form-control " placeholder="" value="{{ form.imageFileName }}">
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="title">Article title:</label>
-                                    <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ form.title }}" tabindex="1" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="imageUrl">Image URL:</label>
-                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control " value="{{ form.imageUrl }}" placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
-                                    <input type="hidden" name="imageFileName" id="imageFileName" class="form-control " placeholder="" value="{{ form.imageFileName }}">
-                                </div>
+                            <div class="form-group">
+                                <label for="author">Author (optional, when published will appear under the title):</label>
+                                <input type="text" name="author" id="author" class="form-control " placeholder="Ex: Max Mustermann, Institution" value="{{ form.author }}" tabindex="5">
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="text">Text (500 - 1500 characters):</label>
-                                    <textarea  class="form-control" rows="10" id="text" name="text" minlength="200" maxlength="3000" tabindex="3">{{ form.text }}</textarea>
-                                </div>
+                            <div class="form-group">
+                                <label for="moreInfoUrl">More info URL (optional):</label>
+                                <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="{{ form.moreInfoUrl }}" tabindex="4">
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="moreInfoUrl">More info URL (optional):</label>
-                                    <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="{{ form.moreInfoUrl }}" tabindex="4">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="author">Author (optional, when published will appear under the title):</label>
-                                    <input type="text" name="author" id="author" class="form-control " placeholder="Ex: Max Mustermann, Institution" value="{{ form.author }}" tabindex="5">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="comments">Internal comments (will not be published):</label>
-                                    <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ form.comments }}</textarea>
-                                </div>
-
-                                <span class="btn btn-success" onclick="confirmSubmission()">Submit article</span>
-                            </form>
                         </div>
 
                         <div class="col-xs-12 col-md-4">
@@ -142,11 +129,29 @@
                                 <button id="rotate-cw" class="btn btn-primary"><span class="fa fa-rotate-right"></span></button>
                             </div>
 
-                            <br><br>
-
                         </div>
 
                     </div>
+
+                <div class="row">
+
+                    <div class="col-xs-12 col-md-12">
+
+                        <div class="form-group">
+                            <label for="text">Article Text (500 - 2000 characters):</label>
+                            <textarea  class="form-control" rows="10" id="text" name="text" minlength="200" maxlength="3000" tabindex="3">{{ form.text }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="comments">Internal comments (will not be published):</label>
+                            <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ form.comments }}</textarea>
+                        </div>
+
+                        <span class="btn btn-success" onclick="confirmSubmission()">Submit article</span>
+                    </div>
+
+                </div>
+
+                </form>
 
             </div>
         </div>
@@ -160,7 +165,6 @@
     <script src="{{ baseUrl }}/assets/cropit/jquery.cropit.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/jquery.validate.min.js"></script>
     <script src="{{ baseUrl }}/assets/js/newsletterManagement.js"></script>
-
 
 
 {% endblock %}
