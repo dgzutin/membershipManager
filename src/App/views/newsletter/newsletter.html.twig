@@ -123,7 +123,7 @@
 
                     <!-- START MAIN CONTENT AREA -->
                     <tr>
-                        <td class="wrapper" style="font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 20px;" valign="top">
+                        <td class="wrapper" style="font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 10px;" valign="top">
                             <table border="0" cellpadding="8" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
 
                                 {% if exception == true %}
@@ -161,13 +161,11 @@
                                     {% if article.imageUrl != NULL %}
 
                                         <tr>
-                                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="center">
-                                                <img style="border-radius: 7px" src="{{ article.imageUrl }}">
-                                            </td>
-
                                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
 
-                                                {{ article.text }}
+                                                <img align="left" style="border-radius: 18px; padding: 10px" src="{{ article.imageUrl }}">
+
+                                                <div>{{ article.text }}</div>
 
                                                 {% if article.moreInfoUrl != NULL %}
                                                     <br><strong>For more information:</strong> <a target="_blank" href="{{ article.moreInfoUrl }}">click here</a>
