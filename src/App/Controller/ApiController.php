@@ -341,15 +341,15 @@ class ApiController {
             $imageData = $req_json->imageData;
             $image_content = base64_decode(str_replace("data:image/png;base64,","",$imageData)); // remove "data:image/png;base64,"
 
-            if ($req_json->fileName == NULL){
-                $fileName = sha1(microtime().rand()).'.png';
+            if ($req_json->imageFileName == NULL){
+                $imageFileName = sha1(microtime().rand()).'.png';
             }
             else{
-                $fileName = $req_json->fileName;
+                $imageFileName = $req_json->imageFileName;
             }
 
             try{
-                $myfile = fopen('files/newsletter/uploads/'.$fileName,'w');
+                $myfile = fopen('files/newsletter/uploads/'.$imageFileName,'w');
                 fwrite($myfile, $image_content);
                 fclose($myfile);
             }
@@ -361,8 +361,8 @@ class ApiController {
             }
 
             $resp = array('exception' => false,
-                'url' => $this->utilsServices->getBaseUrl($request).'/files/newsletter/uploads/'.$fileName,
-                'fileName' => $fileName,
+                'url' => $this->utilsServices->getBaseUrl($request).'/files/newsletter/uploads/'.$imageFileName,
+                'imageFileName' => $imageFileName,
                 'message' => 'Image saved');
         }
         else{

@@ -759,7 +759,7 @@ class UserServices
         $newArticle->setText($article['text']);
         $newArticle->setTitle($article['title']);
         $newArticle->setImageUrl($article['imageUrl']);
-        $newArticle->setImageFileName($article['fileName']);
+        $newArticle->setImageFileName($article['imageFileName']);
         $newArticle->setMoreInfoUrl($article['moreInfoUrl']);
         $newArticle->setComments($article['comments']);
         $newArticle->setAuthor($article['author']);
@@ -800,6 +800,7 @@ class UserServices
         $article->setText($data['text']);
         $article->setTitle($data['title']);
         $article->setImageUrl($data['imageUrl']);
+        $article->setImageFileName($data['imageFileName']);
         $article->setMoreInfoUrl($data['moreInfoUrl']);
         $article->setAuthor($data['author']);
         $article->setComments($data['comments']);

@@ -43,7 +43,7 @@
             <div class="panel-heading"><strong>Submit an article for the Newsletter</strong></div>
             <div class="panel-body">
 
-                    {% if form_submission == true %}
+                    {% if isPost == true %}
 
                         {% if exception == true %}
                             <div class="alert alert-danger">
@@ -91,33 +91,32 @@
 
                                 <div class="form-group">
                                     <label for="title">Article title:</label>
-                                    <input type="text" name="title" id="title" class="form-control " placeholder="" value="" tabindex="1" required>
+                                    <input type="text" name="title" id="title" class="form-control " placeholder="" value="{{ form.title }}" tabindex="1" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="imageUrl">Image URL:</label>
-                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control " placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
+                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control " value="{{ form.imageUrl }}" placeholder="Browse an image and save it. This field is updated automatically." tabindex="2" readonly>
+                                    <input type="hidden" name="imageFileName" id="imageFileName" class="form-control " placeholder="" value="{{ form.imageFileName }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="text">Text (500 - 1500 characters):</label>
-                                    <textarea  class="form-control" rows="10" id="text" name="text" minlength="500" maxlength="1500" tabindex="3"></textarea>
+                                    <textarea  class="form-control" rows="10" id="text" name="text" minlength="500" maxlength="3000" tabindex="3">{{ form.text }}</textarea>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="moreInfoUrl">More info URL (optional):</label>
-                                    <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="" tabindex="4">
+                                    <input type="url" name="moreInfoUrl" id="moreInfoUrl" class="form-control " placeholder="" value="{{ form.moreInfoUrl }}" tabindex="4">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="author">Author (optional, when published will appear under the title):</label>
-                                    <input type="text" name="author" id="moreInfoUrl" class="form-control " placeholder="Ex: Max Mustermann, Institution" value="" tabindex="5">
+                                    <input type="text" name="author" id="author" class="form-control " placeholder="Ex: Max Mustermann, Institution" value="{{ form.author }}" tabindex="5">
                                 </div>
-
-                                <input type="hidden" name="fileName" id="fileName" class="form-control " placeholder="" value="">
 
                                 <div class="form-group">
                                     <label for="comments">Internal comments (will not be published):</label>
-                                    <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5"></textarea>
+                                    <textarea  class="form-control" rows="2" id="comments" name="comments" tabindex=5">{{ form.comments }}</textarea>
                                 </div>
 
                                 <span class="btn btn-success" onclick="confirmSubmission()">Submit article</span>

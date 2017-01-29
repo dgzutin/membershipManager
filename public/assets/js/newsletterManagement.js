@@ -35,7 +35,7 @@ function confirmSubmission()
 
                         var params = {
                             imageData: imageData,
-                            fileName: $('#fileName').val()
+                            imageFileName: $('#imageFileName').val()
                         };
                         // console.log(params);
                         $.ajax({url: window.location.protocol + "//" + window.location.host + "/api-user/v1/saveImage",
@@ -48,7 +48,7 @@ function confirmSubmission()
                                 if( result.exception == false){
 
                                     $('#imageUrl').val(result.url);
-                                    $('#fileName').val(result.fileName);
+                                    $('#imageFileName').val(result.imageFileName);
 
                                     // All tests passed, submit form
                                     $( "#article" ).submit();
@@ -64,13 +64,16 @@ function confirmSubmission()
                             }});
                     }
                     else{
-                        $("#image_preview").notify(
+                        // All tests passed, submit form
+                        $( "#article" ).submit();
+
+                /*        $("#image_preview").notify(
                             'Please select an image',
                             {
                                 position:"top left",
                                 className: "error" }
                         );
-                    }
+              */      }
                 }//end validation
 
                 $( this ).dialog( "close" );

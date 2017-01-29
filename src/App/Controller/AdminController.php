@@ -498,9 +498,11 @@ class AdminController {
 
             $parsedBody = $request->getParsedBody();
 
-            if ($parsedBody['title'] != NULL AND $parsedBody['imageUrl'] != NULL AND $parsedBody['text'] != NULL){
+            if ($parsedBody['title'] != NULL AND $parsedBody['text'] != NULL){
 
                 $resultUpdate = $this->userServices->updateNewsletterArticle($articleId, $parsedBody);
+
+                var_dump($parsedBody['imageFileName']);
                 $resultUpdate['isPost'] = true;
                 return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig', $resultUpdate);
             }

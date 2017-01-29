@@ -39,10 +39,10 @@ class NewsletterArticle
     /** @Column(type="text", nullable=true) * */
     protected $text;
 
-    /** @Column(type="string", length=200, nullable=false) * */
+    /** @Column(type="string", length=200, nullable=true) * */
     public $imageUrl;
 
-    /** @Column(type="string", length=150, nullable=false) * */
+    /** @Column(type="string", length=150, nullable=true) * */
     public $imageFileName;
 
     /** @Column(type="string", length=200, nullable=false) * */

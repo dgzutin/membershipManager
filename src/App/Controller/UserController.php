@@ -520,14 +520,16 @@ class UserController {
 
             $parsedBody = $request->getParsedBody();
 
-            if ($parsedBody['title'] != NULL AND $parsedBody['imageUrl'] != NULL AND $parsedBody['text'] != NULL){
+            if ($parsedBody['title'] != NULL AND $parsedBody['text'] != NULL){
 
                 $result = $this->userServices->addNewsletterArticle($request->getParsedBody(), $_SESSION['user_id']);
                 return $this->container->view->render($response, 'userNotification.twig', $result);
             }
             return $this->container->view->render($response, 'user/newsletterArticle.html.twig', array(
                 'exception' => true,
-                'message' => 'One or more fields are not correct or missing'
+                'message' => 'One or more fields are not correct or missing',
+                'isPost' => true,
+                'form' => $parsedBody
                 ));
         }
 
