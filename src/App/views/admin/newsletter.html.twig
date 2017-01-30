@@ -88,7 +88,7 @@
                         </div>
                     </div>
 
-                    <table class="table" id="articles" cellspacing="0" width="100%">
+                    <table class="table" id="articles" cellspacing="0" width="100%" style="font-size: smaller">
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -105,8 +105,8 @@
                         {%  for article in articles %}
                             <tr id="tr_{{ article.id }}" {% if article.newsletterId != -1 %} class="success" {% endif %}>
                                 <td>{{ article.id }}</td>
-                                <td>{{ article.title }}</td>
-                                <td>{{ article.createDate | date('jS F Y')}}</td>
+                                <td class="col-md-4">{{ article.title }}</td>
+                                <td class="col-md-2">{{ article.createDate | date('d-m-Y')}}</td>
                                 <td><a href="{{ path_for('adminViewUserProfile', { 'userId': article.userId }) }}">{{ article.user_name }}</a></td>
                                 <td><div id="notification_{{ article.id }}"><a href="{{ path_for('newsletterArticleAdmin', { 'articleId': article.id }) }}">open</a></div></td>
                                 <td>
@@ -114,7 +114,7 @@
                                     <input class="form-control" type="number" name="articleOrder_{{ article.id }}" value="{{ article.articleOrder }}">
 
                                 </td>
-                                <td width="140px">
+                                <td class="col-md-2">
                                     <select id="{{ article.id }}" class="form-control" onchange="assignRemoveArticle({{ newsletter.id }}, [{{ article.id }}])">
                                         <option value="false"  {% if article.newsletterId == -1 %} selected {% endif %}><strong>Unassigned</strong></option>
                                         <option  value="true" {% if article.newsletterId == newsletter.id %} selected {% endif %}>Assigned</option>
