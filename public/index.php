@@ -46,7 +46,7 @@ $container['em'] = function (){
 
 $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig('../src/App/views', [
-        'cache' => false
+        'cache' => '../cache/views'
     ]);
     $view->addExtension(new \Slim\Views\TwigExtension(
         $container['router'],
@@ -57,7 +57,7 @@ $container['view'] = function ($container) {
     $systemInfo = $container['userServices']->getSystemInfo();
     $twigEnv = $view->getEnvironment();
     $twigEnv->addGlobal('systemInfo', $systemInfo);
-    $twigEnv->addGlobal('base_url',$container['request']->getUri()->getBaseUrl());
+    $twigEnv->addGlobal('base_url', $container['utilsServices']->getBaseUrl( $container['request']));
 
     return $view;
 };
@@ -103,7 +103,7 @@ $container['mailServices'] = function ($container) {
 
     $loader = new Twig_Loader_Filesystem('../src/App/views');
     $twig = new Twig_Environment($loader, array(
-        'cache' => false,
+        'cache' => '../cache/email',
     ));
     
     return new Service\MailServices($mailer, $message, $twig, $container);
