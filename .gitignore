@@ -1,4 +1,6 @@
 vendor/*
+cache/views/*
+cache/email/*
 src/App/config/config.json
 public/files/Member's Area/.quarantine/*
 public/files/Member's Area/.tmb/*
@@ -7,4 +9,3 @@ composer.phar
 src/App/config/config.json
 public/assets/images/logo_invoice.png
 public/ipnver.txt
-
