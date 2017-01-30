@@ -34,13 +34,15 @@
                         <th>Date created</th>
                         <th></th>
                         <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     {%  for newsletter in newsletters %}
                         <tr class="">
                             <td>{{ newsletter.id }}</td>
-                            <td>{{ newsletter.title }}</td>
+                            <td class="col-md-4">{{ newsletter.title }}</td>
                             <td>
                                 {% if newsletter.published %}
                                     <p class="text-success">Published</p>
@@ -52,6 +54,8 @@
                             <td>
                                 {% if newsletter.published %}
                                     <a href="{{ path_for('createBulkMailNewsletter', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a>
+                                {% else %}
+                                    -
                                 {% endif %}
                             </td>
                             <td><a target="_blank" href="{{ path_for('newsletterAdmin', { 'newsletterId': newsletter.id }) }}">Edit</a></td>
@@ -68,7 +72,7 @@
         </div>
     </div>
 
-    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+    <script src="/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
 
     <script>
 

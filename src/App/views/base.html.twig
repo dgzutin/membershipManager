@@ -13,14 +13,14 @@
     <title>{{ systemInfo.settings.acronym }} - {{ systemInfo.settings.nameOfOrganization }}</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ baseUrl }}/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
 
-    <link href="{{ baseUrl }}/assets/bootstrap/css/footer.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/footer.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{ baseUrl }}/assets/bootstrap/css/navbar.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/navbar.css" rel="stylesheet">
 
-    <link href="{{ baseUrl }}/assets/DataTables-1.10.11/media/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="/assets/DataTables-1.10.11/media/css/jquery.dataTables.css" rel="stylesheet">
 
     <!-- Fonts.. -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
@@ -30,25 +30,25 @@
 
     <!-- Bootstrap core JavaScript  ============================================== -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="{{ baseUrl }}/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- Bootstrap form helpers -->
-    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
-    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <link href="/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+    <script src="/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
 
     <!-- form validator -->
 
-    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+    <script src="/assets/bootstrap-validator/validator.min.js"></script>
 
     <!-- JQuery UI  ============================================== -->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <!-- Notify.js JavaScript  ============================================== -->
-     <script src="{{ baseUrl }}/assets/notify/notify.min.js"></script>
-    <script src="{{ baseUrl }}/assets/js/notification.js"></script>
+     <script src="/assets/notify/notify.min.js"></script>
+    <script src="/assets/js/notification.js"></script>
 
     <!-- Jquery Steps  ============================================== -->
-    <!-- <script src="{{ baseUrl }}/assets/jquery.steps-1.1.0/jquery.steps.min.js"></script> -->
+    <!-- <script src="/assets/jquery.steps-1.1.0/jquery.steps.min.js"></script> -->
 
 </head>
 
@@ -56,7 +56,7 @@
 
 <div class='jumbotron'>
     <div class='container'>
-        <img alt='header' src='{{ baseUrl }}/assets/images/header.jpg' class='img-rounded img-responsive hidden-xs hidden-sm centered'/>
+        <img alt='header' src='/assets/images/header.jpg' class='img-rounded img-responsive hidden-xs hidden-sm centered'/>
         <h2 style='margin:-35px 0 10px 122px;line-height:0.8;padding-bottom:4px;color:white;text-shadow:0 0 4px black;' class='visible-lg visible-md'>{{ systemInfo.settings.acronym }}  <small style='color:white;'>{{ systemInfo.settings.nameOfOrganization }} </small></h2>
     </div>
 </div>
@@ -87,7 +87,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="{{ path_for('userProfile')}}">My Account<span class="sr-only">(current)</span></a></li>
-                <li><a href="{{ baseUrl }}/login">Login</a></li>
+                <li><a href="{{ path_for('login')}}">Login</a></li>
                 <li><a href="{{ path_for('logout')}}">Logout</a></li>
             </ul>
         </div><!--/.nav-collapse -->
@@ -101,7 +101,7 @@
     <div class="col-md-10 col-md-offset-1">
 
 
-<!--    <h1 class="text-center"><img src="{{ baseUrl }}/assets/images/logo.png" width="850"></h1>  -->
+<!--    <h1 class="text-center"><img src="/assets/images/logo.png" width="850"></h1>  -->
 
 
       {% block mainPanel %}{% endblock %}
