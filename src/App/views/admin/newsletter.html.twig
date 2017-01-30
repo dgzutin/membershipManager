@@ -16,13 +16,6 @@
                 <div class="row">
 
                     <div class="col-xs-12 col-sm-12">
-                        <div class="" id="message" hidden></div>
-                    </div>
-                </div>
-
-                <div class="row">
-
-                    <div class="col-xs-12 col-sm-12">
                         {% if isPost == true %}
 
                             {% if exception == true %}
@@ -87,6 +80,11 @@
                             <h4>Newsletter articles:</h4>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12">
+                            <div class="" id="message" hidden></div>
+                        </div>
+                    </div>
 
                     <table class="table" id="articles" cellspacing="0" width="100%" style="font-size: smaller">
                         <thead>
@@ -104,7 +102,7 @@
                         <tbody>
                         {%  for article in articles %}
                             <tr id="tr_{{ article.id }}" {% if article.newsletterId != -1 %} class="success" {% endif %}>
-                                <td>{{ article.id }}</td>
+                                <td><strong>{{ article.id }}</strong></td>
                                 <td class="col-md-4">{{ article.title }}</td>
                                 <td class="col-md-2">{{ article.createDate | date('d-m-Y')}}</td>
                                 <td><a href="{{ path_for('adminViewUserProfile', { 'userId': article.userId }) }}">{{ article.user_name }}</a></td>
