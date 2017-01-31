@@ -85,6 +85,9 @@ class Settings
     /** @Column(type="string", length=100, nullable=true) **/
     protected $bankAddress;
 
+    /** @Column(type="string", length=50, nullable=true) **/
+    protected $googleAnalyticsTrackingId;
+    
 
     /**
      * Get id
@@ -622,5 +625,29 @@ class Settings
     public function getPhone()
     {
         return $this->phone;
+    }
+
+    /**
+     * Set googleAnalyticsTrackingId
+     *
+     * @param string $googleAnalyticsTrackingId
+     *
+     * @return Settings
+     */
+    public function setGoogleAnalyticsTrackingId($googleAnalyticsTrackingId)
+    {
+        $this->googleAnalyticsTrackingId = $googleAnalyticsTrackingId;
+
+        return $this;
+    }
+
+    /**
+     * Get googleAnalyticsTrackingId
+     *
+     * @return string
+     */
+    public function getGoogleAnalyticsTrackingId()
+    {
+        return $this->googleAnalyticsTrackingId;
     }
 }
