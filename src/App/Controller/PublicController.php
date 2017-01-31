@@ -234,7 +234,7 @@ class PublicController {
     {
         $key = $args['key'];
         $baseUrl = $this->utilsServices->getBaseUrl($request);
-        $result = $this->userServices->assemblePublicNewsletter($key, false, $baseUrl);
+        $result = $this->userServices->assemblePublicNewsletter($key, false, $baseUrl, true);
         
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }

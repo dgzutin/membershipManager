@@ -1148,7 +1148,7 @@ class UserServices
             'message' => 'Request was processed. Check results for more information on each action');
     }
 
-    public function assemblePublicNewsletter($publicKey, $preview, $baseUrl)
+    public function assemblePublicNewsletter($publicKey, $preview, $baseUrl, $incrementHits = false)
     {
         $repository = $this->em->getRepository('App\Entity\Newsletter');
 
@@ -1179,6 +1179,15 @@ class UserServices
                 'message' => 'Newsletter does not exist or has not been published yet');
         }
 
+        if ($incrementHits){
+            try{
+                $newsletter->setHits($newsletter->getHits() + 1);
+                $this->em->flush();
+            }
+            catch (\Exception $e){
+            }
+        }
+
         $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
         $articles = $repository->createQueryBuilder('article')
             ->select('article')
@@ -1193,7 +1202,8 @@ class UserServices
             'publicLink' => $baseUrl.'/newsletter/'.$newsletter->getPublicKey(),
             'baseUrl' => $baseUrl,
             'newsletter' => $newsletter,
-            'articles' => $articles);
+            'articles' => $articles,
+            'message' => 'Newsletter generated');
     }
     
     public function deleteNewsletter()

@@ -507,9 +507,9 @@ class UserController {
 
     public function sendInvoiceToUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $user = $this->userServices->getUserById($_SESSION['user_id']);
+        //$user = $this->userServices->getUserById($_SESSION['user_id']);
         $invoiceId = (int)$args['invoiceId'];
-        $result = $this->mailServices->sendInvoiceToUser($invoiceId, $user['user'], $request);
+        $result = $this->mailServices->sendInvoiceToUser($invoiceId, $_SESSION['user_id'], $request);
 
         return $this->container->view->render($response, 'userNotification.twig', $result);
     }

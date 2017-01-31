@@ -301,12 +301,11 @@ class MailServices
         return $this->sendBulkEmailsMembers($members_json, $subject, $body, 'offige@igip.org', $request);
     }
 
-    public function sendInvoiceToUser($invoiceId, $user, $request)
+    public function sendInvoiceToUser($invoiceId, $userId, $request)
     {
 
         $userServices = $this->container->get('userServices');
-
-        $respInvoiceData = $userServices->getInvoiceDataForUser($invoiceId, $user->getId());
+        $respInvoiceData = $userServices->getInvoiceDataForUser($invoiceId, $userId);
 
         // Convert all prices to locale settings ---------------------
         $shoppingCartServices = $this->container->get('shoppingCartServices');
@@ -323,9 +322,10 @@ class MailServices
         }
         // END Convert all prices to locale settings ---------------
         $utilsServices = $this->container->get('utilsServices');
+        $userResp = $userServices->getUserById($respInvoiceData['invoice']->getUserId());
 
         $resp = array(
-            'user' => $user,
+            'user' => $userResp['user'],
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],
             'invoiceDate' => $respInvoiceData['invoiceDate'],
@@ -347,11 +347,11 @@ class MailServices
             ->setSubject($this->settings->getAcronym().': Invoice Nr.'.$respInvoiceData['invoice']->getId())
             ->setFrom(array( $this->settings->getEmail() =>  $this->from));
         try{
-            $this->message->setTo(array($user->getEmail1()));
+            $this->message->setTo(array($userResp['user']->getEmail1()));
             $this->message->setBody($emailBody, 'text/html');
             $result = array('exception' => false,
                 'sent' => $this->mailer->send($this->message),
-                'message' => 'Email successfully sent to '.$user->getEmail1());
+                'message' => 'Email successfully sent to '.$userResp['user']->getEmail1());
         }
         catch (\Exception $e){
             $result = array('exception' => true,
@@ -359,9 +359,7 @@ class MailServices
                 'message' => $e->getMessage());
         }
         return $result;
-
     }
-
 
     public function highlightPlaceholders($emailSubject, $emailBodyText)
     {

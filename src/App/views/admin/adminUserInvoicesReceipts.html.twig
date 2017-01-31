@@ -86,7 +86,7 @@
                             <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
                             <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
                             <td>
-                                <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
+                                <a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoices.invoiceId }) }}"><img height="15px" src="/assets/images/mail_sent.png"></a>
                             </td>
                         </tr>
 

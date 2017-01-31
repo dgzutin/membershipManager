@@ -173,6 +173,14 @@ class AdminController {
         }
     }
 
+    public function sendInvoiceToUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $invoiceId = (int)$args['invoiceId'];
+        $result = $this->mailServices->sendInvoiceToUser($invoiceId, NULL, $request);
+
+        return $this->container->view->render($response, 'userNotification.twig', $result);
+    }
+
     public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $userId = (int)$args['userId'];
@@ -484,7 +492,7 @@ class AdminController {
         $key = $args['key'];
 
         $baseUrl = $this->utilsServices->getBaseUrl($request);
-        $result = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl);
+        $result = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl, false);
 
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
@@ -525,7 +533,7 @@ class AdminController {
     {
         $key = $args['key'];
         $baseUrl = $this->utilsServices->getBaseUrl($request);
-        $resultNewsletter = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl);
+        $resultNewsletter = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl, false);
         $htmlNewsletter = $this->mailServices->createHtmlNewsletter($resultNewsletter);
 
         $resp_process_filter = $this->utilsServices->processFilterForMembersTable(NULL);
@@ -535,8 +543,8 @@ class AdminController {
             'membershipTypes' => $filter_form['membershipTypes'],
             'memberGrades' => $filter_form['memberGrades'],
             'validity' => $filter_form['validity'],
-            'newsletter' => $resultNewsletter,
-            'htmlNewsletter' => $htmlNewsletter));
+            'newsletter' => $resultNewsletter));
+           // 'htmlNewsletter' => $htmlNewsletter));
     }
 
 

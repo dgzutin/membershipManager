@@ -19,6 +19,9 @@ class Newsletter
     /** @Column @Column(type="integer") * */
     protected $creatorId;
 
+    /** @Column @Column(type="integer", nullable=true) * */
+    protected $hits;
+
     /** @Column(type="boolean", nullable=false) * */
     protected $published;
 
@@ -244,4 +247,28 @@ class Newsletter
         return $this->publicKey;
     }
     
+
+    /**
+     * Set hits
+     *
+     * @param string $hits
+     *
+     * @return Newsletter
+     */
+    public function setHits($hits)
+    {
+        $this->hits = $hits;
+
+        return $this;
+    }
+
+    /**
+     * Get hits
+     *
+     * @return string
+     */
+    public function getHits()
+    {
+        return $this->hits;
+    }
 }

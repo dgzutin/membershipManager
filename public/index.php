@@ -46,7 +46,7 @@ $container['em'] = function (){
 
 $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig('../src/App/views', [
-        'cache' => '../cache/views'
+        'cache' => false
     ]);
     $view->addExtension(new \Slim\Views\TwigExtension(
         $container['router'],
@@ -103,7 +103,7 @@ $container['mailServices'] = function ($container) {
 
     $loader = new Twig_Loader_Filesystem('../src/App/views');
     $twig = new Twig_Environment($loader, array(
-        'cache' => '../cache/email',
+        'cache' => false
     ));
     
     return new Service\MailServices($mailer, $message, $twig, $container);
@@ -157,10 +157,8 @@ $app->group('/admin', function () use ($app) {
     $app->map(['GET', 'POST'], '/createNewsletter/', '\AdminController:createNewsletterAction')->setName('createNewsletter');
     $app->get('/newsletterPreview/{key}', '\AdminController:newsletterPreviewAction')->setName('newsletterPreview');
     $app->get('/createBulkMailNewsletter/{key}', '\AdminController:createBulkMailNewsletterAction')->setName('createBulkMailNewsletter');
-
-
-
-
+    $app->get('/sendInvoiceToUser/{invoiceId}', '\AdminController:sendInvoiceToUserAction')->setName('sendInvoiceToUserAdmin');
+    
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
 
@@ -210,7 +208,6 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/assignArticlesToNewsletter', '\ApiController:assignArticlesToNewsletterAction' )->setName('assignArticlesToNewsletter');
     $app->post('/sendNewsletter', '\ApiController:sendNewsletterAction' )->setName('sendNewsletter');
     $app->post('/deleteNewsletterArticle', '\ApiController:deleteNewsletterArticleAction' )->setName('deleteNewsletterArticle');
-
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
