@@ -25,10 +25,11 @@
                     </div>
                 </div>
 
-                <table class="display" id="newsletters" cellspacing="0" width="100%">
+                <table class="display" id="newsletters" cellspacing="0" width="100%" style="font-size: smaller">
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Hits</th>
                         <th>Title</th>
                         <th>Status</th>
                         <th>Date created</th>
@@ -42,6 +43,7 @@
                     {%  for newsletter in newsletters %}
                         <tr class="">
                             <td>{{ newsletter.id }}</td>
+                            <td>{{ newsletter.hits }}</td>
                             <td class="col-md-4">{{ newsletter.title }}</td>
                             <td>
                                 {% if newsletter.published %}
