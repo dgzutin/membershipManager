@@ -494,7 +494,7 @@ class AdminController {
         $baseUrl = $this->utilsServices->getBaseUrl($request);
         $result = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl, false);
 
-        return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
+        return $this->container->view->render($response, 'email/newsletter.html.twig', $result);
     }
 
     //save existing newsletter article
