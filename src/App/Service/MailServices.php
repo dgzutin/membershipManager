@@ -385,7 +385,7 @@ class MailServices
 
     public function createHtmlNewsletter($newsletterData)
     {
-        $template = $this->twig->loadTemplate('newsletter/newsletter.html.twig');
+        $template = $this->twig->loadTemplate('email/newsletter.html.twig');
         $htmlNewsletter = $template->render($newsletterData);
 
         return $htmlNewsletter;
