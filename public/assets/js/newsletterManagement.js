@@ -130,6 +130,7 @@ function assignRemoveArticle(newsletterId, articleIds)
 
 }
 
+// delete articles
 function deleteArticle(articleId)
 {
     var params = {
@@ -166,7 +167,7 @@ function deleteArticle(articleId)
 }
 
 function confirmArticleDelete(id){
-    $( "#dialog-confirm_deleteArticle" ).dialog({
+    $( "#dialog-confirm_delete" ).dialog({
         resizable: false,
         height: "auto",
         width: 400,
@@ -176,6 +177,69 @@ function confirmArticleDelete(id){
 
                 //delete article
                 deleteArticle(id);
+                $( this ).dialog( "close" );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+}
+
+//delete newsletter
+function deleteNewsletter(newsletterId, deleteArticles)
+{
+    var params = {
+        newsletterId: newsletterId,
+        deleteArticles: deleteArticles
+    };
+
+    console.log(params);
+
+    // console.log(params);
+    $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/v1/deleteNewsletter",
+        data: JSON.stringify(params),
+        // data: imageData,
+        type: 'POST',
+        success: function(response){
+
+            console.log(response);
+
+            if (response.exception == false){
+
+                if (response.exception == false){
+
+                    $("#tr_"+response.newsletterId).remove();
+                    notify('alert-info', response.message);
+
+                }
+                else{
+                    notify('alert-warning', response.message);
+                }
+            }
+            else{
+                notify('alert-warning', response.message);
+            }
+        }});
+}
+
+function confirmNewsletterDelete(newsletterId){
+    $( "#dialog-confirm_delete" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+            "Delete newsletter": function() {
+
+                //delete article
+                deleteNewsletter(newsletterId, false);
+                $( this ).dialog( "close" );
+            },
+            "Delete newsletter and articles": function() {
+
+                //delete article
+                deleteNewsletter(newsletterId, true);
                 $( this ).dialog( "close" );
             },
             Cancel: function() {

@@ -536,6 +536,14 @@ class UserController {
         return $this->container->view->render($response, 'user/newsletterArticle.html.twig');
     }
 
+    public function newslettersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $result = $this->userServices->getPublishedNewsletters();
+
+        return $this->container->view->render($response, 'user/publishedNewsletters.html.twig', $result);
+    }
+
     
 
     public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -605,12 +613,16 @@ class UserController {
 
        // $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
 
-        $result = $this->userServices->deleteNewsletterArticle([14, 15, 16]);
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $articles = $repository->createQueryBuilder('article')
+            ->select('article.id')
+            ->where('article.newsletterId = :newsletterId')
+            ->setParameter('newsletterId', 1)
+            ->getQuery()
+            ->getScalarResult();
 
-        //$result = $request->getUri()->withPath($this->container->router->pathFor('paypal_ipn'));
 
-
-        var_dump($result);
+        var_dump($this->userServices->deleteNewsletter(1, true));
 
     }
     

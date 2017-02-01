@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+
+
+
+<div class="panel-group">
+    <div class="panel panel-primary">
+        <div class="panel-heading"><strong>Published Newsletters</strong></div>
+        <div class="panel-body">
+
+            {% if exception == true %}
+
+                <div class="alert alert-danger">
+                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                </div>
+
+            {% else %}
+
+                <h2><spam class="fa fa-envelope-o"></spam> Newsletters:</h2>
+
+                <table class="table">
+                    <th>Newsletter</th>
+                    <th>Published on</th>
+                {% for newsletter in newsletters %}
+
+                    <tr>
+                        <td><a href="{{ baseUrl }}/newsletter/{{ newsletter.publicKey }}">{{ newsletter.title }}</a></td>
+                        <td>{{ newsletter.publishDate | date('jS F Y') }}</td>
+                    </tr>
+
+                {% endfor %}
+                </table>
+
+
+            {% endif %}
+
+
+        </div>
+    </div>
+</div>
+
+    {% endblock %}
+

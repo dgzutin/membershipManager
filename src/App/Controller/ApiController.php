@@ -330,6 +330,27 @@ class ApiController {
             'message' => 'Could not parse Json request'));
     }
 
+    //Route /api/v1/deleteNewsletter
+    public function deleteNewsletterAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+        * {
+        * "newsletterId": id,
+         *"deleteArticles" true/false
+        * }
+        */
+        $req_json = json_decode($request->getBody());
+
+        if ($req_json != null){
+            $resp =  $this->userServices->deleteNewsletter($req_json->newsletterId, $req_json->deleteArticles);
+
+            return $response->withJson($resp);
+        }
+        return $response->withJson(array('exception' => true,
+            'message' => 'Could not parse Json request'));
+
+    }
+
     //Route /api-user/v1/saveImage
     public function saveImageAction(ServerRequestInterface $request, ResponseInterface $response)
     {

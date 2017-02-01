@@ -901,6 +901,23 @@ class UserServices
                     'newsletters' => $newsletters);
     }
 
+    public function getPublishedNewsletters()
+    {
+        $repository = $this->em->getRepository('App\Entity\Newsletter');
+        $newsletters = $repository->createQueryBuilder('newsletter')
+            ->select('newsletter')
+            ->orderBy('newsletter.publishDate', 'DESC')
+            ->where('newsletter.published = :published')
+            ->setParameter('published', true)
+            ->getQuery()
+            ->getResult();
+
+
+        return array ('exception' => false,
+            'count' => count($newsletters),
+            'newsletters' => $newsletters);
+    }
+
     public function getSingleArticle($articleId)
     {
         $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
@@ -1031,6 +1048,7 @@ class UserServices
             $newsletter->setForeword($data['foreword']);
             $newsletter->setComments($data['comments']);
             $newsletter->setCreatorId($creatorId);
+            $newsletter->setHits(0);
             $newsletter->setPublished(false);
             $newsletter->setCreateDate(new DateTime());
             $newsletter->setPublicKey(sha1(microtime().rand()));
@@ -1094,12 +1112,6 @@ class UserServices
             return array ('exception' => true,
                 'newsletterId' => $newsletterId,
                 'message' => 'Newsletter with id '.$newsletterId.' does not exist');
-        }
-
-        if($newsletter->getPublished() == true){
-            return array ('exception' => true,
-                'newsletterId' => $newsletterId,
-                'message' => 'Newsletter #'.$newsletterId.' has already been published. Adding/removing articles is not allowed.');
         }
 
         $i = 0;
@@ -1215,8 +1227,61 @@ class UserServices
             'message' => 'Newsletter generated');
     }
     
-    public function deleteNewsletter()
+    public function deleteNewsletter($newsletterId, $deleteArticles)
     {
-        
+        $repository = $this->em->getRepository('App\Entity\Newsletter');
+
+            $newsletter = $repository->createQueryBuilder('newsletter')
+                ->select('newsletter')
+                ->where('newsletter.id = :id')
+                ->setParameter('id', $newsletterId)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+        if ($newsletter == NULL){
+            return array ('exception' => true,
+                'message' => 'Newsletter does not exist');
+        }
+
+        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
+        $articles = $repository->createQueryBuilder('article')
+            ->select('article.id')
+            ->where('article.newsletterId = :newsletterId')
+            ->setParameter('newsletterId', $newsletter->getId())
+            ->getQuery()
+            ->getScalarResult();
+
+        $i = 0;
+        $articleIds = null;
+        foreach($articles as $article){
+            $articleIds[$i] = $article['id'];
+            $i++;
+        }
+
+        if ($deleteArticles){
+
+            $resArticleAction = $this->deleteNewsletterArticle($articleIds);
+        }
+        else{
+            $resArticleAction = $this->assignRemoveArticlesOfNewsletter($newsletterId, $articleIds, false);
+        }
+
+        try{
+            $this->em->remove($newsletter);
+            $this->em->flush();
+
+        }
+        catch (\Exception $e){
+            $results[$i] = array(
+                'exception' => true,
+                'newsletterId' => $newsletterId,
+                'message' => 'Could not delete newsletter: '.$e->getMessage());
+        }
+
+        return array('exception' => false,
+            'newsletterId' => $newsletterId,
+            'articlesRemove' => $resArticleAction,
+            'articleResults' => $resArticleAction['results'],
+            'message' => 'Newsletter was deleted');
     }
 }

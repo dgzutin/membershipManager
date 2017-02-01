@@ -32,7 +32,7 @@ class User
     /** @Column(type="string", length=10, nullable=true) **/
     public $title;
 
-    /** @Column(type="string", length=10, nullable=true) **/
+    /** @Column(type="string", length=50, nullable=true) **/
     public $position;
 
     /** @Column(type="string", length=200, nullable=false) **/

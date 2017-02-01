@@ -25,6 +25,12 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12">
+                        <div class="" id="message" hidden></div>
+                    </div>
+                </div>
+
                 <table class="display" id="newsletters" cellspacing="0" width="100%">
                     <thead>
                     <tr>
@@ -41,7 +47,7 @@
                     </thead>
                     <tbody>
                     {%  for newsletter in newsletters %}
-                        <tr class="">
+                        <tr class="" id="tr_{{ newsletter.id }}">
                             <td>{{ newsletter.id }}</td>
                             <td>{{ newsletter.hits }}</td>
                             <td class="col-md-4">{{ newsletter.title }}</td>
@@ -62,7 +68,7 @@
                             </td>
                             <td><a target="_blank" href="{{ path_for('newsletterAdmin', { 'newsletterId': newsletter.id }) }}">Edit</a></td>
                             <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-eye"></span></a></td>
-                            <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-trash"></span></a></td>
+                            <td><span class="fa fa-trash" onclick="confirmNewsletterDelete({{ newsletter.id}})"></span></td>
                         </tr>
                     {% endfor %}
 
@@ -74,7 +80,12 @@
         </div>
     </div>
 
+    <div id="dialog-confirm_delete" title="Delete article?" hidden>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Deleted Newsletterss cannot be recovered Are you sure you want to proceed?</p>
+    </div>
+
     <script src="/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+    <script src="{{ baseUrl }}/assets/js/newsletterManagement.js"></script>
 
     <script>
 

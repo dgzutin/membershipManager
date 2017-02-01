@@ -188,6 +188,7 @@ $app->group('/user', function () use ($app) {
     $app->map(['GET', 'POST'], '/cancelMembership/{memberId}', '\UserController:cancelMembershipAction')->setName('cancelMembership');
     $app->get('/sendInvoiceToUser/{invoiceId}', '\UserController:sendInvoiceToUserAction')->setName('sendInvoiceToUser');
     $app->map(['GET', 'POST'], '/newsletterArticle', '\UserController:newsletterArticleAction')->setName('newsletterArticle');
+    $app->get('/newsletters', '\UserController:newslettersAction')->setName('userNewsletters');
 
     $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
 
@@ -212,6 +213,7 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/assignArticlesToNewsletter', '\ApiController:assignArticlesToNewsletterAction' )->setName('assignArticlesToNewsletter');
     $app->post('/sendNewsletter', '\ApiController:sendNewsletterAction' )->setName('sendNewsletter');
     $app->post('/deleteNewsletterArticle', '\ApiController:deleteNewsletterArticleAction' )->setName('deleteNewsletterArticle');
+    $app->post('/deleteNewsletter', '\ApiController:deleteNewsletterAction' )->setName('deleteNewsletter');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
