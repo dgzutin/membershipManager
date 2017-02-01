@@ -17,10 +17,10 @@ class EmFactory
     protected $appConfig;
     protected $isDevMode;
 
-    public function __construct($appConfig, $isDevMode)
+    public function __construct($appConfig)
     {
         $this->appConfig = $appConfig;
-        $this->isDevMode = $isDevMode;
+        $this->isDevMode = $appConfig->devMode;
     }
 
     public function createEntityManager()

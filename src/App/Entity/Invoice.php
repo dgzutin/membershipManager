@@ -80,7 +80,7 @@ class Invoice
     /** @Column(type="string", length=50, nullable=true) **/
     protected $billing_name;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=200, nullable=true) **/
     protected $billing_institution;
 
     /** @Column(type="string", length=50, nullable=true) **/
@@ -92,7 +92,7 @@ class Invoice
     /** @Column(type="string", length=20, nullable=true) **/
     protected $billing_zip;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=10, nullable=true) **/
     protected $billing_country;
 
     /** @Column(type="string", length=50, nullable=true) **/

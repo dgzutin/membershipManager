@@ -40,13 +40,17 @@ $container['em'] = function (){
 
     $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
     $jsonConfig = json_decode($appConfig);
-    $em = new EmFactory($jsonConfig, true); //change to false if not in Dev mode
+    $em = new EmFactory($jsonConfig);
     return $em->createEntityManager();
 };
 
 $container['view'] = function ($container) {
+
+    $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
+    $jsonConfig = json_decode($appConfig);
+
     $view = new \Slim\Views\Twig('../src/App/views', [
-        'cache' => '../cache/views'
+        'cache' => $jsonConfig->twig->viewsCache
     ]);
     $view->addExtension(new \Slim\Views\TwigExtension(
         $container['router'],
@@ -103,7 +107,7 @@ $container['mailServices'] = function ($container) {
 
     $loader = new Twig_Loader_Filesystem('../src/App/views');
     $twig = new Twig_Environment($loader, array(
-        'cache' => '../cache/email'
+        'cache' =>  $jsonConfig->twig->emailTemplateCache
     ));
     
     return new Service\MailServices($mailer, $message, $twig, $container);

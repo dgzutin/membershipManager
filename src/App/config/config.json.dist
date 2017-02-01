@@ -1,4 +1,5 @@
 {
+  "devMode": false,
   "dbConn": {
     "driver": "pdo_mysql",
     "host": "localhost",
@@ -13,5 +14,9 @@
      "encryption": "",
      "username": "",
      "password": ""
-   }
+   },
+    "twig":{
+       "viewsCache": "../cache/views", //replace with false if cache is deactivated
+       "emailTemplateCache": "../cache/email" //replace with false if cache is deactivated
+     }
 }

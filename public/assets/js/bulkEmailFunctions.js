@@ -3,6 +3,7 @@
  * Manages the bulk e-mail operation in the browser
  */
 
+batchSize = 50;
 
 // =============   Event Listeners ====================================
 $("#checkbox_all").change(function () {
@@ -22,13 +23,19 @@ $("#button_verify_recipients").click(function(){
 $("#button_sendBulkMailMembers").click(function(){
 
     $("#button_sendBulkMailMembers").prop('disabled', true);
-    sendBulkEmailsMembers(prepareMembersListToSend());
+
+    membersSend = prepareMembersListToSend();
+    splittedArray = splitArray(membersSend, batchSize);
+    sendBulkEmailsMembersSplit(splittedArray, 0, membersSend.length);
 });
 //Send newsletters
 $("#button_sendNewsletterMembers").click(function(){
 
     $("#button_sendNewsletterMembers").prop('disabled', true);
-    sendNewsletterToMembers(prepareMembersListToSend());
+
+    membersSend = prepareMembersListToSend();
+    splittedArray = splitArray(membersSend, batchSize);
+    sendNewsletterToMembers(splittedArray, 0, membersSend.length);
 
 });
 
@@ -46,9 +53,6 @@ function prepareMembersListToSend()
     $("#button_sendMail").prop('disabled', true);
     $("#checkbox_all").prop('disabled', true);
     //===========================================
-
-    //Notify user
-    notify('alert-info', 'Sending e-mails. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
 
     var membersSend = [];
     var j = 0;
@@ -105,6 +109,126 @@ function getFilteredMembers()
 
 }
 
+function updateSelectedUser(updateIndex)
+{
+
+    members[updateIndex].selected = $('#checkbox_'+updateIndex).prop("checked");
+    console.log('Item '+updateIndex+' select was set to '+members[updateIndex].selected);
+
+}
+
+function sendBulkEmailsMembers(membersSend)
+{
+    //Notify user
+    notify('alert-info', 'Sending e-mails. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
+
+    var request = {
+        members : membersSend,
+        mailSubject: $('#subject').val(),
+        mailBody: $('#emailBody').val(),
+        replyTo: $('#replyTo').val()
+    };
+
+    console.log('Request: ');
+    //console.log(JSON.stringify(request));
+
+    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendBulkMailMembers",
+        data: JSON.stringify(request),
+        type: 'POST',
+        success: function(responseJson){
+
+            processSendMailResults(responseJson);
+        }});
+}
+
+
+function sendNewsletterToMembers(membersSend, index)
+{
+    //Notify user
+    notify('alert-info', 'Sending Newsletters. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
+
+
+    console.log('Sending Newsletter mails now... ');
+    var request = {
+        members : membersSend[index],
+        mailSubject: $("#subject").val(),
+        key: $("#publicKey").val(),
+        replyTo: $("#replyTo").val()
+    };
+
+     console.log('Request: ');
+     console.log(JSON.stringify(request));
+
+    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendNewsletter",
+        data: JSON.stringify(request),
+        type: 'POST',
+        success: function(responseJson){
+
+            processSendMailResults(responseJson);
+
+            if (index < (membersSend.length -1)){
+                setTimeout(sendNewsletterToMembers(membersSend, index + 1), 10000);
+            }
+        }});
+}
+
+function sendBulkEmailsMembersSplit(membersSend, index)
+{
+    //Notify user
+    notify('alert-info', 'Sending e-mails. <strong>Do not close this window. </strong> This operation might take a while... <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>');
+
+    var request = {
+        members : membersSend[index],
+        mailSubject: $('#subject').val(),
+        mailBody: $('#emailBody').val(),
+        replyTo: $('#replyTo').val()
+    };
+
+    //console.log('Request: ');
+    //console.log(JSON.stringify(request));
+
+    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendBulkMailMembers",
+        data: JSON.stringify(request),
+        type: 'POST',
+        success: function(responseJson){
+
+            processSendMailResults(responseJson);
+
+            if (index < (membersSend.length -1)){
+                setTimeout(sendBulkEmailsMembersSplit(membersSend, index + 1), 10000);
+            }
+        }});
+}
+// split array of recipients to send it in batches
+function splitArray(OrigArray, batchSize){
+
+    j = 0;
+    l = 0;
+    innerArray = [];
+    outputArray = [];
+
+    if (OrigArray.length % batchSize == 0){
+        numberOfBatches = Math.floor(OrigArray.length/batchSize);
+    }
+    else{
+        numberOfBatches = Math.floor(OrigArray.length/batchSize) + 1;
+    }
+
+    begin = 0;
+    end = batchSize;
+    for (i = 0; i<numberOfBatches; i++){
+
+        outputArray[i]  = OrigArray.slice(begin, end);
+        begin = end;
+        end = end + batchSize;
+    }
+    console.log("Splietted array:");
+    console.log(outputArray);
+
+    return outputArray;
+}
+
+// ========= Callback functions to update UI
 function fillTableMembers(tableId, members)
 {
     var table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
@@ -138,60 +262,6 @@ function fillTableMembers(tableId, members)
     }
 }
 
-function updateSelectedUser(updateIndex)
-{
-
-    members[updateIndex].selected = $('#checkbox_'+updateIndex).prop("checked");
-    console.log('Item '+updateIndex+' select was set to '+members[updateIndex].selected);
-
-}
-
-function sendBulkEmailsMembers(membersSend)
-{
-    console.log('Sending mails now... ');
-    var request = {
-        members : membersSend,
-        mailSubject: $('#subject').val(),
-        mailBody: $('#emailBody').val(),
-        replyTo: $('#replyTo').val()
-    };
-
-    console.log('Request: ');
-    //console.log(JSON.stringify(request));
-
-    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendBulkMailMembers",
-        data: JSON.stringify(request),
-        type: 'POST',
-        success: function(responseJson){
-
-            processSendMailResults(responseJson);
-        }});
-}
-
-function sendNewsletterToMembers(membersSend)
-{
-    console.log('Sending mails now... ');
-    var request = {
-        members : membersSend,
-        mailSubject: $("#subject").val(),
-        key: $("#publicKey").val(),
-        replyTo: $("#replyTo").val()
-    };
-
-     console.log('Request: ');
-     console.log(JSON.stringify(request));
-
-    $.ajax({url:window.location.protocol + "//" + window.location.host + "/api/v1/sendNewsletter",
-        data: JSON.stringify(request),
-        type: 'POST',
-        success: function(responseJson){
-
-            processSendMailResults(responseJson);
-        }});
-}
-
-
-
 function processSendMailResults(responseJson)
 {
     console.log('Response:');
@@ -214,7 +284,8 @@ function processSendMailResults(responseJson)
                     n++;
                 }
 
-                $("#message").html('Process completed. <strong>'+n+' e-mail(s) sent.</strong>');
+                //Notify user
+                notify('alert-info', 'Process completed. See individual actions protocol below.</strong>');
                 // Set return button to visible
                 //===============================================
                 $('#button_return').css('visibility', 'visible');

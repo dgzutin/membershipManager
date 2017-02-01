@@ -27,7 +27,7 @@ class Billing
     /** @Column(type="string", length=50, nullable=true) **/
     public $name;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=200, nullable=true) **/
     public $institution;
 
     /** @Column(type="string", length=50, nullable=true) **/
@@ -39,7 +39,7 @@ class Billing
     /** @Column(type="string", length=20, nullable=true) **/
     public $zip;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=10, nullable=true) **/
     public $country;
 
     /** @Column(type="string", length=50, nullable=true) **/
