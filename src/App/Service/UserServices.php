@@ -71,22 +71,29 @@ class UserServices
 
         if ($user != NULL){
 
-            if (password_verify($password, $user->getPassword())){
-                $result = array('exception' => false,
-                    'message' => 'User authenticated',
-                    'user_id' => $user->getId(),
-                    'user_role' => $user->getRole());
+            if ($user->getActive()){
+
+                if (password_verify($password, $user->getPassword())){
+                    $result = array('exception' => false,
+                        'message' => 'User authenticated',
+                        'user_id' => $user->getId(),
+                        'user_role' => $user->getRole());
+                }
+                else{
+                    $result = array('exception' => true,
+                        'message' => 'The provided password in incorrect');
+                }
             }
             else{
                 $result = array('exception' => true,
-                                'message' => 'Wrong Password');
+                    'message' => 'This account has not been activated yet. Please check your e-mail.');
             }
 
             return $result;
         }
 
         $result = array('exception' => true,
-                        'message' => 'Wrong e-mail address');
+                        'message' => 'The provided e-mail address does not exist');
         return $result;
     }
 
@@ -349,7 +356,7 @@ class UserServices
         //retrieve all memberships
         try{
             $repository = $this->em->getRepository('App\Entity\Membership');
-            $memberships = $repository->findBy(array(), array('ownerId' => 'ASC'));
+            $memberships = $repository->findBy(array( 'cancelled' => false), array('ownerId' => 'ASC'));
         }
         catch (\Exception $e){
             return array('exception' => true,
@@ -371,6 +378,7 @@ class UserServices
             if ($membership != null){
 
                 $users[$i] = array('id' => $userRes->getId(),
+                    'active' => $userRes->getActive(),
                     'country' => $userRes->getCountry(),
                     'firstName' => $userRes->getFirstName(),
                     'lastName' => $userRes->getLastName(),
@@ -380,6 +388,7 @@ class UserServices
             }
             else{
                 $users[$i] = array('id' => $userRes->getId(),
+                    'active' => $userRes->getActive(),
                     'country' => $userRes->getCountry(),
                     'firstName' => $userRes->getFirstName(),
                     'lastName' => $userRes->getLastName(),

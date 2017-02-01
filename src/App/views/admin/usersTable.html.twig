@@ -12,11 +12,11 @@
             <div class="panel-heading"><strong>Manage Users and Members</strong></div>
             <div class="panel-body">
 
-
                 <table class="display" id="users" cellspacing="0" width="100%">
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Account status</th>
                         <th>Name</th>
                         <th>Country</th>
                         <th>Email</th>
@@ -28,6 +28,13 @@
                     {%  for user in users %}
                         <tr class="">
                             <td>{{ user.id }}</td>
+                            <td>
+                                {% if  user.active == 1 %}
+                                    <p class="text-success">active</p>
+                                {% else %}
+                                      <p class="text-danger">never activated</p>
+                                {% endif %}
+                            </td>
                             <td>{{ user.lastName }}, {{ user.firstName }}</td>
                             <td><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span></td>
                             <td>{{ user.email1 }}</td>
