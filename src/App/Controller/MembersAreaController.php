@@ -81,7 +81,7 @@ class MembersAreaController{
                         'roots' => array(
                             array(
                                 'driver'        => 'LocalFileSystem',           // driver for accessing file system (REQUIRED)
-                                'path'          => realpath(dirname(__DIR__)."/../../public/files/Member's Area/"),                 // path to files (REQUIRED)
+                                'path'          => realpath(dirname(__DIR__)."/../../public/files/Member_Area/"),                 // path to files (REQUIRED)
                                 'URL'           => $url_members, // URL to files (REQUIRED)
                                 'uploadDeny'    => array('application/x-msdownload'),                // All Mimetypes not allowed to upload
                                 'uploadAllow'   => array('image/png'),// Mimetype `image` and `text/plain` allowed to upload
