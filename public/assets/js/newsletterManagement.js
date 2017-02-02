@@ -227,7 +227,7 @@ function confirmNewsletterDelete(newsletterId){
     $( "#dialog-confirm_delete" ).dialog({
         resizable: false,
         height: "auto",
-        width: 400,
+        width: 500,
         modal: true,
         buttons: {
             "Delete newsletter": function() {

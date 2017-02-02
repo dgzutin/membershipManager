@@ -68,7 +68,11 @@
                             </td>
                             <td><a target="_blank" href="{{ path_for('newsletterAdmin', { 'newsletterId': newsletter.id }) }}">Edit</a></td>
                             <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-eye"></span></a></td>
-                            <td><span class="fa fa-trash" onclick="confirmNewsletterDelete({{ newsletter.id}})"></span></td>
+                            <td>
+                                {% if newsletter.published == false %}
+                                    <span class="fa fa-trash" onclick="confirmNewsletterDelete({{ newsletter.id}})"></span>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
 
@@ -80,8 +84,8 @@
         </div>
     </div>
 
-    <div id="dialog-confirm_delete" title="Delete article?" hidden>
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Deleted Newsletterss cannot be recovered Are you sure you want to proceed?</p>
+    <div id="dialog-confirm_delete" title="Delete Newsletter?" hidden>
+        <p class="text-danger"><i class="ui-icon ui-icon-alert"></i> Deleted Newsletters cannot be recovered. Are you sure you want to proceed?</p>
     </div>
 
     <script src="/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>

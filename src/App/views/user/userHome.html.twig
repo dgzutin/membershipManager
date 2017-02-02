@@ -3,27 +3,25 @@
 {% block mainPanel %}
 
     <div class="row show-grid">
-        <div class="col-xs-6 col-md-3">
+        <div class="col-xs-12 col-md-4">
 
-          <p><strong>Welcome, {{ userName }}!</strong></p>
+          <h3><strong>Welcome, {{ userName }}!</strong></h3>
 
         </div>
 
-        <div class="col-xs-12 col-sm-6 col-md-9">
+        <div class="col-xs-12 col-md-8">
 
 
                 {% if memberships.membershipFound > 0 %}
-
-                    <p class="text-right">{{ memberships.message  }}</p>
 
                 {% for membership in memberships.memberships %}
 
                     {% if membership.valid == true %}
 
                         {% if membership.validUntil != null %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %}. <strong>Valid until:</strong> {{ membership.validUntil | date('jS F Y') }} </p>
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong>{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %}. <strong>Valid until:</strong> {{ membership.validUntil | date('jS F Y') }} </p>
                         {% else %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong> - {{ membership.typeName }}{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %} </p>
+                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong>{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %} </p>
                         {% endif %}
 
                     {% else %}
@@ -67,7 +65,7 @@
                 <ul>
                 <li class="active"><a href="{{ path_for('userProfile')}}"><spam class="fa fa-user"></spam> Edit your user account</a></li>
                 <li><a href="{{ path_for('selectMembership')}}"><spam class="fa fa-star"></spam> Your Membership(s)</a></li>
-                <li><a href="{{ path_for('selectMembership')}}"><spam class="fa fa-history"></spam> Payments and Receipts</a></li>
+                <li><a href="{{ path_for('selectMembership')}}"><spam class="fa fa-history"></spam> Invoices and Receipts for {{ userName }}</a></li>
                 </ul>
             </div>
         </div>
@@ -77,7 +75,7 @@
 
         {% if memberships.validMembershipFound %}
 
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading"><spam class="fa fa-star"></spam> Options for Members only</div>
                 <div class="panel-body">
                     <ul>
@@ -114,7 +112,7 @@
             <br>
             <p class="text-danger text-left"><strong>Options for System Administrators:</strong></p>
 
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading"><spam class="fa fa-share-alt"></spam> Newsletter management</div>
                 <div class="panel-body">
                     <ul>
@@ -125,20 +123,20 @@
                 </div>
             </div>
 
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading"><spam class="fa fa-group"></spam> Manage members and users</div>
                 <div class="panel-body">
                     <ul>
                         <li><a href="{{ path_for('members')}}"><spam class="fa fa-group"></spam> Manage Members</a>
                         <li><a href="{{ path_for('usersTableView')}}"><spam class="fa fa-group"></spam> All users</a>, <a href="{{ path_for('registerNewUser')}}">Register new User</a></li>
                         <li><a href="{{ path_for('createBulkMailMembersAdmin')}}"><spam class="fa fa-envelope"></spam> Send e-mail to members</a></li>
-                        <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': '-1'}) }}"><spam class="fa fa-money"></spam> Overview of all invoices and receipts</a></li>
+                        <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': '-1'}) }}"><spam class="fa fa-money"></spam> Invoices, receipts and paymnets</a></li>
 
                     </ul>
                 </div>
             </div>
 
-            <div class="panel panel-default">
+            <div class="panel panel-warning">
                 <div class="panel-heading"><spam class="fa fa-gears"></spam> System Settings</div>
                 <div class="panel-body">
                     <ul>

@@ -33,7 +33,6 @@ function membershipQuickRenew()
                           className: "warn" }
                 );
             }
-
         }});
 }
 
