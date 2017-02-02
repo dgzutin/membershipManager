@@ -18,6 +18,7 @@ class MembersAreaController{
 
         $this->container = $container;
         $this->systemInfo = $container->get('userServices')->getSystemInfo();
+        $this->utilsServices = $container->get('utilsServices');
     }
 
     public function elFinderConnectorAction(ServerRequestInterface $request, ResponseInterface $response)
@@ -26,8 +27,8 @@ class MembersAreaController{
 
         $userService = $this->container->get('userServices');
         $resp = $userService->getUserById($_SESSION['user_id']);
-        $url_admin = $request->getUri()->getBaseUrl().'/files/';
-        $url_members = $request->getUri()->getBaseUrl()."/files/Member's Area";
+        $url_admin = $this->utilsServices->getBaseUrl($request).'/files/';
+        $url_members = $this->utilsServices->getBaseUrl($request)."/files/Member_Area";
 
         if ($resp['exception'] != true){
             $user = $resp['user'];

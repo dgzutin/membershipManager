@@ -97,13 +97,11 @@ class BillingServices
                         $invoice->setActionsExecuted(true);
                         $actionProtocol = array('exception' => false,
                                          'actionExecuted' => true,
-                                         'actionName' => $result['actionName'],
                                          'actionResult' => $result['results']);
                     }
                     else{
                         $actionProtocol = array('exception' => true,
                                          'actionExecuted' => false,
-                                         'actionName' => $result['actionName'],
                                          'actionResult' => $result['results']);
                     }
                     //=========================================================================
