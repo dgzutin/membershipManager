@@ -15,6 +15,8 @@ class UtilsServices
     {
         //$this->mailService = $container['mailServices'];
         $this->membershipServices = $container->get('membershipServices');
+        $this->container = $container;
+       // $this->userServices = $container->get('userServices');
         $this->em = $container['em'];
 
         $repository = $this->em->getRepository('App\Entity\Settings');
@@ -47,7 +49,7 @@ class UtilsServices
         return null;
     }
 
-    public function processFilterForMembersTable($filter_form)
+    public function processFilterForMembersTable($filter_form, $userId = null)
     {
 
         //sanitize post variables, just to be sure
@@ -67,6 +69,9 @@ class UtilsServices
             $user_filter['country'] = $filter_form['country'];
         }
 
+        if ($userId != null){
+            $user_filter['id'] = $userId;
+        }
 
         if (!isset($filter_form['validity'])){
             $validity = -1;
@@ -183,6 +188,29 @@ class UtilsServices
                      'filter_form' => array('membershipTypes' => $membershipTypesResp['membershipTypes'],
                                             'memberGrades' => $memberGradesResp['memberGrades'],
                                             'validity' => $validity_form));
+    }
+
+    public function newMembershipPossible($userId)
+    {
+        $userServices = $this->container->get('userServices');
+        $resUser = $userServices->getUserById($userId);
+
+        if ($resUser['exception'] == true){
+            return false;
+        }
+        $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($resUser['user'], NULL, false);
+
+        if ($membershipsTypes['exception'] == false){
+
+            foreach ($membershipsTypes['membershipTypes'] as $membershipType){
+
+                if ($membershipType['owner'] == false){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
     }
 
     public function getBaseUrl($request)

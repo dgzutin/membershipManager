@@ -55,13 +55,13 @@
 
                 <strong>Name and Invoice address:</strong>
 
-                <br><a href="{{ path_for('userProfile')}}">{{ form.name }}</a>
-                <br>{{ form.institution }}
-                <br>{{ form.street }}
-                <br>{{ form.zip }} - {{ form.city }}
-                <br> <span class="bfh-countries" data-country="{{ form.country }}" data-flags="true"></span>
-                <br>{{ form.vat }}
-                <br>{{ form.reference }}
+                <br>{{ billingInfo.name }}
+                <br>{{ billingInfo.institution }}
+                <br>{{ billingInfo.street }}
+                <br>{{ billingInfo.zip }} - {{ form.city }}
+                <br> <span class="bfh-countries" data-country="{{ billingInfo.country }}" data-flags="true"></span>
+                <br>{{ billingInfo.vat }}
+                <br>{{ billingInfo.reference }}
 
                 <h4>Your order:</h4>
 
@@ -107,24 +107,19 @@
 
                 <hr>
 
-                <form id="form_billing_info" data-toggle="validator" role="form" method="post" action="{{ path_for('processOrder')}}">
+                <form id="form_billing_info" data-toggle="validator" role="form" method="post" action="{{ path_for('processMembershipOrder', { 'membershipTypeId': membershipTypeId }) }}">
 
-                    <input type="hidden" name="name" id="first_name" class="form-control" placeholder="Name" value="{{ form.name }}">
-                    <input type="hidden" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution }}">
-                    <input required type="hidden" name="street" id="street" class="form-control " placeholder="street" value="{{ form.street }}">
-                    <input type="hidden" name="country" id="country" value="{{ form.country }}">
-                    <input required="required" type="hidden" name="city" id="city" class="form-control " placeholder="" value="{{ form.city }}" >
-                    <input type="hidden" name="zip" id="zip" class="form-control " placeholder="" value="{{ form.zip }}">
-                    <input type="hidden" name="vat" id="vat" class="form-control " placeholder="" value="{{ form.vat }}">
-                    <input type="hidden" name="reference" id="reference" class="form-control " placeholder="" value="{{ form.reference }}">
-                    <input type="hidden" name="comments" id="comments" class="form-control " placeholder="" value="{{ membershipData.comments }}" >
 
                     <h4>Invoice terms:</h4>
                     {{ invoiceTerms }}
 
+                    <div class="form-group">
+                        <label for="comments">Comments:</label>
+                        <textarea  class="form-control" rows="2" id="comments" name="comments" readonly>{{ membershipData.comments }}</textarea>
+                    </div>
 
                     <p class="text-right">
-                        <a class="btn btn-primary btn-md" href="{{ path_for('orderSummaryUser')}}" role="button">Back: Edit Invoice Address</a>
+                        <a class="btn btn-primary btn-md" href="{{ path_for('orderSummaryUser', { 'membershipTypeId': membershipTypeId }) }}" role="button">Back: Edit Invoice Address</a>
                         <a id="place_order_button" class="btn btn-success" data-toggle="modal" data-target="#place_order">Confirm Purchase</a>
 
                     </p>

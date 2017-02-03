@@ -213,12 +213,8 @@ class AdminController {
 
     public function membersAction(ServerRequestInterface $request, ResponseInterface $response, $args) 
     {
-
         $post_data = $request->getParsedBody();
-
-        //var_dump($post_data);
-        
-        $resp = $this->utilsServices->processFilterForMembersTable($post_data);
+        $resp = $this->utilsServices->processFilterForMembersTable($post_data, (int)$args['userId']);
 
         $membership_filter = $resp['membership_filter'];
         $user_filter = $resp['user_filter'];
@@ -232,6 +228,13 @@ class AdminController {
 
             return $this->container->view->render($response, 'userNotification.twig', array('message' => $membersResp['message']));
         }
+
+        $membershipTypeAvailable = false;
+        $singleUser = false;
+        if (isset($args['userId'])){
+            $membershipTypeAvailable = $this->utilsServices->newMembershipPossible((int)$args['userId']);
+            $singleUser = true;
+        }
         
         return $this->container->view->render($response, 'admin/membersTable.html.twig', array(
             'exception' => $membersResp['exception'],
@@ -240,7 +243,10 @@ class AdminController {
             'memberGrades' => $filter_form['memberGrades'],
             'validity' => $filter_form['validity'],
             'members' => $membersResp['members'],
-            'form' => $post_data
+            'userId' => (int)$args['userId'],
+            'form' => $post_data,
+            'singleUser' => $singleUser,
+            'membershipTypeAvailable' => $membershipTypeAvailable
         ));
     }
 
@@ -248,45 +254,84 @@ class AdminController {
     {
         $memberId = (int)$args['memberId'];
 
-        $form_submission = false;
         if ($request->isPost()){
+
+            $form_data = $request->getParsedBody();
 
             $memberResp = $this->membershipServices->getMemberByMemberId($memberId);
             $userId = $memberResp['member']['user']->getId();
             $membershipTypeId = $memberResp['member']['membership']->getMembershipTypeId();
-
-            $form_data = $request->getParsedBody();
             $membershipData['comments'] = $form_data['comments'];
-            $membershipData['membershipTypeId'] = $form_data['membershipTypeId'];
-            $membershipData['membershipGrade'] = $form_data['membershipGrade'];
+            $membershipData['membershipTypeId'] = (int)$form_data['membershipTypeId'];
+            $membershipData['membershipGrade'] = (int)$form_data['membershipGrade'];
             $membershipData['cancelled'] = $form_data['cancelled'];
             $membershipData['reasonForCancel'] = $form_data['reasonForCancel'];
 
-            $form_submission = true;
             $updateMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $membershipTypeId , $membershipData);
 
-        }
+            $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($updateMemberResult['member']['user'], NULL, false);
+            $memberGradesResp = $this->membershipServices->getAllMemberGrades();
 
-        $membershipTypesResp = $this->membershipServices->getAllMembershipTypes();
-        $memberGradesResp = $this->membershipServices->getAllMemberGrades();
+            $updateMemberResult['membershipTypes'] = $membershipsTypes['membershipTypes'];
+            $updateMemberResult['memberGrades'] = $memberGradesResp['memberGrades'];
+            $updateMemberResult['form_submission'] = true;
+            return $this->container->view->render($response, 'admin/adminEditMembership.html.twig', $updateMemberResult);
+        }
 
         $memberResp = $this->membershipServices->getMemberByMemberId($memberId);
 
-        // get membership types and grades to populate select boxes
-        $memberResp['membershipTypes'] = $membershipTypesResp['membershipTypes'];
-        $memberResp['memberGrades'] = $memberGradesResp['memberGrades'];
-
         if ($memberResp['exception']){
-
             return $this->container->view->render($response, 'userNotification.twig', $memberResp);
         }
 
-        if ($form_submission){
-            $memberResp['form_submission'] = true;
-            $memberResp['message'] = $updateMemberResult['message'];
-        }
+        $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($memberResp['member']['user'], NULL, false);
+        $memberGradesResp = $this->membershipServices->getAllMemberGrades();
+        //echo json_encode($membershipsTypes);
+
+        // get membership types and grades to populate select boxes
+        $memberResp['membershipTypes'] = $membershipsTypes['membershipTypes'];
+        $memberResp['memberGrades'] = $memberGradesResp['memberGrades'];
 
         return $this->container->view->render($response, 'admin/adminEditMembership.html.twig', $memberResp);
+    }
+
+    public function addMemberAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userResp = $this->userServices->getUserById((int)$args['userId']);
+
+        if ($userResp['exception'] == true){
+            return $this->container->view->render($response, 'userNotification.twig', $userResp);
+        }
+
+        if ($request->isPost()){
+
+            $form_data = $request->getParsedBody();
+
+            $membershipData['comments'] = $form_data['comments'];
+            $membershipData['membershipTypeId'] = $form_data['membershipTypeId'];
+
+            $updateMemberResult = $this->membershipServices->addUpdateMember($userResp['user']->getId(), NULL, (int)$form_data['membershipTypeId'] , $membershipData);
+
+            $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($updateMemberResult['member']['user'], NULL, false, true);
+            $memberGradesResp = $this->membershipServices->getAllMemberGrades();
+
+            $updateMemberResult['membershipTypes'] = $membershipsTypes['membershipTypes'];
+            $updateMemberResult['memberGrades'] = $memberGradesResp['memberGrades'];
+            $updateMemberResult['form_submission'] = true;
+            return $this->container->view->render($response, 'admin/adminEditMembership.html.twig', $updateMemberResult);
+        }
+
+        $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($userResp['user'], NULL, false, true);
+        $memberGradesResp = $this->membershipServices->getAllMemberGrades();
+        //echo json_encode($membershipsTypes);
+
+        // get membership types and grades to populate select boxes
+        $resp['membershipTypes'] = $membershipsTypes['membershipTypes'];
+        $resp['memberGrades'] = $memberGradesResp['memberGrades'];
+        $resp['user'] = $userResp['user'];
+
+        return $this->container->view->render($response, 'admin/adminAddMembership.html.twig', $resp);
+
     }
 
 

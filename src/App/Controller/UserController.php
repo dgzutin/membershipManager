@@ -135,7 +135,9 @@ class UserController {
         $this->shoppingCartServices->emptyCart();
         $user = $this->userServices->getUserById($_SESSION['user_id']);
         $result = $this->membershipServices->getMembershipTypeAndStatusOfUser($user['user'], NULL, false);
-        
+
+        echo json_encode($result);
+
         if ($result['exception'] == true){
             return $this->container->view->render($response, 'userNotification.twig', $result);            
         }
@@ -148,7 +150,7 @@ class UserController {
     }
 
 
-    public function orderSummaryAction(ServerRequestInterface $request, ResponseInterface $response)
+    public function membershipOrderSummaryAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         
         //retrive user data for billing information
@@ -163,45 +165,20 @@ class UserController {
         //get Billing Info
         $billingInfo = $this->userServices->getBillingInfoForUser($userId);
 
-        //Try to retrieve the billing address if renewing membership
-        $renewing = false;
-        
-        if ($renewing == true){
-
-            $billingAddressresp = $this->membershipServices->getBillingInfoForMembership(NULL);
+        if ($billingInfo['exception']){
 
             //convert the data to be shown in the form
-            foreach ($billingAddressresp['billingAddress'] as $key =>$data){
-                    $billing[$key] = array('value' => $data,
-                                           'error' => false);
-            }
+            $billing['name'] = $user->title.' '.$user->first_name.' '.$user->last_name;
+            $billing['institution'] = $user->institution;
+            $billing['street'] = $user->street;
+            $billing['country'] = $user->country;
+            $billing['city'] = $user->city;
+            $billing['zip'] = $user->zip;
         }
         else{
-
-            if ($billingInfo['exception'] == true){
-
-                //convert the data to be shown in the form
-                $billing['name'] = array('value' => $user->title.' '.$user->first_name.' '.$user->last_name,
-                    'error' => false);
-                $billing['institution'] = array('value' => $user->institution,
-                    'error' => false);
-                $billing['street'] = array('value' => $user->street,
-                    'error' => false);
-                $billing['country'] = array('value' => $user->country,
-                    'error' => false);
-                $billing['city'] = array('value' => $user->city,
-                    'error' => false);
-                $billing['zip'] = array('value' => $user->zip,
-                    'error' => false);
-            }
-            else{
-                //convert the data to be shown in the form
-                foreach ($billingInfo['billing'] as $key =>$data){
-                         $billing[$key] = array('value' => $data,
-                                                'error' => false);
-                }
-            }
+            $billing = $billingInfo['billing'];
         }
+
 
         $totalPrice = $shoppingCartServices->getTotalPrice($itemsResp['items']);
         $totalPrice = $shoppingCartServices->convertAmountToLocaleSettings($totalPrice);
@@ -216,15 +193,16 @@ class UserController {
 
         return $this->container->view->render($response, 'user/oderSummary.twig', array(
             'exception' => false,
+            'membershipTypeId' => (int)$args['membershipTypeId'],
             'items' => $items,
             'totalPrice' => $totalPrice,
             'removeItemBaseUrl' => $this->utilsServices->getBaseUrl($request). '/user/removeItemfromCart',
             'message' => '',
-            'form' => $billing));
+            'billingInfo' => $billing));
 
     }
 
-    public function confirmOrderAction(ServerRequestInterface $request, ResponseInterface $response)
+    public function confirmMembershipOrderAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         //retrive user data for billing information
         $userId = $_SESSION['user_id'];
@@ -235,8 +213,9 @@ class UserController {
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $itemsResp = $shoppingCartServices->getItems();
 
-        //Try to retrieve the billing address from post valiables
+        //Try to retrieve the billing address from post variables and save it
         $form_data = $request->getParsedBody();
+        $this->userServices->createOrUpdateBillingInfo($form_data, $user);
 
         //get the user comments. In the future more fields can be added
         $membershipData['comments'] = $form_data['comments'];
@@ -245,38 +224,51 @@ class UserController {
         $totalPrice = $shoppingCartServices->convertAmountToLocaleSettings($totalPrice);
         $items = $shoppingCartServices->convertAmountsToLocaleSettings($itemsResp['items']);
 
+        $systemInfo = $this->userServices->getSystemInfo();
+
         return $this->container->view->render($response, 'user/confirmOrder.html.twig', array(
             'exception' => false,
+            'membershipTypeId' => (int)$args['membershipTypeId'],
             'items' => $items,
-            'currency' => 'EUR',
+            'currency' => $systemInfo['settings']->getSystemCurrency(),
             'totalPrice' => $totalPrice,
             'message' => '',
             'membershipData' => $membershipData,
             'invoiceTerms' => 'Payment is due within 30 days after confirmation of purchase. For membership fee payments, the membership will only be be active after the full payment is received.',
-            'form' => $form_data));
+            'billingInfo' => $form_data));
     }
 
 
-    public function processMembershipOrderAction(ServerRequestInterface $request, ResponseInterface $response)
+    public function processMembershipOrderAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $userId = $_SESSION['user_id'];
         $userResp = $this->userServices->getUserById($userId);
         $user =  $userResp['user'];
 
+        $membershipType = $this->membershipServices->getMembershipTypeById($args['membershipTypeId']);
+
+        if ($membershipType['exception']){
+            return $this->container->view->render($response, 'userNotification.twig', $membershipType);
+        }
+
         $form_data = $request->getParsedBody();
 
         $membershipData['comments'] = $form_data['comments'];
+        $membershipData['membershipTypeId'] =  (int)$args['membershipTypeId'];
+        $membershipData['cancelled'] = 0;
 
-        if ($form_data['free_membership'] != 'free'){
 
-            //Create or update billing info.
-            $billingResp = $this->userServices->createOrUpdateBillingInfo($form_data, $user);
+        //check if membership is free
+        if ($membershipType['membershipType']->getFee() > 0){
+
+            //get billing info for user
+            $billingInfo = $this->userServices->getBillingInfoForUser($userId);
 
             // shoppingCartServices
             $shoppingCartServices = $this->container->get('shoppingCartServices');
 
-            if ($billingResp['exception'] == true){
-                return $this->container->view->render($response, 'userNotification.twig', $billingResp);
+            if ($billingInfo['exception'] == true){
+                return $this->container->view->render($response, 'userNotification.twig', $billingInfo);
             }
 
             $itemsResp = $shoppingCartServices->getItems();
@@ -285,25 +277,22 @@ class UserController {
                 return $this->container->view->render($response, 'userNotification.twig', $itemsResp);
             }
 
-            $i = 0;
-            foreach ($itemsResp['items'] as $item){
-                //add Membership to the database and link it to user.
-                $addMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $item->getTypeId(), $membershipData);
+            //add Membership to the database and link it to user.
+            $addMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $args['membershipTypeId'], $membershipData);
 
-                if ($addMemberResult['exception'] == true){
-                    return $this->container->view->render($response, 'userNotification.twig', 
-                        array('exception' => true,
-                              'message' => $addMemberResult['message']));
+            if ($addMemberResult['exception'] == true){
+                return $this->container->view->render($response, 'userNotification.twig',
+                    array('exception' => true,
+                          'message' => $addMemberResult['message']));
                 }
-                $membershipIds[$i] = $addMemberResult['membership']->getId();
-                $i++;
-            }
-            //Generate invoice if member is succesfully added AND create on payment actions
+                $membershipId = $addMemberResult['member']['membership']->getId();
+
+            //Generate invoice if member is successfully added AND create on payment actions
 
             $onPaymentActions = array(array ('actionName' => 'renewForOnePeriod',
-                                             'membershipIds' => $membershipIds));
+                                             'membershipIds' => array($membershipId)));
 
-            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingResp['billingInfo'], $itemsResp['items'], json_encode($onPaymentActions), true, $request);
+            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingInfo['billing'], $itemsResp['items'], json_encode($onPaymentActions), true, $request);
 
             if ($resultsGenInvoice['exception'] == false){
                 //delete shopping cart items if invoice is generated
@@ -321,16 +310,9 @@ class UserController {
         }
 
         //add Membership to the database and link it to user. Active is set to false
-        $addMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $form_data['membershipTypeId']);
+        $addMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $args['membershipTypeId'], $membershipData);
 
-        if ($addMemberResult['exception'] == true){
-            return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
-                                                                                            'message' => $addMemberResult['message']));
-        }
-        else{
-            return $this->container->view->render($response, 'userNotification.twig', array('exception' => false,
-                                                                                            'message' => $addMemberResult['message']));
-        }
+        return $this->container->view->render($response, 'userNotification.twig', $addMemberResult);
 
     }
 
@@ -416,11 +398,15 @@ class UserController {
 
     public function addMembershipToCartAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $membershipTypeId = $args['membershipTypeId'];
+        $membershipTypeId = (int)$args['membershipTypeId'];
         $shoppingCartServices = $this->container->get('shoppingCartServices');
         $res = $shoppingCartServices->addIMembershipToCart($membershipTypeId);
 
-        $uri = $this->utilsServices->getBaseUrl($request).'/user/orderSummary';
+        if ($res['exception']){
+            return $this->container->view->render($response, 'userNotification.twig', $res);
+        }
+
+        $uri = $this->utilsServices->getBaseUrl($request).'/user/membershipOrderSummary/'.$membershipTypeId;
         return $response = $response->withRedirect($uri, 200);
     }
 

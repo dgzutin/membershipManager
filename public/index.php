@@ -138,8 +138,8 @@ $app->group('/admin', function () use ($app) {
     
     $app->get('/users', '\AdminController:usersAction')->setName('usersTableView');
     $app->get('/usersJson', '\AdminController:users')->setName('usersTableView');
-    $app->get('/users/{userId}', '\AdminController:viewUserProfileAction')->setName('adminViewUserProfile');
-    $app->post('/users/{userId}', '\AdminController:saveUserProfileAction')->setName('adminSaveUserProfile');
+    $app->get('/user/{userId}', '\AdminController:viewUserProfileAction')->setName('adminViewUserProfile');
+    $app->post('/user/{userId}', '\AdminController:saveUserProfileAction')->setName('adminSaveUserProfile');
     $app->get('/resetPassword/{userId}', '\AdminController:resetPasswordAction')->setName('resetPasswordByAdmin');
     $app->get('/documents', '\MembersAreaController:documentsAction')->setName('documentsAdmin');
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsAdmin');
@@ -148,8 +148,9 @@ $app->group('/admin', function () use ($app) {
     $app->post('/verifyBulkMailUsers', '\AdminController:verifyBulkMailUsersAction')->setName('verifyBulkMailUsersAdmin');
     $app->post('/verifyBulkMailMembers', '\AdminController:verifyBulkMailMembersAction')->setName('verifyBulkMailMembersAdmin');
     $app->map(['GET', 'POST'], '/registerNewUser', '\AdminController:registerNewUserAction')->setName('registerNewUser');
-    $app->map(['GET', 'POST'], '/members', '\AdminController:membersAction')->setName('members');
+    $app->map(['GET', 'POST'], '/members[/{userId}]', '\AdminController:membersAction')->setName('members');
     $app->map(['GET', 'POST'], '/member/{memberId}', '\AdminController:memberAction')->setName('adminMember');
+    $app->map(['GET', 'POST'], '/addMember/{userId}', '\AdminController:addMemberAction')->setName('addMemberAdmin');
     $app->get('/manageRenewals/{membershipId}', '\AdminController:manageRenewalsAction')->setName('manageRenewals');
     $app->get('/userInvoices/{userId}', '\AdminController:userInvoicesAction')->setName('userInvoicesAdmin');
     $app->get('/invoicePayments/{invoiceId}', '\AdminController:invoicePaymentsAction')->setName('invoicePayments');
@@ -178,12 +179,12 @@ $app->group('/user', function () use ($app) {
     $app->get('/sounds/{fileName}', '\MembersAreaController:soundsAction')->setName('soundsUser');
     $app->get('/selectMembership', '\UserController:selectMembershipAction')->setName('selectMembership');
     $app->get('/membershipData/{membershipTypeId}', '\UserController:membershipDataAction')->setName('membershipData');
-    $app->get('/orderSummary', '\UserController:orderSummaryAction')->setName('orderSummaryUser');
+    $app->get('/membershipOrderSummary/{membershipTypeId}', '\UserController:membershipOrderSummaryAction')->setName('orderSummaryUser');
     $app->get('/addMembershipToCart/{membershipTypeId}', '\UserController:addMembershipToCartAction')->setName('addMembershipToCartUser');
     $app->get('/removeItemfromCart/{itemId}', '\UserController:removeItemfromCartAction')->setName('removeItemfromCartUser');
-    $app->post('/processOrder', '\UserController:processMembershipOrderAction')->setName('processOrder');
+    $app->post('/processMembershipOrder/{membershipTypeId}', '\UserController:processMembershipOrderAction')->setName('processMembershipOrder');
     $app->map(['GET', 'POST'], '/singleInvoice/{invoiceId}', '\UserController:singleInvoiceAction')->setName('singleInvoice');
-    $app->post('/confirmOrder', '\UserController:confirmOrderAction')->setName('confirmOrder');
+    $app->post('/confirmMembershipOrder/{membershipTypeId}', '\UserController:confirmMembershipOrderAction')->setName('confirmOrder');
     $app->map(['GET', 'POST'], '/manageMembership/{memberId}', '\UserController:manageMembershipAction')->setName('manageMembership');
     $app->map(['GET', 'POST'], '/cancelMembership/{memberId}', '\UserController:cancelMembershipAction')->setName('cancelMembership');
     $app->get('/sendInvoiceToUser/{invoiceId}', '\UserController:sendInvoiceToUserAction')->setName('sendInvoiceToUser');

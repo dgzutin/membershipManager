@@ -94,7 +94,7 @@
 
                 <h4>Your Invoice address:</h4>
 
-                <form data-toggle="validator" role="form" method="post" action="{{ path_for('confirmOrder')}}">
+                <form data-toggle="validator" role="form" method="post" action="{{ path_for('confirmOrder', { 'membershipTypeId': membershipTypeId }) }}">
 
                     {% if form_submission == true %}
 
@@ -118,28 +118,28 @@
                     {% endif %}
 
 
-                    <div class="form-group {% if form.name.error == true %}has-error{% endif %}">
+                    <div class="form-group">
                         <label class="control-label" for="name">Name</label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Name" value="{{ form.name.value }}" tabindex="1">
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Name" value="{{ billingInfo.name }}" tabindex="1">
                     </div>
 
-                    <div class="form-group {% if form.institution.error == true %}has-error{% endif %}">
+                    <div class="form-group">
                         <label class="control-label" for="institution">Institution</label>
-                        <input type="text" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution.value }}" tabindex="2">
+                        <input type="text" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ billingInfo.institution }}" tabindex="2">
                     </div>
 
-                    <div class="form-group {% if form.street.error == true %}has-error{% endif %}">
+                    <div class="form-group">
                         <label class="control-label" for="street">Street and Nr.</label>
-                        <input required type="text" name="street" id="street" class="form-control " placeholder="street" value="{{ form.street.value }}" tabindex="3">
+                        <input required type="text" name="street" id="street" class="form-control " placeholder="street" value="{{ billingInfo.street }}" tabindex="3">
                     </div>
 
 
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group {% if form.country.error == true %}has-error{% endif %}">
+                            <div class="form-group">
                                 <label for="">Country</label>
-                                <div  id="country" class="bfh-selectbox bfh-countries" data-country="{{ form.country.value }}"  data-name="country" data-flags="true">
+                                <div  id="country" class="bfh-selectbox bfh-countries" data-country="{{ billingInfo.country }}"  data-name="country" data-flags="true">
                                     <input type="hidden" value="">
                                     <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
                                         <span class="bfh-selectbox-option input-medium" data-option=""></span>
@@ -156,15 +156,15 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group {% if form.city.error == true %}has-error{% endif %}">
+                            <div class="form-group">
                                 <label for="city">City</label>
-                                <input required="required" type="text" name="city" id="city" class="form-control " placeholder="" value="{{ form.city.value }}" tabindex="5">
+                                <input required="required" type="text" name="city" id="city" class="form-control " placeholder="" value="{{ billingInfo.city }}" tabindex="5">
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-4 col-md-4">
-                            <div class="form-group {% if form.zip.error == true %}has-error{% endif %}">
+                            <div class="form-group">
                                 <label for="zip">ZIP</label>
-                                <input type="text" name="zip" id="zip" class="form-control " placeholder="" value="{{ form.zip.value }}" tabindex="6">
+                                <input type="text" name="zip" id="zip" class="form-control " placeholder="" value="{{ billingInfo.zip }}" tabindex="6">
                             </div>
                         </div>
                     </div>
@@ -172,16 +172,16 @@
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-6">
-                            <div class="form-group {% if form.vat.error == true %}has-error{% endif %}">
+                            <div class="form-group">
                                 <label for="vat">VAT Number of your institution (optional)</label>
-                                <input type="text" name="vat" id="vat" class="form-control " placeholder="" value="{{ form.vat.value }}" tabindex="5" data-error="" />
+                                <input type="text" name="vat" id="vat" class="form-control " placeholder="" value="{{ billingInfo.vat }}" tabindex="5" data-error="" />
                                 <div class="help-block with-errors"></div>
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6">
-                            <div class="form-group {% if form.reference.error == true %}has-error{% endif %}">
+                            <div class="form-group">
                                 <label for="reference">Reference (ex. order number, etc. Optional)</label>
-                                <input type="text" name="reference" id="reference" class="form-control " placeholder="" value="{{ form.reference.value }}" tabindex="6" data-error="">
+                                <input type="text" name="reference" id="reference" class="form-control " placeholder="" value="{{ billingInfo.reference }}" tabindex="6" data-error="">
                                 <div class="help-block with-errors"></div>
                             </div>
                         </div>

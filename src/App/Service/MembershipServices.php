@@ -102,8 +102,12 @@ class MembershipServices
                 elseif (($Membership->getCancelled() == true) AND ($membershipData['cancelled'] == 0)){
                     $Membership->setDateCancelled(null);
                 }
-                if ($membershipData['cancelled'] != null){
-                    $Membership->setCancelled($membershipData['cancelled']);
+
+                if ($membershipData['cancelled'] == 0){
+                    $Membership->setCancelled(false);
+                }
+                if ($membershipData['cancelled'] == 1){
+                    $Membership->setCancelled(true);
                 }
                 if ( isset($membershipData['reasonForCancel'])){
                     $Membership->setReasonForCancel($membershipData['reasonForCancel']);
@@ -119,10 +123,12 @@ class MembershipServices
                              'message' => $e->getMessage());
             }
 
+            $memberRes = $this->getMemberByMemberId($Membership->getMemberId());
+
             // In this case it is an update.
                return  array('exception' => false,
                              'renewal' => true,
-                             'membership' => $Membership,
+                             'member' => $memberRes['member'],
                              'message' => "Membership with member ID ".$Membership->getMemberId()." was updated");
         }
 
@@ -198,11 +204,14 @@ class MembershipServices
         $newUserToMembershipRelation->setIsOwner(true);
 
         $this->em->persist($newUserToMembershipRelation);
+
+        $memberRes = $this->getMemberByMemberId($newMembership->getMemberId());
+
         try{
             $this->em->flush();
             $result =  array('exception' => false,
                              'renewal' => false,
-                             'membership' => $newMembership,
+                             'member' => $memberRes['member'],
                              'message' => "Membership was created");
         }
         catch (\Exception $e){
@@ -238,51 +247,62 @@ class MembershipServices
     //Retrieve all membershipTypes available, including those for which the user is not a member, but can select from
     // It additionally appends information regarding the membership status of the user, provided he/she is a member.
     // If $returnOnlyOwnedMemberships is FALSE also memberships not owned by the user will be returned.
-    public function getMembershipTypeAndStatusOfUser(User $user, $membershipTypeId, $returnOnlyOwnedMemberships)
+    public function getMembershipTypeAndStatusOfUser(User $user, $membershipTypeId, $returnOnlyOwnedMemberships, $considerNotSelectable = false)
     {
+
         $repository = $this->em->getRepository('App\Entity\MembershipType');
 
-        if ($membershipTypeId == null){
+        if ($considerNotSelectable){
 
-            if ($user->getRole() == 'ROLE_ADMIN'){
-
-                $membershipTypes = $repository->createQueryBuilder('memberships')
-                    ->select('memberships')
-                    ->orderBy('memberships.listingOrder', 'ASC')
-                    ->getQuery()
-                    ->getResult();
-            }
-            else{
-                $membershipTypes = $repository->createQueryBuilder('memberships')
-                    ->select('memberships')
-                    ->where('memberships.selectable = :selectable')
-                    ->setParameter('selectable', true)
-                    ->orderBy('memberships.listingOrder', 'ASC')
-                    ->getQuery()
-                    ->getResult();
-            }
+            $membershipTypes = $repository->createQueryBuilder('memberships')
+                ->select('memberships')
+                ->orderBy('memberships.listingOrder', 'ASC')
+                ->getQuery()
+                ->getResult();
         }
         else{
-            if ($user->getRole() == 'ROLE_ADMIN'){
+            if ($membershipTypeId == null){
 
-                $membershipTypes = $repository->createQueryBuilder('memberships')
-                    ->select('memberships')
-                    ->where('memberships.id = :id')
-                    ->setParameter('id', $membershipTypeId)
-                    ->orderBy('memberships.listingOrder', 'ASC')
-                    ->getQuery()
-                    ->getResult();
+                if ($user->getRole() == 'ROLE_ADMIN'){
+
+                    $membershipTypes = $repository->createQueryBuilder('memberships')
+                        ->select('memberships')
+                        ->orderBy('memberships.listingOrder', 'ASC')
+                        ->getQuery()
+                        ->getResult();
+                }
+                else{
+                    $membershipTypes = $repository->createQueryBuilder('memberships')
+                        ->select('memberships')
+                        ->where('memberships.selectable = :selectable')
+                        ->setParameter('selectable', true)
+                        ->orderBy('memberships.listingOrder', 'ASC')
+                        ->getQuery()
+                        ->getResult();
+                }
             }
-            else {
-                $membershipTypes = $repository->createQueryBuilder('memberships')
-                    ->select('memberships')
-                    ->where('memberships.id = :id')
-                    ->andWhere('memberships.selectable = :selectable')
-                    ->setParameter('id', $membershipTypeId)
-                    ->setParameter('selectable', true)
-                    ->orderBy('memberships.listingOrder', 'ASC')
-                    ->getQuery()
-                    ->getResult();
+            else{
+                if ($user->getRole() == 'ROLE_ADMIN'){
+
+                    $membershipTypes = $repository->createQueryBuilder('memberships')
+                        ->select('memberships')
+                        ->where('memberships.id = :id')
+                        ->setParameter('id', $membershipTypeId)
+                        ->orderBy('memberships.listingOrder', 'ASC')
+                        ->getQuery()
+                        ->getResult();
+                }
+                else {
+                    $membershipTypes = $repository->createQueryBuilder('memberships')
+                        ->select('memberships')
+                        ->where('memberships.id = :id')
+                        ->andWhere('memberships.selectable = :selectable')
+                        ->setParameter('id', $membershipTypeId)
+                        ->setParameter('selectable', true)
+                        ->orderBy('memberships.listingOrder', 'ASC')
+                        ->getQuery()
+                        ->getResult();
+                }
             }
         }
 
@@ -296,10 +316,8 @@ class MembershipServices
                 ->select('Membership')
                 ->where('Membership.ownerId = :ownerId')
                 ->andWhere('Membership.membershipTypeId = :membershipTypeId')
-                ->andWhere('Membership.cancelled = :cancelled')
                 ->setParameter('ownerId', $user->getId())
                 ->setParameter('membershipTypeId', $membershipType->getId())
-                ->setParameter('cancelled', false)
                 ->getQuery()
                 ->getOneOrNullResult();
 
@@ -312,15 +330,18 @@ class MembershipServices
             if ($membership  != NULL){
 
                 //check membership validity
-                $validity = $this->getMembershipValidity($membership->getId(), $membershipType);
                 $validUntil_string = null;
                 $valid = null;
 
-                if (($validity['exception'] == false) AND ($validity['validity'] != NULL)){
+                if (!$membership->getCancelled()){
 
-                    $validUntil = $validity['validity']->getValidUntil();
-                    $valid = $validity['valid'];
-                    $validUntil_string = $validUntil->format('l jS F Y');
+                    $validity = $this->getMembershipValidity($membership->getId(), $membershipType);
+                    if (($validity['exception'] == false) AND ($validity['validity'] != NULL)){
+
+                        $validUntil = $validity['validity']->getValidUntil();
+                        $valid = $validity['valid'];
+                        $validUntil_string = $validUntil->format('l jS F Y');
+                    }
                 }
 
 
@@ -344,6 +365,7 @@ class MembershipServices
                                               //    'user' => $user,
                                                   'membershipGrade' => $membershipGrade,
                                                   'cancelled' => $membership->getCancelled(),
+                                                  'dateCancelled' => $membership->getDateCancelled(),
                                                   'memberId' => $membership->getMemberId(),
                                                   'valid' => $valid,
                                                   'validUntil' => $validUntil_string,
@@ -998,6 +1020,25 @@ class MembershipServices
 
         return $validitiy;
 
+    }
+
+    public function getMembershipTypeById($id)
+    {
+        try{
+            $repository = $this->em->getRepository('App\Entity\MembershipType');
+            $membershipType = $repository->createQueryBuilder('MembershipType')
+                ->select('MembershipType')
+                ->where('MembershipType.id = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+        return array ('exception' => false,
+            'membershipType' => $membershipType);
     }
 
     public function getMembershipType($membershipId)

@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('members') }}">Members</a></li>
+        <li class="breadcrumb-item active">Member {{ member.membership.memberId }}</li>
+    </ol>
+
+
+    <div class="panel-group">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Create new membership for {{ user.first_name }} {{ user.last_name }}</strong><div id="notification"></div></div>
+            <div class="panel-body">
+
+
+                <!-- Form starts here -->
+                <form data-toggle="validator" role="form" method="post" action="{{ path_for('addMemberAdmin', {'userId': user.Id}) }}">
+
+                <div class="well">
+
+                    <div class="row show-grid">
+                        <div class="col-md-8">
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><strong>Member ID:</strong></p></div>
+                                <div class="col-xs-12 col-md-6">
+
+
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="membershipGrade">Member grade:</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+
+                                    <select class="form-control" id="membershipGrade" name="membershipGrade">
+
+                                        <option value="-1">None</option>
+                                        {% for memberGrade in memberGrades %}
+                                            <option value="{{ memberGrade.id }}" {% if member.memberGrade.id == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="membershipTypeId">Type</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <select class="form-control" id="membershipTypeId" name="membershipTypeId">
+                                        {% for membershipType in membershipTypes %}
+                                            {% if membershipType.owner == false %}
+                                                <option value="{{ membershipType.id }}">{{ membershipType.typeName }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="comments">Comments</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <textarea class="form-control" rows="3" id="comments" name="comments"></textarea>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-12 col-md-3"><p class="text-right"><label for="cancelled">Status:</label></p></div>
+                                <div class="col-xs-12 col-md-6">
+                                    <select class="form-control" id="cancelled" name="cancelled">
+                                        <option value="0" selected>Continued</option>
+                                        <option value="1">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4">
+
+                            <p class="text-right">
+
+                                <a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">{{ user.title }} {{ user.first_name }} {{ user.last_name }}</a><br>
+                                {{ user.institution }} <br>
+                                {{ user.street }} <br>
+                                {{ user.city }} {{ user.zip }} <br>
+                                <span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span><br>
+                                <a href="mailto:{{ member.user.email_1 }}">{{ user.email_1 }}</a><br>
+
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-right"><button class="btn btn-success btn-md" type="submit">Save membership</button></p>
+
+                    <!-- Wells ends here -->
+                    </div>
+
+                    <!-- Form ends here -->
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS file  ============================================== -->
+    <script src="{{ baseUrl }}/assets/js/memberhipManager.js"></script>
+
+
+{% endblock %}

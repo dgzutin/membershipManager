@@ -34,7 +34,7 @@
                                     <p class="text-danger">(Users cannot select this group. Available only to admins)</p>
                                 {% endif %}
 
-                                {%  if membershipType.owner == true %}
+                                {%  if membershipType.owner == true and membershipType.cancelled == false %}
 
                                     {%  if membershipType.membershipGrade != null %}
 
@@ -58,7 +58,7 @@
 
                                     {% endif %}
 
-                                    {% if membershipType.validUntil != null or membershipType.cancelled %}
+                                    {% if membershipType.validUntil != null %}
 
                                         {% if membershipType.valid == false %}
 
@@ -105,7 +105,7 @@
                                     {% endif %}
 
 
-                            {% else %}
+                                {% else %}
 
                                 <strong>Description:</strong> {{ membershipType.description }}
 
@@ -121,7 +121,7 @@
 
                                 <div class="row show-grid">
                                     <div class="col-xs-12 col-md-8">
-                                        <a class="btn btn-success btn-md" href="{{ path_for('membershipData', { 'membershipTypeId': membershipType.id }) }}" role="button"><spam class="fa fa-star"></spam> Become a member</a>
+                                        <a class="btn btn-success btn-md" href="{{ path_for('membershipData', { 'membershipTypeId': membershipType.id }) }}" role="button"><spam class="fa fa-plus"></spam> Apply now</a>
                                     </div>
                                     <div class="col-xs-6 col-md-4">
                                         <p class="text-right"><a class="btn btn-warning btn-md" data-toggle="modal" data-target="#terms_{{ membershipType.id }}">Terms and Conditions</a></p>

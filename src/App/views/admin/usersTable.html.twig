@@ -12,11 +12,11 @@
             <div class="panel-heading"><strong>Manage Users and Members</strong></div>
             <div class="panel-body">
 
-                <table class="display" id="users" cellspacing="0" width="100%">
+                <table class="display" id="users" cellspacing="0" width="100%" style="font-size: smaller">
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Account status</th>
+                        <th>Account</th>
                         <th>Name</th>
                         <th>Country</th>
                         <th>Email</th>
@@ -38,10 +38,14 @@
                             <td>{{ user.lastName }}, {{ user.firstName }}</td>
                             <td><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span></td>
                             <td>{{ user.email1 }}</td>
-                            <td>{% if user.member == true %}<spam class="fa fa-star"> Member</spam> {% else %} not a member {% endif %}</td>
+                            <td>{% if user.member == true %}
+                                    <a href="{{ path_for('members', { 'userId': user.id }) }}"><span class="fa fa-star"></span> Membership(s)</a>
+                                {% else %}
+                                    <a href="{{ path_for('addMemberAdmin', { 'userId': user.id }) }}"><span class="fa fa-plus"></span> Make member</a>
+                                {% endif %}</td>
                             <td>
-                                <p style="font-size: smaller"><a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">Edit user</a><br>
-                                    <a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"> Invoices and receipts</a></p>
+                                <a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}">Edit user</a><br>
+                                <a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"> Invoices and receipts</a>
                             </td>
                         </tr>
                     {% endfor %}

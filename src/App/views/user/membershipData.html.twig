@@ -174,9 +174,8 @@
                     </div>
 
 
-                    <form id="process_order" data-toggle="validator" role="form" method="post" action="{{ path_for('processOrder')}}">
+                    <form id="process_order" data-toggle="validator" role="form" method="post" action="{{ path_for('processMembershipOrder', { 'membershipTypeId': membershipType.id }) }}">
 
-                        <input type="hidden" name="free_membership" id="free_membership" class="form-control " placeholder="" value="free" tabindex="6" data-error="">
                         <input type="hidden" name="membershipTypeId" id="membershipTypeId" class="form-control " placeholder="" value="{{  membershipType.id }}" tabindex="6" data-error="">
 
                         <hr>
@@ -188,11 +187,11 @@
 
                                 {% if membershipType.validUntil != null or membershipType.cancelled %}
 
-                                    <a class="btn btn-success" href="{{ path_for('addMembershipToCartUser', { 'membershipTypeId': membershipType.id }) }}">Proceed to add billing information</a>
+                                    <a class="btn btn-success" href="{{ path_for('addMembershipToCartUser', { 'membershipTypeId': membershipType.id }) }}">Proceed and add billing information</a>
 
                                 {% else %}
 
-                                    <a class="btn btn-success disabled" href="{{ path_for('addMembershipToCartUser', { 'membershipTypeId': membershipType.id }) }}">Proceed to add billing information</a>
+                                    <a class="btn btn-success disabled" href="{{ path_for('addMembershipToCartUser', { 'membershipTypeId': membershipType.id }) }}">Proceed and add billing information</a>
 
                                 {% endif %}
 
