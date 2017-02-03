@@ -347,19 +347,19 @@
 
                                                             <tr>
                                                                 <td class="desc">{{ item.name }} (qty. {{ item.quantity }}) </td>
-                                                                <td class="alignright">{{ invoiceData.currency }} {{ item.totalPrice }}</td>
+                                                                <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(item.totalPrice) }}</td>
                                                             </tr>
 
                                                         {% endfor %}
 
                                                         <tr>
                                                             <td class="alignright" width="80%">Total:</td>
-                                                            <td class="alignright">{{ invoiceData.currency }} {{ totalPrice }}</td>
+                                                            <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(totalPrice) }}</td>
                                                         </tr>
 
                                                         <tr>
                                                             <td class="alignright" width="80%">Amount paid:</td>
-                                                            <td class="alignright">{{ invoiceData.currency }} {{ amountPaid }}</td>
+                                                            <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(amountPaid) }}</td>
                                                         </tr>
 
                                                         <tr>
@@ -369,7 +369,7 @@
 
                                                         <tr class="total">
                                                             <td class="alignright" width="80%">Total:</td>
-                                                            <td class="alignright">{{ invoiceData.currency }} {{ outstandingAmount }}</td>
+                                                            <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(outstandingAmount) }}</td>
                                                         </tr>
 
                                                     </table>

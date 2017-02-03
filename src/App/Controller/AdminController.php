@@ -391,7 +391,7 @@ class AdminController {
         }
 
         $result = $this->userServices-> getInvoices($userId);
-        $result['user'] =$invoiceOwner;
+        $result['user'] = $invoiceOwner;
 
         return $this->container->view->render($response, 'admin/adminUserInvoicesReceipts.html.twig', $result);
     }
@@ -431,29 +431,6 @@ class AdminController {
             return $this->container->view->render($response, 'userNotification.twig', $userResp);
         }
 
-        // Convert all prices to locale settings ---------------------
-        $shoppingCartServices = $this->container->get('shoppingCartServices');
-        $totalPrice_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['totalPrice']);
-        $amountPaid_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['amountPaid']);
-        $outstandingAmount_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['outstandingAmount']);
-        $items = $respInvoiceData['invoiceItems'];
-
-        $i = 0;
-        foreach ($items as $item){
-            $items[$i]->setUnitPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getUnitPrice()));
-            $items[$i]->setTotalPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getTotalPrice()));
-            $i++;
-        }
-
-        // END Convert all prices to locale settings ---------------------
-
-        $isPost = false;
-
-        if ($request->isPost()){
-            $messagePaypal = $request->getBody();
-            $isPost = true;
-        }
-
         return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
@@ -463,14 +440,14 @@ class AdminController {
             'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
-            'totalPrice' =>  $totalPrice_formatted,
-            'amountPaid' => $amountPaid_formatted,
-            'outstandingAmount' => $outstandingAmount_formatted,
-            'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
+            'totalPrice' =>  $respInvoiceData['totalPrice'],
+            'amountPaid' => $respInvoiceData['amountPaid'],
+            'outstandingAmount' => $respInvoiceData['outstandingAmount'],
+            'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
             'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
             'invoiceLink' => $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message'],
-            'isPost' =>$isPost));
+            'isPost' =>$request->isPost()));
     }
 
     public function createNewsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)

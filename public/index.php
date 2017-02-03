@@ -63,6 +63,13 @@ $container['view'] = function ($container) {
     $twigEnv->addGlobal('systemInfo', $systemInfo);
     $twigEnv->addGlobal('base_url', $container['utilsServices']->getBaseUrl( $container['request']));
 
+    $convertAmount = new Twig_SimpleFunction('formatAmount', function ($amount) {
+
+        return number_format($amount,2,".","");
+    });
+
+    $twigEnv->addFunction($convertAmount);
+
     return $view;
 };
 
@@ -109,6 +116,13 @@ $container['mailServices'] = function ($container) {
     $twig = new Twig_Environment($loader, array(
         'cache' =>  $jsonConfig->twig->emailTemplateCache
     ));
+
+    $convertAmount = new Twig_SimpleFunction('formatAmount', function ($amount) {
+
+        return number_format($amount,2,".","");
+    });
+
+    $twig->addFunction($convertAmount);
     
     return new Service\MailServices($mailer, $message, $twig, $container);
 };
@@ -190,6 +204,7 @@ $app->group('/user', function () use ($app) {
     $app->get('/sendInvoiceToUser/{invoiceId}', '\UserController:sendInvoiceToUserAction')->setName('sendInvoiceToUser');
     $app->map(['GET', 'POST'], '/newsletterArticle', '\UserController:newsletterArticleAction')->setName('newsletterArticle');
     $app->get('/newsletters', '\UserController:newslettersAction')->setName('userNewsletters');
+    $app->get('/myInvoices', '\UserController:invoicesAction')->setName('userInvoices');
 
     $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
 

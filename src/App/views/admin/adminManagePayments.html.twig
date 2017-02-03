@@ -31,7 +31,7 @@
                             <div class="form-group">
                                 <label for="amountPaid">Amount in {{ invoiceData.invoice.currency }}:</label>
                                 <p class="text-muted" style="font-size: smaller">(use "." as decimal separator)</p>
-                                <input id="amountPaid" name="amountPaid" type="number" step=0.01 class="form-control" value="{{ invoiceData.outstandingAmount }}">
+                                <input id="amountPaid" name="amountPaid" type="number" step=0.01 class="form-control" value="{{ formatAmount(invoiceData.outstandingAmount) }}">
                             </div>
                         </div>
 

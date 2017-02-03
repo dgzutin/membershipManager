@@ -75,18 +75,18 @@
                     </thead>
                     <tbody>
 
-                    {%  for invoices in openInvoicesArray %}
+                    {%  for invoice in openInvoicesArray %}
 
                         <tr class="">
-                            <td>{{ invoices.invoiceId }}</td>
-                            <td>{{ invoices.invoiceDate }}</td>
-                            <td>{{ invoices.invoice.dueDate | date('jS F Y') }}</td>
-                            <td>{{ invoices.invoiceCurrency }} {{ invoices.amountPaid }}</td>
-                            <td>{{ invoices.invoiceCurrency }} {{ invoices.outstandingAmount }}</td>
-                            <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
-                            <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                            <td>{{ invoice.invoiceId }}</td>
+                            <td>{{ invoice.invoiceDate }}</td>
+                            <td>{{ invoice.invoice.dueDate | date('jS F Y') }}</td>
+                            <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoice.amountPaid) }}</td>
+                            <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</td>
+                            <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoice.invoiceId }) }}">payments</a></td>
+                            <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoice.invoiceId }) }}">open</a></td>
                             <td>
-                                <a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoices.invoiceId }) }}"><img height="15px" src="/assets/images/mail_sent.png"></a>
+                                <a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoice.invoiceId }) }}"><img height="15px" src="/assets/images/mail_sent.png"></a>
                             </td>
                         </tr>
 
@@ -112,16 +112,16 @@
                     </thead>
                     <tbody>
 
-                    {%  for invoices in closedInvoicesArray %}
+                    {%  for invoice in closedInvoicesArray %}
 
                         <tr class="">
-                            <td>{{ invoices.invoiceId }}</td>
-                            <td>{{ invoices.invoiceDate }}</td>
-                            <td>{{ invoices.invoice.dueDate | date('jS F Y') }}</td>
-                            <td>{{ invoices.invoiceCurrency }} {{ invoices.amountPaid }}</td>
-                            <td>{{ invoices.invoiceCurrency }} {{ invoices.outstandingAmount }}</td>
-                            <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoices.invoiceId }) }}">payments</a></td>
-                            <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                            <td>{{ invoice.invoiceId }}</td>
+                            <td>{{ invoice.invoiceDate }}</td>
+                            <td>{{ invoice.invoice.dueDate | date('jS F Y') }}</td>
+                            <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoice.amountPaid) }}</td>
+                            <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</td>
+                            <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoice.invoiceId }) }}">payments</a></td>
+                            <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoice.invoiceId }) }}">open</a></td>
                             <td>
                                 <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
                             </td>

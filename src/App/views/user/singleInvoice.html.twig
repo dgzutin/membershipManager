@@ -67,9 +67,9 @@
                 <tr>
                     <td class="no">{{ loop.index }}</td>
                     <td class="desc"><h3>{{ item.name }}</h3></td>
-                    <td class="unit">{{ invoiceData.currency }} {{ item.unitPrice }}</td>
+                    <td class="unit">{{ invoiceData.currency }} {{ formatAmount(item.unitPrice) }}</td>
                     <td class="qty">{{ item.quantity }}</td>
-                    <td class="total">{{ invoiceData.currency }} {{ item.totalPrice }}</td>
+                    <td class="total">{{ invoiceData.currency }} {{ formatAmount(item.totalPrice) }}</td>
                 </tr>
 
             {% endfor %}
@@ -79,7 +79,7 @@
             <tr>
                 <td colspan="2"></td>
                 <td colspan="2">SUBTOTAL</td>
-                <td>{{ invoiceData.currency }} {{ totalPrice }}</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(totalPrice) }}</td>
             </tr>
             <tr>
                 <td colspan="2"></td>
@@ -90,13 +90,13 @@
             <tr>
                 <td colspan="2"></td>
                 <td colspan="2">Amount paid</td>
-                <td>{{ invoiceData.currency }} {{ amountPaid }}</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(amountPaid) }}</td>
             </tr>
 
             <tr>
                 <td colspan="2"></td>
                 <td colspan="2">AMOUNT DUE</td>
-                <td>{{ invoiceData.currency }} {{ outstandingAmount }}</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(outstandingAmount) }}</td>
             </tr>
             </tfoot>
         </table>

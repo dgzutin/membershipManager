@@ -179,10 +179,8 @@ class UserController {
 
 
         $totalPrice = $shoppingCartServices->getTotalPrice($itemsResp['items']);
-        $totalPrice = $shoppingCartServices->convertAmountToLocaleSettings($totalPrice);
-        $items = $shoppingCartServices->convertAmountsToLocaleSettings($itemsResp['items']);
 
-        if (count($items) == 0){
+        if (count($itemsResp['items']) == 0){
 
             // If shopping cart is empty return to home
             $uri = $this->utilsServices->getBaseUrl($request).'/user/home';
@@ -192,7 +190,7 @@ class UserController {
         return $this->container->view->render($response, 'user/oderSummary.twig', array(
             'exception' => false,
             'membershipTypeId' => (int)$args['membershipTypeId'],
-            'items' => $items,
+            'items' => $itemsResp['items'],
             'totalPrice' => $totalPrice,
             'removeItemBaseUrl' => $this->utilsServices->getBaseUrl($request). '/user/removeItemfromCart',
             'message' => '',
@@ -334,29 +332,7 @@ class UserController {
 
             return $this->container->view->render($response, 'userNotification.twig', $respInvoiceData);
         }
-
-        // Convert all prices to locale settings ---------------------
-        $shoppingCartServices = $this->container->get('shoppingCartServices');
-        $totalPrice_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['totalPrice']);
-        $amountPaid_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['amountPaid']);
-        $outstandingAmount_formatted = $shoppingCartServices->convertAmountToLocaleSettings($respInvoiceData['outstandingAmount']);
-        $items = $respInvoiceData['invoiceItems'];
-
-        $i = 0;
-        foreach ($items as $item){
-            $items[$i]->setUnitPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getUnitPrice()));
-            $items[$i]->setTotalPrice($shoppingCartServices->convertAmountToLocaleSettings($item->getTotalPrice()));
-            $i++;
-        }
-
-        // END Convert all prices to locale settings ---------------------
-
-        $isPost = false;
-
-        if ($request->isPost()){
-            $messagePaypal = $request->getBody();
-            $isPost = true;
-        }
+        
 
         return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
             'user' => $user,
@@ -367,14 +343,14 @@ class UserController {
             'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
-            'totalPrice' =>  $totalPrice_formatted,
-            'amountPaid' => $amountPaid_formatted,
-            'outstandingAmount' => $outstandingAmount_formatted,
-            'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'], //original US locale to be passed to paypal.
+            'totalPrice' =>  $respInvoiceData['totalPrice'],
+            'amountPaid' => $respInvoiceData['amountPaid'],
+            'outstandingAmount' => $respInvoiceData['outstandingAmount'],
+            'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
             'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
             'invoiceLink' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message'],
-            'isPost' =>$isPost));
+            'isPost' =>$request->isPost()));
 
     }
 
@@ -526,6 +502,23 @@ class UserController {
         $result = $this->userServices->getPublishedNewsletters();
 
         return $this->container->view->render($response, 'user/publishedNewsletters.html.twig', $result);
+    }
+    
+    public function invoicesAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = $_SESSION['user_id'];
+
+        $user = $this->userServices->getUserById($userId);
+        if ($user['exception'] == true){
+
+            return $this->container->view->render($response, 'userNotification.twig', $user);
+        }
+        $invoiceOwner =  $user['user'];
+
+        $result = $this->userServices-> getInvoices($userId);
+        $result['user'] = $invoiceOwner;
+
+        return $this->container->view->render($response, 'user/userInvoices.html.twig', $result);
     }
 
     
