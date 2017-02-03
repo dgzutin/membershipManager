@@ -82,7 +82,7 @@
                             <td>{{ invoice.invoiceDate }}</td>
                             <td>{{ invoice.invoice.dueDate | date('jS F Y') }}</td>
                             <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoice.amountPaid) }}</td>
-                            <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</td>
+                            <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoice.outstandingAmount) }}</td>
                             <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoice.invoiceId }) }}">payments</a></td>
                             <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoice.invoiceId }) }}">open</a></td>
                             <td>

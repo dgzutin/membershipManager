@@ -717,7 +717,7 @@ class UserServices
         if ($userId != NULL){
 
             try{
-                $invoices = $repository->findBy(array('userId' => $userId), array('id' => 'DESC'));
+                $invoices = $repository->findBy(array('userId' => $userId), array('createDate' => 'DESC'));
             }
             catch (\Exception $e){
                 return array('exception' => true,
