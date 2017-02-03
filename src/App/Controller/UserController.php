@@ -136,8 +136,6 @@ class UserController {
         $user = $this->userServices->getUserById($_SESSION['user_id']);
         $result = $this->membershipServices->getMembershipTypeAndStatusOfUser($user['user'], NULL, false);
 
-        echo json_encode($result);
-
         if ($result['exception'] == true){
             return $this->container->view->render($response, 'userNotification.twig', $result);            
         }
