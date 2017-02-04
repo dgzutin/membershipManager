@@ -10,6 +10,7 @@
 use App\Controller;
 use App\Service;
 use App\Middleware\UserAuthenticationMiddleware;
+use App\Middleware\ApiAuthenticationMiddleware;
 use App\EmFactory;
 
 require '../vendor/autoload.php';
@@ -232,7 +233,7 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/deleteNewsletter', '\ApiController:deleteNewsletterAction' )->setName('deleteNewsletter');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
+})->add(new ApiAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
 
 $app->group('/api-user/v1', function () use ($app) {
 
@@ -241,7 +242,7 @@ $app->group('/api-user/v1', function () use ($app) {
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN'), $container));
+})->add(new ApiAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN'), $container));
 
 // Define the public routes
 $app->get('/', '\PublicController:homeAction');

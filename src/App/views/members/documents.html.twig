@@ -2,20 +2,35 @@
 
 {% block mainPanel %}
 
-    <!-- Bootstrap core CSS -->
-    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
-
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
-    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
-
-    <!-- jQuery and jQuery UI (REQUIRED) -->
-    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-
     <!-- elFinder CSS (REQUIRED) -->
     <link rel="stylesheet" type="text/css" href="{{ baseUrl }}/assets/elFinder-2.1.14/css/elfinder.min.css">
     <link rel="stylesheet" type="text/css" href="{{ baseUrl }}/assets/elFinder-2.1.14/css/theme.css">
+
+    <div class="panel-group">
+    <div class="panel panel-primary">
+    <div class="panel-heading"><strong>Member's Area: Documents</strong></div>
+
+    {% if validMembershipFound %}
+
+        <div class="panel-body" id="elfinder"></div>
+
+    {% else %}
+
+        <div class="panel-body">
+        <div class="row">
+           <div class="col-xs-12 col-md-12">
+               <div class="alert alert-danger">
+                   <p class="text-center">You do not have permission to access this area. You are either not a member or your membership(s) has/have expired.</p>
+                   <p class="text-center"><a href="{{ path_for('homeUser')}}">Return to main page</a></p>
+               </div>
+           </div>
+        </div>
+        </div>
+    {% endif %}
+
+    </div>
+    </div>
+
 
     <!-- elFinder JS (REQUIRED) -->
     <script src="{{ baseUrl }}/assets/elFinder-2.1.14/js/elfinder.min.js"></script>
@@ -33,21 +48,10 @@
         $(document).ready(function() {
             $('#elfinder').elfinder({
                 url : '{{ path_for('elFinderConnector')}}',  // connector URL (REQUIRED)
-                defaultView : 'list',
+                defaultView : 'list'
                 // , lang: 'ru'                    // language (OPTIONAL)
             });
         });
     </script>
-
-    <div class="panel-group">
-
-        <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Member's Area: Documents</strong></div>
-            <div class="panel-body" id="elfinder">
-
-            </div>
-        </div>
-
-    </div>
 
 {% endblock %}

@@ -590,16 +590,9 @@ class UserController {
 
        // $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
 
-        $repository = $this->em->getRepository('App\Entity\NewsletterArticle');
-        $articles = $repository->createQueryBuilder('article')
-            ->select('article.id')
-            ->where('article.newsletterId = :newsletterId')
-            ->setParameter('newsletterId', 1)
-            ->getQuery()
-            ->getScalarResult();
+        $memberships = $this->membershipServices->getMembershipsForUser($_SESSION['user_id']);
 
-
-        var_dump($this->userServices->deleteNewsletter(1, true));
+        echo json_encode($memberships);
 
     }
     

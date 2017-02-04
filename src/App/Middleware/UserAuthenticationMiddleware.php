@@ -54,7 +54,7 @@ class UserAuthenticationMiddleware
         }
         $_SESSION['orig_uri'] = $baseUrl.$_SERVER['REQUEST_URI'];
 
-        return $response = $response->withRedirect($loginUrl, 403);
+        return $response->withRedirect($loginUrl, 403);
         
     }
 }

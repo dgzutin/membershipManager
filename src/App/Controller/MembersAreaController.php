@@ -19,10 +19,13 @@ class MembersAreaController{
         $this->container = $container;
         $this->systemInfo = $container->get('userServices')->getSystemInfo();
         $this->utilsServices = $container->get('utilsServices');
+        $this->membershipServices = $container->get('membershipServices');
     }
 
     public function elFinderConnectorAction(ServerRequestInterface $request, ResponseInterface $response)
     {
+        //echo json_encode($memberships);
+
         //TODO: Define different access rights based on the Membership Type if needed. At the moment only ADMIN has all rights
 
         $userService = $this->container->get('userServices');
@@ -76,6 +79,7 @@ class MembersAreaController{
                     break;
 
                 default:
+
                     $opts = array(
                         // 'debug' => true,
                         'roots' => array(
@@ -113,7 +117,6 @@ class MembersAreaController{
                             )
                         )
                     );
-
                     break;
 
             }
@@ -152,7 +155,18 @@ class MembersAreaController{
     public function documentsAction(ServerRequestInterface $request, ResponseInterface $response)
     {
 
-        return $this->container->view->render($response, 'members/documents.html.twig', array('user_role' => $_SESSION['user_role']));
+        //determine if user's memberships are valid
+        $memberships = $this->membershipServices->getMembershipsForUser($_SESSION['user_id']);
+
+        if ($memberships['exception']){
+            return $this->container->view->render($response, 'userNotification.twig', array (
+                'exception' => true,
+                'message' => $memberships['message']));
+        }
+
+        return $this->container->view->render($response, 'members/documents.html.twig', $memberships);
+
+
     }
 
 }
