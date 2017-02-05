@@ -166,22 +166,21 @@ class ShoppingCartServices
 
             try{
                 $this->em->flush();
-                $result = array('exception' => false,
+                return array('exception' => false,
                     'message' => "Item(s) was/were removed");
             }
             catch (\Exception $e){
-                $result = array('exception' => true,
+                return array('exception' => true,
                     'message' => $e->getMessage());
             }
         }
 
-        return $result;
-
+        return array('exception' => true,
+            'message' => 'Item not found');
     }
 
-    public function emptyCart()
+    public function emptyCart($userId)
     {
-        $userId = $_SESSION['user_id'];
         $repository =$this->em->getRepository('App\Entity\ShoppingCartItem');
         $cartItems = $repository->createQueryBuilder('cartItem')
             ->select('cartItem')
@@ -206,8 +205,6 @@ class ShoppingCartServices
                 }
             }
         }
-
-
     }
 
     

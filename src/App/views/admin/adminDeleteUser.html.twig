@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('usersTableView') }}">Users</a></li>
+        <li class="breadcrumb-item active">User {{ user.id }}</li>
+    </ol>
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>User Data</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        {% if form_submission == true %}
+
+                            {% if exception == true %}
+                                <div class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if exception == true %}
+                                <div class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+
+                {% if purgeResult == null %}
+
+                <form data-toggle="validator" role="form" method="post">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                        <p class="text-danger"><span class="fa fa-exclamation-triangle"></span>
+                            <strong>
+                                ATTENTION: This action will delete all data of of the following user. This includes all memberships, invoices, payments, and membership renewals.
+                                This action is irreversible. Are you sure you want to proceed?
+                            </strong>
+                        </p>
+                            <div class="well">
+                                User ID: {{ user.id }}
+                                <br><strong>{{ user.title }} {{ user.first_name }} {{ user.last_name }}</strong>
+                                <br>{{ user.institution }}
+                                <br>{{ user.street }}
+                                <br>{{ user.zip }} {{ user.city }}
+                                <br><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
+                                <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
+                            </div>
+
+                            <p class="text-primary">This is the owner of {{ memberships.membershipFound }} memberships(s):</p>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-md-6">
+
+                            <table class="table table-striped table-bordered table-hover" id="members" cellspacing="0" width="100%" style="font-size: smaller">
+                                <thead>
+                                <tr>
+                                    <th>Member ID</th>
+                                    <th>Expiry date</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {%  for membership in memberships.memberships %}
+                                    <tr class="">
+                                        <td>{{ membership.memberId }}</td>
+                                        <td>
+                                            {% if member.valid == true  %}
+
+                                                <span class="text-success">{{ membership.validUntil_string }}</span>
+
+                                            {% else %}
+
+                                                <span class="text-danger">{{ membership.validUntil_string }}</span>
+
+                                            {% endif %}
+                                        </td>
+                                        <td><a href="{{ path_for('adminMember', { 'memberId': membership.memberId }) }}">view details</a></td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-xs-6 col-md-6">
+                            <p class="text-right">
+                                <button type="submit" class="btn btn-danger">Delete user #{{ user.id }}</button>
+                            </p>
+                        </div>
+                    </div>
+                </form>
+
+                {% else %}
+
+
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

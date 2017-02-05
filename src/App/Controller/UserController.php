@@ -132,7 +132,7 @@ class UserController {
     public function selectMembershipAction(ServerRequestInterface $request, ResponseInterface $response)
     {
 
-        $this->shoppingCartServices->emptyCart();
+        $this->shoppingCartServices->emptyCart((int)$_SESSION['user_id']);
         $user = $this->userServices->getUserById($_SESSION['user_id']);
         $result = $this->membershipServices->getMembershipTypeAndStatusOfUser($user['user'], NULL, false);
 
@@ -237,7 +237,7 @@ class UserController {
 
     public function processMembershipOrderAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $userId = $_SESSION['user_id'];
+        $userId = (int)$_SESSION['user_id'];
         $userResp = $this->userServices->getUserById($userId);
         $user =  $userResp['user'];
 
@@ -292,7 +292,7 @@ class UserController {
 
             if ($resultsGenInvoice['exception'] == false){
                 //delete shopping cart items if invoice is generated
-                $shoppingCartServices->emptyCart();
+                $shoppingCartServices->emptyCart($userId);
 
                 return $this->container->view->render($response, '/user/confirmationAndPayment.html.twig', 
                     array('resultsGenInvoice' => $resultsGenInvoice));
@@ -585,14 +585,13 @@ class UserController {
 
        // $result = $this->billingServices->addPayment(38, 75.00, NULL, 'WIRE_TRANSFER', NULL);
 
-        $result = $request->getUri()->getPort();
-
 
        // $result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
 
-        $memberships = $this->membershipServices->getMembershipsForUser($_SESSION['user_id']);
+        $result = $this->userServices->purgeUser(40);
 
-        echo json_encode($memberships);
+
+       echo json_encode($result);
 
     }
     

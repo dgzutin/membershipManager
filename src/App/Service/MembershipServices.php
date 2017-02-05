@@ -614,18 +614,30 @@ class MembershipServices
     }
 
 
-    public function getMembershipsForUser($userId)
+    public function getMembershipsForUser($userId, $includeCancelled = false)
     {
+        if ($includeCancelled){
 
-        $repository = $this->em->getRepository('App\Entity\Membership');
-        $memberships = $repository->createQueryBuilder('Membership')
-            ->select('Membership')
-            ->where('Membership.ownerId = :ownerId')
-            ->andWhere('Membership.cancelled = :cancelled')
-            ->setParameter('ownerId', $userId)
-            ->setParameter('cancelled', false)
-            ->getQuery()
-            ->getResult();
+            $repository = $this->em->getRepository('App\Entity\Membership');
+            $memberships = $repository->createQueryBuilder('Membership')
+                ->select('Membership')
+                ->where('Membership.ownerId = :ownerId')
+                ->setParameter('ownerId', $userId)
+                ->getQuery()
+                ->getResult();
+        }
+        else{
+            $repository = $this->em->getRepository('App\Entity\Membership');
+            $memberships = $repository->createQueryBuilder('Membership')
+                ->select('Membership')
+                ->where('Membership.ownerId = :ownerId')
+                ->andWhere('Membership.cancelled = :cancelled')
+                ->setParameter('ownerId', $userId)
+                ->setParameter('cancelled', $includeCancelled)
+                ->getQuery()
+                ->getResult();
+        }
+
 
         $membershipsArray = null;
         $validMembershipsFound = false;
@@ -692,7 +704,7 @@ class MembershipServices
                     'valid' => $validity['valid'],
                     'validUntil' => $validUntil,
                     'validUntil_string' => $validUntil_string,
-                    'id' => $membershipType->getId(),
+                    'id' => $membership->getId(),
                     'typeName' => $membershipType->getTypeName(),
                     'typeId' => $membershipType->getId(),
                     'description' => $membershipType->getDescription(),
@@ -1201,7 +1213,117 @@ class MembershipServices
                      'message' => 'Your membership with member ID'.$memberId.' was terminated');
 
     }
-    
+
+    public function deleteValiditiesForMembership($id)
+    {
+        $validitiesResp = $this->getValiditiesForMembershipId($id);
+
+        if ($validitiesResp['exception'] == false) {
+
+            $validityIds = null;
+            $i = 0;
+            $results = null;
+            foreach ($validitiesResp['membershipValidities'] as $validity) {
+                $validityIds[$i] = $validity->getId();
+                $i++;
+            }
+            return $this->deleteValidities($validityIds);
+        }
+        return $validitiesResp;
+    }
+
+    public function deleteUserMembersRelation($membershipId)
+    {
+
+        $repository = $this->em->getRepository('App\Entity\UserToMemberRelation');
+        $userToMemberRelation = $repository->createQueryBuilder('relation')
+            ->select('relation')
+            ->where('relation.membershipId = :membershipId')
+            ->setParameter('membershipId', $membershipId)
+            ->getQuery()
+            ->getResult();
+
+        $i=0;
+        $deletedCount = 0;
+        $results = null;
+        foreach ($userToMemberRelation as $relation){
+
+            $relId = $relation->getId();
+            try{
+                $this->em->remove($relation);
+                $this->em->flush();
+
+                $results[$i] = array('exception' => false,
+                    'membershipId' => $membershipId,
+                    'relId' => $relId,
+                    'message' => 'Relation successfully deleted');
+                $deletedCount ++;
+            }
+            catch (\Exception $e){
+                $results[$i] = array('exception' => true,
+                    'membershipId' => $membershipId,
+                    'message' => $e->getMessage());
+            }
+            $i++;
+        }
+
+        return array('exception' => false,
+            'results' => $results,
+            'message' => $deletedCount.' member to user relationships deleted.');
+    }
+
+    public function deleteMemberships($ids)
+    {
+        $results = null;
+        $i = 0;
+        $deletedCount = 0;
+        foreach ($ids as $id){
+
+            $repository = $this->em->getRepository('App\Entity\Membership');
+            $membership = $repository->createQueryBuilder('membership')
+                ->select('membership')
+                ->where('membership.id = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if ($membership != null){
+
+                try{
+                    $this->em->remove($membership);
+                    $this->em->flush();
+
+                    $results[$i] = array('exception' => false,
+                        'membershipId' => $id,
+                        'validities' => $this->deleteValiditiesForMembership($id),
+                        'relations' => $this->deleteUserMembersRelation($id),
+                        'message' => 'Membership successfully deleted');
+                    $deletedCount ++;
+                }
+                catch (\Exception $e){
+                    $results[$i] = array('exception' => true,
+                        'membershipId' => $id,
+                        'message' => $e->getMessage());
+                }
+            }
+            else{
+                $results[$i] = array('exception' => true,
+                    'membershipId' => $id,
+                    'message' => 'Membership with id '.$id.' not found');
+            }
+            $i++;
+        }
+
+        //check if at least one delete membership failed
+        $exception = false;
+        foreach ($results as $result){
+            $exception = ($exception OR $result['exception']);
+        }
+
+        return array('exception' => $exception,
+            'results' => $results,
+            'message' => $deletedCount.' Membership(s) deleted');
+    }
 
     //implements binary search to find object by ID in array: ARRAY MUST BE SORTED BY ID !!!
     public function searchArrayById($sortedArray, $id)

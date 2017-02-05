@@ -5,7 +5,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
         <li class="breadcrumb-item"><a href="{{ path_for('usersTableView') }}">Users</a></li>
-        <li class="breadcrumb-item active">User {{ form.id.value }}</li>
+        <li class="breadcrumb-item active">User {{ user.id }}</li>
     </ol>
 
     <div class="panel-group">
@@ -14,31 +14,29 @@
             <div class="panel-body">
                     <div class="row">
                         <div class="col-xs-6 col-md-8">
-                            <br>User ID: {{ form.id.value }}
-                            <br><strong>{{ form.title.value }} {{ form.first_name.value }} {{ form.last_name.value }}</strong>
-                            <br>{{ form.institution.value }}
-                            <br>{{ form.street.value }}
-                            <br>{{ form.zip.value }} {{ form.city.value }}
-                            <br><span class="bfh-countries" data-country="{{ form.country.value }}" data-flags="true"></span>
-                            <br>E-mail: <a href="mailto:{{ form.email_1.value }}">{{ form.email_1.value }}</a>
+                            User ID: {{ user.id }}
+                            <br><strong>{{ user.title }} {{ user.first_name }} {{ user.last_name }}</strong>
+                            <br>{{ user.institution }}
+                            <br>{{ user.street }}
+                            <br>{{ user.zip }} {{ user.city }}
+                            <br><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
+                            <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
                             <br>
-                            <br><strong>Reset password link:</strong> <a href="{{ resetPasswordLink }}" target="_blank">{{ resetPasswordLink }}</a>
+                            <p style="font-size: smaller"><strong>Reset password:</strong> <a href="{{ base_url }}/resetPassword/{{ user.profileKey }}" target="_blank">{{ base_url }}/resetPassword/{{ user.profileKey }}</a></p>
                         </div>
 
                         <div class="col-xs-6 col-md-4">
                             <ul>
-                                <li><a href="{{ path_for('members', { 'userId': form.id.value }) }}"> Manage user's membership(s)</a></li>
-                                <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': form.id.value }) }}"> Invoices and receipts</a></li>
+                                <li><a href="{{ path_for('members', { 'userId': user.id }) }}"> Manage user's membership(s)</a></li>
+                                <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"> Invoices and receipts</a></li>
                                 <li><a href=""> Create new invoice for user</a></li>
-                                <li><a href=""> Edit billing address</a></li>
-                                <li><a href=""> Delete user account</a></li>
+                                <li><a href="{{ path_for('deleteUser', { 'userId': user.id }) }}"> Delete user account</a></li>
                             </ul>
                         </div>
                     </div>
 
-                <div class="well">
-                    <form data-toggle="validator" role="form" method="post">
-
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
                         {% if form_submission == true %}
 
                             {% if exception == true %}
@@ -59,6 +57,60 @@
                                 </div>
                             {% endif %}
                         {% endif %}
+                    </div>
+                </div>
+
+                <form data-toggle="validator" role="form" method="post">
+                <div class="well">
+
+                        <div class="row">
+
+                            <div class="col-xs-6 col-md-2">
+                                <p class="text-right">
+                                    <label class="control-label text-danger" for="role">User role:</label>
+                                </p>
+                            </div>
+
+                            <div class="col-xs-6 col-md-4">
+
+                                <div class="form-group">
+                                    <select required="required" class="form-control" name="role" id="role">
+                                        <option {% if user.role == 'ROLE_USER' %} selected="selected" {% endif %} value="ROLE_USER">User</option>
+                                        <option {% if user.role == 'ROLE_EDITOR' %} selected="selected" {% endif %} value="ROLE_EDITOR">Editor</option>
+                                        <option {% if user.role == 'ROLE_ADMIN' %} selected="selected" {% endif %} value="ROLE_ADMIN">Administrator</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-md-2">
+
+                            </div>
+                            <div class="col-xs-12 col-sm-4 col-md-4">
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-2">
+                                <p class="text-right"><label for="active">User active</label></p>
+                            </div>
+
+                            <div class="col-xs-6 col-md-4">
+                                <div class="form-group">
+                                    <select required="required" class="form-control" name="active" id="active">
+                                        <option {% if user.active %} selected="selected" {% endif %} value="1">Active</option>
+                                        <option {% if user.active == false %} selected="selected" {% endif %} value="0">Not active</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <p class="text-right">
+                                    <button type="submit" class="btn btn-success">Save user data</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="well">
 
                         <div class="row">
 
@@ -69,48 +121,48 @@
                             </div>
 
                             <div class="col-xs-6 col-md-2">
-                                <div class="form-group {% if form.title.error == true %}has-error{% endif %}">
+                                <div class="form-group {% if user.title.error == true %}has-error{% endif %}">
                                     <label class="col-sm-4 control-label" for="first_name">Title</label>
-                                    <select required="required" value="{{ form.title.value }}" class="form-control" name="title" id="title">
-                                        <option {% if form.title.value == 'Dr.' %} selected="selected" {% endif %}>Dr.</option>
-                                        <option {% if form.title.value == 'Mrs.' %} selected="selected" {% endif %}>Mrs.</option>
-                                        <option {% if form.title.value == 'Mr.' %} selected="selected" {% endif %}>Mr.</option>
+                                    <select required="required" value="{{ user.title }}" class="form-control" name="title" id="title">
+                                        <option {% if user.title == 'Dr.' %} selected="selected" {% endif %}>Dr.</option>
+                                        <option {% if user.title == 'Mrs.' %} selected="selected" {% endif %}>Mrs.</option>
+                                        <option {% if user.title == 'Mr.' %} selected="selected" {% endif %}>Mr.</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-xs-6 col-md-4">
-                                <div class="form-group {% if form.first_name.error == true %}has-error{% endif %}">
+                                <div class="form-group {% if user.first_name.error == true %}has-error{% endif %}">
                                     <label class="control-label" for="first_name">First Name</label>
-                                    <input required="required" type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" value="{{ form.first_name.value }}" tabindex="1">
+                                    <input required="required" type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" value="{{ user.first_name }}" tabindex="1">
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <div class="form-group {% if form.last_name.error == true %}has-error{% endif %}">
+                                <div class="form-group {% if user.last_name.error == true %}has-error{% endif %}">
                                     <label class="control-label" for="last_name">Last Name</label>
-                                    <input required="required" type="text" name="last_name" id="last_name" class="form-control " placeholder="Last Name" value="{{ form.last_name.value }}" tabindex="2">
+                                    <input required="required" type="text" name="last_name" id="last_name" class="form-control " placeholder="Last Name" value="{{ user.last_name }}" tabindex="2">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group {% if form.position.error == true %}has-error{% endif %}">
+                        <div class="form-group {% if user.position.error == true %}has-error{% endif %}">
                             <div class="row">
                                 <div class="col-xs-6 col-md-2"><p class="text-right"><label class="control-label" for="position">Position</label></p></div>
                                 <div class="col-xs-12 col-md-10">
-                                    <input type="text" name="position" id="position" class="form-control " placeholder="position" value="{{ form.position.value }}" tabindex="3">
+                                    <input type="text" name="position" id="position" class="form-control " placeholder="position" value="{{ user.position }}" tabindex="3">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group {% if form.institution.error == true %}has-error{% endif %}">
+                        <div class="form-group {% if user.institution.error == true %}has-error{% endif %}">
                             <div class="row">
                                 <div class="col-xs-6 col-md-2"><p class="text-right"><label class="control-label" for="institution">Institution</label></p></div>
                                 <div class="col-xs-12 col-md-10">
-                                    <input type="text" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ form.institution.value }}" tabindex="3">
+                                    <input type="text" name="institution" id="institution" class="form-control " placeholder="Institution" value="{{ user.institution }}" tabindex="3">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group {% if form.department.error == true %}has-error{% endif %}">
+                        <div class="form-group {% if user.department.error == true %}has-error{% endif %}">
                             <div class="row">
                                 <div class="col-xs-6 col-md-2">
                                     <p class="text-right">
@@ -118,12 +170,12 @@
                                     </p>
                                 </div>
                                 <div class="col-xs-12 col-md-10">
-                                    <input type="text" name="department" id="department" class="form-control " placeholder="Department" value="{{ form.department.value }}" tabindex="3">
+                                    <input type="text" name="department" id="department" class="form-control " placeholder="Department" value="{{ user.department }}" tabindex="3">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group {% if form.street.error == true %}has-error{% endif %}">
+                        <div class="form-group {% if user.street.error == true %}has-error{% endif %}">
                             <div class="row">
                                 <div class="col-xs-6 col-md-2">
                                     <p class="text-right">
@@ -131,12 +183,12 @@
                                     </p>
                                 </div>
                                 <div class="col-xs-12 col-md-10">
-                                    <input required type="text" name="street" id="street" class="form-control " placeholder="street" value="{{ form.street.value }}" tabindex="3">
+                                    <input required type="text" name="street" id="street" class="form-control " placeholder="street" value="{{ user.street }}" tabindex="3">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group {% if form.street.error == true %}has-error{% endif %}">
+                        <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-6 col-md-2">
                                     <p class="text-right">
@@ -145,8 +197,8 @@
                                 </div>
                                 <div class="col-xs-6 col-md-4">
 
-                                    <div class="form-group {% if form.country.error == true %}has-error{% endif %}">
-                                        <div  id="country" class="bfh-selectbox bfh-countries" data-country="{{ form.country.value }}"  data-name="country" data-flags="true">
+                                    <div class="form-group">
+                                        <div  id="country" class="bfh-selectbox bfh-countries" data-country="{{ user.country }}"  data-name="country" data-flags="true">
                                             <input type="hidden" value="">
                                             <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
                                                 <span class="bfh-selectbox-option input-medium" data-option=""></span>
@@ -165,22 +217,22 @@
                                 </div>
                                 <div class="col-xs-6 col-md-3">
 
-                                    <div class="form-group {% if form.city.error == true %}has-error{% endif %}">
-                                        <input required="required" type="text" name="city" id="city" class="form-control " placeholder="City" value="{{ form.city.value }}" tabindex="5">
+                                    <div class="form-group">
+                                        <input required="required" type="text" name="city" id="city" class="form-control " placeholder="City" value="{{ user.city }}" tabindex="5">
                                     </div>
 
                                 </div>
                                 <div class="col-xs-6 col-md-3">
 
-                                    <div class="form-group {% if form.zip.error == true %}has-error{% endif %}">
-                                        <input type="text" name="zip" id="zip" class="form-control " placeholder="ZIP code" value="{{ form.zip.value }}" tabindex="6">
+                                    <div class="form-group">
+                                        <input type="text" name="zip" id="zip" class="form-control " placeholder="ZIP code" value="{{ user.zip }}" tabindex="6">
                                     </div>
 
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group {% if form.website.error == true %}has-error{% endif %}">
+                        <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-6 col-md-2">
                                     <p class="text-right">
@@ -188,12 +240,12 @@
                                     </p>
                                 </div>
                                 <div class="col-xs-12 col-md-10">
-                                    <input type="text" name="website" id="street" class="form-control " placeholder="" value="{{ form.website.value }}" tabindex="3">
+                                    <input type="text" name="website" id="street" class="form-control " placeholder="" value="{{ user.website }}" tabindex="3">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group {% if form.phone.error == true %}has-error{% endif %}">
+                        <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-6 col-md-2">
                                     <p class="text-right">
@@ -201,7 +253,7 @@
                                     </p>
                                 </div>
                                 <div class="col-xs-12 col-md-10">
-                                    <input type="text" id="phone" name="phone" class="form-control" value="{{ form.phone.value }}">
+                                    <input type="text" id="phone" name="phone" class="form-control" value="{{ user.phone }}">
                                 </div>
                             </div>
                         </div>
@@ -214,16 +266,16 @@
                             </div>
                             <div class="col-xs-6 col-md-5">
 
-                                <div class="form-group {% if form.email_1.error == true %}has-error{% endif %}">
-                                    <input type="email" name="email_1" id="email_1" class="form-control " placeholder="Primary E-mail" value="{{ form.email_1.value }}" tabindex="5" data-error="This e-mail address is invalid" required />
+                                <div class="form-group {% if user.email_1.error == true %}has-error{% endif %}">
+                                    <input type="email" name="email_1" id="email_1" class="form-control " placeholder="Primary E-mail" value="{{ user.email_1 }}" tabindex="5" data-error="This e-mail address is invalid" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
 
                             </div>
                             <div class="col-xs-6 col-md-5">
 
-                                <div class="form-group {% if form.email_2.error == true %}has-error{% endif %}">
-                                    <input type="email" name="email_2" id="email_2" class="form-control " placeholder="Secondary E-mail" value="{{ form.email_2.value }}" tabindex="6" data-error="This e-mail address is invalid">
+                                <div class="form-group {% if user.email_2.error == true %}has-error{% endif %}">
+                                    <input type="email" name="email_2" id="email_2" class="form-control " placeholder="Secondary E-mail" value="{{ user.email_2 }}" tabindex="6" data-error="This e-mail address is invalid">
                                     <div class="help-block with-errors"></div>
                                 </div>
 
@@ -237,12 +289,35 @@
                                         <label class="control-label" for="">Reset password</label>
                                     </p>
                                 </div>
-                                <div class="col-xs-12 col-md-2">
-                                    <a href="{{ path_for('resetPasswordByAdmin', { 'userId': form.id.value }) }}"><label class="btn btn-primary btn-sm">Reset password</label></a>
+                                <div class="col-xs-12 col-md-6">
+                                    <a href="{{ path_for('resetPasswordByAdmin', { 'userId': user.id }) }}"><label class="btn btn-primary btn-sm">Send reset password link to user</label></a>
 
                                 </div>
-                                <div class="col-xs-12 col-md-8">
+                                <div class="col-xs-12 col-md-4">
 
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                    <p class="text-primary">Billing address:</p>
+
+                    <div class="well">
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2"><p class="text-right"><label class="control-label" for="position">Name</label></p></div>
+                                <div class="col-xs-12 col-md-10">
+                                    <input type="text" name="billing_name" id="billing_name" class="form-control " placeholder="Ex. Dr. Max Mustermann" value="{% if billingInfo == null %}{{ user.title }} {{ user.first_name }} {{ user.last_name }} {% else %}{{ billingInfo.name }}{% endif %}" tabindex="7">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2"><p class="text-right"><label class="control-label" for="billing_institution">Institution</label></p></div>
+                                <div class="col-xs-12 col-md-10">
+                                    <input type="text" name="billing_institution" id="billing_institution" class="form-control " placeholder="Institution" value="{% if billingInfo == null %}{{ user.institution }}{% else %}{{ billingInfo.institution }}{% endif %}" tabindex="8">
                                 </div>
                             </div>
                         </div>
@@ -251,17 +326,100 @@
                             <div class="row">
                                 <div class="col-xs-6 col-md-2">
                                     <p class="text-right">
-
+                                        <label class="control-label" for="street">Street</label>
                                     </p>
                                 </div>
                                 <div class="col-xs-12 col-md-10">
-                                    <button type="submit" class="btn btn-success">Save Profile</button>
+                                    <input required type="text" name="billing_street" id="billing_street" class="form-control " placeholder="street" value="{% if billingInfo == null %}{{ user.street }}{% else %}{{ billingInfo.street }}{% endif %}" tabindex="9">
                                 </div>
                             </div>
                         </div>
 
-                    </form>
-                </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2">
+                                    <p class="text-right">
+                                        <label class="control-label" for="">Country, city and ZIP</label>
+                                    </p>
+                                </div>
+                                <div class="col-xs-6 col-md-4">
+
+                                    <div class="form-group">
+                                        <div  id="billing_country" class="bfh-selectbox bfh-countries" data-country="{% if billingInfo == null %}{{ user.country }}{% else %}{{ billingInfo.country }}{% endif %}"  data-name="billing_country" data-flags="true">
+                                            <input type="hidden" value="{% if billingInfo == null %}{{ user.country }}{% else %}{{ billingInfo.country }}{% endif %}">
+                                            <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+                                                <span class="bfh-selectbox-option input-medium" data-option=""></span>
+                                                <b class="caret"></b>
+                                            </a>
+                                            <div class="bfh-selectbox-options">
+                                                <input type="text" class="bfh-selectbox-filter">
+                                                <div role="listbox">
+                                                    <ul role="option">
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6 col-md-3">
+
+                                    <div class="form-group">
+                                        <input required="required" type="text" name="billing_city" id="billing_city" class="form-control " placeholder="City" value="{% if billingInfo == null %}{{ user.city }}{% else %}{{ billingInfo.city }}{% endif %}" tabindex="11">
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6 col-md-3">
+
+                                    <div class="form-group">
+                                        <input type="text" name="billing_zip" id="billing_zip" class="form-control " placeholder="ZIP code" value="{{ billingInfo.zip }}" tabindex="12">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2">
+
+                                </div>
+                                <div class="col-xs-6 col-md-5">
+
+                                    <div class="form-group">
+                                        <label class="control-label" for="billing_vat">VAT Number</label>
+                                        <input type="text" name="billing_vat" id="billing_vat" class="form-control " placeholder="VAT Nr. xxx" value="{{ billingInfo.vat }}" tabindex="13"/>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6 col-md-5">
+
+                                    <div class="form-group">
+                                        <label class="control-label" for="billing_reference">Reference</label>
+                                        <input type="text" name="billing_reference" id="billing_reference" class="form-control " placeholder="Reference (Ex. Order, number, etc.)" value="{{ billingInfo.reference }}" tabindex="14">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-2">
+                                <p class="text-right">
+
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-md-10">
+                                <p class="text-right">
+                                    <button type="submit" class="btn btn-success">Save user data</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
             </div>
         </div>
 

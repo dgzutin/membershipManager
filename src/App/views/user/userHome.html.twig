@@ -80,7 +80,7 @@
                 <div class="panel-body">
                     <ul>
                         <li><a href="{{ path_for('documentsUser')}}"><spam class="fa fa-files-o"></spam> View documents for members</a></li>
-                        <li><a href="{{ path_for('newsletterArticle')}}"><spam class="fa fa-share-alt"></spam> Submit article for the {{ systemInfo.settings.acronym }} Newsletter</a></li>
+                        <li><a href="{{ path_for('newsletterArticle')}}"><spam class="fa fa-share-alt"></spam> Submit article to the {{ systemInfo.settings.acronym }} Newsletter</a></li>
                         <li><a href="{{ path_for('userNewsletters')}}"><spam class="fa fa-envelope-o"></spam> Published Newsletters</a></li>
                     </ul>
                 </div>
@@ -106,39 +106,56 @@
 
     {% endif %}
 
+    {% if user_role == 'ROLE_EDITOR' %}
+
+    <br>
+    <p class="text-danger text-left"><strong>Options for editors:</strong></p>
+
+        <div class="panel panel-default">
+        <div class="panel-heading">Manage newsletters and articles</div>
+             <div class="panel-body">
+
+                 <p class="text-success text-left"><strong><spam class="fa fa-envelope"></spam> Manage articles and newsletters</strong></p>
+
+                 <ul>
+                    <li><a href="{{ path_for('newsletterArticle')}}"></spam> Create new article</a></li>
+                     <li><a href="{{ path_for('newslettersAdmin') }}"></spam> Manage Newsletters and articles</a></li>
+
+                </ul>
+             </div>
+        </div>
+
+    {% endif %}
+
 
         {% if user_role == 'ROLE_ADMIN' %}
 
             <br>
             <p class="text-danger text-left"><strong>Options for System Administrators:</strong></p>
 
-            <div class="panel panel-primary">
-                <div class="panel-heading"><spam class="fa fa-share-alt"></spam> Newsletter management</div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Manage users, members, newsletters and system settings</div>
                 <div class="panel-body">
+
+                    <p class="text-success text-left"><strong><spam class="fa fa-envelope"></spam> Manage articles and newsletters</strong></p>
+
                     <ul>
                         <li><a href="{{ path_for('newsletterArticle')}}"></spam> Create new article</a></li>
                         <li><a href="{{ path_for('newslettersAdmin') }}"></spam> Manage Newsletters and articles</a></li>
 
                     </ul>
-                </div>
-            </div>
 
-            <div class="panel panel-primary">
-                <div class="panel-heading"><spam class="fa fa-group"></spam> Manage members and users</div>
-                <div class="panel-body">
+                    <p class="text-success text-left"><strong><spam class="fa fa-group"></spam> Manage members and users:</strong></p>
+
                     <ul>
                         <li><a href="{{ path_for('members')}}"><spam class="fa fa-group"></spam> Manage Members</a>
                         <li><a href="{{ path_for('usersTableView')}}"><spam class="fa fa-group"></spam> All users</a>, <a href="{{ path_for('registerNewUser')}}">Register new User</a></li>
                         <li><a href="{{ path_for('createBulkMailMembersAdmin')}}"><spam class="fa fa-envelope"></spam> Send e-mail to members</a></li>
                         <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': '-1'}) }}"><spam class="fa fa-money"></spam> Invoices, receipts and paymnets</a></li>
-
                     </ul>
-                </div>
-            </div>
 
-            <div class="panel panel-warning">
-                <div class="panel-heading"><spam class="fa fa-gears"></spam> System Settings</div>
-                <div class="panel-body">
+                    <p class="text-success text-left"><strong><spam class="fa fa-gears"></spam> System Settings:</strong></p>
+
                     <ul>
                         <li><a href="">System Settings</a></li>
                         <li><a href="">Manage Membership types</a></li>

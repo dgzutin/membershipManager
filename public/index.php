@@ -147,7 +147,7 @@ $container['\MembersAreaController'] = function ($container) {
 };
 
 
-//Define the Routes for admin group
+//Define the Routes for admin role
 
 $app->group('/admin', function () use ($app) {
     
@@ -170,19 +170,27 @@ $app->group('/admin', function () use ($app) {
     $app->get('/userInvoices/{userId}', '\AdminController:userInvoicesAction')->setName('userInvoicesAdmin');
     $app->get('/invoicePayments/{invoiceId}', '\AdminController:invoicePaymentsAction')->setName('invoicePayments');
     $app->map(['GET', 'POST'],'/singleInvoice/{invoiceId}', '\AdminController:singleInvoiceAction')->setName('singleInvoiceAdmin');
+    $app->get('/createBulkMailNewsletter/{key}', '\AdminController:createBulkMailNewsletterAction')->setName('createBulkMailNewsletter');
+    $app->get('/sendInvoiceToUser/{invoiceId}', '\AdminController:sendInvoiceToUserAction')->setName('sendInvoiceToUserAdmin');
+    $app->map(['GET', 'POST'],'/deleteUser/{userId}', '\AdminController:deleteUserAction')->setName('deleteUser');
+    
+    //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
+})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
+
+//Define the Routes for editor role
+$app->group('/editor', function () use ($app) {
+
     $app->map(['GET', 'POST'], '/newsletterArticle/{articleId}', '\AdminController:newsletterArticleAction')->setName('newsletterArticleAdmin');
     $app->map(['GET', 'POST'], '/newsletters', '\AdminController:newslettersAction')->setName('newslettersAdmin');
     $app->get('/newsletter/{newsletterId}', '\AdminController:newsletterAction')->setName('newsletterAdmin');
     $app->post('/newsletter/{newsletterId}', '\AdminController:saveNewsletterAdminAction')->setName('saveNewsletterAdmin');
     $app->map(['GET', 'POST'], '/createNewsletter/', '\AdminController:createNewsletterAction')->setName('createNewsletter');
     $app->get('/newsletterPreview/{key}', '\AdminController:newsletterPreviewAction')->setName('newsletterPreview');
-    $app->get('/createBulkMailNewsletter/{key}', '\AdminController:createBulkMailNewsletterAction')->setName('createBulkMailNewsletter');
-    $app->get('/sendInvoiceToUser/{invoiceId}', '\AdminController:sendInvoiceToUserAction')->setName('sendInvoiceToUserAdmin');
-    
-    //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
 
-//Define the Routes for user group
+    //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
+})->add(new UserAuthenticationMiddleware(array('ROLE_EDITOR', 'ROLE_ADMIN'), $container));
+
+//Define the Routes for user role
 $app->group('/user', function () use ($app) {
     
     $app->get('/home', '\UserController:homeAction')->setName('homeUser');
@@ -211,7 +219,7 @@ $app->group('/user', function () use ($app) {
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN'), $container));
+})->add(new UserAuthenticationMiddleware(array('ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'), $container));
 
 //Define the Routes for admin API
 
@@ -233,7 +241,7 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/deleteNewsletter', '\ApiController:deleteNewsletterAction' )->setName('deleteNewsletter');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new ApiAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
+})->add(new ApiAuthenticationMiddleware(array('ROLE_ADMIN', 'ROLE_EDITOR'), $container));
 
 $app->group('/api-user/v1', function () use ($app) {
 
@@ -242,7 +250,7 @@ $app->group('/api-user/v1', function () use ($app) {
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
-})->add(new ApiAuthenticationMiddleware(array('ROLE_USER', 'ROLE_ADMIN'), $container));
+})->add(new ApiAuthenticationMiddleware(array('ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'), $container));
 
 // Define the public routes
 $app->get('/', '\PublicController:homeAction');

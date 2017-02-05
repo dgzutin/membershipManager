@@ -282,7 +282,7 @@ class BillingServices
 
                     $results[$i] = array('exception' => false,
                         'paymentId' => $id,
-                        'message' => 'Item successfully deleted');
+                        'message' => 'Payment successfully deleted');
                     $deletedCount ++;
                 }
                 catch (\Exception $e){
@@ -308,6 +308,137 @@ class BillingServices
         return array('exception' => false,
                      'results' => $results,
                      'message' => $deletedCount.' item(s) deleted');
+    }
+
+    public function deleteInvoiceItems($ids)
+    {
+        $results = null;
+        $i = 0;
+        $deletedCount = 0;
+        foreach ($ids as $id){
+
+            $repository = $this->em->getRepository('App\Entity\InvoiceItem');
+            $item = $repository->createQueryBuilder('item')
+                ->select('item')
+                ->where('item.id = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if ($item != null){
+
+                try{
+                    $this->em->remove($item);
+                    $this->em->flush();
+
+                    $results[$i] = array('exception' => false,
+                        'itemId' => $id,
+                        'message' => 'Invoice item successfully deleted');
+                    $deletedCount ++;
+                }
+                catch (\Exception $e){
+                    $results[$i] = array('exception' => true,
+                        'itemId' => $id,
+                        'message' => $e->getMessage());
+                }
+            }
+            else{
+                $results[$i] = array('exception' => true,
+                    'itemId' => $id,
+                    'message' => 'Invoice item with id '.$id.' not found');
+            }
+            $i++;
+        }
+
+        if ($deletedCount == 0){
+
+            return array('exception' => true,
+                'results' => $results,
+                'message' => $deletedCount.' invoice item(s) deleted');
+        }
+        return array('exception' => false,
+            'results' => $results,
+            'message' => $deletedCount.' invoice item(s) deleted');
+
+    }
+
+    public function deleteInvoiceItemsPayments($ids)
+    {
+        $results = null;
+        $i = 0;
+        $deletedCount = 0;
+        foreach ($ids as $id){
+
+            $invoice = $this->userServices->getInvoiceDataForUser($id, NULL);
+
+            if ($invoice['exception'] == false){
+
+                //delete payments for invoice
+                $k = 0;
+                $paymentIds = null;
+                foreach ($invoice['payments'] as $payment){
+
+                    $paymentIds[$k] = $payment->getId();
+                    $k++;
+                }
+
+                $deletePaymentResults = null;
+                if ($paymentIds != null){
+                    $deletePaymentResults = $this->deletePayments($paymentIds);
+                }
+
+                //delete items of invoice
+                $j = 0;
+                $itemIds = null;
+                foreach ($invoice['invoiceItems'] as $invoiceItem){
+
+                    $itemIds[$j] = $invoiceItem->getId();
+                    $j++;
+                }
+
+                $itemDeleteResults = null;
+                if ($itemIds != null){
+
+                    $itemDeleteResults = $this->deleteInvoiceItems($itemIds);
+
+                }
+
+                try{
+                    $this->em->remove($invoice['invoice']);
+                    $this->em->flush();
+
+                    $results[$i] = array('exception' => false,
+                        'invoiceId' => $id,
+                        'items' => $itemDeleteResults,
+                        'payments' => $deletePaymentResults,
+                        'message' => 'Invoice '.$id.' successfully deleted');
+                    $deletedCount ++;
+                }
+                catch (\Exception $e){
+                    $results[$i] = array('exception' => true,
+                        'invoiceId' => $id,
+                        'message' => $e->getMessage());
+                }
+
+            }
+            else{
+                $results[$i] = array('exception' => true,
+                    'invoiceId' => $id,
+                    'message' => 'Invoice with id '.$id.' not found');
+            }
+            $i++;
+        }
+
+        if ($deletedCount == 0){
+
+            return array('exception' => true,
+                'results' => $results,
+                'message' => $deletedCount.' invoice item(s) deleted');
+        }
+        return array('exception' => false,
+            'results' => $results,
+            'message' => $deletedCount.' invoice item(s) deleted');
+
     }
         
 }

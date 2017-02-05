@@ -19,6 +19,7 @@ class UserAuthenticationMiddleware
 
     public function __construct($roles_allowed, $container)
     {
+        $this->userServices = $this->userServices = $container->get('userServices');
         $this->roles_allowed = $roles_allowed;
         $this->container = $container;
     }
@@ -29,7 +30,13 @@ class UserAuthenticationMiddleware
         //Authorizes request here
         if (isset($_SESSION['user_id'])){
 
+            $user = $this->userServices->getUserById((int)$_SESSION['user_id']);
+
+            if ($user['exception']){
+                return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $user));
+            }
             //get user role
+
             $user_role = $_SESSION['user_role'];
 
             $twigEnv = $this->container['view']->getEnvironment();

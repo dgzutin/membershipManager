@@ -30,7 +30,7 @@ class AdminController {
     {
 
         $users = $this->userServices->findUsersFiltered(array());
-        
+
         return $this->container->view->render($response, 'admin/usersTable.html.twig', array(
             'users' => $users['users']
         ));
@@ -99,78 +99,69 @@ class AdminController {
 
     public function viewUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $userId = $args['userId'];
+        $userId = (int)$args['userId'];
         $resp =  $this->userServices->getUserById($userId);
         //$resultMemberships = $this->membershipServices->getMembershipsForUser($userId);
 
-        if ($resp['exception'] == false){
-            $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/resetPassword/'.$resp['user']->getProfileKey();
-        }
-        else{
-            $resetPasswordLink = null;
+        if ($resp['exception'] == true){
+            return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resp));
         }
 
-        //convert the data to be shown in the form
-        foreach ($resp['user'] as $key =>$data){
-            $user[$key] = array('value' => $data,
-                'error' => false);
+        $billingInfo = $this->userServices->getBillingInfoForUser($userId);
+
+        if ($billingInfo['exception']){
+            $billing =  null;
         }
-        $validation = array('exception' => false,
-            'message' => '',
-            'fields' => array());
+        else{
+            $billing = $billingInfo['billing'];
+        }
 
         return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
             'form_submission' => false,
             'exception' => $resp['exception'],
             'message' => $resp['message'],
-            'resetPasswordLink' => $resetPasswordLink,
-            'form' => $user));
+            'billingInfo' => $billing,
+            'user' => $resp['user']));
     }
 
     public function saveUserProfileAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-
         $form_data = $request->getParsedBody();
 
-        foreach ($form_data as $key =>$data){
+        $userId = $args['userId'];
+        
+        $resp = $this->userServices->updateUserProfile($userId, $form_data, $form_data);
 
-            //add validation code for each input here
-            $val_array[$key] = array('value' => $data,
-                'error' => false);
+        if ($resp['exception'] == true){
+            return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resp));
         }
 
-        $form_validation = array('exception' => false,
-                                 'message' => 'One or more fields are not valid. Please check your data and submit it again.',
-                                 'fields' => array());
+        // save  billing Info for user
+        $billing['name'] = $form_data['billing_name'];
+        $billing['institution'] = $form_data['billing_institution'];
+        $billing['street'] = $form_data['billing_street'];
+        $billing['country'] = $form_data['billing_country'];
+        $billing['city'] = $form_data['billing_city'];
+        $billing['zip'] = $form_data['billing_zip'];
+        $billing['vat'] = $form_data['billing_vat'];
+        $billing['reference'] = $form_data['billing_reference'];
 
+        $billingInfo = $this->userServices->createOrUpdateBillingInfo($billing, $resp['user']);
 
-        if ($form_validation['exception'] == true){
-
-            return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
-                'form_submission' => true,
-                'exception' => $form_validation['exception'],
-                'message' => $form_validation['message'],
-                'form' => $val_array));
+        if ($billingInfo['exception']){
+            $billing =  null;
         }
         else{
-            $userId = $args['userId'];
-
-            $userService = $this->container->get('userServices');
-            $resp = $userService->updateUserProfile($userId, $form_data);
-
-            //convert the data to be shown in the form
-            foreach ($resp['user'] as $key =>$data){
-                $user[$key] = array('value' => $data,
-                    'error' => false);
-            }
-
-            return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
-                'form_submission' => true,
-                'exception' => $resp['exception'],
-                'message' => $resp['message'],
-                'form' => $user));
-
+            $billing = $billingInfo['billing'];
         }
+
+        return $this->container->view->render($response, 'admin/adminEditUser.html.twig', array(
+            'form_submission' => true,
+            'exception' => $resp['exception'],
+            'message' => $resp['message'],
+            'billingInfo' => $billing,
+            'user' => $resp['user']));
+
     }
 
     public function sendInvoiceToUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -567,6 +558,46 @@ class AdminController {
             'validity' => $filter_form['validity'],
             'newsletter' => $resultNewsletter));
            // 'htmlNewsletter' => $htmlNewsletter));
+    }
+
+    public function deleteUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = (int)$args['userId'];
+        $resp =  $this->userServices->getUserById($userId);
+
+        if ($resp['exception'] == true){
+            return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resp));
+        }
+
+        if ($request->isPost()){
+            //delete user ...
+            if ($userId == $_SESSION['user_id']){
+                return $this->container->view->render($response, 'admin/adminDeleteUser.html.twig', array(
+                    'form_submission' => true,
+                    'purgeResult' => null,
+                    'exception' => true,
+                    'user' => $resp['user'],
+                    'message' => 'You are currently logged in the same user account you are trying to delete. Sign in with a different account and try again.'));
+            }
+
+            $purgeResult = $this->userServices->purgeUser($userId);
+
+            return $this->container->view->render($response, 'admin/adminDeleteUser.html.twig', array(
+                'form_submission' => true,
+                'purgeResult' => $purgeResult,
+                'exception' => false,
+                'user' => $resp['user'],
+                'message' => 'Delete operation was carried out. See protocol below for more details.'));
+        }
+
+        $membershipsOfUser = $this->membershipServices->getMembershipsForUser($userId, true);
+
+        return $this->container->view->render($response, 'admin/adminDeleteUser.html.twig', array(
+            'form_submission' => false,
+            'purgeResult' => null,
+            'exception' => $resp['exception'],
+            'memberships' => $membershipsOfUser,
+            'user' => $resp['user']));
     }
 
 

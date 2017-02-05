@@ -23,11 +23,12 @@ class UserServices
     public function __construct($container)
     {
         //$this->mailService = $container['mailServices'];
+        $this->container = $container;
         $this->utilsServices = $container->get('utilsServices');
         $this->shoppingCartServices = $container['shoppingCartServices'];
+        $this->membershipServices = $container['membershipServices'];
         $this->em = $container['em'];
         $this->mailServices = $container['mailServices'];
-
         $repository = $this->em->getRepository('App\Entity\Settings');
         $this->settings = $repository->createQueryBuilder('settings')
             ->select('settings')
@@ -157,9 +158,8 @@ class UserServices
         return $result;
     }
 
-    public function updateUserProfile($userId, $user_data)
+    public function updateUserProfile($userId, $user_data, $admin_data = null)
     {
-
         $repository = $this->em->getRepository('App\Entity\User');
         $user = $repository->createQueryBuilder('u')
             ->select('u')
@@ -185,7 +185,11 @@ class UserServices
             $user->setStreet($user_data['street']);
             $user->setWebsite($user_data['website']);
             $user->setZip($user_data['zip']);
-            $user->setActive(true);
+
+            if ($admin_data != null){
+                $user->setRole($admin_data['role']);
+                $user->setActive($admin_data['active']);
+            }
             //$user->setProfileKey(sha1(microtime().rand()));
 
             try{
@@ -379,6 +383,7 @@ class UserServices
 
                 $users[$i] = array('id' => $userRes->getId(),
                     'active' => $userRes->getActive(),
+                    'role' => $userRes->getRole(),
                     'country' => $userRes->getCountry(),
                     'firstName' => $userRes->getFirstName(),
                     'lastName' => $userRes->getLastName(),
@@ -389,6 +394,7 @@ class UserServices
             else{
                 $users[$i] = array('id' => $userRes->getId(),
                     'active' => $userRes->getActive(),
+                    'role' => $userRes->getRole(),
                     'country' => $userRes->getCountry(),
                     'firstName' => $userRes->getFirstName(),
                     'lastName' => $userRes->getLastName(),
@@ -631,6 +637,7 @@ class UserServices
                          'invoiceDueDate' => $invoiceDueDate_string,
                          'paidDate' => $invoicePaidDate_string,
                          'invoiceItems' => $invoiceItems,
+                         'payments' => $invoicePayments,
                          'issuerData' => $issuerData,
                          'totalPrice' => $totalPrice,
                          'amountPaid' => $amountPaid,
@@ -706,7 +713,7 @@ class UserServices
                          'message' => 'Could not create billing information: '.$e->getMessage());
         }
         return array('exception' => false,
-                     'billingInfo' => $billingInfo,
+                     'billing' => $billingInfo,
                      'message' => 'New Billing info for user '.$user->getId().' added/updated.');
     }
 
@@ -876,7 +883,7 @@ class UserServices
                 $results[$i] = array(
                     'exception' => false,
                     'articleId' => $articleId,
-                    'message' => 'Article was updated. Thank you!');
+                    'message' => 'Article '.$articleId.' was deleted.');
             }
             $i++;
             }
@@ -989,17 +996,20 @@ class UserServices
         $articlesArray = null;
         foreach ($articles as $article){
 
-            $userResp = $this->getUserById($article->getUserId());
+            $articlesArray[$i]['id'] = $article->getId();
+            $articlesArray[$i]['title'] = $article->getTitle();
+            $articlesArray[$i]['createDate'] = $article->getCreateDate();
+            $articlesArray[$i]['articleOrder'] = $article->getArticleOrder();
+            $articlesArray[$i]['userId'] = $article->getUserId();
+            $articlesArray[$i]['newsletterId'] = $article->getNewsletterId();
 
+            $userResp = $this->getUserById($article->getUserId());
             if ($userResp['exception'] == false){
 
-                $articlesArray[$i]['id'] = $article->getId();
-                $articlesArray[$i]['title'] = $article->getTitle();
-                $articlesArray[$i]['createDate'] = $article->getCreateDate();
-                $articlesArray[$i]['articleOrder'] = $article->getArticleOrder();
-                $articlesArray[$i]['userId'] = $article->getUserId();
-                $articlesArray[$i]['newsletterId'] = $article->getNewsletterId();
                 $articlesArray[$i]['user_name'] = $userResp['user']->getFirstName().' '.$userResp['user']->getLastName();
+            }
+            else{
+                $articlesArray[$i]['user_name'] = 'n/a';
             }
             $i++;
         }
@@ -1230,13 +1240,12 @@ class UserServices
     public function deleteNewsletter($newsletterId, $deleteArticles)
     {
         $repository = $this->em->getRepository('App\Entity\Newsletter');
-
-            $newsletter = $repository->createQueryBuilder('newsletter')
-                ->select('newsletter')
-                ->where('newsletter.id = :id')
-                ->setParameter('id', $newsletterId)
-                ->getQuery()
-                ->getOneOrNullResult();
+        $newsletter = $repository->createQueryBuilder('newsletter')
+            ->select('newsletter')
+            ->where('newsletter.id = :id')
+            ->setParameter('id', $newsletterId)
+            ->getQuery()
+            ->getOneOrNullResult();
 
         if ($newsletter == NULL){
             return array ('exception' => true,
@@ -1284,4 +1293,120 @@ class UserServices
             'articleResults' => $resArticleAction['results'],
             'message' => 'Newsletter was deleted');
     }
+
+    public function deleteBillingAddressForUser($userId)
+    {
+        $repository = $this->em->getRepository('App\Entity\Billing');
+        $billing = $repository->createQueryBuilder('billing')
+            ->select('billing')
+            ->where('billing.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($billing != null){
+
+            $id = $billing->getId();
+            try{
+                $this->em->remove($billing);
+                $this->em->flush();
+
+                return array('exception' => false,
+                    'billingId' => $id,
+                    'userId' => $userId,
+                    'message' => 'Billing address successfully deleted');
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                    'billingId' => $id,
+                    'userId' => $userId,
+                    'message' => $e->getMessage());
+            }
+        }
+        return array('exception' => true,
+            'userId' => $userId,
+            'message' => 'Billing address for user '.$userId.' not found');
+    }
+
+
+
+    //this function deleter a user including ALL associated resources, except newsletter articles
+    public function purgeUser($userId)
+    {
+        $userResp = $this->getUserById($userId);
+
+        if ($userResp['exception']){
+
+            return $userResp;
+        }
+
+        //empty user's shopping cart
+        $shoppingCartDeleteResp = $this->shoppingCartServices->emptyCart($userId);
+
+        //delete memberships
+        $membershipsOfUser = $this->membershipServices->getMembershipsForUser($userId, true);
+        $i = 0;
+        $membershipIds = null;
+        foreach ($membershipsOfUser['memberships'] as $membership){
+
+            $membershipIds[$i] = $membership['id'];
+            $i++;
+        }
+        $membershipDeleteResp = $this->membershipServices->deleteMemberships($membershipIds);
+
+        if ($membershipDeleteResp['exception'] == false){
+
+            //delete billing address
+            $billingDeleteResp = $this->deleteBillingAddressForUser($userId);
+
+            //delete invoices
+            $repository = $this->em->getRepository('App\Entity\Invoice');
+            $invoices = $repository->createQueryBuilder('invoice')
+                ->select('invoice.id')
+                ->where('invoice.userId = :userId')
+                ->setParameter('userId', $userId)
+                ->getQuery()
+                ->getResult();
+
+            $invoiceIds = null;
+            $i = 0;
+            foreach ($invoices as $invoice){
+                $invoiceIds[$i] =  $invoice['id'];
+                $i++;
+            }
+
+            $billingServices = $this->container->get('billingServices');
+            $invoicesDeleteResp = $billingServices->deleteInvoiceItemsPayments($invoiceIds);
+
+            try{
+                $this->em->remove($userResp['user']);
+                $this->em->flush();
+
+                return array('exception' => false,
+                    'userId' => $userId,
+                    'billing' => $billingDeleteResp,
+                    'memberships' => $membershipDeleteResp,
+                    'invoices' => $invoicesDeleteResp,
+                    'shoppingCart' => $shoppingCartDeleteResp,
+                    'message' => 'User successfully deleted');
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                    'userId' => $userId,
+                    'billing' => $billingDeleteResp,
+                    'memberships' => $membershipDeleteResp,
+                    'invoices' => $invoicesDeleteResp,
+                    'shoppingCart' => $shoppingCartDeleteResp,
+                    'message' => $e->getMessage());
+            }
+        }
+        return array('exception' => true,
+            'userId' => $userId,
+            'billing' => null,
+            'memberships' => $membershipDeleteResp,
+            'invoices' => null,
+            'shoppingCart' => $shoppingCartDeleteResp,
+            'message' => $e->getMessage());
+    }
+
 }
