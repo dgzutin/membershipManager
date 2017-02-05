@@ -154,15 +154,8 @@ class MembersAreaController{
 
     public function documentsAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-
         //determine if user's memberships are valid
         $memberships = $this->membershipServices->getMembershipsForUser($_SESSION['user_id']);
-
-        if ($memberships['exception']){
-            return $this->container->view->render($response, 'userNotification.twig', array (
-                'exception' => true,
-                'message' => $memberships['message']));
-        }
 
         return $this->container->view->render($response, 'members/documents.html.twig', $memberships);
 

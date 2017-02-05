@@ -10,7 +10,7 @@
     <div class="panel panel-primary">
     <div class="panel-heading"><strong>Member's Area: Documents</strong></div>
 
-    {% if validMembershipFound %}
+    {% if validMembershipFound or user_role == 'ROLE_ADMIN' %}
 
         <div class="panel-body" id="elfinder"></div>
 
