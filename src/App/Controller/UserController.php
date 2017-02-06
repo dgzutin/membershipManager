@@ -591,10 +591,7 @@ class UserController {
         //$result = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
 
        // $currentUrl = $this->utilsServices->getUrlForRoute($request, 'login', array('param' => 1));
-
-        $currentUrl = $purgeResult = $this->userServices->purgeUser(3);
-       echo json_encode($currentUrl);
-
+        
     }
     
 }
