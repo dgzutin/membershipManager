@@ -433,11 +433,11 @@ class BillingServices
 
             return array('exception' => true,
                 'results' => $results,
-                'message' => $deletedCount.' invoice item(s) deleted');
+                'message' => $deletedCount.' invoice(s) deleted');
         }
         return array('exception' => false,
             'results' => $results,
-            'message' => $deletedCount.' invoice item(s) deleted');
+            'message' => $deletedCount.' invoice(s) deleted');
 
     }
         
