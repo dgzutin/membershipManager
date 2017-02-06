@@ -83,8 +83,8 @@
                                 <td>{{ item.name }}</td>
                                 <td></td>
                                 <td>{{ item.quantity }}</td>
-                                <td>{{ item.unitPrice }}</td>
-                                <td>{{ item.totalPrice }}</td>
+                                <td>{{ membershipType.currency }} {{ formatAmount(item.unitPrice) }}</td>
+                                <td>{{ membershipType.currency }} {{ formatAmount(item.totalPrice) }}</td>
                                 <td>
                                     <a href="{{ path_for('removeItemfromCartUser', { 'itemId': item.id }) }}">
                                         <span class="fa fa-trash-o"></span>
@@ -98,7 +98,7 @@
                             <td></td>
                             <td></td>
                             <td><strong>TOTAL:</strong></td>
-                            <td>{{ systemInfo.settings.systemCurrency }} {{ totalPrice }}</td>
+                            <td>{{ membershipType.currency }}  {{ formatAmount(totalPrice) }}</td>
                         </tr>
 
                         </tbody>

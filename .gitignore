@@ -8,4 +8,6 @@ composer.phar
 .idea
 src/App/config/config.json
 public/assets/images/logo_invoice.png
+public/assets/images/header_newsletter.jpg
+public/assets/images/header.jpg
 public/ipnver.txt

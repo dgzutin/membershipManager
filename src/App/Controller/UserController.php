@@ -186,9 +186,12 @@ class UserController {
             $uri = $this->utilsServices->getBaseUrl($request).'/user/home';
             return $response = $response->withRedirect($uri, 200);
         }
+        
+        $membershipType = $this->membershipServices->getMembershipTypeById((int)$args['membershipTypeId']);
 
         return $this->container->view->render($response, 'user/oderSummary.twig', array(
             'exception' => false,
+            'membershipType' => $membershipType['membershipType'],
             'membershipTypeId' => (int)$args['membershipTypeId'],
             'items' => $itemsResp['items'],
             'totalPrice' => $totalPrice,
@@ -222,8 +225,11 @@ class UserController {
 
         $systemInfo = $this->userServices->getSystemInfo();
 
+        $membershipType = $this->membershipServices->getMembershipTypeById((int)$args['membershipTypeId']);
+
         return $this->container->view->render($response, 'user/confirmOrder.html.twig', array(
             'exception' => false,
+            'membershipType' => $membershipType['membershipType'],
             'membershipTypeId' => (int)$args['membershipTypeId'],
             'items' => $items,
             'currency' => $systemInfo['settings']->getSystemCurrency(),
@@ -288,7 +294,7 @@ class UserController {
             $onPaymentActions = array(array ('actionName' => 'renewForOnePeriod',
                                              'membershipIds' => array($membershipId)));
 
-            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingInfo['billing'], $itemsResp['items'], json_encode($onPaymentActions), true, $request);
+            $resultsGenInvoice = $this->userServices->generateInvoiceForUser($user, $billingInfo['billing'], $itemsResp['items'], json_encode($onPaymentActions), true, $request, $membershipType['membershipType']->getCurrency());
 
             if ($resultsGenInvoice['exception'] == false){
                 //delete shopping cart items if invoice is generated

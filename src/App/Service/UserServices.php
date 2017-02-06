@@ -478,7 +478,7 @@ class UserServices
         }
     }
 
-    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems, $onPaymentActions, $notifyUser, $request)
+    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems, $onPaymentActions, $notifyUser, $request, $currency)
     {
 
         $newInvoice = new Invoice();
@@ -494,7 +494,7 @@ class UserServices
         //$newInvoice->setDueDate(date('d/m/Y', strtotime("+30 days")));
 
 
-        $newInvoice->setCurrency($this->settings->getSystemCurrency());
+        $newInvoice->setCurrency($currency);
         $newInvoice->setInvVat($this->settings->getVat());
         $newInvoice->setInvRegistrationNumber($this->settings->getRegistrationNumber());
         $newInvoice->setInvOrganization($this->settings->getNameOfOrganization());

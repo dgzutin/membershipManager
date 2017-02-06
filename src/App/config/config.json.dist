@@ -14,9 +14,10 @@
      "encryption": "",
      "username": "",
      "password": ""
+     "authentication": "plain"
    },
     "twig":{
-       "viewsCache": "../cache/views", //replace with false if cache is deactivated
-       "emailTemplateCache": "../cache/email" //replace with false if cache is deactivated
+       "viewsCache": "../cache/views",
+       "emailTemplateCache": "../cache/email"
      }
 }

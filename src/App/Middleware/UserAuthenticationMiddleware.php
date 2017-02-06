@@ -33,7 +33,7 @@ class UserAuthenticationMiddleware
             $user = $this->userServices->getUserById((int)$_SESSION['user_id']);
 
             if ($user['exception']){
-                return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $user));
+                return $this->container->view->render($response, 'userNotificationMail.twig', $user['exception']);
             }
             //get user role
 
