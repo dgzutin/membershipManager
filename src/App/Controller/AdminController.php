@@ -36,6 +36,18 @@ class AdminController {
         ));
     }
 
+    public function impersonateUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = (int)$args['userId'];
+
+        $impersonateResp = $this->userServices->impersonateUser($userId, $request);
+
+        if ($impersonateResp['exception']){
+            return $this->container->view->render($response, 'userNotification.twig', $impersonateResp);
+        }
+        return $response = $response->withRedirect($impersonateResp['redirectUrl'], 200);
+    }
+
     public function registerNewUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
 
@@ -599,6 +611,7 @@ class AdminController {
             'memberships' => $membershipsOfUser,
             'user' => $resp['user']));
     }
+
 
 
 }

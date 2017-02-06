@@ -223,6 +223,21 @@ class UtilsServices
         }
         return $baseUrl;
     }
+    
+    public function getCurrentRouteName($request)
+    {
+        return $request->getAttribute('route')->getName();
+    }
+
+    public function getUrlForRouteName($request, $routeName, $params = array())
+    {
+        return $this->getBaseUrl($request).$this->container->router->pathFor($routeName, $params);
+    }
+
+    public function getCurrentUrl($request)
+    {
+        return  $this->getBaseUrl($request).$request->getUri()->getPath();
+    }
 
 
 

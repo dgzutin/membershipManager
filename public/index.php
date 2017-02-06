@@ -173,6 +173,7 @@ $app->group('/admin', function () use ($app) {
     $app->get('/createBulkMailNewsletter/{key}', '\AdminController:createBulkMailNewsletterAction')->setName('createBulkMailNewsletter');
     $app->get('/sendInvoiceToUser/{invoiceId}', '\AdminController:sendInvoiceToUserAction')->setName('sendInvoiceToUserAdmin');
     $app->map(['GET', 'POST'],'/deleteUser/{userId}', '\AdminController:deleteUserAction')->setName('deleteUser');
+    $app->get('/impersonateUser/{userId}', '\AdminController:impersonateUserAction')->setName('impersonateUser');
     
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
@@ -215,7 +216,7 @@ $app->group('/user', function () use ($app) {
     $app->get('/newsletters', '\UserController:newslettersAction')->setName('userNewsletters');
     $app->get('/myInvoices', '\UserController:invoicesAction')->setName('userInvoices');
 
-    $app->get('/testRoute', '\UserController:testAction')->setName('testRoute');
+    $app->get('/testRoute/{param}', '\UserController:testAction')->setName('testRoute');
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

@@ -98,6 +98,47 @@ class UserServices
         return $result;
     }
 
+    public function impersonateUser($userId, $request)
+    {
+
+        $repository =$this->em->getRepository('App\Entity\User');
+        $user = $repository->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.id = :id')
+            ->setParameter('id', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($user != NULL){
+
+            if ($user->getActive()){
+
+                $_SESSION['orig_user_id'] = $_SESSION['user_id'];
+                $_SESSION['orig_user_role'] = $_SESSION['user_role'];
+                $_SESSION['return_url'] =  $this->utilsServices->getCurrentUrl($request);
+
+                $_SESSION['user_id'] = $user->getId();
+                $_SESSION['user_role'] = $user->getRole();
+
+                $redirectUrl = $this->utilsServices->getUrlForRouteName($request, 'homeUser');
+
+                $result = array('exception' => false,
+                    'redirectUrl' => $redirectUrl,
+                    'message' => 'You are now logged in as '.$user->getFirstName().' '.$user->getLastName());
+            }
+            else{
+                $result = array('exception' => true,
+                    'message' => 'Could not impersonate user. This user account has not been activated yet.');
+            }
+
+            return $result;
+        }
+
+        $result = array('exception' => true,
+            'message' => 'Could not impersonate user. The provided user id does not exist');
+        return $result;
+    }
+
     public function registerNewUser($user_data)
     {
 
