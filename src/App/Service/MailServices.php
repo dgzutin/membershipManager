@@ -298,7 +298,7 @@ class MailServices
                   Best Regards, <br><br>
                   {nameOfOrganization} - {orgAcronym}";
 
-        return $this->sendBulkEmailsMembers($members_json, $subject, $body, 'offige@igip.org', $request);
+        return $this->sendBulkEmailsMembers($members_json, $subject, $body, $this->settings->getEmail(), $request);
     }
 
     public function sendInvoiceToUser($invoiceId, $userId, $request)

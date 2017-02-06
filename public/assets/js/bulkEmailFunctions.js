@@ -3,7 +3,7 @@
  * Manages the bulk e-mail operation in the browser
  */
 
-batchSize = 50;
+batchSize = 20;
 
 // =============   Event Listeners ====================================
 $("#checkbox_all").change(function () {

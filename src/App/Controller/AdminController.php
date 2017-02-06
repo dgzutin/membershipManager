@@ -587,9 +587,10 @@ class AdminController {
                 return $this->container->view->render($response, 'admin/adminDeleteUser.html.twig', array(
                     'form_submission' => true,
                     'purgeResult' => null,
+                    'purgeResult_json' => null,
                     'exception' => true,
                     'user' => $resp['user'],
-                    'message' => 'You are currently logged in the same user account you are trying to delete. Sign in with a different account and try again.'));
+                    'message' => 'You are currently logged in with the same account you are trying to delete. Sign in with a different account and try again.'));
             }
 
             $purgeResult = $this->userServices->purgeUser($userId);
@@ -597,6 +598,7 @@ class AdminController {
             return $this->container->view->render($response, 'admin/adminDeleteUser.html.twig', array(
                 'form_submission' => true,
                 'purgeResult' => $purgeResult,
+                'purgeResult_json' => json_encode($purgeResult),
                 'exception' => false,
                 'user' => $resp['user'],
                 'message' => 'Delete operation was carried out. See protocol below for more details.'));
@@ -607,6 +609,7 @@ class AdminController {
         return $this->container->view->render($response, 'admin/adminDeleteUser.html.twig', array(
             'form_submission' => false,
             'purgeResult' => null,
+            'purgeResult_json' => null,
             'exception' => $resp['exception'],
             'memberships' => $membershipsOfUser,
             'user' => $resp['user']));

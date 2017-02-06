@@ -61,7 +61,7 @@
                                 <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
                             </div>
 
-                            <p class="text-primary">This is the owner of {{ memberships.membershipFound }} memberships(s):</p>
+                            <p class="text-primary">This user is the owner of {{ memberships.membershipFound }} memberships(s):</p>
 
                         </div>
                     </div>
@@ -110,6 +110,48 @@
 
                 {% else %}
 
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+
+                            {% if purgeResult.exception %}
+
+                                <p class="text-danger"><span class="fa fa-exclamation-triangle"></span>
+                                    <strong>
+                                        {{ purgeResult.message }}
+                                    </strong>
+                                </p>
+
+                            {% else %}
+                                <p class="text-success"><strong>{{ purgeResult.message }}</strong></p>
+
+                                <p class="text-info">Billing information deletion protocol:</p>
+                                <ul>
+                                    <li>Billing info ID:  {{ purgeResult.billing.billingId }}</li>
+                                    <li>Result: {{ purgeResult.billing.message }}</li>
+                                </ul>
+
+                                <p class="text-info">Memberships deletion protocol:</p>
+
+                                <ul>
+                                    <li>Exception: {{ purgeResult.memberships.exception }}</li>
+                                    <li>Result: {{ purgeResult.memberships.message }}</li>
+                                </ul>
+
+                                <p class="text-info">Invoices deletion protocol:</p>
+
+                                <ul>
+                                    <li>Exception: {{ purgeResult.invoices.exception }}</li>
+                                    <li>Result: {{ purgeResult.invoices.message }}</li>
+                                </ul>
+
+                                <p class="text-success"><strong>Detailed deletion protocol:</strong></p>
+
+                                <pre class="prettyprint"><code>{{ purgeResult_json }}</code></pre>
+
+                            {% endif %}
+
+                        </div>
+                    </div>
 
 
                 {% endif %}
@@ -118,5 +160,7 @@
         </div>
 
     </div>
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
 {% endblock %}
