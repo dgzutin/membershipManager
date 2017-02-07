@@ -349,6 +349,8 @@ class UserController {
             'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
+            'totalPrice_nett' =>  $respInvoiceData['totalPrice_nett'],
+            'totalTaxes' => $respInvoiceData['totalTaxes'],
             'totalPrice' =>  $respInvoiceData['totalPrice'],
             'amountPaid' => $respInvoiceData['amountPaid'],
             'outstandingAmount' => $respInvoiceData['outstandingAmount'],

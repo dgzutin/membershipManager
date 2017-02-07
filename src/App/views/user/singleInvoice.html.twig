@@ -15,7 +15,7 @@
             <div>{{ issuerData.street }} - {{ issuerData.city }} {{ issuerData.zip }}, {{ issuerData.country }}</div>
             <div>{{  issuerData.vat }}</div>
             <div>{{ issuerData.registrationNumber }}</div>
-            <div>P. {{ issuerData.phone }}</div>
+            <div>{{ issuerData.phone }}</div>
             <div><a href="mailto:{{ issuerData.email }}">{{ issuerData.email }}</a></div>
         </div>
     </header>
@@ -79,12 +79,12 @@
             <tr>
                 <td colspan="2"></td>
                 <td colspan="2">SUBTOTAL</td>
-                <td>{{ invoiceData.currency }} {{ formatAmount(totalPrice) }}</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(totalPrice_nett) }}</td>
             </tr>
             <tr>
                 <td colspan="2"></td>
-                <td colspan="2">TAX 0%</td>
-                <td></td>
+                <td colspan="2">Tax ({{ invoiceData.vatRate }}%)</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(totalTaxes) }}</td>
             </tr>
 
             <tr>

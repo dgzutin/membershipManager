@@ -354,7 +354,7 @@
 
                                                         <tr>
                                                             <td class="alignright" width="80%">Total:</td>
-                                                            <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(totalPrice) }}</td>
+                                                            <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(totalPrice_nett) }}</td>
                                                         </tr>
 
                                                         <tr>
@@ -363,8 +363,8 @@
                                                         </tr>
 
                                                         <tr>
-                                                            <td class="alignright" width="80%">Tax </td>
-                                                            <td class="alignright">0.0 %</td>
+                                                            <td class="alignright" width="80%">Tax({{ invoiceData.vatRate }} %)</td>
+                                                            <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(totalTaxes) }}</td>
                                                         </tr>
 
                                                         <tr class="total">

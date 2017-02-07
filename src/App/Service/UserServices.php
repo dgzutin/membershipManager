@@ -607,8 +607,8 @@ class UserServices
                 ->getQuery()
                 ->getResult();
 
-            $totalPrice = $this->shoppingCartServices->getTotalPrice($invoiceItems);
-
+            $totalPrice_nett = $this->shoppingCartServices->getTotalPrice($invoiceItems);
+            $totalPrice = $totalPrice_nett + $totalPrice_nett*($invoice->getVatRate()/100);
             //get date of invoice
 
             $invoiceDate = $invoice->getCreateDate();
@@ -680,7 +680,9 @@ class UserServices
                          'invoiceItems' => $invoiceItems,
                          'payments' => $invoicePayments,
                          'issuerData' => $issuerData,
+                         'totalPrice_nett' => $totalPrice_nett,
                          'totalPrice' => $totalPrice,
+                         'totalTaxes' => $totalPrice_nett*($invoice->getVatRate()/100),
                          'amountPaid' => $amountPaid,
                          'outstandingAmount' => $outstandingAmount,
                          'message' => $message);

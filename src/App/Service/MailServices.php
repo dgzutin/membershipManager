@@ -319,6 +319,8 @@ class MailServices
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
             'totalPrice' =>  $respInvoiceData['totalPrice'],
+            'totalPrice_nett' =>  $respInvoiceData['totalPrice_nett'],
+            'totalTaxes' => $respInvoiceData['totalTaxes'],
             'amountPaid' => $respInvoiceData['amountPaid'],
             'outstandingAmount' => $respInvoiceData['outstandingAmount'],
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
