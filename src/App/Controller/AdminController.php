@@ -36,6 +36,65 @@ class AdminController {
         ));
     }
 
+    public function systemSettingsAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+
+        if ($request->isPost()){
+
+          //  var_dump($request->getParsedBody());
+            $systemInfoSave = $this->userServices->saveSystemInfo($request->getParsedBody());
+            //$settings = $systemInfo['settings'];
+        }
+        else{
+
+        }
+
+        $systemInfo = $this->userServices->getSystemInfo();
+        $settings = $systemInfo['settings'];
+
+        $form = array(
+            array('type' => 'text', 'name' => 'acronym', 'label' => "Acronym", 'value' => $settings->getAcronym(), 'required' => true),
+            array('type' => 'text', 'name' => 'nameOfOrganization', 'label' => "Name of Organisation", 'value' => $settings->getNameOfOrganization(), 'required' => true, 'readonly' => false),
+            array('type' => 'text', 'name' => 'orgWebsite', 'label' => "Organisation's Website", 'value' => $settings->getOrgWebsite(), 'required' => false),
+            array('type' => 'textarea', 'name' => 'disclaimer', 'label' => "Disclaimer", 'value' => $settings->getDisclaimer(), 'required' => false),
+            array('type' => 'email', 'name' => 'email', 'label' => "E-mail Address", 'value' => $settings->getEmail(), 'required' => true),
+            array('type' => 'text', 'name' => 'street', 'label' => "Street", 'value' => $settings->getStreet(), 'required' => true),
+            array('type' => 'text', 'name' => 'city', 'label' => "City", 'value' => $settings->getCity(), 'required' => true),
+            array('type' => 'text', 'name' => 'zip', 'label' => "ZIP", 'value' => $settings->getZip(), 'required' => true),
+            array('type' => 'text', 'name' => 'vat', 'label' => "VAT Number", 'value' => $settings->getVat(), 'required' => false),
+            array('type' => 'phone', 'name' => 'phone', 'label' => "Phone", 'value' => $settings->getPhone(), 'required' => false),
+            array('type' => 'text', 'name' => 'googleAnalyticsTrackingId', 'label' => "Google Analytics ID", 'value' => $settings->getGoogleAnalyticsTrackingId(), 'required' => false),
+            array('type' => 'text', 'name' => 'registrationNumber', 'label' => "Registration Number", 'value' => $settings->getRegistrationNumber(), 'required' => false),
+            array('type' => 'country', 'name' => 'country', 'label' => "Country", 'value' => $settings->getCountry(), 'required' => true),
+            array('type' => 'section', 'name' => 'section', 'label' => "Payment Options", 'required' => true),
+            array('type' => 'number', 'name' => 'vat_rate', 'label' => "VAT Rate (ex. 20%)", 'value' => $settings->getVatRate(), 'required' => false),
+            array('type' => 'text', 'name' => 'systemCurrency', 'label' => "System currency", 'value' => $settings->getSystemCurrency(), 'required' => true),
+            array('type' => 'select', 'name' => 'paypalActive', 'label' => "Paypal Active?", 'value' => $settings->getPaypalActive(), 'required' => true, 'options' => array(
+                array('value' => '1', 'name' => 'Active'),
+                array('value' => '0', 'name' => 'Not Active')
+                )),
+            array('type' => 'email', 'name' => 'paypalEmail', 'label' => "Paypal e-mail Address", 'value' => $settings->getPaypalEmail(), 'required' => false),
+            array('type' => 'select', 'name' => 'paypalSandboxModeActive', 'label' => "Paypal Sandbox Mode?", 'value' => $settings->getPaypalSandboxModeActive(), 'required' => true, 'options' => array(
+                array('value' => '1', 'name' => 'Sandbox Active'),
+                array('value' => '0', 'name' => 'Sandbox Not Active')
+            )),
+            array('type' => 'select', 'name' => 'wireTransferActive', 'label' => "Wire Transfer active?", 'value' => $settings->getWireTransferActive(), 'required' => true, 'options' => array(
+                array('value' => '1', 'name' => 'Active'),
+                array('value' => '0', 'name' => 'Not Active')
+            )),
+            array('type' => 'text', 'name' => 'iban', 'label' => "IBAN", 'value' => $settings->getIban(), 'required' => true),
+            array('type' => 'text', 'name' => 'bic', 'label' => "BIC", 'value' => $settings->getBic(), 'required' => true),
+            array('type' => 'text', 'name' => 'bankName', 'label' => "Bank Name", 'value' => $settings->getBankName(), 'required' => false),
+            array('type' => 'text', 'name' => 'bankAddress', 'label' => "Bank Address", 'value' => $settings->getBankAddress(), 'required' => false),
+            );
+
+        return $this->container->view->render($response, 'admin/adminEditSystemSettings.html.twig', array(
+            'form' => $form,
+            'form_submission' => $request->isPost(),
+            'message' => $systemInfoSave['message']
+        ));
+    }
+
     public function impersonateUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $userId = (int)$args['userId'];

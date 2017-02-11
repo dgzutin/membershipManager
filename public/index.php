@@ -174,6 +174,7 @@ $app->group('/admin', function () use ($app) {
     $app->get('/sendInvoiceToUser/{invoiceId}', '\AdminController:sendInvoiceToUserAction')->setName('sendInvoiceToUserAdmin');
     $app->map(['GET', 'POST'],'/deleteUser/{userId}', '\AdminController:deleteUserAction')->setName('deleteUser');
     $app->get('/impersonateUser/{userId}', '\AdminController:impersonateUserAction')->setName('impersonateUser');
+    $app->map(['GET', 'POST'],'/systemSettings', '\AdminController:systemSettingsAction')->setName('systemSettings');
     
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));

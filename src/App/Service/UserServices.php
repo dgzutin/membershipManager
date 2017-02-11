@@ -56,7 +56,53 @@ class UserServices
         return array('exception' => false,
                      'year' => $year,
                      'settings' => $result);
+    }
 
+    public function saveSystemInfo($data)
+    {
+        $repository =$this->em->getRepository('App\Entity\Settings');
+        $settings = $repository->createQueryBuilder('s')
+            ->select('s')
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($settings != null){
+
+            $settings->setAcronym($data['acronym']);
+            $settings->setNameOfORganization($data['nameOfOrganization']);
+            $settings->setOrgWebsite($data['orgWebsite']);
+            $settings->setDisclaimer($data['disclaimer']);
+            $settings->setEmail($data['email']);
+            $settings->setStreet($data['street']);
+            $settings->setCity($data['city']);
+            $settings->setZip($data['zip']);
+            $settings->setVat($data['vat']);
+            $settings->setRegistrationNumber($data['registrationNumber']);
+            $settings->setPhone($data['phone']);
+            $settings->setGoogleAnalyticsTrackingId($data['googleAnalyticsTrackingId']);
+            $settings->setCountry($data['country']);
+            $settings->setVatRate($data['vat_rate']);
+            $settings->setSystemCurrency($data['systemCurrency']);
+            $settings->setPaypalActive($data['paypalActive']);
+            $settings->setPaypalEmail($data['paypalEmail']);
+            $settings->setPaypalSandboxModeActive($data['paypalSandboxModeActive']);
+            $settings->setWireTransferActive($data['wireTransferActive']);
+            $settings->setIban($data['iban']);
+            $settings->setBic($data['bic']);
+            $settings->setBankName($data['bankName']);
+            $settings->setBankAddress($data['bankAddress']);
+
+            try{
+                $this->em->flush();
+                return array('exception' => false,
+                    'settings' => $settings,
+                    'message' => "System settings updated");
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                    'message' => $e->getMessage());
+            }
+        }
     }
 
     public function authenticateUser($email_1, $password)

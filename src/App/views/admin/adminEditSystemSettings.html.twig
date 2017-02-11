@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item active">System Settings</li>
+    </ol>
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>System Settings</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        {% if form_submission == true %}
+
+                            {% if exception == true %}
+                                <div class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if exception == true %}
+                                <div class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+
+                <form data-toggle="validator" role="form" method="post">
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-2">
+                                <p class="text-right">
+
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-md-10">
+                                <p class="text-right">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-info">Edit system settings:</p>
+
+                    <div class="well">
+
+                        {% for input in form %}
+
+                            {% if input.type == 'country' %}
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2 col-md-2"><p class="text-right"><label class="control-label" for="{{ input.name }}">{{ input.label }}</label></p></div>
+                                        <div class="col-xs-10 col-md-10">
+                                            <div  id="country" class="bfh-selectbox bfh-countries" data-country="{{ input.value }}"  data-name="country" data-flags="true">
+                                                <input type="hidden" value="">
+                                                <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+                                                    <span class="bfh-selectbox-option input-medium" data-option=""></span>
+                                                    <b class="caret"></b>
+                                                </a>
+                                                <div class="bfh-selectbox-options">
+                                                    <input type="text" class="bfh-selectbox-filter">
+                                                    <div role="listbox">
+                                                        <ul role="option">
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% elseif input.type == 'section' %}   <!-- Can be extended to support other input types   -->
+
+                                <p class="text-primary">{{ input.label }}:</p>
+                                <hr>
+
+                            {% elseif input.type == 'select' %}   <!-- Can be extended to support other input types   -->
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2 col-md-2"><p class="text-right"><label class="control-label" for="{{ input.name }}">{{ input.label }}</label></p></div>
+                                        <div class="col-xs-10 col-md-10">
+                                            <select name="{{ input.name }}" id="{{ input.name }}" class="form-control" {% if input.required %}required="required"{% endif %} {% if input.readonly %}readonly{% endif %} tabindex="{{ loop.index }}">
+                                                {% for option in input.options %}
+                                                    <option {% if option.value == input.value %} selected="selected" {% endif %} value="{{ option.value }}">{{ option.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% elseif input.type == 'textarea' %}   <!-- Can be extended to support other input types   -->
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2 col-md-2"><p class="text-right"><label class="control-label" for="{{ input.name }}">{{ input.label }}</label></p></div>
+                                        <div class="col-xs-10 col-md-10">
+                                            <textarea rows="10" class="form-control" name="{{ input.name }}" {% if input.required %}required="required"{% endif %} {% if input.readonly %}readonly{% endif %} tabindex="{{ loop.index }}">{{ input.value }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% else %}
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2 col-md-2"><p class="text-right"><label class="control-label" for="{{ input.name }}">{{ input.label }}</label></p></div>
+                                        <div class="col-xs-10 col-md-10">
+                                            <input type="{{ input.type }}" name="{{ input.name }}" id="{{ input.name }}" class="form-control " placeholder="" value="{{ input.value }}" {% if input.required %}required="required"{% endif %} {% if input.readonly %}readonly{% endif %} tabindex="{{ loop.index }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-2">
+                                <p class="text-right">
+
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-md-10">
+                                <p class="text-right">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
