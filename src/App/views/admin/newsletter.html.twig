@@ -118,7 +118,7 @@
                                         <option  value="true" {% if article.newsletterId == newsletter.id %} selected {% endif %}>Assigned</option>
                                     </select>
                                 </td>
-                                <td><a href="#" class="fa fa-trash-o" onclick="confirmArticleDelete({{ article.id }})"> </a></td>
+                                <td><a href="#tr_{{ article.id }}" class="fa fa-trash-o" onclick="confirmArticleDelete({{ article.id }})"> </a></td>
                             </tr>
                         {% endfor %}
 

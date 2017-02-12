@@ -73,7 +73,7 @@
                         <td>{{ validity.validFrom | date('jS F Y') }}</td>
                         <td><div id="validUntil_{{ validity.id }}">{{ validity.validUntil | date('jS F Y') }}</div></td>
                         <td>{{ validity.date | date('jS F Y') }}</td>
-                        <td><a href="" onclick="deleteValidities([{{ validity.id }}])"><span class="fa fa-trash-o"> </span></a></td>
+                        <td><a href="#tableRow_{{ validity.id }}" onclick="deleteValidities([{{ validity.id }}])"><span class="fa fa-trash-o"> </span></a></td>
 
                     </tr>
                 {% endfor %}

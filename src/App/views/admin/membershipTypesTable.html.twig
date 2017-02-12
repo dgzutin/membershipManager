@@ -65,10 +65,10 @@
                                 <input class="form-control" type="number" name="{{ type.id }}" value="{{ type.listingOrder }}">
                             </td>
                             <td>
-                                <a href="{{ path_for('membershipType', { 'typeId': type.id }) }}"><span class="fa fa-gear"></span> Edit</a>
+                                <a class="fa fa-gear" href="{{ path_for('membershipType', { 'typeId': type.id }) }}"></a>
                             </td>
                             <td>
-                                <a href="#" onclick="confirmMembershipTypeDelete({{ type.id }})"><span class="fa fa-trash"></span></a>
+                                <a href="#tableRow_{{ type.id }}" class="fa fa-trash" onclick="confirmMembershipTypeDelete({{ type.id }})"></a>
                             </td>
                         </tr>
                     {% endfor %}

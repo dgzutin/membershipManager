@@ -96,7 +96,7 @@
                                 <a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoice.invoiceId }) }}"><img height="15px" src="/assets/images/mail_sent.png"></a>
                             </td>
                             <td>
-                                <a href="#" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
+                                <a href="#tableRow_{{ invoice.invoiceId }}" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
                             </td>
                         </tr>
 
@@ -137,7 +137,7 @@
                                 <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
                             </td>
                             <td>
-                                <a href="#" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
+                                <a href="#tableRow_{{ invoice.invoiceId }}" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
                             </td>
                         </tr>
 
