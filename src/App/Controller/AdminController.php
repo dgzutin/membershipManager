@@ -578,7 +578,7 @@ class AdminController {
 
             if ($result['exception'] == false){
 
-                $uri = $this->utilsServices->getBaseUrl($request).'/admin/newsletter/'.$result['newsletter']->getId();
+                $uri = $this->utilsServices->getUrlForRouteName($request, 'saveNewsletterAdmin', array('newsletterId' => $result['newsletter']->getId()));
                 return $response = $response->withRedirect($uri, 200);
             }
             return $this->container->view->render($response, 'userNotification.twig', $result);
