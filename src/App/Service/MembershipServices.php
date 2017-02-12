@@ -9,6 +9,7 @@
 namespace App\Service;
 
 use App\Entity\Membership;
+use App\Entity\MembershipType;
 use App\Entity\MembershipValidity;
 use App\Entity\User;
 use App\Entity\UserToMemberRelation;
@@ -732,11 +733,11 @@ class MembershipServices
 
     }
 
-    public function getAllMembershipTypes()
+    public function getAllMembershipTypes($orderBy = 'id')
     {
         try{
             $repository = $this->em->getRepository('App\Entity\MembershipType');
-            $membershipTypes = $repository->findBy(array(), array('id' => 'ASC'));
+            $membershipTypes = $repository->findBy(array(), array($orderBy => 'ASC'));
         }
         catch (\Exception $e){
             return array('exception' => true,
@@ -1051,6 +1052,180 @@ class MembershipServices
         }
         return array ('exception' => false,
             'membershipType' => $membershipType);
+    }
+
+    public function saveAddMembershipType($id, $data)
+    {
+        try{
+            $repository = $this->em->getRepository('App\Entity\MembershipType');
+            $membershipType = $repository->createQueryBuilder('MembershipType')
+                ->select('MembershipType')
+                ->where('MembershipType.id = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        if ($membershipType == null){
+
+            $membershipType = new MembershipType();
+            $alias = str_replace(" ", "_", $data['typeName']);
+            $alias = strtoupper($alias);
+            $membershipType->setTypeAlias($alias);
+            $membershipType->setListingOrder(0);
+
+            $message = 'Membership Type updated';
+        }
+        else{
+
+            $message = 'New Membership Type created';
+        }
+
+        if (isset($data['typeName'])){
+            $membershipType->setTypeName($data['typeName']);
+        }
+        if (isset($data['selectable'])){
+            $membershipType->setSelectable($data['selectable']);
+        }
+        if (isset($data['renewal_threshold'])){
+            $membershipType->setRenewalThreshold($data['renewal_threshold']);
+        }
+        if (isset($data['currency'])){
+            $membershipType->setCurrency($data['currency']);
+        }
+        if (isset($data['fee'])){
+            $membershipType->setFee($data['fee']);
+        }
+        if (isset($data['recurrence'])){
+            $membershipType->setRecurrence($data['recurrence']);
+        }
+        if (isset($data['description'])){
+            $membershipType->setDescription($data['description']);
+        }
+        if (isset($data['numberOfRepresentatives'])){
+            $membershipType->setNumberOfRepresentatives($data['numberOfRepresentatives']);
+        }
+        if (isset($data['prefix'])){
+            $membershipType->setPrefix($data['prefix']);
+        }
+        if (isset($data['useGlobalMemberNumberAssignment'])){
+            $membershipType->setUseGlobalMemberNumberAssignment($data['useGlobalMemberNumberAssignment']);
+        }
+        if (isset($data['initialMemberId'])){
+            $membershipType->setInitialMemberId($data['initialMemberId']);
+        }
+        if (isset($data['terms'])){
+            $membershipType->setTerms($data['terms']);
+        }
+
+        try{
+            $this->em->persist($membershipType);
+            $this->em->flush();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        return array ('exception' => false,
+            'membershipType' => $membershipType,
+            'message' => $message);
+    }
+
+    public function saveMembershipTypeListingOrder($id, $value)
+    {
+        try{
+            $repository = $this->em->getRepository('App\Entity\MembershipType');
+            $membershipType = $repository->createQueryBuilder('MembershipType')
+                ->select('MembershipType')
+                ->where('MembershipType.id = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        if ($membershipType == null){
+            return array('exception' => true,
+                'message' => 'Membership Type '.$id.' does not exist');
+        }
+         $membershipType->setListingOrder($value);
+
+        try{
+            $this->em->flush();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        return array ('exception' => false,
+            'membershipType' => $membershipType,
+            'message' =>  'Membership Type '.$id.' updated');
+    }
+
+    public function saveMembershipTypeOrder($newOrders)
+    {
+        foreach(array_keys($newOrders) as $key){
+
+            //var_dump($newOrders[$key]);
+            $res = $this->saveMembershipTypeListingOrder($key, $newOrders[$key]);
+        }
+
+    }
+
+    public function deleteMembershipType($id)
+    {
+        //first check if there are members for this membership type
+        $repository = $this->em->getRepository('App\Entity\Membership');
+        $membership = $repository->createQueryBuilder('Membership')
+            ->select('Membership')
+            ->where('Membership.membershipTypeId = :membershipTypeId')
+            ->setParameter('membershipTypeId', $id)
+            ->getQuery()
+            ->getResult();
+
+        if (count($membership) > 0){
+
+            return array('exception' => true,
+                'message' => 'It was not possible to delete membership type '.$id.'. There are '.count($membership).' memberships associated with it');
+        }
+
+        $repository = $this->em->getRepository('App\Entity\MembershipType');
+        $membershipType = $repository->createQueryBuilder('MembershipType')
+            ->select('MembershipType')
+            ->where('MembershipType.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($membershipType == null){
+            return array('exception' => true,
+                'typeId' => $id,
+                'message' => 'Membership Type '.$id.' not found');
+        }
+
+        try{
+            $this->em->remove($membershipType);
+            $this->em->flush();
+
+            return array('exception' => false,
+                'typeId' => $id,
+                'message' => 'Membership Type was deleted');
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'typeId' => $id,
+                'message' => $e->getMessage());
+        }
+
     }
 
     public function getMembershipType($membershipId)

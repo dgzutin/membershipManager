@@ -79,6 +79,33 @@ function deleteValidities(ids)
         }});
 }
 
+function deleteMembershipType(id)
+{
+    var params = {
+        typeId: id
+    };
+
+    console.log(params);
+
+    $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/"+api_version+"/deleteMembershipType",
+        data: JSON.stringify(params),
+        type: 'POST',
+        success: function(result){
+
+            if( result.exception == false){
+                notify('alert-info', result.message);
+
+                //delete table row
+                $('#tableRow_'+result.typeId).remove();
+
+            }
+            else{
+                notify('alert-danger', result.message);
+            }
+
+        }});
+}
+
 function renewMembership()
 {
     var params = {

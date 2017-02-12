@@ -4,7 +4,7 @@
 
 function notify(type, message)
 {
-    document.getElementById("message").className = 'alert '+type+' alert-dismissable fade in';
+    document.getElementById("message").className = 'alert '+type;
     //$("#message").toggleClass(type);
     $("#message").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
                         '<strong>'+message+'</strong>');

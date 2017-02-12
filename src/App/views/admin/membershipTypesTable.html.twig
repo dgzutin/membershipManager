@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item active">Membership Types</li>
+    </ol>
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Manage Membership Types</strong></div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-8 col-md-8"></div>
+                        <div class="col-xs-4 col-md-4">
+                            <p class="text-right">
+                                <a href="{{ path_for('membershipType') }}" class="btn btn-lg btn-success btn-block"><span class="fa fa-plus"></span> New</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <form data-toggle="validator" role="form" method="post">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                            <div class="alert alert-info" id="message" hidden="true"></div>
+                        </div>
+                    </div>
+
+
+                <table class="table table-condensed" id="users" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Prefix</th>
+                        <th>Type Name</th>
+                        <th>Selectable</th>
+                        <th>Currency</th>
+                        <th>Fee</th>
+                        <th>Order</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for type in membershipTypes %}
+                        <tr class="" id="tableRow_{{ type.id }}">
+                            <td>{{ type.id }}</td>
+                            <td>{{ type.prefix }}</td>
+                            <td>{{ type.typeNAme }}</td>
+                            <td>
+                                {% if type.selectable %}
+                                    <span class="label label-success">true</span>
+                                {% else %}
+                                    <span class="label label-danger">false</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ type.currency }}</td>
+                            <td>{{ type.fee }}</td>
+                            <td>
+                                <input class="form-control" type="number" name="{{ type.id }}" value="{{ type.listingOrder }}">
+                            </td>
+                            <td>
+                                <a href="{{ path_for('membershipType', { 'typeId': type.id }) }}"><span class="fa fa-gear"></span> Edit</a>
+                            </td>
+                            <td>
+                                <span href="" onclick="deleteMembershipType({{ type.id }})"><span class="fa fa-trash"></span></span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-8 col-md-8"></div>
+                            <div class="col-xs-4 col-md-4">
+                                <p class="text-right">
+                                    <button type="submit" class="btn btn-lg btn-primary btn-block">Save</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+    <script src="{{ baseUrl }}/assets/js/memberhipManager.js"></script>
+    <script src="{{ baseUrl }}/assets/js/notification.js"></script>
+
+
+
+{% endblock %}

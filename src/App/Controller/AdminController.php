@@ -6,6 +6,7 @@
  * Time: 10:28
  */
 namespace App\Controller;
+use App\Entity\MembershipType;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -45,9 +46,6 @@ class AdminController {
             $systemInfoSave = $this->userServices->saveSystemInfo($request->getParsedBody());
             //$settings = $systemInfo['settings'];
         }
-        else{
-
-        }
 
         $systemInfo = $this->userServices->getSystemInfo();
         $settings = $systemInfo['settings'];
@@ -55,7 +53,7 @@ class AdminController {
         $form = array(
             array('type' => 'text', 'name' => 'acronym', 'label' => "Acronym", 'value' => $settings->getAcronym(), 'required' => true),
             array('type' => 'text', 'name' => 'nameOfOrganization', 'label' => "Name of Organisation", 'value' => $settings->getNameOfOrganization(), 'required' => true, 'readonly' => false),
-            array('type' => 'text', 'name' => 'orgWebsite', 'label' => "Organisation's Website", 'value' => $settings->getOrgWebsite(), 'required' => false),
+            array('type' => 'url', 'name' => 'orgWebsite', 'label' => "Organisation's Website", 'value' => $settings->getOrgWebsite(), 'required' => false),
             array('type' => 'textarea', 'name' => 'disclaimer', 'label' => "Disclaimer", 'value' => $settings->getDisclaimer(), 'required' => false),
             array('type' => 'email', 'name' => 'email', 'label' => "E-mail Address", 'value' => $settings->getEmail(), 'required' => true),
             array('type' => 'text', 'name' => 'street', 'label' => "Street", 'value' => $settings->getStreet(), 'required' => true),
@@ -67,7 +65,7 @@ class AdminController {
             array('type' => 'text', 'name' => 'registrationNumber', 'label' => "Registration Number", 'value' => $settings->getRegistrationNumber(), 'required' => false),
             array('type' => 'country', 'name' => 'country', 'label' => "Country", 'value' => $settings->getCountry(), 'required' => true),
             array('type' => 'section', 'name' => 'section', 'label' => "Payment Options", 'required' => true),
-            array('type' => 'number', 'name' => 'vat_rate', 'label' => "VAT Rate (ex. 20%)", 'value' => $settings->getVatRate(), 'required' => false),
+            array('type' => 'number', 'name' => 'vat_rate', 'label' => "VAT Rate (%)", 'value' => $settings->getVatRate(), 'required' => false),
             array('type' => 'text', 'name' => 'systemCurrency', 'label' => "System currency", 'value' => $settings->getSystemCurrency(), 'required' => true),
             array('type' => 'select', 'name' => 'paypalActive', 'label' => "Paypal Active?", 'value' => $settings->getPaypalActive(), 'required' => true, 'options' => array(
                 array('value' => '1', 'name' => 'Active'),
@@ -94,6 +92,64 @@ class AdminController {
             'message' => $systemInfoSave['message']
         ));
     }
+
+    public function membershipTypesAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        if ($request->isPost()){
+            $this->membershipServices->saveMembershipTypeOrder($request->getParsedBody());
+        }
+
+        $membershipTypesResp = $this->membershipServices->getAllMembershipTypes('listingOrder');
+        return $this->container->view->render($response, 'admin/membershipTypesTable.html.twig', $membershipTypesResp);
+    }
+
+    public function membershipTypeAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        if ($request->isPost()){
+
+            $membershipTypesResp = $this->membershipServices->saveAddMembershipType((int)$args['typeId'], $request->getParsedBody());
+            $type = $membershipTypesResp['membershipType'];
+        }
+        else{
+            $membershipTypesResp = $this->membershipServices->getMembershipTypeById((int)$args['typeId']);
+            $type = $membershipTypesResp['membershipType'];
+        }
+
+        if ($type == null){
+            $type = new MembershipType();
+        }
+
+        $form = array(
+            array('type' => 'text', 'name' => 'typeName', 'label' => "Name", 'value' => $type->getTypeName(), 'required' => true),
+            array('type' => 'select', 'name' => 'selectable', 'label' => "Selectable?", 'value' => $type->getSelectable(), 'required' => true, 'options' => array(
+                array('value' => '1', 'name' => 'Selectable'),
+                array('value' => '0', 'name' => 'Non selectable')
+            )),
+            array('type' => 'text', 'name' => 'renewal_threshold', 'label' => "Threshold for renewal (MM-DD)", 'value' => $type->getRenewalThreshold(), 'required' => true),
+            array('type' => 'text', 'name' => 'currency', 'label' => "Currency", 'value' => $type->getCurrency(), 'required' => true),
+            array('type' => 'text', 'name' => 'fee', 'label' => "Fee", 'value' => $type->getFee(), 'required' => false),
+            array('type' => 'select', 'name' => 'recurrence', 'label' => "Recurrence", 'value' => $type->getRecurrence(), 'required' => false, 'options' => array(
+                array('value' => 'year', 'name' => 'yearly'),
+                array('value' => null, 'name' => 'n/a - free')
+            )),
+            array('type' => 'textarea', 'name' => 'description', 'label' => "Description", 'value' => $type->getDescription(), 'required' => false),
+            array('type' => 'number', 'name' => 'numberOfRepresentatives', 'label' => "Number of Representatives", 'value' => $type->getNumberOfRepresentatives(), 'required' => false),
+            array('type' => 'text', 'name' => 'prefix', 'label' => "Prefix", 'value' => $type->getPrefix(), 'required' => true),
+            array('type' => 'select', 'name' => 'useGlobalMemberNumberAssignment', 'label' => "Use global member ID assignment?", 'value' => $type->getUseGlobalMemberNumberAssignment(), 'required' => false, 'options' => array(
+                array('value' => '1', 'name' => 'Use global')
+            )),
+            array('type' => 'number', 'name' => 'initialMemberId', 'label' => "Initial Member ID", 'value' => $type->getInitialMemberId(), 'required' => false),
+            array('type' => 'textarea', 'name' => 'terms', 'label' => "Membership Terms", 'value' => $type->getTerms(), 'required' => false),
+        );
+
+
+        return $this->container->view->render($response, 'admin/adminAddEditMembershipType.html.twig', array(
+            'form' => $form,
+            'form_submission' => $request->isPost(),
+            'message' => $membershipTypesResp['message']
+        ));
+    }
+
 
     public function impersonateUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {

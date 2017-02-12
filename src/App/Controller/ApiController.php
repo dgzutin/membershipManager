@@ -351,6 +351,25 @@ class ApiController {
 
     }
 
+    //Route /api/v1/deleteMembershipType
+    public function deleteMembershipTypeAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+       * {
+       * "typeId": id
+       * }
+       */
+
+        $param = json_decode($request->getBody());
+
+        //var_dump($param);
+
+        $deleteRes = $this->membershipServices->deleteMembershipType((int)$param->typeId);
+
+        return $response->withJson($deleteRes);
+    }
+
+
     //Route /api-user/v1/saveImage
     public function saveImageAction(ServerRequestInterface $request, ResponseInterface $response)
     {

@@ -150,7 +150,9 @@ $container['\MembersAreaController'] = function ($container) {
 //Define the Routes for admin role
 
 $app->group('/admin', function () use ($app) {
-    
+
+    $app->map(['GET', 'POST'],'/membershipTypes', '\AdminController:membershipTypesAction')->setName('membershipTypes');
+    $app->map(['GET', 'POST'],'/membershipType[/{typeId}]', '\AdminController:membershipTypeAction')->setName('membershipType');
     $app->get('/users', '\AdminController:usersAction')->setName('usersTableView');
     $app->get('/usersJson', '\AdminController:users')->setName('usersTableView');
     $app->get('/user/{userId}', '\AdminController:viewUserProfileAction')->setName('adminViewUserProfile');
@@ -241,6 +243,7 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/sendNewsletter', '\ApiController:sendNewsletterAction' )->setName('sendNewsletter');
     $app->post('/deleteNewsletterArticle', '\ApiController:deleteNewsletterArticleAction' )->setName('deleteNewsletterArticle');
     $app->post('/deleteNewsletter', '\ApiController:deleteNewsletterAction' )->setName('deleteNewsletter');
+    $app->post('/deleteMembershipType', '\ApiController:deleteMembershipTypeAction')->setName('deleteMembershipType');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new ApiAuthenticationMiddleware(array('ROLE_ADMIN', 'ROLE_EDITOR'), $container));
