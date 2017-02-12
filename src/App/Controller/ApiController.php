@@ -369,6 +369,18 @@ class ApiController {
         return $response->withJson($deleteRes);
     }
 
+    //Route /api/v1/deleteInvoices
+    public function deleteInvoicesAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+       * {
+       * "invoiceIds": id
+       * }
+       */
+        $param = json_decode($request->getBody());
+        $invoicesDeleteResp = $this->billingServices->deleteInvoiceItemsPayments($param->invoiceIds);
+        return $response->withJson($invoicesDeleteResp);
+    }
 
     //Route /api-user/v1/saveImage
     public function saveImageAction(ServerRequestInterface $request, ResponseInterface $response)

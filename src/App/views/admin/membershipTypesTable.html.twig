@@ -26,8 +26,8 @@
                 <form data-toggle="validator" role="form" method="post">
 
                     <div class="row">
-                        <div class="col-xs-12 col-md-12">
-                            <div class="alert alert-info" id="message" hidden="true"></div>
+                        <div class="col-xs-12 col-sm-12">
+                            <div class="" id="message" hidden></div>
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@
                                 <a href="{{ path_for('membershipType', { 'typeId': type.id }) }}"><span class="fa fa-gear"></span> Edit</a>
                             </td>
                             <td>
-                                <span href="" onclick="deleteMembershipType({{ type.id }})"><span class="fa fa-trash"></span></span>
+                                <a href="#" onclick="confirmMembershipTypeDelete({{ type.id }})"><span class="fa fa-trash"></span></a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -90,6 +90,10 @@
 
             </div>
         </div>
+    </div>
+
+    <div id="dialog-confirm_delete" title="Delete Membership Type?" hidden>
+        <p class="text-danger"><i class="ui-icon ui-icon-alert"></i> Deleted Membership Types cannot be recovered. Are you sure you want to proceed?</p>
     </div>
 
     <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>

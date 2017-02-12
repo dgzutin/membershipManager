@@ -70,7 +70,7 @@
                             <td><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}"><span class="fa fa-eye"></span></a></td>
                             <td>
                                 {% if newsletter.published == false %}
-                                    <span class="fa fa-trash" onclick="confirmNewsletterDelete({{ newsletter.id}})"></span>
+                                    <a href="#" class="fa fa-trash" onclick="confirmNewsletterDelete({{ newsletter.id}})"></a>
                                 {% endif %}
                             </td>
                         </tr>

@@ -244,6 +244,8 @@ $app->group('/api/v1', function () use ($app) {
     $app->post('/deleteNewsletterArticle', '\ApiController:deleteNewsletterArticleAction' )->setName('deleteNewsletterArticle');
     $app->post('/deleteNewsletter', '\ApiController:deleteNewsletterAction' )->setName('deleteNewsletter');
     $app->post('/deleteMembershipType', '\ApiController:deleteMembershipTypeAction')->setName('deleteMembershipType');
+    $app->post('/deleteInvoices', '\ApiController:deleteInvoicesAction')->setName('deleteInvoices');
+
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new ApiAuthenticationMiddleware(array('ROLE_ADMIN', 'ROLE_EDITOR'), $container));

@@ -144,10 +144,30 @@ function renewMembership()
                     result.message,
                     {
                         position:"top center",
-                        className: "warning" }
+                        className: "warn" }
                 );
             }
 
         }});
 
+}
+
+function confirmMembershipTypeDelete(typeId){
+    $( "#dialog-confirm_delete" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+            "Delete Membership Type": function() {
+
+                //delete article
+                deleteMembershipType(typeId);
+                $( this ).dialog( "close" );
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
 }

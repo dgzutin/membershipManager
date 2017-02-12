@@ -56,6 +56,12 @@
 
                 {% endif %}
 
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12">
+                        <div class="" id="message" hidden></div>
+                    </div>
+                </div>
+
                 <hr>
 
                 <h4>Open invoices:</h4>
@@ -71,13 +77,14 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
 
                     {%  for invoice in openInvoicesArray %}
 
-                        <tr class="">
+                        <tr id="tableRow_{{ invoice.invoiceId }}" class="">
                             <td>{{ invoice.invoiceId }}</td>
                             <td>{{ invoice.invoiceDate }}</td>
                             <td>{{ invoice.invoice.dueDate | date('jS F Y') }}</td>
@@ -87,6 +94,9 @@
                             <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoice.invoiceId }) }}">open</a></td>
                             <td>
                                 <a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoice.invoiceId }) }}"><img height="15px" src="/assets/images/mail_sent.png"></a>
+                            </td>
+                            <td>
+                                <a href="#" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
                             </td>
                         </tr>
 
@@ -108,13 +118,14 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
 
                     {%  for invoice in closedInvoicesArray %}
 
-                        <tr class="">
+                        <tr id="tableRow_{{ invoice.invoiceId }}" class="">
                             <td>{{ invoice.invoiceId }}</td>
                             <td>{{ invoice.invoiceDate }}</td>
                             <td>{{ invoice.invoice.dueDate | date('jS F Y') }}</td>
@@ -124,6 +135,9 @@
                             <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoice.invoiceId }) }}">open</a></td>
                             <td>
                                 <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
+                            </td>
+                            <td>
+                                <a href="#" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
                             </td>
                         </tr>
 
@@ -135,7 +149,12 @@
         </div>
     </div>
 
+    <div id="dialog-confirm_delete" title="Delete Invoice?" hidden>
+        <p class="text-danger"><i class="ui-icon ui-icon-alert"></i> Deleted Invoices cannot be recovered. Are you sure you want to proceed?</p>
+    </div>
+
     <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+    <script src="{{ baseUrl }}/assets/js/invoiceManagement.js"></script>
 
     <script>
 
