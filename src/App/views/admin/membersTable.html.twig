@@ -156,6 +156,7 @@
                 <table class="display" id="users" cellspacing="0" width="100%" style="font-size: smaller">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Member ID</th>
                         <th>Country</th>
                         <th>Expiry date</th>
@@ -168,6 +169,7 @@
                     <tbody>
                     {%  for member in members %}
                         <tr class="">
+                            <td>{{ member.membership.id }}</td>
                             <td>{{ member.membership.memberId }}</td>
                             <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
                             <td>

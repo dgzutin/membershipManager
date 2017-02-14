@@ -524,21 +524,53 @@ class UserServices
         }
     }
 
-    public function generateInvoiceForUser(User $user, Billing $billingInfo, $cartItems, $onPaymentActions, $notifyUser, $request, $currency)
+    public function generateUpdateInvoiceForUser($invoiceId, User $user, Billing $billingInfo, $cartItems, $onPaymentActions, $notifyUser, $request, $currency, $vatRate = null, $createDate = null, $dueDate = null)
     {
+        if ($invoiceId == null){
+            $newInvoice = new Invoice();
+        }
+        else{
+            $repository = $this->em->getRepository('App\Entity\Invoice');
+            $newInvoice = $repository->createQueryBuilder('invoice')
+                ->select('invoice')
+                ->where('invoice.id = :id')
+                ->setParameter('id', $invoiceId)
+                ->getQuery()
+                ->getOneOrNullResult();
 
-        $newInvoice = new Invoice();
+            $repository = $this->em->getRepository('App\Entity\InvoiceItem');
+            $invoiceItems = $repository->createQueryBuilder('items')
+                ->select('items')
+                ->where('items.invoiceId = :invoiceId')
+                ->setParameter('invoiceId', $invoiceId)
+                ->getQuery()
+                ->getResult();
+        }
+
         $newInvoice->setUserId($user->getId());
-        $date_create = new DateTime();
-        $newInvoice->setCreateDate($date_create);
 
-        $date_due = new DateTime();
-        $date_due->add(new DateInterval('P1M'));
-        $newInvoice->setDueDate($date_due);
+        if ($createDate == null){
+            $date_create = new DateTime();
+            $newInvoice->setCreateDate($date_create);
+        }
+        else{
+            $date_create = new DateTime($createDate);
+            $newInvoice->setCreateDate($date_create);
+        }
+
+        if ($dueDate == null){
+            $date_due = new DateTime();
+            $date_due->add(new DateInterval('P1M'));
+            $newInvoice->setDueDate($date_due);
+        }
+        else{
+            $date_due = new DateTime($dueDate.'T23:59:59');
+            $newInvoice->setDueDate($date_due);
+        }
+
 
         //$newInvoice->setCreateDate(date('d/m/Y'));
         //$newInvoice->setDueDate(date('d/m/Y', strtotime("+30 days")));
-
 
         $newInvoice->setCurrency($currency);
         $newInvoice->setInvVat($this->settings->getVat());
@@ -550,7 +582,13 @@ class UserServices
         $newInvoice->setInvCountry($this->settings->getCountry());
         $newInvoice->setInvEmail($this->settings->getEmail());
         $newInvoice->setInvPhone($this->settings->getPhone());
-        $newInvoice->setVatRate($this->settings->getVatRate());
+
+        if ($vatRate == null){
+            $newInvoice->setVatRate($this->settings->getVatRate());
+        }
+        else{$newInvoice->setVatRate($vatRate);
+        }
+
         $newInvoice->setBillingName($billingInfo->getName());
         $newInvoice->setBillingInstitution($billingInfo->getInstitution());
         $newInvoice->setBillingStreet($billingInfo->getStreet());
@@ -573,6 +611,32 @@ class UserServices
             return array('exception' => true,
                          'message' => $e->getMessage());
         }
+
+       // var_dump($cartItems);
+        //delete items first, if any
+        if ($invoiceId != null){
+
+            $j = 0;
+            $itemIds = null;
+            foreach ($invoiceItems as $invoiceItem){
+
+                $itemIds[$j] = $invoiceItem->getId();
+                $j++;
+            }
+
+            $itemDeleteResults = null;
+            if ($itemIds != null){
+
+                $billingServices = $this->container->get('billingServices');
+                $itemDeleteResults = $billingServices->deleteInvoiceItems($itemIds);
+
+                if ($itemDeleteResults['exception'] == true){
+                    return array('exception' => true,
+                        'message' => 'Could not delete invoice items');
+                }
+            }
+        }
+
 
         foreach ($cartItems as $cartItem){
 
@@ -607,18 +671,18 @@ class UserServices
             return array('exception' => false,
                          'invoiceId' => $newInvoice->getId(),
                          'userNotified' => $result['sent'],
-                         'message' => 'Invoice created. Invoice ID: '.$newInvoice->getId().'. '.$result['message']);
+                         'message' => 'Invoice was saved. Invoice ID: '.$newInvoice->getId().'. '.$result['message']);
 
         }
 
         return array('exception' => false,
                      'invoiceId' => $newInvoice->getId(),
                      'userNotified' => false,
-                     'message' => 'Invoice created. Invoice ID: '.$newInvoice->getId());
+                     'message' => 'Invoice was saved. Invoice ID: '.$newInvoice->getId());
 
     }
 
-    public function getInvoiceDataForUser($invoiceId, $userId)
+    public function getInvoiceDataForUser($invoiceId, $userId = null)
     {
 
         $repository = $this->em->getRepository('App\Entity\Invoice');

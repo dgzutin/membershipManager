@@ -25,7 +25,7 @@ class ShoppingCartItem
     /** @Column(type="integer", length=50, nullable=true) * */
     protected $typeId;
 
-    /** @Column(type="string", length=500, nullable=false) * */
+    /** @Column(type="string", length=500, nullable=true) * */
     protected $description;
 
     /** @Column(type="integer", nullable=false) * */

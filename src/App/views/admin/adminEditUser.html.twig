@@ -28,9 +28,9 @@
                         <div class="col-xs-6 col-md-4">
                             <ul>
                                 <li><a href="{{ path_for('members', { 'userId': user.id }) }}"> Manage user's membership(s)</a></li>
-                                <li><a href="{{ path_for('impersonateUser', { 'userId': user.id }) }}""> Login as</a></li>
+                                <li><a href="{{ path_for('impersonateUser', { 'userId': user.id }) }}"> Login as</a></li>
                                 <li><a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"> Invoices and receipts</a></li>
-                                <li><a href=""> Create new invoice for user</a></li>
+                                <li><a href="{{ path_for('invoiceAdmin', { 'userId': user.id }) }}">Create new invoice for user</a></li>
                                 <li><a href="{{ path_for('deleteUser', { 'userId': user.id }) }}"> Delete user account</a></li>
                             </ul>
                         </div>
@@ -373,7 +373,7 @@
                                 <div class="col-xs-6 col-md-3">
 
                                     <div class="form-group">
-                                        <input type="text" name="billing_zip" id="billing_zip" class="form-control " placeholder="ZIP code" value="{{ billingInfo.zip }}" tabindex="12">
+                                        <input type="text" name="billing_zip" id="billing_zip" class="form-control " placeholder="ZIP code" value="{% if billingInfo == null %}{{ user.zip }}{% else %}{{ billingInfo.zip }}{% endif %} tabindex="12">
                                     </div>
 
                                 </div>

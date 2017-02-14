@@ -1,0 +1,395 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"> Invoices and receipts</a></li>
+        <li class="breadcrumb-item active">Create/update Invoice</li>
+    </ol>
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Create/update Invoice for {{ user.firstName }} {{ user.lastName }}</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-8">
+                        User ID: {{ user.id }}
+                        <br><strong>{{ user.title }} {{ user.first_name }} {{ user.last_name }}</strong>
+                        <br>{{ user.institution }}
+                        <br>{{ user.street }} {{ user.zip }} {{ user.city }}, <span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
+                        <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
+                    </div>
+
+                    <div class="col-xs-6 col-md-4">
+                        <ul>
+                            <li><a href="{{ path_for('members', { 'userId': user.id }) }}"> Manage user's membership(s)</a></li>
+                            <li><a href="{{ path_for('impersonateUser', { 'userId': user.id }) }}"> Login as</a></li>
+
+                            {% if invoiceData != null %}
+                                <li><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id}) }}"><span class="fa fa-eye"></span> view Invoice {{ invoiceData.invoice.id }}</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        {% if form_submission == true %}
+
+                            {% if exception == true %}
+                                <div class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if exception == true %}
+                                <div class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <form data-toggle="validator" role="form" method="post">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12">
+                            <div class="" id="message" hidden></div>
+                        </div>
+                    </div>
+
+                    <p class="text-info">Billing address (can be diffrent from above):</p>
+
+                    <div class="well">
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2"><p class="text-right"><label class="control-label" for="position">Name</label></p></div>
+                                <div class="col-xs-12 col-md-10">
+                                    <input type="text" name="billing_name" id="billing_name" class="form-control " placeholder="Ex. Dr. Max Mustermann" value="{% if invoiceData == null %}{{ billingInfo.name }} {% else %}{{ invoiceData.invoice.billingName }}{% endif %}" tabindex="7">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2"><p class="text-right"><label class="control-label" for="billing_institution">Institution</label></p></div>
+                                <div class="col-xs-12 col-md-10">
+                                    <input type="text" name="billing_institution" id="billing_institution" class="form-control " placeholder="Institution" value="{% if invoiceData == null %}{{ billingInfo.institution }}{% else %}{{ invoiceData.invoice.billingInstitution }}{% endif %}" tabindex="8">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2">
+                                    <p class="text-right">
+                                        <label class="control-label" for="street">Street</label>
+                                    </p>
+                                </div>
+                                <div class="col-xs-12 col-md-10">
+                                    <input required type="text" name="billing_street" id="billing_street" class="form-control " placeholder="street" value="{% if invoiceData == null %}{{ billingInfo.street }}{% else %}{{ invoiceData.invoice.billingStreet }}{% endif %}" tabindex="9">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2">
+                                    <p class="text-right">
+                                        <label class="control-label" for="">Country, city and ZIP</label>
+                                    </p>
+                                </div>
+                                <div class="col-xs-6 col-md-4">
+
+                                    <div class="form-group">
+                                        <div  id="billing_country" class="bfh-selectbox bfh-countries" data-country="{% if invoiceData == null %}{{ billingInfo.country }}{% else %}{{ invoiceData.invoice.billingCountry }}{% endif %}"  data-name="billing_country" data-flags="true">
+                                            <input type="hidden" value="{% if invoiceData == null %}{{ billingInfo.country }}{% else %}{{ invoiceData.invoice.billingCountry }}{% endif %}">
+                                            <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+                                                <span class="bfh-selectbox-option input-medium" data-option=""></span>
+                                                <b class="caret"></b>
+                                            </a>
+                                            <div class="bfh-selectbox-options">
+                                                <input type="text" class="bfh-selectbox-filter">
+                                                <div role="listbox">
+                                                    <ul role="option">
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6 col-md-3">
+
+                                    <div class="form-group">
+                                        <input required="required" type="text" name="billing_city" id="billing_city" class="form-control " placeholder="City" value="{% if invoiceData == null %}{{ billingInfo.city }}{% else %}{{ invoiceData.invoice.billingCity }}{% endif %}" tabindex="11">
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6 col-md-3">
+
+                                    <div class="form-group">
+                                        <input type="text" name="billing_zip" id="billing_zip" class="form-control " placeholder="ZIP code" value="{% if invoiceData == null %}{{ billingInfo.zip }}{% else %}{{ invoiceData.invoice.billingZip }}{% endif %}" tabindex="12">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2">
+
+                                </div>
+                                <div class="col-xs-6 col-md-5">
+
+                                    <div class="form-group">
+                                        <label class="control-label" for="billing_vat">VAT Number</label>
+                                        <input type="text" name="billing_vat" id="billing_vat" class="form-control " placeholder="VAT Nr. xxx" value="{% if invoiceData == null %}{{ billingInfo.vat }}{% else %}{{ invoiceData.invoice.billingVat }}{% endif %}" tabindex="13"/>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-6 col-md-5">
+
+                                    <div class="form-group">
+                                        <label class="control-label" for="billing_reference">Reference</label>
+                                        <input type="text" name="billing_reference" id="billing_reference" class="form-control" placeholder="Reference (Ex. Order, number, etc.)" value="{% if invoiceData == null %}{{ billingInfo.reference }}{% else %}{{ invoiceData.invoice.billingReference }}{% endif %}" tabindex="14">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-primary">Invoice data:</p>
+
+
+                    <div class="well">
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-3 col-md-3">
+                                    <label>Currency:</label>
+                                    <input type="text" class="form-control" name="currency" id="currency" value="{% if invoiceData == null %}{{ systemInfo.settings.systemCurrency }}{% else %}{{ invoiceData.invoice.currency }} {% endif %}" required>
+                                </div>
+                                <div class="col-xs-3 col-md-3">
+                                    <label>Tax rate (%):</label>
+                                    <input type="text" class="form-control" name="vatRate" id="vatRate" value="{% if invoiceData == null %}{{ systemInfo.settings.vatRate}}{% else %}{{ invoiceData.invoice.vatRate }}{% endif %}" required>
+                                </div>
+                                <div class="col-xs-3 col-md-3">
+
+                                </div>
+                                <div class="col-xs-3 col-md-3">
+
+                                </div>
+                            </div>
+                        </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-3 col-md-3">
+                                <label for="createDate">Issue date:</label>
+                                <input type="text" class="form-control" name="createDate" id="createDate" value="{% if invoiceData == null %}{% else %}{{ invoiceData.invoice.createDate | date('m/d/Y') }}{% endif %}" required>
+                            </div>
+                            <div class="col-xs-3 col-md-3">
+                                <label for="dueDate">Due date:</label>
+                                <input type="text" class="form-control" name="dueDate" id="dueDate" value="{% if invoiceData == null %}{% else %}{{ invoiceData.invoice.dueDate | date('m/d/Y') }}{% endif %}" required>
+                            </div>
+
+
+                                {% if invoiceData.invoice.actionsExecuted %}
+                                    <div class="col-xs-6 col-md-6">
+                                    {% if invoiceData.invoice.onPaymentActions != NULL %}
+
+                                        {% if invoiceData.invoice.actionsExecuted %}
+                                            <p style="font-size: smaller" class="text-danger">The following actions have already been executed:</p>
+                                        {% else %}
+                                            <p style="font-size: smaller" class="text-primary">The following actions will be executed if full amount is paid:</p>
+                                        {% endif %}
+
+                                        <pre class="prettyprint"><code>{{ invoiceData.invoice.onPaymentActions }}</code></pre>
+
+                                    {% else %}
+                                        <p style="font-size: smaller" class="text-primary" >This invoice has no actions associated.</p>
+                                    {% endif %}
+                                   </div>
+                                {% else %}
+
+                                <div class="col-xs-3 col-md-3">
+                                    <label>On Payment actions:</label>
+                                    <div class="form-group">
+                                        <select class="form-control" name="actionName" id="actionName">
+                                            <option value="" selected="selected">No action</option>
+                                            <option value="renewForOnePeriod">RenewForOnePeriod</option>
+                                        </select>
+                                    </div>
+                                 </div>
+                                 <div class="col-xs-3 col-md-3">
+                                     <label>Parameters (Ids):</label>
+                                     <input type="text" class="form-control" name="params">
+                                 </div>
+                                {% endif %}
+
+                        </div>
+                    </div>
+                    </div> <!-- end wells -->
+
+                    <p class="text-primary">Invoice Items:</p>
+
+                    <div class="well">
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-6">
+                                    <label>Item Name:</label>
+                                </div>
+                                <div class="col-xs-3 col-md-3">
+                                    <label>Unit price:</label>
+                                </div>
+                                <div class="col-xs-2 col-md-2">
+                                    <label>Quantity:</label>
+                                </div>
+                                <div class="col-xs-1 col-md-1">
+
+                                </div>
+                            </div>
+                        </div>
+
+                    <div id="items">
+
+                        {% if invoiceData.invoiceItems != null %}
+
+                            {% for item in invoiceData.invoiceItems %}
+
+                            <div class="form-group" id="item_{{ loop.index }}">
+                                <div class="row">
+                                    <div class="col-xs-6 col-md-6">
+                                        <input type="text" class="form-control" name="itemName[]" value="{{ item.name }}" required>
+                                    </div>
+                                    <div class="col-xs-3 col-md-3">
+                                        <input type="number" step="0.01" class="form-control" name="unitPrice[]" value="{{ item.unitPrice }}" required>
+                                    </div>
+                                    <div class="col-xs-2 col-md-2">
+                                        <input type="number" class="form-control" name="quantity[]" value="{{ item.quantity }}" required>
+                                    </div>
+                                    <div class="col-xs-1 col-md-1">
+                                       {% if loop.index != 1 %}
+                                           <span onclick="removeInputs('item_{{ loop.index }}')" class="fa fa-trash"></span>
+                                       {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        {% endfor %}
+
+                        {% else %}
+
+                        <div class="form-group" id="0">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-6">
+                                    <input type="text" class="form-control" name="itemName[]" value="" required>
+                                </div>
+                                <div class="col-xs-3 col-md-3">
+                                    <input type="number" step="0.01" class="form-control" name="unitPrice[]" value="" required>
+                                </div>
+                                <div class="col-xs-2 col-md-2">
+                                    <input type="number" class="form-control" name="quantity[]" value="" required>
+                                </div>
+                                <div class="col-xs-1 col-md-1">
+
+                                </div>
+                            </div>
+                         </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                            <span class="fa fa-plus" onclick="addInputs('items')"></span>
+                        </div>
+                    </div>
+
+
+                    {% if invoiceData != null %}
+                        <!-- Get total price  -->
+
+                        <div class="row">
+                            <div class="col-xs-9 col-md-9">
+                                <p class="text-right text-info">
+                                    Total price (nett):<br>
+                                    Taxes:<br>
+                                    Amount paid:<br>
+                                    Outstanding amount:
+                                </p>
+                            </div>
+                            <div class="col-xs-3 col-md-3">
+                                {{ invoiceData.invoice.currency  }} {{ formatAmount(invoiceData.totalPrice_nett) }} <br>
+                                {{ invoiceData.invoice.currency }} {{ formatAmount(invoiceData.totalTaxes) }} <br>
+                                {{ invoiceData.invoice.currency }} {{ formatAmount(invoiceData.amountPaid) }} <br>
+                                <strong>{{ invoiceData.invoice.currency }} {{ formatAmount(invoiceData.outstandingAmount) }}</strong>
+                            </div>
+                        </div>
+
+
+
+                    {% endif %}
+
+
+                    </div> <!-- Wells ends here  -->
+
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-2">
+                                <p class="text-right">
+
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-md-10">
+                                <p class="text-right">
+
+                                    {% if invoiceData != null %}
+                                        <input type="hidden" name="invoiceId" value="{{ invoiceData.invoice.id }}">
+                                    {% endif %}
+
+                                    <button type="submit" class="btn btn-success">Save Invoice and calculate total amount</button>
+
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="{{ baseUrl }}/assets/js/invoiceManagement.js"></script>
+    <script type="application/javascript">
+
+        //start datepicker
+        $( function() {
+            $( "#createDate" ).datepicker();
+            $( "#dueDate" ).datepicker();
+        } );
+
+    </script>
+
+{% endblock %}

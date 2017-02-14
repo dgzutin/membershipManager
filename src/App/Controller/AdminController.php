@@ -7,6 +7,7 @@
  */
 namespace App\Controller;
 use App\Entity\MembershipType;
+use App\Entity\ShoppingCartItem;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -728,6 +729,117 @@ class AdminController {
             'exception' => $resp['exception'],
             'memberships' => $membershipsOfUser,
             'user' => $resp['user']));
+    }
+
+    public function invoiceAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = (int)$args['userId'];
+        $resp =  $this->userServices->getUserById($userId);
+
+        $invoiceId = null;
+        if (isset($args['invoiceId'])){
+            $invoiceId = (int)$args['invoiceId'];
+
+        }
+
+        $respInvoiceData = null;
+        $resultsGenInvoice = null;
+        if ($request->isPost()){
+
+            $form_data = $request->getParsedBody();
+
+            if (isset($form_data['invoiceId'])){
+                $invoiceId = $form_data['invoiceId'];
+            }
+
+            // save  billing Info for user
+            $billing['name'] = $form_data['billing_name'];
+            $billing['institution'] = $form_data['billing_institution'];
+            $billing['street'] = $form_data['billing_street'];
+            $billing['country'] = $form_data['billing_country'];
+            $billing['city'] = $form_data['billing_city'];
+            $billing['zip'] = $form_data['billing_zip'];
+            $billing['vat'] = $form_data['billing_vat'];
+            $billing['reference'] = $form_data['billing_reference'];
+            $billingInfo = $this->userServices->createOrUpdateBillingInfo($billing, $resp['user']);
+
+            $itemNames = $form_data['itemName'];
+            $unitPrices = $form_data['unitPrice'];
+            $quantities = $form_data['quantity'];
+
+           // var_dump($itemNames);
+
+            // create Items
+            $i = 0;
+            $items[] = new ShoppingCartItem();
+            foreach ($itemNames as $itemName){
+                
+                $cartItem = new ShoppingCartItem();
+                $cartItem->setName($itemName);
+                $cartItem->setQuantity($quantities[$i]);
+                $cartItem->setUnitPrice($unitPrices[$i]);
+                $cartItem->setTotalPrice($unitPrices[$i]*$quantities[$i]);
+                $cartItem->setUserId($userId);
+                $items[$i] = $cartItem;
+                $i++;
+            }
+            //var_dump($items);
+            //on payment actions
+
+            $actionName = $form_data['actionName'];
+
+            $params = $form_data['params'];
+            $params = array_map("intval", explode(",", $params));
+
+            $onPaymentActions = array(array ('actionName' => $actionName,
+                'membershipIds' => $params));
+
+            $userResp = $this->userServices->getUserById($userId);
+            $user =  $userResp['user'];
+
+            //remove spaces from currency code
+            $currency = str_replace(' ', '', $form_data['currency']);
+            $currency = preg_replace('/\s+/', '', $currency);
+
+            $resultsGenInvoice = $this->userServices->generateUpdateInvoiceForUser($invoiceId, $user, $billingInfo['billing'], $items, json_encode($onPaymentActions), false, $request, $currency, $form_data['vatRate'], $form_data['createDate'], $form_data['dueDate']);
+            $respInvoiceData = $this->userServices->getInvoiceDataForUser($resultsGenInvoice['invoiceId'], $userId);
+
+            return $this->container->view->render($response, 'admin/adminAddEditInvoice.html.twig', array(
+                'form_submission' => true,
+                'exception' => $resultsGenInvoice['exception'],
+                'message' => $resultsGenInvoice['message'],
+                'billingInfo' => $billing,
+                'user' => $resp['user'],
+                'resultsGenInvoice' => $resultsGenInvoice,
+                'invoiceData' => $respInvoiceData));
+        }
+        else{
+            $billing  = null;
+            if ($invoiceId != null){
+                $respInvoiceData = $this->userServices->getInvoiceDataForUser($invoiceId);
+                
+            }
+            else{
+                $billingInfo = $this->userServices->getBillingInfoForUser($userId);
+
+                if ($billingInfo['exception']){
+                    $billing =  null;
+                }
+                else{
+                    $billing = $billingInfo['billing'];
+                }
+            }
+
+        }
+
+
+        return $this->container->view->render($response, 'admin/adminAddEditInvoice.html.twig', array(
+            'form_submission' => false,
+            'exception' => $resp['exception'],
+            'message' => $resp['message'],
+            'billingInfo' => $billing,
+            'user' => $resp['user'],
+            'invoiceData' => $respInvoiceData));
     }
 
 
