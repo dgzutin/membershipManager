@@ -112,7 +112,7 @@
 
         <footer class="footer">
                 <p style="font-size:12px" class="text-center text-muted">&copy; {{ systemInfo.year}} {{ systemInfo.settings.acronym }} - <a target="_blank" href="{{ systemInfo.settings.orgWebsite }}"> {{ systemInfo.settings.nameOfOrganization }}</a> |
-                    {{ systemInfo.settings.street }} {{ systemInfo.settings.zip }} {{ systemInfo.settings.city }} - {{ systemInfo.settings.country }} | e-mail: <a href="mailto:{{ systemInfo.settings.email }}">{{ systemInfo.settings.email }}</a>
+                    {{ systemInfo.settings.street }} {{ systemInfo.settings.zip }} {{ systemInfo.settings.city }} - <span class="bfh-countries" data-country="{{ systemInfo.settings.country }}" data-flags="false"></span> | e-mail: <a href="mailto:{{ systemInfo.settings.email }}">{{ systemInfo.settings.email }}</a>
                 </p>
                 <p  style="font-size:9px" class="text-center text-muted">Software Development: Danilo Zutin | e-mail: <a href="mailto:danilo@zutin.net">danilo@zutin.net</a></p>
         </footer>
