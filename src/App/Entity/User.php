@@ -35,37 +35,37 @@ class User
     /** @Column(type="string", length=50, nullable=true) **/
     public $position;
 
-    /** @Column(type="string", length=200, nullable=false) **/
+    /** @Column(type="string", length=100, nullable=false) **/
     public $institution;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=100, nullable=true) **/
     public $department;
 
-    /** @Column(type="string", length=50, nullable=false) **/
+    /** @Column(type="string", length=100, nullable=false) **/
     public $street;
 
-    /** @Column(type="string", length=50, nullable=false) **/
+    /** @Column(type="string", length=75, nullable=false) **/
     public $city;
 
-    /** @Column(type="string", length=20, nullable=false) **/
+    /** @Column(type="string", length=50, nullable=false) **/
     public $zip;
 
     /** @Column(type="string", length=10, nullable=false) **/
     public $country;
 
-    /** @Column(type="string", length=50, nullable=false) **/
+    /** @Column(type="string", length=100, nullable=false) **/
     public $email_1;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=100, nullable=true) **/
     public $email_2;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=100, nullable=true) **/
     public $website;
 
-    /** @Column(type="string", length=50, nullable=true) **/
+    /** @Column(type="string", length=100, nullable=true) **/
     public $phone;
 
-    /** @Column(type="string", length=500, nullable=true) **/
+    /** @Column(type="text", nullable=true) **/
     protected $comments;
 
     /** @Column(type="datetime", nullable=true) * */
