@@ -50,7 +50,7 @@ class MembershipType
     /** @Column(type="string", length=20, nullable=true) * */
     protected $recurrence;
 
-    /** @Column(type="string", length=500, nullable=true) **/
+    /** @Column(type="text", nullable=true) **/
     protected $description;
 
     /** @Column(type="text", nullable=true) **/

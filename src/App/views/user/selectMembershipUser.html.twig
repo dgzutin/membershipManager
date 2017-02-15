@@ -46,7 +46,7 @@
 
                                     {% endif %}
 
-                                <strong>Description:</strong> {{ membershipType.description }}
+                                <strong>Description:</strong> {{ membershipType.description|raw }}
 
                                     {% if membershipType.free == true %}
 
@@ -107,7 +107,7 @@
 
                                 {% else %}
 
-                                <strong>Description:</strong> {{ membershipType.description }}
+                                <strong>Description:</strong> {{ membershipType.description|raw }}
 
                                 {% if membershipType.free == true %}
 
