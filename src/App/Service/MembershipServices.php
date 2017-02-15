@@ -37,7 +37,7 @@ class MembershipServices
     }
 
    // If $representativeUserIdsArray is NULL, only owner will be associated with membership
-    public function addUpdateMember($ownerUserId, $representativeUserIdsArray, $membershipTypeId, $membershipData)
+    public function addUpdateMember($ownerUserId, $representativeUserIdsArray, $membershipTypeId, $membershipData, $memberId = null)
     {
         //retrieve information about membership type
         try{
@@ -167,13 +167,18 @@ class MembershipServices
 
         $newMembership = new Membership();
 
-        if($highestMemberId == NULL){
+        if ($memberId == null){
+            if($highestMemberId == NULL){
 
-            //TODO: Get this from settings
-            $newMembership->setMemberId(10000);
+                //TODO: Get this from settings
+                $newMembership->setMemberId(10000);
+            }
+            else{
+                $newMembership->setMemberId($highestMemberId + 1);
+            }
         }
         else{
-            $newMembership->setMemberId($highestMemberId + 1);
+            $newMembership->setMemberId($memberId);
         }
 
         $now = new DateTime();
