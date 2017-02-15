@@ -119,7 +119,7 @@
                     </div>
                 </div>
 
-                    <p class="text-right"><a class="btn btn-success btn-md">Back</a> <a class="btn btn-danger btn-md" type="submit" data-toggle="modal" data-target="#confirm_cancel">Cancel Membership</a></p>
+                    <p class="text-right"><a href="{{ path_for('manageMembership', {'memberId': member.membership.memberId}) }}" class="btn btn-success btn-md">Back</a> <a class="btn btn-danger btn-md" type="submit" data-toggle="modal" data-target="#confirm_cancel">Cancel Membership</a></p>
 
 
                     <!-- Modal Confirmation -->
