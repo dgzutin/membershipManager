@@ -43,11 +43,11 @@
                             </td>
                             <td>
                                 <a href="{{ path_for('adminViewUserProfile', { 'userId': user.id }) }}"><span class="fa fa-user"></span> Edit user</a><br>
-                                <a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"><span class="fa fa-money"></span> Invoices and receipts</a><br>
+                                <a href="{{ path_for('userInvoicesAdmin', { 'userId': user.id }) }}"><span class="fa fa-money"></span> Invoices</a><br>
                                 {% if user.member == true %}
-                                    <a href="{{ path_for('members', { 'userId': user.id }) }}"><span class="fa fa-star"></span> Membership(s)</a>
+                                    <a href="{{ path_for('members', { 'userId': user.id }) }}">Membership(s)</a>
                                 {% else %}
-                                    <a class="text-danger" href="{{ path_for('addMemberAdmin', { 'userId': user.id }) }}"><span class="fa fa-plus"></span> Make member</a>
+                                    <a class="text-danger" href="{{ path_for('addMemberAdmin', { 'userId': user.id }) }}"><span class="fa fa-plus"></span> Member</a>
                                 {% endif %}
                             </td>
                         </tr>
