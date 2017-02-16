@@ -2,8 +2,10 @@ vendor/*
 cache/views/*
 cache/email/*
 src/App/config/config.json
-public/files/Member's Area/.quarantine/*
-public/files/Member's Area/.tmb/*
+public/files/Member_Area/.quarantine/*
+public/files/Member_Area/.tmb/*
+public/files/Member_Area/placeholder.txt
+public/files/test.txt
 composer.phar
 .idea
 src/App/config/config.json
