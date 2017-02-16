@@ -18,9 +18,9 @@
 
                 {% else %}
 
-                    <h3>Invoices:</h3>
+                    <h3>Your invoices and receipts:</h3>
 
-                    <table class="table table-striped" id="openInvoices" cellspacing="0" width="100%">
+                    <table class="table table-striped" id="openInvoices" cellspacing="0" width="100%" style="font-size: smaller">
                         <thead>
                         <tr>
                             <th>Invoice ID</th>
@@ -28,71 +28,72 @@
                             <th>Date due</th>
                             <th>AmountPaid</th>
                             <th>Outstanding amount</th>
-                            <th></th>
+                            <th>status</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
 
                         {%  for invoices in openInvoicesArray %}
+
+                            <tr {% if invoices.invoice.dueDate < date("now") %} class="danger" {% endif %}>
+                                <td>{{ invoices.invoiceId }}</td>
+                                <td>{{ invoices.invoiceDate }}</td>
+                                <td>
+                                    {% if invoices.invoice.dueDate < date("now") %}
+                                        <p class="text text-danger"> {{ invoices.invoice.dueDate | date('jS F Y') }}</p>
+                                    {% else %}
+                                        <p class="text text-info"> {{ invoices.invoice.dueDate | date('jS F Y') }}</p>
+                                    {% endif %}
+
+                                </td>
+                                <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.amountPaid) }}</td>
+                                <td>
+                                    {% if invoices.outstandingAmount <= 0 %}
+                                        <p class="text-success"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
+                                    {% else %}
+                                        <p class="text-danger"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if invoices.outstandingAmount <= 0 %}
+                                        <p class="text-primary">paid</p>
+                                    {% else %}
+                                        <p class="text-danger">open</p>
+                                    {% endif %}
+                                </td>
+                                <td><a class="fa fa-eye" href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}"> view</a></td>
+                            </tr>
+                        {% endfor %}
+
+                        {%  for invoices in closedInvoicesArray %}
 
                             <tr class="">
                                 <td>{{ invoices.invoiceId }}</td>
                                 <td>{{ invoices.invoiceDate }}</td>
                                 <td>{{ invoices.invoice.dueDate | date('jS F Y') }}</td>
                                 <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.amountPaid) }}</td>
-                                <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</td>
+                                <td>
+                                    {% if invoices.outstandingAmount <= 0 %}
+                                        <p class="text-success"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
+                                    {% else %}
+                                        <p class="text-danger"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {% if invoices.outstandingAmount <= 0 %}
                                         <p class="text-primary">paid</p>
+                                    {% else %}
+                                        <p class="text-danger">open</p>
                                     {% endif %}
                                 </td>
-                                <td><a href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
+                                <td><a class="fa fa-eye" href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}"> view</a></td>
                             </tr>
 
                         {% endfor %}
                         </tbody>
                     </table>
 
-                    <h3>Receipts:</h3>
-
-                    <table class="table table-striped" id="openInvoices" cellspacing="0" width="100%">
-                        <thead>
-                        <tr>
-                            <th>Invoice ID</th>
-                            <th>Date issued</th>
-                            <th>Date due</th>
-                            <th>AmountPaid</th>
-                            <th>Outstanding amount</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        {%  for invoices in openInvoicesArray %}
-
-                            {%  for invoices in closedInvoicesArray %}
-
-                                <tr class="">
-                                    <td>{{ invoices.invoiceId }}</td>
-                                    <td>{{ invoices.invoiceDate }}</td>
-                                    <td>{{ invoices.invoice.dueDate | date('jS F Y') }}</td>
-                                    <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.amountPaid) }}</td>
-                                    <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</td>
-                                    <td>
-                                        {% if invoices.outstandingAmount <= 0 %}
-                                            <p class="text-primary">paid</p>
-                                        {% endif %}
-                                    </td>
-                                    <td><a href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}">open</a></td>
-                                </tr>
-
-                            {% endfor %}
-
-                        {% endfor %}
-                        </tbody>
-                    </table>
 
                 {% endif %}
 

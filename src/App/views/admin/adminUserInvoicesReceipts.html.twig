@@ -63,7 +63,7 @@
 
                 <hr>
 
-                <h4>Open invoices:</h4>
+                <h4>Invoices and receipts:</h4>
 
                 <table class="display" id="openInvoices" cellspacing="0" width="100%" style="font-size: smaller">
                     <thead>
@@ -73,7 +73,7 @@
                         <th>Date due</th>
                         <th>AmountPaid</th>
                         <th>Outstanding amount</th>
-                        <th></th>
+                        <th>Status</th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -84,67 +84,49 @@
 
                     {%  for invoice in openInvoicesArray %}
 
-                        <tr id="tableRow_{{ invoice.invoiceId }}">
+                        <tr  {% if invoice.invoice.dueDate < date("now") %} class="danger" {% endif %} id="tableRow_{{ invoice.invoiceId }}">
                             <td>{{ invoice.invoiceId }}</td>
                             <td>{{ invoice.invoiceDate }}</td>
-                            <td>{{ invoice.invoice.dueDate | date('jS F Y') }}</td>
+                            <td>
+                                {% if invoice.invoice.dueDate < date("now") %}
+                                    <div class="text text-danger"> {{ invoice.invoice.dueDate | date('jS F Y') }}</div>
+                                {% else %}
+                                    <div class="text text-info"> {{ invoice.invoice.dueDate | date('jS F Y') }}</div>
+                                {% endif %}
+                            </td>
                             <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoice.amountPaid) }}</td>
                             <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoice.outstandingAmount) }}</td>
+                            <td><div class="text-danger">open</div></td>
                             <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoice.invoiceId }) }}">payments</a></td>
                             <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoice.invoiceId }) }}"><span class="fa fa-eye"></span></a></td>
                             <td><a href="{{ path_for('invoiceAdmin', { 'userId': invoice.invoice.userId , 'invoiceId': invoice.invoiceId }) }}">edit</a></td>
                             <td>
-                                <a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoice.invoiceId }) }}"><img height="15px" src="/assets/images/mail_sent.png"></a>
-                            </td>
-                            <td>
                                 <a href="#tableRow_{{ invoice.invoiceId }}" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
                             </td>
                         </tr>
-
                     {% endfor %}
-                    </tbody>
-                </table>
-
-                <hr>
-                <h4>Receipts:</h4>
-
-                <table class="display" id="closedInvoices" cellspacing="0" width="100%" style="font-size: smaller">
-                    <thead>
-                    <tr>
-                        <th>Invoice ID</th>
-                        <th>Date issued</th>
-                        <th>Date due</th>
-                        <th>AmountPaid</th>
-                        <th>Outstanding amount</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
 
                     {%  for invoice in closedInvoicesArray %}
 
                         <tr id="tableRow_{{ invoice.invoiceId }}" class="">
                             <td>{{ invoice.invoiceId }}</td>
                             <td>{{ invoice.invoiceDate }}</td>
-                            <td>{{ invoice.invoice.dueDate | date('jS F Y') }}</td>
+                            <td>
+                                {{ invoice.invoice.dueDate | date('jS F Y') }}
+                            </td>
                             <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoice.amountPaid) }}</td>
                             <td>{{ invoice.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</td>
+                            <td><div class="text-success">paid</div></td>
                             <td><a href="{{ path_for('invoicePayments', { 'invoiceId': invoice.invoiceId }) }}">payments</a></td>
                             <td><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoice.invoiceId }) }}"><span class="fa fa-eye"></span></a></td>
                             <td><a href="{{ path_for('invoiceAdmin', { 'userId': invoice.invoice.userId , 'invoiceId': invoice.invoiceId }) }}">edit</a></td>
-                            <td>
-                                <a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}"><img height="15px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a>
-                            </td>
                             <td>
                                 <a href="#tableRow_{{ invoice.invoiceId }}" onclick="confirmInvoiceDelete({{ invoice.invoiceId }})" class="fa fa-trash"></a>
                             </td>
                         </tr>
 
                     {% endfor %}
+
                     </tbody>
                 </table>
 
