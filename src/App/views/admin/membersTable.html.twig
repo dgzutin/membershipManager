@@ -175,11 +175,11 @@
                             <td>
                                 {% if member.valid == true  %}
 
-                                    <span class="text-success">{{ member.validity_string }}</span>
+                                    <span class="text-success">{{ member.validity.validUntil| date('d M Y') }}</span>
 
                                 {% else %}
 
-                                    <span class="text-danger">{{ member.validity_string }}</span>
+                                    <span class="text-danger">{{ member.validity.validUntil| date('d M Y') }}</span>
 
                                 {% endif %}
                             </td>

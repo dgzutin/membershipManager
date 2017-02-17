@@ -388,7 +388,7 @@ class AdminController {
 
             $updateMemberResult = $this->membershipServices->addUpdateMember($userId, NULL, $membershipTypeId , $membershipData);
 
-            $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($updateMemberResult['member']['user'], NULL, false);
+            $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($updateMemberResult['member']['user'], NULL, false, true);
             $memberGradesResp = $this->membershipServices->getAllMemberGrades();
 
             $updateMemberResult['membershipTypes'] = $membershipsTypes['membershipTypes'];
@@ -403,7 +403,7 @@ class AdminController {
             return $this->container->view->render($response, 'userNotification.twig', $memberResp);
         }
 
-        $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($memberResp['member']['user'], NULL, false);
+        $membershipsTypes = $this->membershipServices->getMembershipTypeAndStatusOfUser($memberResp['member']['user'], NULL, false, true);
         $memberGradesResp = $this->membershipServices->getAllMemberGrades();
         //echo json_encode($membershipsTypes);
 

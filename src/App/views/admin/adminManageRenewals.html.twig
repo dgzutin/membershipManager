@@ -27,7 +27,7 @@
                     <div class="col-xs-12 col-sm-4 col-md-4">
                         <div class="form-group">
                             <label>From:</label>
-                            <input class="form-control" id="from" name="from" type="date" placeholder="MM/DD/YYYY">
+                            <input class="form-control" id="from" name="from" type="text">
 
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                     <div class="col-xs-12 col-sm-4 col-md-4">
                         <div class="form-group">
                             <label>Until:</label>
-                            <input class="form-control" id="until" name="until" type="date" placeholder="MM/DD/YYYY">
+                            <input class="form-control" id="until" name="until" type="text" required>
 
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" id="checkbox_all" ></th>
-                    <th>id</th>
+                    <th>Id</th>
                     <th>Valid from</th>
                     <th><div id="validUntil">Valid until</div></th>
                     <th>Date created</th>
@@ -86,6 +86,16 @@
 
     <!-- JS file  ============================================== -->
     <script src="{{ baseUrl }}/assets/js/memberhipManager.js"></script>
+
+    <script type="application/javascript">
+
+        //start datepicker
+        $( function() {
+            $( "#from" ).datepicker();
+            $( "#until" ).datepicker();
+        } );
+
+    </script>
 
 
 {% endblock %}

@@ -105,7 +105,7 @@
                                 <div class="col-xs-12 col-md-6">
                                     <select class="form-control" id="membershipTypeId" name="membershipTypeId">
                                         {% for membershipType in membershipTypes %}
-                                            {% if membershipType.owner == false or membershipType.id ==  member.membership.membershipTypeId%}
+                                            {% if membershipType.owner == false or membershipType.id ==  member.membership.membershipTypeId %}
                                                 <option value="{{ membershipType.id }}" {% if member.membership.membershipTypeId == membershipType.id  %}selected{% endif %}>{{ membershipType.typeName }}</option>
                                             {% endif %}
                                         {% endfor %}

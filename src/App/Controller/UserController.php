@@ -16,6 +16,7 @@ use App\Entity\Billing;
 use App\Entity\ShoppingCartItem;
 use \Httpful\Request;
 use \Exception;
+use App\Entity\User;
 
 
 class UserController {
@@ -600,8 +601,160 @@ class UserController {
 
        // $currentUrl = $this->utilsServices->getUrlForRoute($request, 'login', array('param' => 1));
 
-        var_dump($this->shoppingCartServices->getItems()['items']);
-        
+        $mType1 = 'Individual Membership';
+        $mType2 = 'Institutional Membership';
+
+
+
+
+
+        $repository =$this->em->getRepository('App\Entity\TmpUser');
+        $results = $repository->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.membership_active = :membership_active')
+            ->andWhere('u.membership_type = :membership_type')
+            ->setParameter('membership_active', 1)
+            ->setParameter('membership_type', $mType1)
+            ->getQuery()
+            ->getResult();
+
+        //var_dump($results);
+
+
+
+        foreach ($results as $result){
+
+
+            $userRe = $this->userServices->findUserByEmail($result->getEmail());
+
+
+            if ($userRe['exception']){
+
+                $user_data['title'] = $result->getSalutation();
+                $user_data['last_name'] = utf8_encode($result->getLastName());
+                $user_data['first_name'] = utf8_encode($result->getFirstName());
+                $user_data['city'] = utf8_encode($result->getCity());
+                $user_data['country'] = $result->getCountry();
+                $user_data['department'] = utf8_encode($result->getDepartment());
+                $user_data['institution'] = utf8_encode($result->getInstitution());
+                $user_data['email_1'] = $result->getEmail();
+                $user_data['phone'] = $result->getPhone();
+                $user_data['position'] = $result->getPosition();
+                $user_data['password'] = sha1(microtime().rand());
+                $user_data['street'] = utf8_encode($result->getAddress1());
+                $user_data['website'] = $result->getWebsite();
+                $user_data['zip']= $result->getPostalCode();
+
+                //$resp = $this->userServices->registerNewUser($user_data);
+
+                //echo 'USER: '.$resp['message'].'<br>';
+
+                $newuser = new User();
+                $newuser->setTitle($user_data['title']);
+                $newuser->setLastName($user_data['last_name']);
+                $newuser->setFirstName($user_data['first_name']);
+                $newuser->setCity($user_data['city']);
+                $newuser->setCountry($user_data['country']);
+                $newuser->setDepartment($user_data['department']);
+                $newuser->setInstitution($user_data['institution']);
+                $newuser->setEmail1($user_data['email_1']);
+                $newuser->setEmail2($user_data['email_2']);
+                $newuser->setPhone($user_data['phone']);
+                $newuser->setPosition($user_data['position']);
+                $newuser->setRole('ROLE_USER');
+
+                $hash = password_hash($user_data['password'], PASSWORD_BCRYPT);
+
+                $newuser->setPassword($hash);
+                $newuser->setStreet($user_data['street']);
+                $newuser->setUserRegDate(new \DateTime());
+                $newuser->setWebsite($user_data['website']);
+                $newuser->setZip($user_data['zip']);
+                $newuser->setActive(true);
+                $newuser->setProfileKey(sha1(microtime().rand()));
+
+
+                $this->em->persist($newuser);
+
+                try{
+                    $this->em->flush();
+                    $result2 = array('exception' => false,
+                        'user' => $newuser,
+                        'message' => "User account was created");
+
+                    $addMRes = $this->membershipServices->addUpdateMember($newuser->getId(), null, 2, null, $result->getId());
+
+                    echo 'USER Added: '.$result2['message']. '<br>';
+                    echo 'Member Added: '.$addMRes['message']. '<br>';
+                }
+                catch (\Exception $e){
+                    $result2 = array('exception' => true,
+                        'message' => $e->getMessage());
+                }
+
+            }
+            else{
+                $addMRes = $this->membershipServices->addUpdateMember($userRe['user']->getId(), null, 2, null, $result->getId());
+
+                echo 'USER Exists <br>';
+                echo 'Member Added: '.$addMRes['message']. '<br>';
+            }
+
+
+        }
+
+
+
+
+        $repository3 =$this->em->getRepository('App\Entity\Membership');
+        $results3 = $repository3->createQueryBuilder('m')
+            ->select('m')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($results3 as $result){
+
+            $repository2 =$this->em->getRepository('App\Entity\TmpRenewal');
+            $results2 = $repository2->createQueryBuilder('r')
+                ->select('r')
+                ->where('r.client_id = :client_id')
+                ->setParameter('client_id', $result->getMemberId())
+                ->getQuery()
+                ->getResult();
+
+            foreach ($results2 as $result2){
+
+                //echo 'From: '. $result2->getRenewedThru().'-01-01T00:00:01';
+
+                try{
+                    $from = new \DateTime($result2->getRenewedThru().'-01-01T00:00:01');
+                    $until = new \DateTime($result2->getRenewedThru().'-12-31T23:59:59');
+                    $resp = $this->membershipServices->addNewMembershipValidity($result->getId(), $from, $until);
+
+
+
+                }
+                catch (\Exception $e){
+
+                    $resp =  array('exception' => true,
+                        'message' => 'Could not parse date string. The format should be  MM/DD/YYYY. Renewal not added.');
+                }
+
+                echo $resp['message'].'<br>';
+
+            }
+
+
+
+
+
+        }
+
+
+
+
+
+
     }
-    
+
 }
