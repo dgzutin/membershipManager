@@ -179,7 +179,13 @@
 
                                 {% else %}
 
-                                    <span class="text-danger">{{ member.validity.validUntil| date('d/m/Y') }}</span>
+                                    {% if member.validity != null  %}
+
+                                        <span class="text-danger">{{ member.validity.validUntil| date('d/m/Y') }}</span>
+
+                                    {% else %}
+                                        <span class="text-danger">n/a</span>
+                                    {% endif %}
 
                                 {% endif %}
                             </td>

@@ -5,13 +5,16 @@
     <div class="se-pre-con"></div>
 
     <div class="row show-grid">
-        <div class="col-xs-12 col-md-4">
+        <div class="col-xs-12 col-md-12">
 
-          <p class="text text-primary"><strong>Welcome, {{ userName }}!</strong></p>
+          <div class="text-right"><strong>Welcome, {{ userName }}!</strong></div>
 
         </div>
+    </div>
 
-        <div class="col-xs-12 col-md-8">
+    <div class="row show-grid">
+
+        <div class="col-xs-12 col-md-12">
 
 
                 {% if memberships.membershipFound > 0 %}
@@ -21,24 +24,24 @@
                     {% if membership.valid == true %}
 
                         {% if membership.validUntil != null %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong>{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %}. <strong>Valid until:</strong> {{ membership.validUntil | date('jS F Y') }} </p>
+                            <p class="text-primary text-left">{% if membership.membershipGrade != null %}<img src="{{ baseUrl }}/assets/images/memberStatus_small.png" alt="...">{% endif %} <strong>Member ID: {{ membership.memberId }}</strong>{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %}. <strong>Membership valid until:</strong> {{ membership.validUntil | date('jS F Y') }} </p>
                         {% else %}
-                            <p class="text-primary text-right"><strong>Member ID: {{ membership.memberId }}</strong>{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %} </p>
+                            <p class="text-primary text-left"><strong>Member ID: {{ membership.memberId }}</strong>{% if membership.membershipGrade != null %}, {{ membership.membershipGrade }}{% endif %} </p>
                         {% endif %}
 
                     {% else %}
 
                         {% if membership.validUntil != null %}
-                            <p class="text-danger text-right"><a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a><strong> Member ID: {{ membership.memberId }}</strong> (This membership expired on {{ membership.validUntil | date('jS F Y') }})</p>
+                            <p class="text-danger text-left"><strong> Member ID: {{ membership.memberId }}</strong> (This membership expired on {{ membership.validUntil | date('jS F Y') }}) <a href="{{ path_for('membershipData', { 'membershipTypeId': membership.typeId }) }}" class="btn btn-success btn-xs">Renew now!</a></p>
                         {% else %}
-                            <p class="text-danger text-right"><strong> Member ID: {{ membership.memberId }}</strong> (This membership is not active)</p>
+                            <p class="text-danger text-left"><strong> Member ID: {{ membership.memberId }}</strong> (This membership is not active)</p>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
 
                 {% else %}
 
-                <p class="text-warning text-right">{{ memberships.message  }} <a href="{{ path_for('selectMembership')}}" class="btn btn-success btn-xs">Apply for membership here</a></p>
+                <p class="text-warning text-left">{{ memberships.message  }} <a href="{{ path_for('selectMembership')}}" class="btn btn-success btn-xs">Apply for membership here</a></p>
 
                 {% endif %}
 
