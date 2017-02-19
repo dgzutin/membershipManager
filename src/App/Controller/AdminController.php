@@ -8,6 +8,7 @@
 namespace App\Controller;
 use App\Entity\MembershipType;
 use App\Entity\ShoppingCartItem;
+use App\Entity\Billing;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -564,7 +565,7 @@ class AdminController {
             'outstandingAmount' => $respInvoiceData['outstandingAmount'],
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
             'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
-            'invoiceLink' => $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
+            'invoiceLink' => $this->utilsServices->getBaseUrl($request).'/admin/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message'],
             'isPost' =>$request->isPost()));
     }
@@ -752,16 +753,16 @@ class AdminController {
                 $invoiceId = $form_data['invoiceId'];
             }
 
-            // save  billing Info for user
-            $billing['name'] = $form_data['billing_name'];
-            $billing['institution'] = $form_data['billing_institution'];
-            $billing['street'] = $form_data['billing_street'];
-            $billing['country'] = $form_data['billing_country'];
-            $billing['city'] = $form_data['billing_city'];
-            $billing['zip'] = $form_data['billing_zip'];
-            $billing['vat'] = $form_data['billing_vat'];
-            $billing['reference'] = $form_data['billing_reference'];
-            $billingInfo = $this->userServices->createOrUpdateBillingInfo($billing, $resp['user']);
+            // create  billing Info for user
+            $billingInfo = new Billing();
+            $billingInfo->setName($form_data['billing_name']);
+            $billingInfo->setInstitution($form_data['billing_institution']);
+            $billingInfo->setStreet($form_data['billing_street']);
+            $billingInfo->setCountry($form_data['billing_country']);
+            $billingInfo->setCity($form_data['billing_city']);
+            $billingInfo->setZip($form_data['billing_zip']);
+            $billingInfo->setVat($form_data['billing_vat']);
+            $billingInfo->setReference($form_data['billing_reference']);
 
             $itemNames = $form_data['itemName'];
             $unitPrices = $form_data['unitPrice'];
@@ -801,14 +802,14 @@ class AdminController {
             $currency = str_replace(' ', '', $form_data['currency']);
             $currency = preg_replace('/\s+/', '', $currency);
 
-            $resultsGenInvoice = $this->userServices->generateUpdateInvoiceForUser($invoiceId, $user, $billingInfo['billing'], $items, json_encode($onPaymentActions), false, $request, $currency, $form_data['vatRate'], $form_data['createDate'], $form_data['dueDate']);
+            $resultsGenInvoice = $this->userServices->generateUpdateInvoiceForUser($invoiceId, $user, $billingInfo, $items, json_encode($onPaymentActions), false, $request, $currency, $form_data['vatRate'], $form_data['createDate'], $form_data['dueDate']);
             $respInvoiceData = $this->userServices->getInvoiceDataForUser($resultsGenInvoice['invoiceId'], $userId);
 
             return $this->container->view->render($response, 'admin/adminAddEditInvoice.html.twig', array(
                 'form_submission' => true,
                 'exception' => $resultsGenInvoice['exception'],
                 'message' => $resultsGenInvoice['message'],
-                'billingInfo' => $billing,
+                'billingInfo' => $billingInfo,
                 'user' => $resp['user'],
                 'resultsGenInvoice' => $resultsGenInvoice,
                 'invoiceData' => $respInvoiceData));
@@ -823,7 +824,15 @@ class AdminController {
                 $billingInfo = $this->userServices->getBillingInfoForUser($userId);
 
                 if ($billingInfo['exception']){
-                    $billing =  null;
+
+                    // create  billing Info for user
+                    $billing = new Billing();
+                    $billing->setName($resp['user']->getTitle().' '.$resp['user']->getFirstName().' '.$resp['user']->getLastName());
+                    $billing->setInstitution($resp['user']->getInstitution());
+                    $billing->setStreet($resp['user']->getStreet());
+                    $billing->setCountry($resp['user']->getCountry());
+                    $billing->setCity($resp['user']->getCity());
+                    $billing->setZip($resp['user']->getZip());
                 }
                 else{
                     $billing = $billingInfo['billing'];
