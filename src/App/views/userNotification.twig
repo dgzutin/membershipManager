@@ -2,16 +2,14 @@
 
 {% block mainPanel %}
 
-
-                {% if exception == true %}
-                    <div class="alert alert-danger">
-                       {{ message }}. <a href="{{ path_for('homeUser')}}">Return to main page</a>
-                    </div>
-                {% else %}
-                    <div class="alert alert-success">
-                        {{ message }}. <a href="{{ path_for('homeUser')}}">Return to main page</a>
-                    </div>
-                {% endif %}
-
+    {% if exception == true %}
+        <div class="alert alert-danger">
+            <p class="text-center">{{ message }}. <a href="{{ path_for('homeUser')}}">Return to main page</a></p>
+        </div>
+    {% else %}
+        <div class="alert alert-success">
+            <p class="text-center">{{ message }}. <a href="{{ path_for('homeUser')}}">Return to main page</a></p>
+        </div>
+    {% endif %}
 
 {% endblock %}
