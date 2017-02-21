@@ -1,0 +1,231 @@
+{% extends 'base.html.twig' %}
+
+
+{% block mainPanel %}
+
+    <link href="{{ baseUrl }}/assets/css/invoice.css" rel="stylesheet">
+
+    <div class="se-pre-con"></div>
+
+    <header class="clearfix">
+        <div id="logo">
+            <img src="{{ baseUrl }}/assets/images/logo_invoice.png">
+        </div>
+
+        <div id="company">
+            <h2 class="name">{{ issuerData.nameOfOrganization }}</h2>
+            <div>{{ issuerData.street }} - {{ issuerData.city }} {{ issuerData.zip }}, {{ issuerData.country }}</div>
+            <div>{{  issuerData.vat }}</div>
+            <div>{{ issuerData.registrationNumber }}</div>
+            <div>{{ issuerData.phone }}</div>
+            <div><a href="mailto:{{ issuerData.email }}">{{ issuerData.email }}</a></div>
+        </div>
+    </header>
+    <hr>
+    <main>
+        <div id="details" class="clearfix">
+            <div id="client">
+                <div class="to">BILLING ADDRESS:</div>
+                <h2 class="name">{{ invoiceData.billingName }}</h2>
+                <div class="address">{{ invoiceData.billingInstitution }}</div>
+                <div class="address">{{ invoiceData.street }} {{ invoiceData.billingZip }} {{ invoiceData.billingCity }}, <span class="bfh-countries" data-country="{{ invoiceData.billingCountry }}" data-flags="false"></span></div>
+                {{ invoiceData.billingVat }}
+                <br>{{ invoiceData.billingReference }}
+            </div>
+
+            {% if outstandingAmount > 0 %}
+
+                <div id="invoice">
+                    <h1>INVOICE #{{ invoiceData.id }}</h1>
+                    <div class="date">Date of Invoice: {{ invoiceDate }}</div>
+                    <div class="date">Due Date: {{ invoiceDueDate }}</div>
+                </div>
+
+            {% else %}
+
+                <div id="invoice">
+                    <h1>RECEIPT for Invoice #{{ invoiceData.id }}</h1>
+                    <div class="date">Date issued: {{ invoiceDate }}</div>
+                    <div class="date">Due Date: {{ invoiceDueDate }}</div>
+                </div>
+
+            {% endif %}
+
+        </div>
+        <table border="0" cellspacing="0" cellpadding="0">
+            <thead>
+            <tr>
+                <th class="no">#</th>
+                <th class="desc">DESCRIPTION</th>
+                <th class="unit">UNIT PRICE</th>
+                <th class="qty">QUANTITY</th>
+                <th class="total">TOTAL</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {%  for item in items %}
+
+                <tr>
+                    <td class="no">{{ loop.index }}</td>
+                    <td class="desc"><h3>{{ item.name }}</h3></td>
+                    <td class="unit">{{ invoiceData.currency }} {{ formatAmount(item.unitPrice) }}</td>
+                    <td class="qty">{{ item.quantity }}</td>
+                    <td class="total">{{ invoiceData.currency }} {{ formatAmount(item.totalPrice) }}</td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">SUBTOTAL</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(totalPrice_nett) }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">Tax ({{ invoiceData.vatRate }}%)</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(totalTaxes) }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">Amount paid</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(amountPaid) }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="2">AMOUNT DUE</td>
+                <td>{{ invoiceData.currency }} {{ formatAmount(outstandingAmount) }}</td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div id="notices">
+            <div>NOTICE:</div>
+            <div class="notice">
+                <strong>{{ message }}</strong>
+            </div>
+        </div>
+    </main>
+
+
+              <!-- Display payment options if oustanding amount is greater that 0  -->
+             {% if outstandingAmount > 0 %}
+
+                 <div id="notices">
+                     <div class="notice">
+                         The following payment methods are possible:
+                     </div>
+                 </div>
+
+                <div class="row show-grid">
+
+                    <!-- Display Wire transfer options if active    -->
+                    {% if issuerData.wireTransferActive == true %}
+
+
+
+                    <div class="col-md-6">
+
+                        <h3>Wire transfer:</h3>
+                        <br><strong>Account holder: </strong>{{ issuerData.nameOfOrganization }}
+                        <br><strong>Bank: </strong>{{ issuerData.bankName }}
+                        <br><strong>Bank address: </strong>{{ issuerData.bankAddress }}
+                        <br><strong>IBAN: </strong>{{ issuerData.iban }}
+                        <br><strong>BIC/SWIFT: </strong> {{ issuerData.bic }}
+                        <br><strong>Reason for transfer: </strong> Invoice Nr. {{ invoiceData.id }}
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- Display Paypal button if Paypal active    -->
+
+                    {% if issuerData.paypalActive == true %}
+
+                    <div class="col-md-6">
+
+                        <h3>Credit card via Paypal:</h3>
+
+
+                        {% if issuerData.paypalSandboxMode == true %}
+
+                            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method='post' name='paypal'>
+
+                        {% else %}
+
+                                <form action="https://www.paypal.com/cgi-bin/webscr" method='post' name='paypal'>
+
+                        {% endif %}
+
+                            <input type='hidden' name="notify_url" value="{{ paypal_ipn_url }}">
+
+                            <input type='hidden' name="return" value="{{ invoiceLink }}">
+                            <input type='hidden' name="cancel_return" value="{{ invoiceLink }}">
+                            <input type='hidden' name="rm" value="2">
+                            <input type='hidden' name="ah" value="0">
+                            <input type='hidden' name="amount" value="{{ outstandingAmount_paypal }}">
+                            <input type='hidden' name="currency_code" value="{{ invoiceData.currency }}">
+
+                            {% if items|length == 1 %}
+
+                                <input type='hidden' name="item_name" value="Invoice Nr. {{ invoiceData.id }} - {{items[0].name}}">
+
+                            {% else %}
+
+                                <input type='hidden' name="item_name" value="Invoice Nr. {{ invoiceData.id }} - {{ issuerData.nameOfOrganization }} ">
+
+                            {% endif %}
+
+
+                            <input type='hidden' name="invoice" value="{{ invoiceData.id }}">
+                            <input type='hidden' name="no_note" value="1">
+                            <input type='hidden' name="no_shipping" value="1">
+                            <input type='hidden' name="charset" value="UTF-8">
+                            <input type='hidden' name="cmd" value="_ext-enter">
+                            <input type='hidden' name="redirect_cmd" value="_xclick">
+                            <input type='hidden' name="business" value="{{ issuerData.paypalEmail }}">
+                            <input type='hidden' name="custom" value="2299">
+
+                            <input type='hidden' name="email" value="{{ user.email_1 }}">
+                            <input type='hidden' name="first_name" value="{{ user.first_name }}">
+                            <input type='hidden' name="last_name" value="{{ user.last_name }}">
+                            <input type='hidden' name="address1" value="{{ invoiceData.billingInstitution }}">
+                            <input type='hidden' name="address2" value="{{ invoiceData.billingStreet }}">
+                            <input type='hidden' name="city" value="{{ invoiceData.billingCity }}">
+                            <input type='hidden' name="state" value="">
+                            <input type='hidden' name="zip" value="{{ invoiceData.billingZip }}">
+                            <input type='hidden' name="country" value="{{ invoiceData.billingCountry }}">
+
+                            <input type='hidden' name="lc" value="en_US">
+                            <input type="image" name="submit" border="0" src="{{ baseUrl }}/assets/images/pay_now_button.png" alt="Please select to make your payment with PayPal - it's fast, free and secure!">
+                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                        </form>
+
+                    </div>
+
+                    {% endif %}
+                </div>
+
+             {% else %}
+
+                 <div id="notices">
+                     <div class="notice">
+                        Payment received on {{ paidDate }}
+                     </div>
+                 </div>
+
+                <p class="text-right"><img src="{{ baseUrl }}/assets/images/paid.png"></p>
+
+             {% endif %}
+
+    <p class="text-right"><a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoiceData.id }) }}">Mail this invoice to user<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+
+
+    <hr>
+
+{% endblock %}
+

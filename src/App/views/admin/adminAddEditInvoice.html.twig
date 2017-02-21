@@ -30,7 +30,7 @@
                             <li><a href="{{ path_for('impersonateUser', { 'userId': user.id }) }}"> Login as</a></li>
 
                             {% if invoiceData != null %}
-                                <li><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id}) }}"><span class="fa fa-eye"></span> view Invoice {{ invoiceData.invoice.id }}</a></li>
+                                <li><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id }) }}"><span class="fa fa-eye"></span> view Invoice {{ invoiceData.invoice.id }}</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -345,6 +345,15 @@
                                 {{ invoiceData.invoice.currency }} {{ formatAmount(invoiceData.amountPaid) }} <br>
                                 <strong>{{ invoiceData.invoice.currency }} {{ formatAmount(invoiceData.outstandingAmount) }}</strong>
                             </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-8 col-md-8">
+                                <a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId':invoiceData.invoice.id }) }}"><img height="20px" src="{{ baseUrl }}/assets/images/mail_sent.png">Send invoice to user</a>
+                            </div>
+                            <div class="col-xs-4 col-md-4">
+                            </div>
+
                         </div>
 
 

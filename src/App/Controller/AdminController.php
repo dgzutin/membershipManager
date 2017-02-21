@@ -551,7 +551,7 @@ class AdminController {
             return $this->container->view->render($response, 'userNotification.twig', $userResp);
         }
 
-        return $this->container->view->render($response, 'user/singleInvoice.html.twig', array(
+        return $this->container->view->render($response, 'admin/singleInvoice.html.twig', array(
             'user' => $user,
             'exception' => $respInvoiceData['exception'],
             'invoiceData' => $respInvoiceData['invoice'],

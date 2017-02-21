@@ -307,6 +307,13 @@ class MailServices
         $userServices = $this->container->get('userServices');
         $respInvoiceData = $userServices->getInvoiceDataForUser($invoiceId, $userId);
 
+        if ($respInvoiceData['exception']){
+
+            return array('exception' => true,
+                'sent' => false,
+                'message' => 'Invoice not found');
+        }
+
         $utilsServices = $this->container->get('utilsServices');
         $userResp = $userServices->getUserById($respInvoiceData['invoice']->getUserId());
 
