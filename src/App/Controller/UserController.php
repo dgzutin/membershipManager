@@ -541,14 +541,14 @@ class UserController {
     {
         $data = array(
             'invoice' => -1,
-            'receiptUrl' => null);
+            'receiptUrl' => $this->utilsServices->getBaseUrl($request).'/user/home');
         
         if ($request->isPost()) {
 
             $parsedBody = $request->getParsedBody();
             $data = array(
                 'invoice' => (int)$parsedBody['invoice'],
-                'receiptUrl' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$parsedBody['invoice']);
+                'receiptUrl' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.(int)$parsedBody['invoice']);
         }
 
         return $this->container->view->render($response, 'user/verifyingPayment.html.twig', $data);
