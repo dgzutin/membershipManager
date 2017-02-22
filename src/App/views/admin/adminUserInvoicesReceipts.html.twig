@@ -25,7 +25,7 @@
                     <div class="row">
                         <div class="col-xs-6 col-sm-9">
 
-                            <p class="text-info">Overview of all invoices and receipts.</p>
+                            <p>Overview of all invoices and receipts.
                         </div>
 
                         <div class="col-xs-6 col-sm-3">
@@ -62,6 +62,33 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-xs-3 col-sm-3">
+                        <div class="text-info text-right">Total amount invoices:</div>
+                    </div>
+                    <div class="col-xs-9 col-sm-9">
+                        <div class="text-info"><strong>{{ systemInfo.settings.systemCurrency }} {{ formatAmount(totalAmount) }}</strong> </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-3 col-sm-3">
+                        <div class="text-success text-right">Total amount received:</div>
+                    </div>
+                    <div class="col-xs-9 col-sm-9">
+                        <div class="text-success"><strong>{{ systemInfo.settings.systemCurrency }} {{ formatAmount(totalReceived) }}</strong> </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-3 col-sm-3">
+                        <div class="text-danger text-right">Total amount open:</div>
+                    </div>
+                    <div class="col-xs-9 col-sm-9">
+                        <div class="text-danger"><strong>{{ systemInfo.settings.systemCurrency }} {{ formatAmount(totalAmount - totalReceived) }}</strong> </div>
+                    </div>
+                </div>
+
                 <hr>
 
                 <h4>Invoices and receipts:</h4>
@@ -70,10 +97,10 @@
                     <thead>
                     <tr>
                         <th>Invoice ID</th>
-                        <th>Date issued</th>
+                        <th>Name</th>
                         <th>Date due</th>
                         <th>AmountPaid</th>
-                        <th>Outstanding amount</th>
+                        <th>Open amount</th>
                         <th>Status</th>
                         <th></th>
                         <th></th>
@@ -87,7 +114,7 @@
 
                         <tr  {% if invoice.invoice.dueDate < date("now") %} class="danger" {% endif %} id="tableRow_{{ invoice.invoiceId }}">
                             <td>{{ invoice.invoiceId }}</td>
-                            <td>{{ invoice.invoiceDate }}</td>
+                            <td>{{ invoice.invoice.billingName }}</td>
                             <td>
                                 {% if invoice.invoice.dueDate < date("now") %}
                                     <div class="text text-danger"> {{ invoice.invoice.dueDate | date('jS F Y') }}</div>
@@ -111,7 +138,7 @@
 
                         <tr id="tableRow_{{ invoice.invoiceId }}" class="">
                             <td>{{ invoice.invoiceId }}</td>
-                            <td>{{ invoice.invoiceDate }}</td>
+                            <td>{{ invoice.invoice.billingName }}</td>
                             <td>
                                 {{ invoice.invoice.dueDate | date('jS F Y') }}
                             </td>

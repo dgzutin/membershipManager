@@ -277,10 +277,10 @@ function processSendMailResults(responseJson)
             for (i=0; i<resultJson.length; i++){
                 //console.log(result[i].userId);
                 if (resultJson[i].exception == true){
-                    document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-danger">'+resultJson[i].message+'</p>';
+                    document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<div class="text-danger">'+resultJson[i].message+'</div>';
                 }
                 else{
-                    document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<p class="text-success">'+resultJson[i].message+'</p>';
+                    document.getElementById('message_'+resultJson[i].membershipId).innerHTML = '<div class="text-success">'+resultJson[i].message+'</div>';
                     n++;
                 }
 

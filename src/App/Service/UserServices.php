@@ -896,28 +896,34 @@ class UserServices
 
         $openInvoicesArray = null;
         $closedInvoicesArray = null;
+        $totalReceived = 0;
+        $totalAmount = 0;
             $i = 0;
             $j = 0;
-            foreach ($invoices as $invoice){
+        foreach ($invoices as $invoice){
 
-                $invoiceData = $this->getInvoiceDataForUser($invoice->getId(), $userId);
-
-                if ($invoiceData['outstandingAmount'] > 0){
-                    $openInvoicesArray[$i] = $invoiceData;
-                    $i++;
-                }
-                else{
-                    $closedInvoicesArray[$j] = $invoiceData;
-                    $j++;
-                }
+            $invoiceData = $this->getInvoiceDataForUser($invoice->getId(), $userId);
+            
+            if ($invoiceData['outstandingAmount'] > 0){
+                $openInvoicesArray[$i] = $invoiceData;
+                $i++;
             }
+            else{
+                $closedInvoicesArray[$j] = $invoiceData;
+                $j++;
+            }
+            $totalAmount  = $totalAmount + $invoiceData['totalPrice'];
+            $totalReceived  = $totalReceived + $invoiceData['amountPaid'];
+        }
 
         return array ('exception' => false,
                       'numberOfInvoices' => count($openInvoicesArray) + count($closedInvoicesArray),
                       'numberOfOpenInvoices' => count($openInvoicesArray),
                       'numberOfClosedInvoices' => count($closedInvoicesArray),
                       'openInvoicesArray' => $openInvoicesArray,
-                      'closedInvoicesArray' => $closedInvoicesArray);
+                      'closedInvoicesArray' => $closedInvoicesArray,
+                      'totalReceived' => $totalReceived,
+                      'totalAmount' => $totalAmount);
     }
 
     public function addNewsletterArticle($article, $userId)

@@ -1,1 +1,0 @@
-All files and folder created at this level will only be visible to administrators

@@ -30,7 +30,8 @@
                             <li><a href="{{ path_for('impersonateUser', { 'userId': user.id }) }}"> Login as</a></li>
 
                             {% if invoiceData != null %}
-                                <li><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id }) }}"><span class="fa fa-eye"></span> view Invoice {{ invoiceData.invoice.id }}</a></li>
+                                <li><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id }) }}"> view Invoice {{ invoiceData.invoice.id }}</a></li>
+                                <li><a href="{{ path_for('invoicePayments', { 'invoiceId': invoiceData.invoice.id }) }}"> Add Payment</a></li>
                             {% endif %}
                         </ul>
                     </div>
