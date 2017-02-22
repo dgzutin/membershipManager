@@ -282,7 +282,6 @@ class ApiController {
             $sendReceipt = (bool)$body_json->sendReceipt;
 
             //var_dump($amountPaid);
-
             $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL, $datePaid, $sendReceipt, $request);
 
             return $response->withJson($result);
