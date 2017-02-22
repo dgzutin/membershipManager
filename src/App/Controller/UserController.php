@@ -539,18 +539,19 @@ class UserController {
 
     public function verifyingPaymentAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $parsedBody = array(
+        $data = array(
             'invoice' => -1,
             'receiptUrl' => null);
         
         if ($request->isPost()) {
 
             $parsedBody = $request->getParsedBody();
-            $parsedBody = array(
-                'receiptUrl' => $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$parsedBody['invoice']);
+            $data = array(
+                'invoice' => (int)$parsedBody['invoice'],
+                'receiptUrl' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$parsedBody['invoice']);
         }
 
-        return $this->container->view->render($response, 'user/verifyingPayment.html.twig', $parsedBody);
+        return $this->container->view->render($response, 'user/verifyingPayment.html.twig', $data);
     }
     
 
