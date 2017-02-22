@@ -20,6 +20,7 @@ class BillingServices
         $this->em = $container->get('em');
         $this->userServices = $container->get('userServices');
         $this->membershipServices = $container->get('membershipServices');
+        $this->mailServices = $container->get('mailServices');
 
         $this->Paypal_sandbox_ipn = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
         $this->Paypal_ipn = 'https://ipnpb.paypal.com/cgi-bin/webscr';
@@ -74,17 +75,48 @@ class BillingServices
                     'message' => 'Payment is invalid');
     }
 
-    public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paymentGatewayData)
+    public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paymentGatewayData, $sendReceiptIfFullPayment = false, $request = null)
     {
-        //verify if full amount was paid to execute OnPayment Actions
-        $invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, NULL);
+        //try to find invoice
+        $repository = $this->em->getRepository('App\Entity\Invoice');
+        $inv = $repository->createQueryBuilder('inv')
+            ->select('inv')
+            ->where('inv.id = :id')
+            ->setParameter('id', $invoiceId)
+            ->getQuery()
+            ->getOneOrNullResult();
 
-        if ($invoiceData['exception'] == false){
+        $sendReceiptResp = null;
+        if ($inv != null){
 
-            $newOutstandingAmount = $invoiceData['outstandingAmount'] - $amountPaid;
+            //add payment
+            $newInvoicePayment = new InvoicePayment();
+            $newInvoicePayment->setInvoiceId($invoiceId);
+            $newInvoicePayment->setDatePaid(new \DateTime());
+            $newInvoicePayment->setPaymentNote($note);
+            $newInvoicePayment->setAmountPaid($amountPaid);
+            $newInvoicePayment->setPaymentMode($paymentMode);
+
+            $this->em->persist($newInvoicePayment);
+            try{
+                $this->em->flush();
+            }
+            catch (\Exception $e){
+                return array('exception' => true,
+                    'message' => $e->getMessage());
+            }
+
+            //verify if full amount was paid to execute OnPayment Actions
+            $invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, NULL);
+
             $invoice = $invoiceData['invoice'];
 
-            if ($newOutstandingAmount <= 0){
+            if ($invoiceData['outstandingAmount'] <= 0){
+
+                //send receipt to user if full amount is paid
+                if ($sendReceiptIfFullPayment){
+                    $sendReceiptResp = $this->mailServices->sendInvoiceToUser($invoiceId, $invoice->getUserId(), $request);
+                }
 
                 if ($invoice->getActionsExecuted() == false AND $invoice->getOnPaymentActions() != null){
 
@@ -97,24 +129,28 @@ class BillingServices
                         $invoice->setActionsExecuted(true);
                         $actionProtocol = array('exception' => false,
                                          'actionExecuted' => true,
-                                         'actionResult' => $result['results']);
+                                         'actionResult' => $result['results'],
+                                         'sendReceiptResp' => $sendReceiptResp);
                     }
                     else{
                         $actionProtocol = array('exception' => true,
                                          'actionExecuted' => false,
-                                         'actionResult' => $result['results']);
+                                         'actionResult' => $result['results'],
+                                         'sendReceiptResp' => $sendReceiptResp);
                     }
                     //=========================================================================
                 }
                 else{
                     $actionProtocol = array('exception' => false,
                                      'actionExecuted' => false,
-                                     'actionResult' => NULL);
+                                     'actionResult' => NULL,
+                                     'sendReceiptResp' => $sendReceiptResp);
                 }
 
                 $invoice->setPaid(true);
                 $invoice->setPaidDate(new \DateTime());
                 $exception = false;
+
             }
             else{
                 //else do nothing
@@ -122,25 +158,19 @@ class BillingServices
                 $exception = false;
                 $actionProtocol = array('exception' => false,
                                  'actionExecuted' => false,
-                                 'actionResult' => NULL);
+                                 'actionResult' => NULL,
+                                 'sendReceiptResp' => $sendReceiptResp);
             }
             
         }
         else{
             return array('exception' => true,
-                         'message' => $invoiceData['message']);
+                         'message' => 'Invoice not found');
         }
 
-        $newInvoicePayment = new InvoicePayment();
-        $newInvoicePayment->setInvoiceId($invoiceId);
-        $newInvoicePayment->setDatePaid(new \DateTime());
-        $newInvoicePayment->setPaymentNote($note);
-        $newInvoicePayment->setAmountPaid($amountPaid);
-        $newInvoicePayment->setPaymentMode($paymentMode);
+        //save actions now
         $newInvoicePayment->setSystemMessage(json_encode($actionProtocol));
         $newInvoicePayment->setPaymentGatewayData(json_encode($paymentGatewayData));
-
-        
         $this->em->persist($newInvoicePayment);
         try{
             $this->em->flush();
@@ -169,8 +199,9 @@ class BillingServices
                      'systemMessage' => $newInvoicePayment->getSystemMessage(),
                      'paymentGatewayData' => $newInvoicePayment->getPaymentGatewayData(),
                      'paymentNote' => $newInvoicePayment->getPaymentNote(),
-                     'newOutstandingAmount' => $newOutstandingAmount,
+                     'newOutstandingAmount' => $invoiceData['outstandingAmount'],
                      'actionProtocol' => $actionProtocol,
+                     'sendReceiptResp' => $sendReceiptResp,
                      'message' => 'A new payment was added');
     }
 

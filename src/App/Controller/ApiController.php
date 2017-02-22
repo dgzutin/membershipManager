@@ -275,7 +275,7 @@ class ApiController {
 
             //var_dump($amountPaid);
 
-            $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL);
+            $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL, true, $request);
 
             return $response->withJson($result);
         }
