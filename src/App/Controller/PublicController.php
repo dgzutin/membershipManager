@@ -204,9 +204,9 @@ class PublicController {
     {
         $parsedBody = $request->getParsedBody();
 
-        //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
-        //fwrite($myfile, $request->getBody());
-        //fclose($myfile);
+        $myfile = fopen('webservice.txt','w') or die("Unable to open file");
+        fwrite($myfile, $request->getBody());
+        fclose($myfile);
 
         $resp = $this->billingServices->verifyPaypalIpn($parsedBody,  $this->systemInfo['settings']->getPaypalSandboxModeActive());
 
@@ -222,7 +222,7 @@ class PublicController {
             $paymentGatewayData['ipn_track_id'] = $resp['paypalVars']['ipn_track_id'];
             $paymentGatewayData['payment_status'] = $resp['paypalVars']['payment_status'];
 
-            $this->billingServices->addPayment($invoiceId, $amountPaid, null, 'PAYPAL', $paymentGatewayData, null, true, $request);
+            $this->billingServices->addPayment($invoiceId, $amountPaid, null, 'PAYPAL', $paymentGatewayData, NULL, true, $request);
 
             //TODO: log results;
         }
