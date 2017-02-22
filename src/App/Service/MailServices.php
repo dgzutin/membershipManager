@@ -323,6 +323,7 @@ class MailServices
             'invoiceData' => $respInvoiceData['invoice'],
             'invoiceDate' => $respInvoiceData['invoiceDate'],
             'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
+            'paidDate' => $respInvoiceData['paidDate'],
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
             'totalPrice' =>  $respInvoiceData['totalPrice'],
@@ -332,15 +333,25 @@ class MailServices
             'outstandingAmount' => $respInvoiceData['outstandingAmount'],
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
             'logo' =>  $resetPasswordLink = $utilsServices->getBaseUrl($request). '/assets/images/logo_invoice.png',
+            'imgPaid' =>  $resetPasswordLink = $utilsServices->getBaseUrl($request). '/assets/images/paid.png',
             'invoiceLink' =>  $utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message']);
 
         $template = $this->twig->loadTemplate('email/eMailInvoice.html.twig');
         $emailBody = $template->render($resp);
 
-        $this->message
-            ->setSubject($this->settings->getAcronym().': Invoice Nr.'.$respInvoiceData['invoice']->getId())
-            ->setFrom(array( $this->settings->getEmail() =>  $this->from));
+        if ($respInvoiceData['outstandingAmount'] > 0){
+
+            $this->message
+                ->setSubject('Invoice Nr.'.$respInvoiceData['invoice']->getId())
+                ->setFrom(array( $this->settings->getEmail() =>  $this->from));
+        }
+        else{
+            $this->message
+                ->setSubject('RECEIPT for Invoice Nr.'.$respInvoiceData['invoice']->getId())
+                ->setFrom(array( $this->settings->getEmail() =>  $this->from));
+        }
+
         try{
             $this->message->setTo(array($userResp['user']->getEmail1()));
             $this->message->setBody($emailBody, 'text/html');

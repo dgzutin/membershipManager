@@ -222,8 +222,14 @@
 
              {% endif %}
 
-    <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Mail this invoice to user<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+     {% if outstandingAmount > 0 %}
 
+         <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Send me this invoice<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+
+     {% else %}
+         <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Send me this receipt<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+
+     {% endif %}
 
     <hr>
 

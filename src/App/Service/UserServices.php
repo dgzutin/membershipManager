@@ -671,6 +671,7 @@ class UserServices
             return array('exception' => false,
                          'invoiceId' => $newInvoice->getId(),
                          'userNotified' => $result['sent'],
+                         'userNotifiedMessage' => $result['message'],
                          'message' => 'Invoice was saved. Invoice ID: '.$newInvoice->getId().'. '.$result['message']);
 
         }
@@ -678,6 +679,7 @@ class UserServices
         return array('exception' => false,
                      'invoiceId' => $newInvoice->getId(),
                      'userNotified' => false,
+                     'userNotifiedMessage' => null,
                      'message' => 'Invoice was saved. Invoice ID: '.$newInvoice->getId());
 
     }

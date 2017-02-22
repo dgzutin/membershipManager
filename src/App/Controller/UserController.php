@@ -295,7 +295,7 @@ class UserController {
             $onPaymentActions = array(array ('actionName' => 'renewForOnePeriod',
                                              'membershipIds' => array($membershipId)));
 
-            $resultsGenInvoice = $this->userServices->generateUpdateInvoiceForUser(null, $user, $billingInfo['billing'], $itemsResp['items'], json_encode($onPaymentActions), true, $request, $membershipType['membershipType']->getCurrency());
+            $resultsGenInvoice = $this->userServices->generateUpdateInvoiceForUser(null, $user, $billingInfo['billing'], $itemsResp['items'], json_encode($onPaymentActions), true, $request, $membershipType['membershipType']->getCurrency(), NULL, NULL, NULL);
 
             if ($resultsGenInvoice['exception'] == false){
                 //delete shopping cart items if invoice is generated

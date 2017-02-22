@@ -560,13 +560,17 @@ class AdminController {
             'invoiceDueDate' => $respInvoiceData['invoiceDueDate'],
             'items' => $respInvoiceData['invoiceItems'],
             'issuerData' => $respInvoiceData['issuerData'],
+            'totalPrice_nett' =>  $respInvoiceData['totalPrice_nett'],
+            'totalTaxes' => $respInvoiceData['totalTaxes'],
             'totalPrice' =>  $respInvoiceData['totalPrice'],
             'amountPaid' => $respInvoiceData['amountPaid'],
             'outstandingAmount' => $respInvoiceData['outstandingAmount'],
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
             'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
-            'invoiceLink' => $this->utilsServices->getBaseUrl($request).'/admin/singleInvoice/'.$respInvoiceData['invoice']->getId(),
+            'invoiceLink' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
             'message' => $respInvoiceData['message'],
+            'logo' =>  $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/assets/images/logo_invoice.png',
+            'imgPaid' =>  $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/assets/images/paid.png',
             'isPost' =>$request->isPost()));
     }
 

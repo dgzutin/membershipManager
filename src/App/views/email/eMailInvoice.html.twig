@@ -315,22 +315,37 @@
                                 </tr>
                                 <tr>
                                     <td class="content-block">
-                                        <strong>Invoice #{{ invoiceData.id }}</strong>
+                                        {% if outstandingAmount > 0 %}
+
+                                            <strong>Invoice #{{ invoiceData.id }}</strong>
+                                            <div><strong>Date:</strong> {{ invoiceDate }}</div>
+                                            <div><strong>Due date:</strong> {{ invoiceDueDate }}</div>
+                                        {% else %}
+
+                                            <strong>RECEIPT for Invoice #{{ invoiceData.id }}</strong> ({{ invoiceDate }})
+                                        {% endif %}
 
                                         <div class="name">{{ invoiceData.billingName }}</div>
                                         <div class="address">{{ invoiceData.billingInstitution }}</div>
                                         <div class="address">{{ invoiceData.billingStreet }} {{ invoiceData.billingZip }} {{ invoiceData.billingCity }}, {{ invoiceData.billingCountry }}</div>
                                         <div class="email"><a href="mailto:{{ user.email1 }}">{{ user.email1 }}</a></div>
-                                        <div><strong>Date:</strong> {{ invoiceDate }}</div>
-                                        <div><strong>Due date:</strong> {{ invoiceDueDate }}</div>
                                         {{ invoiceData.billingVat }}
                                         <br>{{ invoiceData.billingReference }}
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    Thank you for your purchase. Here you find your invoice. If you have any questions feel free to contact us. <br><br>
-                                    Best regards,
+                                    {% if outstandingAmount > 0 %}
+
+                                        Thank you for your purchase. Here you find your invoice. If you have any questions feel free to contact us. <br><br>
+                                        Best regards,
+                                    {% else %}
+
+                                        Full amount has been received on {{ paidDate }}. Thank you.<br>
+                                        If you have any questions feel free to contact us. <br><br>
+                                        Best regards,
+                                    {% endif %}
+
                                     <p style="font-size:85%;">{{ issuerData.nameOfOrganization }}</p>
                                 </tr>
                                 <tr>
@@ -368,7 +383,7 @@
                                                         </tr>
 
                                                         <tr class="total">
-                                                            <td class="alignright" width="80%">Total:</td>
+                                                            <td class="alignright" width="80%">Total due:</td>
                                                             <td class="alignright">{{ invoiceData.currency }} {{ formatAmount(outstandingAmount) }}</td>
                                                         </tr>
 
@@ -380,13 +395,16 @@
                                 </tr>
 
                                 <tr>
+
+                                    {% if outstandingAmount > 0 %}
                                     <td class="content-block">
+
                                         {% if issuerData.wireTransferActive == true %}
-                                                <br><strong>Account holder: </strong>{{ issuerData.nameOfOrganization }}
-                                                <br><strong>Bank: </strong>{{ issuerData.bankName }}
-                                                <br><strong>Bank address: </strong>{{ issuerData.bankAddress }}
-                                                <br><strong>IBAN: </strong>{{ issuerData.iban }} | <strong>BIC/SWIFT: </strong> {{ issuerData.bic }}
-                                                <br><strong>Reason for transfer: </strong> Invoice Nr. {{ invoiceData.id }}
+                                            <br><strong>Account holder: </strong>{{ issuerData.nameOfOrganization }}
+                                            <br><strong>Bank: </strong>{{ issuerData.bankName }}
+                                            <br><strong>Bank address: </strong>{{ issuerData.bankAddress }}
+                                            <br><strong>IBAN: </strong>{{ issuerData.iban }} | <strong>BIC/SWIFT: </strong> {{ issuerData.bic }}
+                                            <br><strong>Reason for transfer: </strong> Invoice Nr. {{ invoiceData.id }}
 
                                         {% endif %}
 
@@ -395,10 +413,15 @@
                                             <br><br>
                                             <a href="{{ invoiceLink }}" class="btn-primary">Pay now with credit card</a>
 
-
                                         {% endif %}
-
                                     </td>
+                                    {% else %}
+
+                                        <td class="alignright">
+                                            <img width="90px" alt="PAID" src="{{ imgPaid }}">
+                                        </td>
+
+                                    {% endif %}
                                 </tr>
                             </table>
                         </td>

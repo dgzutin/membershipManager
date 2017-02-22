@@ -58,7 +58,7 @@
 
                     <p class="text-center text-muted"><strong>Thank you!</strong></p>
                     <p class="text-center text-muted">Your membership registration was succesfully completed!</p>
-                    <p class="text-center text-muted">An invoice with the number <strong>Invoice Nr. {{ resultsGenInvoice.invoiceId }}</strong> was generated.</p>
+                    <p class="text-center text-muted">An invoice with the number <strong>Invoice Nr. {{ resultsGenInvoice.invoiceId }}</strong> was generated. {{ resultsGenInvoice.userNotifiedMessage }}</p>
                     <p class="text-center text-muted">Please note that your membership will be activated after we receive your membership fee.</p>
                     <p class="text-center text-muted"><a  class="btn btn-primary" href="{{ path_for('singleInvoice', { 'invoiceId': resultsGenInvoice.invoiceId }) }}">View and pay Invoice #{{ resultsGenInvoice.invoiceId }}</a> </p>
 
