@@ -389,6 +389,40 @@ class ApiController {
         return $response->withJson($invoicesDeleteResp);
     }
 
+    //Route/api/v1/verifyInvoiceFullPayment
+    public function verifyInvoiceFullPayment(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        /*
+     * {
+     * "invoiceId": id
+     * }
+     */
+        $param = json_decode($request->getBody());
+
+        $respInvoiceData = $this->userServices->getInvoiceDataForUser($param->invoiceId, $_SESSION['user_id']);
+
+        if ($respInvoiceData['exception'] == false){
+
+            if ($respInvoiceData['outstandingAmount'] <= 0){
+                $resp = array(
+                    'exception' => false,
+                    'paid' => true);
+            }
+            else{
+                $resp = array(
+                    'exception' => false,
+                    'paid' => false);
+            }
+        }
+        else{
+            $resp = array(
+                'exception' => true,
+                'paid' => false,
+                'message' =>$respInvoiceData['message']);
+        }
+        return $response->withJson($resp);
+    }
+
     //Route /api-user/v1/saveImage
     public function saveImageAction(ServerRequestInterface $request, ResponseInterface $response)
     {

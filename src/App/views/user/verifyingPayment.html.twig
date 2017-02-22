@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+<div id="message" class="text-center">
+
+    <input type="hidden" id="invoiceId" value="{{ invoice }}">
+    <input type="hidden" id="receiptUrl" value="{{ receiptUrl }}">
+
+    <h3>We are verifying your payment of Invoice Nr. {{ invoice }}. This might take a a few seconds...</h3>
+    <div class="text-center text-info"><i class="fa fa-refresh fa-spin" style="font-size:100px"></i></div>
+
+</div>
+
+
+
+    <script>
+
+        $(function() {
+            verifyInvoiceFullPayment();
+        });
+
+        api_version = 'v1';
+
+        function verifyInvoiceFullPayment()
+        {
+            var params = {
+                invoiceId: $('#invoiceId').val()
+            };
+
+            console.log(params);
+
+            $.ajax({url: window.location.protocol + "//" + window.location.host + "/api-user/"+api_version+"/verifyInvoiceFullPayment",
+                data: JSON.stringify(params),
+                type: 'POST',
+                success: function(result){
+
+                    console.log(result);
+
+                    if( result.exception == false){
+
+                        if( result.paid == false){
+
+                            setTimeout(verifyInvoiceFullPayment, 2000);
+                        }
+                        else{
+                            $("#message").html('<h3>Your payment was successfully verified! A receipt was mailed to you. </h3>' +
+                                    '<a href="'+$('#receiptUrl').val()+'">Click here to view your receipt</a>');
+
+                            setTimeout(function(){ window.location.href = $('#receiptUrl').val(); }, 2000);
+
+                        }
+                    }
+                    else{
+
+                        $("#message").html('<h3>'+result.message+'</h3>');
+                    }
+
+                    // location.reload();
+                }});
+        }
+
+    </script>
+
+
+{% endblock %}

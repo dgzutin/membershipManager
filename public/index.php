@@ -219,6 +219,7 @@ $app->group('/user', function () use ($app) {
     $app->map(['GET', 'POST'], '/newsletterArticle', '\UserController:newsletterArticleAction')->setName('newsletterArticle');
     $app->get('/newsletters', '\UserController:newslettersAction')->setName('userNewsletters');
     $app->get('/myInvoices', '\UserController:invoicesAction')->setName('userInvoices');
+    $app->map(['GET', 'POST'], '/verifyingPayment', '\UserController:verifyingPaymentAction')->setName('verifyingPayment');
 
     $app->get('/testRoute/{param}', '\UserController:testAction')->setName('testRoute');
 
@@ -255,6 +256,8 @@ $app->group('/api-user/v1', function () use ($app) {
 
     $app->post('/saveImage', '\ApiController:saveImageAction' )->setName('saveImage');
     $app->post('/cropImage', '\ApiController:cropImageAction' )->setName('cropImage');
+    $app->post('/verifyInvoiceFullPayment', '\ApiController:verifyInvoiceFullPayment' )->setName('verifyInvoiceFullPayment');
+
 
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes

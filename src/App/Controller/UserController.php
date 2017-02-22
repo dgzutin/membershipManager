@@ -326,6 +326,11 @@ class UserController {
         //Retrieve the user creating the invoice
         $userResp = $this->userServices->getUserById($userId);
 
+        $payPalData = null;
+        if ($request->isPost()){
+            $payPalData = $request->getParsedBody();
+        }
+
         if ($userResp['exception'] == false){
             $user =  $userResp['user'];
         }
@@ -358,8 +363,10 @@ class UserController {
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
             'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
             'invoiceLink' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
+            'returnUrl' => $this->utilsServices->getBaseUrl($request).'/user/verifyingPayment',
             'message' => $respInvoiceData['message'],
-            'isPost' =>$request->isPost()));
+            'payPalData' => $payPalData,
+            'isPost' => $request->isPost()));
 
     }
 
@@ -530,6 +537,21 @@ class UserController {
         return $this->container->view->render($response, 'user/userInvoices.html.twig', $result);
     }
 
+    public function verifyingPaymentAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $parsedBody = array(
+            'invoice' => -1,
+            'receiptUrl' => null);
+        
+        if ($request->isPost()) {
+
+            $parsedBody = $request->getParsedBody();
+            $parsedBody = array(
+                'receiptUrl' => $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$parsedBody['invoice']);
+        }
+
+        return $this->container->view->render($response, 'user/verifyingPayment.html.twig', $parsedBody);
+    }
     
 
     public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)

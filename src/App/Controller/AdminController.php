@@ -568,6 +568,7 @@ class AdminController {
             'outstandingAmount_paypal' => $respInvoiceData['outstandingAmount'],
             'paypal_ipn_url' => $this->utilsServices->getBaseUrl($request).'/paypal_ipn',
             'invoiceLink' =>  $this->utilsServices->getBaseUrl($request).'/user/singleInvoice/'.$respInvoiceData['invoice']->getId(),
+            'returnUrl' => $this->utilsServices->getBaseUrl($request).'/user/verifyingPayment',
             'message' => $respInvoiceData['message'],
             'logo' =>  $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/assets/images/logo_invoice.png',
             'imgPaid' =>  $resetPasswordLink = $this->utilsServices->getBaseUrl($request). '/assets/images/paid.png',
