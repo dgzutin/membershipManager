@@ -27,7 +27,7 @@
 
                     <div class="row">
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label for="amountPaid">Amount in {{ invoiceData.invoice.currency }}:</label>
                                 <p class="text-muted" style="font-size: smaller">(use "." as decimal separator)</p>
@@ -35,7 +35,7 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label for="paymentMode">Method:</label>
                                 <p class="text-muted" style="font-size: smaller">Wire transfer, Paypal, cash</p>
@@ -47,16 +47,33 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-4">
-
+                        <div class="col-sm-3">
                             <div class="form-group">
-                                <label for="note">Note/comments:</label>
-                                <textarea class="form-control" rows="2" id="note" name="note"></textarea>
+                                <label for="datePaid">Date paid:</label>
+                                <p class="text-muted" style="font-size: smaller">(leave blank if today)</p>
+                                <input id="datePaid" name="datePaid" type="text" class="form-control" value="">
                             </div>
-
                         </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="sendReceipt"></label>
+                                <input type="checkbox" name="sendReceipt" id="sendReceipt"> Send receipt to use if full payment?
+                            </div>
+                        </div>
+
                     </div>
 
+                <div class="row">
+                    <div class="col-sm-12">
+
+                        <div class="form-group">
+                            <label for="note">Note/comments:</label>
+                            <textarea class="form-control" rows="2" id="note" name="note"></textarea>
+                        </div>
+
+                    </div>
+                </div>
                 <input type="hidden" id="invoiceId" value="{{ invoiceData.invoice.id }}">
 
                 <div class="row">
@@ -144,5 +161,13 @@
     <script src="{{ baseUrl }}/assets/js/paymentManagement.js"></script>
 
 
+    <script type="application/javascript">
+
+        //start datepicker
+        $( function() {
+            $( "#datePaid" ).datepicker();
+        } );
+
+    </script>
 
 {% endblock %}

@@ -58,9 +58,13 @@ function addPayment(result)
         invoiceId:  $('#invoiceId').val(),
         note:  $('#note').val(),
         amountPaid:  $('#amountPaid').val(),
-        paymentMode: $('#paymentMode').val()
+        paymentMode: $('#paymentMode').val(),
+        datePaid: $('#datePaid').val(),
+        sendReceipt: $('#sendReceipt').is(":checked")
 
     };
+
+    console.log(params);
 
     $.ajax({url: window.location.protocol + "//" + window.location.host + "/api/"+api_version+"/addPayment",
         data: JSON.stringify(params),

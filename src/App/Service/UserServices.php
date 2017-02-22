@@ -554,7 +554,7 @@ class UserServices
             $newInvoice->setCreateDate($date_create);
         }
         else{
-            $date_create = new DateTime($createDate);
+            $date_create = new DateTime($createDate.'T23:59:59');
             $newInvoice->setCreateDate($date_create);
         }
 

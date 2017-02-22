@@ -31,7 +31,7 @@
 
                             {% if invoiceData != null %}
                                 <li><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id }) }}"> view Invoice {{ invoiceData.invoice.id }}</a></li>
-                                <li><a href="{{ path_for('invoicePayments', { 'invoiceId': invoiceData.invoice.id }) }}"> Add Payment</a></li>
+                                <li><a href="{{ path_for('invoicePayments', { 'invoiceId': invoiceData.invoice.id }) }}"> Add Payments</a></li>
                             {% endif %}
                         </ul>
                     </div>

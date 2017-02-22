@@ -222,7 +222,7 @@ class PublicController {
             $paymentGatewayData['ipn_track_id'] = $resp['paypalVars']['ipn_track_id'];
             $paymentGatewayData['payment_status'] = $resp['paypalVars']['payment_status'];
 
-            $this->billingServices->addPayment($invoiceId, $amountPaid, null, 'PAYPAL', $paymentGatewayData, true, $request);
+            $this->billingServices->addPayment($invoiceId, $amountPaid, null, 'PAYPAL', $paymentGatewayData, null, true, $request);
 
             //TODO: log results;
         }

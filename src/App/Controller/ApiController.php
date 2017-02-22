@@ -261,6 +261,7 @@ class ApiController {
        *  "invoiceId": 1,
        *  "note": ".....",
        *  "amount": 1.55,
+         * datePaid: MM/DD/YYYY
        *  "paymentMode": PAYPAL
           }
       */
@@ -270,17 +271,24 @@ class ApiController {
 
             $invoiceId = (int)$body_json->invoiceId;
             $amountPaid = (double)$body_json->amountPaid;
+
+            if ($amountPaid == 0){
+                return $response->withJson(array('exception' => true,
+                    'message' => 'Amount cannot be '.$amountPaid));
+            }
             $note = $body_json->note;
             $paymentMode = $body_json->paymentMode;
+            $datePaid = $body_json->datePaid;
+            $sendReceipt = (bool)$body_json->sendReceipt;
 
             //var_dump($amountPaid);
 
-            $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL, true, $request);
+            $result = $this->billingServices->addPayment($invoiceId, $amountPaid, $note, $paymentMode, NULL, $datePaid, $sendReceipt, $request);
 
             return $response->withJson($result);
         }
 
-        return $response->withJson(array('exception' => false,
+        return $response->withJson(array('exception' => true,
                                          'message' => 'Could not parse request body'));
     }
     //Route /api/v1/assignArticlesToNewsletter

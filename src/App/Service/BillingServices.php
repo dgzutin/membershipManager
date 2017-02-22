@@ -75,7 +75,7 @@ class BillingServices
                     'message' => 'Payment is invalid');
     }
 
-    public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paymentGatewayData, $sendReceiptIfFullPayment = false, $request = null)
+    public function addPayment($invoiceId, $amountPaid, $note, $paymentMode, $paymentGatewayData, $datePaid, $sendReceiptIfFullPayment = false, $request = null)
     {
         //try to find invoice
         $repository = $this->em->getRepository('App\Entity\Invoice');
@@ -92,7 +92,7 @@ class BillingServices
             //add payment
             $newInvoicePayment = new InvoicePayment();
             $newInvoicePayment->setInvoiceId($invoiceId);
-            $newInvoicePayment->setDatePaid(new \DateTime());
+            $newInvoicePayment->setDatePaid(new \DateTime($datePaid.'T23:59:59'));
             $newInvoicePayment->setPaymentNote($note);
             $newInvoicePayment->setAmountPaid($amountPaid);
             $newInvoicePayment->setPaymentMode($paymentMode);
