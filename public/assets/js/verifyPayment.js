@@ -1,3 +1,7 @@
+/**
+ * Created by garbi on 22.02.17.
+ */
+
 
 api_version = 'v1';
 redirectUrl = $('#receiptUrl').val();
@@ -24,8 +28,8 @@ function verifyInvoiceFullPayment()
                     setTimeout(verifyInvoiceFullPayment, 2000);
                 }
                 else{
-                    $("#message").html('<h3>Your payment was successfully verified! A receipt was mailed to you. </h3>' +
-                        '<a href="'+$('#receiptUrl').val()+'">Click here to view your receipt</a>');
+                    $( "#unverified" ).hide();
+                    $( "#verified" ).show();
 
                     setTimeout(function(){
                         window.location.href = redirectUrl;
@@ -44,6 +48,4 @@ function verifyInvoiceFullPayment()
 
             // location.reload();
         }});
-}/**
- * Created by garbi on 22.02.17.
- */
+}
