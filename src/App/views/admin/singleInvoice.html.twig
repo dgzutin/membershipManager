@@ -224,10 +224,10 @@
 
     {% if outstandingAmount > 0 %}
 
-        <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Send invoice to user<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+        <p class="text-right"><a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoiceData.id }) }}">Send invoice to user<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
 
     {% else %}
-        <p class="text-right"><a href="{{ path_for('sendInvoiceToUser', { 'invoiceId': invoiceData.id }) }}">Send receipt to user<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
+        <p class="text-right"><a href="{{ path_for('sendInvoiceToUserAdmin', { 'invoiceId': invoiceData.id }) }}">Send receipt to user<img height="30px" src="{{ baseUrl }}/assets/images/mail_sent.png"></a></p>
 
     {% endif %}
 
