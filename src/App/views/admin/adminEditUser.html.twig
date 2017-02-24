@@ -24,7 +24,7 @@
                             <br><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
                             <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
                             <p style="font-size: smaller"><strong>Reset password:</strong> <a href="{{ base_url }}/resetPassword/{{ user.profileKey }}" target="_blank">{{ base_url }}/resetPassword/{{ user.profileKey }}</a></p>
-                            <strong>Account created:</strong> {{ user.createDate |date('g:ia \o\n l jS F Y') }}
+                            <strong>Account created:</strong> {{ user.userRegDate |date('g:ia \o\n l jS F Y') }}
                         </div>
 
                         <div class="col-xs-6 col-md-4">
