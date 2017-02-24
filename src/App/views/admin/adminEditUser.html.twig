@@ -23,8 +23,8 @@
                             <br>{{ user.zip }} {{ user.city }}
                             <br><span class="bfh-countries" data-country="{{ user.country }}" data-flags="true"></span>
                             <br>E-mail: <a href="mailto:{{ user.email_1 }}">{{ user.email_1 }}</a>
-                            <br>
                             <p style="font-size: smaller"><strong>Reset password:</strong> <a href="{{ base_url }}/resetPassword/{{ user.profileKey }}" target="_blank">{{ base_url }}/resetPassword/{{ user.profileKey }}</a></p>
+                            <strong>Account created:</strong> {{ user.createDate |date('g:ia \o\n l jS F Y') }}
                         </div>
 
                         <div class="col-xs-6 col-md-4">
@@ -68,13 +68,13 @@
 
                         <div class="row">
 
-                            <div class="col-xs-6 col-md-2">
-                                <p class="text-right">
+                            <div class="col-xs-2 col-md-2">
+                                <div class="text-right">
                                     <label class="control-label text-danger" for="role">User role:</label>
-                                </p>
+                                </div>
                             </div>
 
-                            <div class="col-xs-6 col-md-4">
+                            <div class="col-xs-4 col-md-4">
 
                                 <div class="form-group">
                                     <select required="required" class="form-control" name="role" id="role">
@@ -84,17 +84,17 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xs-6 col-md-2">
+                            <div class="col-xs-2 col-md-2">
 
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="col-xs-4 col-md-4">
 
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-xs-6 col-md-2">
-                                <p class="text-right"><label for="active">User active</label></p>
+                                <div class="text-right"><label for="active">User active</label></div>
                             </div>
 
                             <div class="col-xs-6 col-md-4">
