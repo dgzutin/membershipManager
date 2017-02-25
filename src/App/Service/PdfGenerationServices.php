@@ -95,7 +95,7 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, 'TAX ('.$invoiceData['issuerData']['vat_rate'].' %):', 10, $currY+10, 135, 10, 10, '', 'R');
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['totalTaxes'], 2, '.', ''), 140, $currY+10, 30, 10, 10, '', 'R');
         $pdf = $this->CreateTextBox($pdf, 'TOTAL:', 10, $currY+15, 135, 10, 10, 'B', 'R');
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['outstandingAmount'], 2, '.', ''), 140, $currY+15, 30, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['totalPrice'], 2, '.', ''), 140, $currY+15, 30, 10, 10, 'B', 'R');
 
         // some payment instructions or information
 
@@ -202,7 +202,9 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, 'TAX ('.$invoiceData['issuerData']['vat_rate'].' %):', 10, $currY+10, 135, 10, 10, '', 'R');
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['totalTaxes'], 2, '.', ''), 140, $currY+10, 30, 10, 10, '', 'R');
         $pdf = $this->CreateTextBox($pdf, 'TOTAL:', 10, $currY+15, 135, 10, 10, 'B', 'R');
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['outstandingAmount'], 2, '.', ''), 140, $currY+15, 30, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['totalPrice'], 2, '.', ''), 140, $currY+15, 30, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, 'TOTAL PAID:', 10, $currY+20, 135, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['amountPaid'], 2, '.', ''), 140, $currY+20, 30, 10, 10, 'B', 'R');
 
         // some payment instructions or information
 
