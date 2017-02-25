@@ -31,10 +31,10 @@
                             <th>Invoice ID</th>
                             <th>Date issued</th>
                             <th>Date due</th>
+                            <th>Total</th>
                             <th>AmountPaid</th>
-                            <th>Outstanding amount</th>
-                            <th>status</th>
-                            <th></th>
+                            <th>Invoice</th>
+                            <th>Receipt</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -52,7 +52,6 @@
                                     {% endif %}
 
                                 </td>
-                                <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.amountPaid) }}</td>
                                 <td>
                                     {% if invoices.outstandingAmount <= 0 %}
                                         <p class="text-success"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
@@ -60,14 +59,13 @@
                                         <p class="text-danger"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
                                     {% endif %}
                                 </td>
+                                <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.amountPaid) }}</td>
                                 <td>
-                                    {% if invoices.outstandingAmount <= 0 %}
-                                        <p class="text-primary">paid</p>
-                                    {% else %}
-                                        <p class="text-danger">open</p>
-                                    {% endif %}
+                                    <a href="{{ path_for('downloadPdfInvoice', { 'invoiceId': invoices.invoice.id }) }}" target="_blank">
+                                    <img height="20px" src="/assets/images/PDF_download.png">
+                                    </a>
                                 </td>
-                                <td><a class="fa fa-eye" href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}"> view</a></td>
+                                <td></td>
                             </tr>
                         {% endfor %}
 
@@ -77,22 +75,24 @@
                                 <td>{{ invoices.invoiceId }}</td>
                                 <td>{{ invoices.invoiceDate }}</td>
                                 <td>{{ invoices.invoice.dueDate | date('jS F Y') }}</td>
+                                <td>
+                                    {% if invoices.outstandingAmount <= 0 %}
+                                        <p class="text-success"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.totalPrice) }}</p>
+                                    {% else %}
+                                        <p class="text-danger"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.totalPrice) }}</p>
+                                    {% endif %}
+                                </td>
                                 <td>{{ invoices.invoiceCurrency }} {{ formatAmount(invoices.amountPaid) }}</td>
                                 <td>
-                                    {% if invoices.outstandingAmount <= 0 %}
-                                        <p class="text-success"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
-                                    {% else %}
-                                        <p class="text-danger"> {{ invoices.invoiceCurrency }} {{ formatAmount(invoices.outstandingAmount) }}</p>
-                                    {% endif %}
+                                    <a href="{{ path_for('downloadPdfInvoice', { 'invoiceId': invoices.invoice.id }) }}" target="_blank">
+                                        <img height="20px" src="/assets/images/PDF_download.png">
+                                    </a>
                                 </td>
                                 <td>
-                                    {% if invoices.outstandingAmount <= 0 %}
-                                        <p class="text-primary">paid</p>
-                                    {% else %}
-                                        <p class="text-danger">open</p>
-                                    {% endif %}
+                                    <a href="{{ path_for('downloadPdfReceipt', { 'invoiceId': invoices.invoice.id }) }}" target="_blank">
+                                        <img height="20px" src="/assets/images/PDF_download.png">
+                                    </a>
                                 </td>
-                                <td><a class="fa fa-eye" href="{{ path_for('singleInvoice', { 'invoiceId': invoices.invoiceId }) }}"> view</a></td>
                             </tr>
 
                         {% endfor %}

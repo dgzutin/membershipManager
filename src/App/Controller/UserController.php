@@ -554,7 +554,36 @@ class UserController {
         $uri = $this->utilsServices->getBaseUrl($request).'/user/home';
         return $response = $response->withRedirect($uri, 200);
     }
-    
+
+    public function downloadPdfInvoiceAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $pdfInv = $this->pdfGenerationServices->generatePdfInvoice((int)$args['invoiceId'],  $_SESSION['user_id'], $request);
+
+        if ($pdfInv['exception']){
+
+            return $this->container->view->render($response, 'userNotification.twig', $pdfInv);
+        }
+
+        $resp = $response->withHeader( 'Content-type', 'application/pdf' );
+        $resp->write( $pdfInv['pdfInvoice'] );
+
+        return $resp;
+    }
+
+    public function downloadPdfReceiptAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $pdfInv = $this->pdfGenerationServices->generatePdfReceipt((int)$args['invoiceId'],  $_SESSION['user_id'], $request);
+
+        if ($pdfInv['exception']){
+
+            return $this->container->view->render($response, 'userNotification.twig', $pdfInv);
+        }
+
+        $resp = $response->withHeader( 'Content-type', 'application/pdf' );
+        $resp->write( $pdfInv['pdfInvoice'] );
+
+        return $resp;
+    }
 
     public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {

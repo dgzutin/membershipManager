@@ -228,6 +228,8 @@ $app->group('/user', function () use ($app) {
     $app->get('/newsletters', '\UserController:newslettersAction')->setName('userNewsletters');
     $app->get('/myInvoices', '\UserController:invoicesAction')->setName('userInvoices');
     $app->map(['GET', 'POST'], '/verifyingPayment', '\UserController:verifyingPaymentAction')->setName('verifyingPayment');
+    $app->get('/downloadPdfInvoice/{invoiceId}', '\UserController:downloadPdfInvoiceAction')->setName('downloadPdfInvoice');
+    $app->get('/downloadPdfReceipt/{invoiceId}', '\UserController:downloadPdfReceiptAction')->setName('downloadPdfReceipt');
 
     $app->get('/testRoute/{param}', '\UserController:testAction')->setName('testRoute');
 
