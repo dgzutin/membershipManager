@@ -218,6 +218,7 @@ class PublicController {
 
             $paymentGatewayData['txn_id'] = $resp['paypalVars']['txn_id'];
             $paymentGatewayData['payer_id'] = $resp['paypalVars']['payer_id'];
+            $paymentGatewayData['payer_email'] = $resp['paypalVars']['payer_email'];
             $paymentGatewayData['receiver_email'] = $resp['paypalVars']['receiver_email'];
             $paymentGatewayData['ipn_track_id'] = $resp['paypalVars']['ipn_track_id'];
             $paymentGatewayData['payment_status'] = $resp['paypalVars']['payment_status'];
