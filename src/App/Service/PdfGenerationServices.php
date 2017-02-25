@@ -126,7 +126,7 @@ class PdfGenerationServices
         if ($systemInfo['settings']->getPaypalActive()){
             $pdf->SetXY(20, $currY+$i);
             $pdf->MultiCell(165, 40, '<b>Credit Card via Paypal:</b><br>
-                                  <a href="'.$invoiceUrl.'">Pay Now</a><br>', 0, 'L', 0, 1, '', '', true, null, true);
+                                  <a href="'.$invoiceUrl.'"><img width="120px" src="assets/images/pay_now_button.jpg"></a><br>', 0, 'L', 0, 1, '', '', true, null, true);
         }
 
         // create content for signature (image and/or text)
