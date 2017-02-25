@@ -31,6 +31,10 @@ class PdfGenerationServices
             return $invoiceData;
         }
 
+        //get System Info
+
+        $systemInfo = $this->userServices->getSystemInfo();
+
         // create new PDF document
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -53,33 +57,33 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['vat'].' | '. $invoiceData['issuerData']['registrationNumber'], 0, 55, 80, 10, 10);
 
 // create address box
-        $pdf = $this->CreateTextBox($pdf, 'BILLING ADDRESS::', 0, 70, 80, 10, 10, 'B');
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingName(), 0, 75, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingInstitution(), 0, 80, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, 'BILLING ADDRESS:', 0, 65, 80, 10, 10, 'B');
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingName(), 0, 70, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingInstitution(), 0, 75, 80, 10, 10);
 //$pdf->CreateTextBox($member['address1'], 0, 65, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity(), 0, 85, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingCountry(), 0, 90, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 95, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 100, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity(), 0, 80, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingCountry(), 0, 85, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 95, 90, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 95, 80, 10, 10);
 
+        // date
+        $pdf = $this->CreateTextBox($pdf, 'Date Issued: '.$invoiceData['invoiceDate'], 0, 100, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, 'Date due: '.$invoiceData['invoiceDueDate'], 0, 105, 80, 10, 10);
 // invoice title / number
-        $pdf = $this->CreateTextBox($pdf, 'Invoice #'.$invoiceData['invoiceId'], 0, 105, 120, 20, 16);
+        $pdf = $this->CreateTextBox($pdf, 'Invoice #'.$invoiceData['invoiceId'], 0, 110, 120, 20, 16);
 
-        // date, order ref
-        $pdf = $this->CreateTextBox($pdf, 'Date Issued: '.$invoiceData['invoiceDate'], 0, 100, 0, 10, 10, '', 'L');
-        $pdf = $this->CreateTextBox($pdf, 'Date due: '.$invoiceData['invoiceDueDate'], 0, 105, 0, 10, 10, '', 'L');
 
         // list headers
-        $pdf = $this->CreateTextBox($pdf, 'Quantity', 0, 120, 20, 10, 10, 'B', 'C');
-        $pdf = $this->CreateTextBox($pdf, 'Description', 20, 120, 90, 10, 10, 'B');
-        $pdf = $this->CreateTextBox($pdf, 'Unit Price', 110, 120, 30, 10, 10, 'B', 'R');
-        $pdf = $this->CreateTextBox($pdf, 'Total', 140, 120, 30, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, 'Quantity', 0, 130, 20, 10, 10, 'B', 'C');
+        $pdf = $this->CreateTextBox($pdf, 'Description', 20, 130, 90, 10, 10, 'B');
+        $pdf = $this->CreateTextBox($pdf, 'Unit Price', 110, 130, 30, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, 'Total', 140, 130, 30, 10, 10, 'B', 'R');
 
-        $pdf->Line(20, 129, 195, 129);
+        $pdf->Line(20, 139, 195, 139);
 
         // list items
-        $currY = 128;
-        $total = 0;
+        $currY = 138;
+
         foreach ($invoiceData['invoiceItems'] as $item) {
             $pdf = $this->CreateTextBox($pdf, $item->getQuantity(), 0, $currY, 20, 10, 10, '', 'C');
             $pdf = $this->CreateTextBox($pdf, $item->getName(), 20, $currY, 90, 10, 10, '');
@@ -101,17 +105,29 @@ class PdfGenerationServices
 
         $invoiceUrl = $this->utilsServices->getUrlForRouteName($request, 'singleInvoice', $params = array('invoiceId' => $invoiceData['invoice']->getId()));
 
-        $pdf->SetXY(20, $currY+30);
+        $pdf->SetXY(20, $currY+25);
         $pdf->SetFont(PDF_FONT_NAME_MAIN, '', 10);
-        $pdf->MultiCell(175, 10, '<b>Wire Transfer:</b><br> 
-                                  International Society of Engineering Pedagogy<br>
-                                  Bank Austria<br>
-                                  BIC: BKAUATWW<br>
-                                  Account Number: 50575084471<br>
-                                  IBAN: AT021200050575084471<br>
-                                  Reason for transfer: Invoice '.$invoiceData['invoiceId'].'<br><br>
-                                  <b>With Credit Card via Paypal:</b><br>
+
+        $pdf->MultiCell(165, 10, '<b>Possible payment methods are:</b><br> <br>', 0, 'L', 0, 1, '', '', true, null, true);
+
+        $i = 30;
+        if ($systemInfo['settings']->getWireTransferActive()){
+
+            $pdf->SetXY(20, $currY+$i);
+            $pdf->MultiCell(155, 10, '<b>Wire Transfer:</b><br> 
+                                  '.$systemInfo['settings']->getNameOfOrganization().'<br>
+                                  '.$systemInfo['settings']->getBankName().'<br>
+                                  BIC: '.$systemInfo['settings']->getBic().'<br>
+                                  IBAN: '.$systemInfo['settings']->getIban().'<br>
+                                  Reason for transfer: Invoice '.$invoiceData['invoice']->getId().'<br><br>', 0, 'L', 0, 1, '', '', true, null, true);
+            $i = $i + 30;
+        }
+
+        if ($systemInfo['settings']->getPaypalActive()){
+            $pdf->SetXY(20, $currY+$i);
+            $pdf->MultiCell(165, 40, '<b>Credit Card via Paypal:</b><br>
                                   <a href="'.$invoiceUrl.'">Pay Now</a><br>', 0, 'L', 0, 1, '', '', true, null, true);
+        }
 
         // create content for signature (image and/or text)
         $pdf->Image('assets/images/pdf_invoice/stamp_s.jpg', 140, $currY+30, 37, 35, 'JPG');
@@ -186,7 +202,7 @@ class PdfGenerationServices
 
         // list items
         $currY = 138;
-        $total = 0;
+
         foreach ($invoiceData['invoiceItems'] as $item) {
             $pdf = $this->CreateTextBox($pdf, $item->getQuantity(), 0, $currY, 20, 10, 10, '', 'C');
             $pdf = $this->CreateTextBox($pdf, $item->getName(), 20, $currY, 90, 10, 10, '');
