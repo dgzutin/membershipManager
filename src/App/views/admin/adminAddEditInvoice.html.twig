@@ -32,6 +32,12 @@
                             {% if invoiceData != null %}
                                 <li><a href="{{ path_for('singleInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id }) }}"> view Invoice {{ invoiceData.invoice.id }}</a></li>
                                 <li><a href="{{ path_for('invoicePayments', { 'invoiceId': invoiceData.invoice.id }) }}"> Add Payments</a></li>
+                                <li><a href="{{ path_for('downloadPdfInvoiceAdmin', { 'invoiceId': invoiceData.invoice.id }) }}" target="_blank"> Download PDF Invoice</a></li>
+
+                                {% if invoiceData.outstandingAmount <= 0 %}
+                                    <li><a href="{{ path_for('downloadPdfReceiptAdmin', { 'invoiceId': invoiceData.invoice.id }) }}" target="_blank"> Download PDF Receipt</a></li>
+                                {% endif %}
+
                             {% endif %}
                         </ul>
                     </div>

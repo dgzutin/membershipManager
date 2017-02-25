@@ -100,6 +100,11 @@ $container['billingServices'] = function($container){
     return new Service\BillingServices($container);
 };
 
+$container['pdfGenerationServices'] = function($container){
+    return new Service\PdfGenerationServices($container);
+};
+
+
 $container['mailServices'] = function ($container) {
 
     $appConfig = file_get_contents(__DIR__."/../src/App/config/config.json");
@@ -178,6 +183,9 @@ $app->group('/admin', function () use ($app) {
     $app->get('/impersonateUser/{userId}', '\AdminController:impersonateUserAction')->setName('impersonateUser');
     $app->map(['GET', 'POST'],'/systemSettings', '\AdminController:systemSettingsAction')->setName('systemSettings');
     $app->map(['GET', 'POST'],'/invoice/{userId}[/{invoiceId}]', '\AdminController:invoiceAction')->setName('invoiceAdmin');
+    $app->get('/downloadPdfInvoice/{invoiceId}', '\AdminController:downloadPdfInvoiceAction')->setName('downloadPdfInvoiceAdmin');
+    $app->get('/downloadPdfReceipt/{invoiceId}', '\AdminController:downloadPdfReceiptAction')->setName('downloadPdfReceiptAdmin');
+
     
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));

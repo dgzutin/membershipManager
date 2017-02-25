@@ -26,6 +26,7 @@ class AdminController {
         $this->mailServices = $container->get('mailServices');
         $this->utilsServices = $container->get('utilsServices');
         $this->billingServices = $container->get('billingServices');
+        $this->pdfGenerationServices = $container->get('pdfGenerationServices');
     }
 
 
@@ -854,6 +855,36 @@ class AdminController {
             'billingInfo' => $billing,
             'user' => $resp['user'],
             'invoiceData' => $respInvoiceData));
+    }
+
+    public function downloadPdfInvoiceAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $pdfInv = $this->pdfGenerationServices->generatePdfInvoice((int)$args['invoiceId'], null, $request);
+
+        if ($pdfInv['exception']){
+
+            return $this->container->view->render($response, 'userNotification.twig', $pdfInv);
+        }
+
+        $resp = $response->withHeader( 'Content-type', 'application/pdf' );
+        $resp->write( $pdfInv['pdfInvoice'] );
+
+        return $resp;
+    }
+
+    public function downloadPdfReceiptAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $pdfInv = $this->pdfGenerationServices->generatePdfReceipt((int)$args['invoiceId'], null, $request);
+
+        if ($pdfInv['exception']){
+
+            return $this->container->view->render($response, 'userNotification.twig', $pdfInv);
+        }
+
+        $resp = $response->withHeader( 'Content-type', 'application/pdf' );
+        $resp->write( $pdfInv['pdfInvoice'] );
+
+        return $resp;
     }
 
 

@@ -24,6 +24,16 @@
 
                     {% endif %}
 
+                <div class="row">
+                    <div class="col-sm-12 ">
+                        <div>{{ invoiceData.invoice.billingName }}</div>
+                        <div>{{ invoiceData.invoice.billingInstitution }}</div>
+                        <div>{{ invoiceData.invoice.street }} {{ invoiceData.invoice.billingZip }} {{ invoiceData.invoice.billingCity }}, <span class="bfh-countries" data-country="{{ invoiceData.invoice.billingCountry }}" data-flags="false"></span></div>
+                        <div><strong>Invoice Total: </strong>{{ invoiceData.invoice.currency }} {{ formatAmount(invoiceData.totalPrice) }}</div>
+                    </div>
+                </div>
+
+                <hr>
 
                     <div class="row">
 
@@ -58,7 +68,7 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label for="sendReceipt"></label>
-                                <input type="checkbox" name="sendReceipt" id="sendReceipt"> Send receipt to use if full payment?
+                                <input type="checkbox" name="sendReceipt" id="sendReceipt"> Send receipt to user if full payment?
                             </div>
                         </div>
 

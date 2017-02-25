@@ -11,6 +11,7 @@ namespace App\Service;
 use App\Entity\InvoicePayment;
 use \Httpful\Request;
 use \Exception;
+use TCPDF;
 
 class BillingServices
 {
@@ -21,6 +22,7 @@ class BillingServices
         $this->userServices = $container->get('userServices');
         $this->membershipServices = $container->get('membershipServices');
         $this->mailServices = $container->get('mailServices');
+        $this->pdfGenerationServices = $container->get('pdfGenerationServices');
 
         $this->Paypal_sandbox_ipn = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
         $this->Paypal_ipn = 'https://ipnpb.paypal.com/cgi-bin/webscr';
@@ -465,7 +467,6 @@ class BillingServices
         return array('exception' => false,
             'results' => $results,
             'message' => $deletedCount.' invoice(s) deleted');
-
     }
         
 }
