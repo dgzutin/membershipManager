@@ -61,10 +61,9 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingName(), 0, 70, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingInstitution(), 0, 75, 80, 10, 10);
 //$pdf->CreateTextBox($member['address1'], 0, 65, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity(), 0, 80, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingCountry(), 0, 85, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 95, 90, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 95, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity().' '.$invoiceData['invoice']->getBillingCountry(), 0, 80, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 85, 90, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 90, 80, 10, 10);
 
         // date
         $pdf = $this->CreateTextBox($pdf, 'Date Issued: '.$invoiceData['invoiceDate'], 0, 100, 80, 10, 10);
@@ -180,10 +179,9 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingName(), 0, 70, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingInstitution(), 0, 75, 80, 10, 10);
 //$pdf->CreateTextBox($member['address1'], 0, 65, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity(), 0, 80, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingCountry(), 0, 85, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 90, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 95, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity().' '.$invoiceData['invoice']->getBillingCountry(), 0, 80, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 85, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 90, 80, 10, 10);
 
         // date
         $pdf = $this->CreateTextBox($pdf, 'Date Issued: '.$invoiceData['invoiceDate'], 0, 100, 80, 10, 10);
