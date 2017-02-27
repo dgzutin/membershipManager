@@ -9,6 +9,8 @@ namespace App\Service;
 
 use TCPDF;
 
+//require_once('tcpdf_include.php');
+
 class PdfGenerationServices
 {
 
@@ -49,6 +51,26 @@ class PdfGenerationServices
 
         $pdf->setJPEGQuality(90);
         $pdf->Image('assets/images/pdf_invoice/header.jpg', 20, 15, 170, 0, 'JPG', '');
+
+        // set style for barcode
+        $style = array(
+            'border' => 1,
+            'vpadding' => 'auto',
+            'hpadding' => 'auto',
+            'fgcolor' => array(0,0,0),
+            'bgcolor' => false, //array(255,255,255)
+            'module_width' => 1, // width of a single module in points
+            'module_height' => 1 // height of a single module in points
+        );
+
+        $invoiceUrl = $this->utilsServices->getUrlForRouteName($request, 'singleInvoice', $params = array('invoiceId' => $invoiceData['invoice']->getId()));
+
+        // QRCODE,H : QR-CODE Best error correction
+        $pdf->write2DBarcode($invoiceUrl, 'QRCODE,H', 155, 40, 35, 35, $style, 'N');
+        //$pdf->write2DBarcode($invoiceUrl, 'PDF417,3,4', 140, 40, 80, 80, $style, 'N');
+
+
+
 
 // create address box of invoice issuer
         $pdf = $this->CreateTextBox($pdf, $invoiceData['issuerData']['nameOfOrganization'], 0, 40, 120, 10, 10, 'B');
@@ -101,8 +123,6 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getCurrency().' '.number_format($invoiceData['totalPrice'], 2, '.', ''), 140, $currY+15, 30, 10, 10, 'B', 'R');
 
         // some payment instructions or information
-
-        $invoiceUrl = $this->utilsServices->getUrlForRouteName($request, 'singleInvoice', $params = array('invoiceId' => $invoiceData['invoice']->getId()));
 
         $pdf->SetXY(20, $currY+25);
         $pdf->SetFont(PDF_FONT_NAME_MAIN, '', 10);
