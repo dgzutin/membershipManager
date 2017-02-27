@@ -53,7 +53,7 @@ class PdfGenerationServices
 // create address box of invoice issuer
         $pdf = $this->CreateTextBox($pdf, $invoiceData['issuerData']['nameOfOrganization'], 0, 40, 120, 10, 10, 'B');
         $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['street'], 0, 45, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['zip'].' '. $invoiceData['issuerData']['city'].' - '. $invoiceData['issuerData']['country'], 0, 50, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['zip'].' '. $invoiceData['issuerData']['city'].' - '. $this->utilsServices->getCountryNameByCode($invoiceData['issuerData']['country']), 0, 50, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['vat'].' | '. $invoiceData['issuerData']['registrationNumber'], 0, 55, 80, 10, 10);
 
 // create address box
@@ -61,7 +61,7 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingName(), 0, 70, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingInstitution(), 0, 75, 80, 10, 10);
 //$pdf->CreateTextBox($member['address1'], 0, 65, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity().' '.$invoiceData['invoice']->getBillingCountry(), 0, 80, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity().', '.$this->utilsServices->getCountryNameByCode($invoiceData['invoice']->getBillingCountry()), 0, 80, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 85, 90, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 90, 80, 10, 10);
 
@@ -171,7 +171,7 @@ class PdfGenerationServices
 // create address box of invoice issuer
         $pdf = $this->CreateTextBox($pdf, $invoiceData['issuerData']['nameOfOrganization'], 0, 40, 120, 10, 10, 'B');
         $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['street'], 0, 45, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['zip'].' '. $invoiceData['issuerData']['city'].' - '. $invoiceData['issuerData']['country'], 0, 50, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['zip'].' '. $invoiceData['issuerData']['city'].' - '. $this->utilsServices->getCountryNameByCode($invoiceData['issuerData']['country']), 0, 50, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf,  $invoiceData['issuerData']['vat'].' | '. $invoiceData['issuerData']['registrationNumber'], 0, 55, 80, 10, 10);
 
 // create address box
@@ -179,7 +179,7 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingName(), 0, 70, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingInstitution(), 0, 75, 80, 10, 10);
 //$pdf->CreateTextBox($member['address1'], 0, 65, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().' '.$invoiceData['invoice']->getBillingCity().' '.$invoiceData['invoice']->getBillingCountry(), 0, 80, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingStreet().' - '.$invoiceData['invoice']->getBillingzip().', '.$this->utilsServices->getCountryNameByCode($invoiceData['invoice']->getBillingCountry()), 0, 80, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingVat(), 0, 85, 80, 10, 10);
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 90, 80, 10, 10);
 
