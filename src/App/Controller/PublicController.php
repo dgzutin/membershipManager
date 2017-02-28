@@ -31,7 +31,13 @@ class PublicController {
 
     public function loginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+        session_start();
+        //Authorizes request here
+        if (isset($_SESSION['user_id'])){
 
+            $homeUrl = $this->utilsServices->getUrlForRouteName($request, 'homeUser');
+            return $response->withRedirect($homeUrl, 200);
+        }
         return $this->container->view->render($response, 'login.html.twig');
     }
 
