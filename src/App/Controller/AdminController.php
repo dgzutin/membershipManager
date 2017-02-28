@@ -334,8 +334,17 @@ class AdminController {
 
     public function membersAction(ServerRequestInterface $request, ResponseInterface $response, $args) 
     {
+        $userId = null;
+        $membershipTypeAvailable = false;
+        $singleUser = false;
+        if (isset($args['userId'])){
+            $userId = (int)$args['userId'];
+            $membershipTypeAvailable = $this->utilsServices->newMembershipPossible((int)$args['userId']);
+            $singleUser = true;
+        }
+
         $post_data = $request->getParsedBody();
-        $resp = $this->utilsServices->processFilterForMembersTable($post_data, (int)$args['userId']);
+        $resp = $this->utilsServices->processFilterForMembersTable($post_data, $userId);
 
         $membership_filter = $resp['membership_filter'];
         $user_filter = $resp['user_filter'];
@@ -349,13 +358,6 @@ class AdminController {
 
             return $this->container->view->render($response, 'userNotification.twig', array('message' => $membersResp['message']));
         }
-
-        $membershipTypeAvailable = false;
-        $singleUser = false;
-        if (isset($args['userId'])){
-            $membershipTypeAvailable = $this->utilsServices->newMembershipPossible((int)$args['userId']);
-            $singleUser = true;
-        }
         
         return $this->container->view->render($response, 'admin/membersTable.html.twig', array(
             'exception' => $membersResp['exception'],
@@ -364,7 +366,7 @@ class AdminController {
             'memberGrades' => $filter_form['memberGrades'],
             'validity' => $filter_form['validity'],
             'members' => $membersResp['members'],
-            'userId' => (int)$args['userId'],
+            'userId' => $userId,
             'form' => $post_data,
             'singleUser' => $singleUser,
             'membershipTypeAvailable' => $membershipTypeAvailable
