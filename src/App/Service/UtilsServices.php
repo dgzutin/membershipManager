@@ -215,8 +215,15 @@ class UtilsServices
 
     public function getBaseUrl($request)
     {
-        if ($_SERVER['HTTPS'] != NULL){
-            $baseUrl = $request->getUri()->getScheme().'://'.$request->getUri()->getHost();
+        if (isset($_SERVER['HTTPS'])) {
+
+            if ($_SERVER['HTTPS'] != NULL) {
+
+                $baseUrl = $request->getUri()->getScheme() . '://' . $request->getUri()->getHost();
+            }
+            else {
+                $baseUrl = $request->getUri()->getBaseUrl();
+            }
         }
         else{
             $baseUrl = $request->getUri()->getBaseUrl();
