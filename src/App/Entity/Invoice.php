@@ -28,8 +28,11 @@ class Invoice
     /** @Column(type="string", length=10, nullable=false) * */
     protected $currency;
 
-    /** @Column(type="string", length=500, nullable=true) * */
+    /** @Column(type="text", nullable=true) * */
     protected $invoiceNote;
+
+    /** @Column(type="text", nullable=true) * */
+    protected $invoiceText;
 
     /** @Column(type="string", length=100, nullable=true) **/
     protected $inv_organization;
@@ -854,5 +857,29 @@ class Invoice
     public function getInvPhone()
     {
         return $this->inv_phone;
+    }
+
+    /**
+     * Set invoiceText
+     *
+     * @param string $invoiceText
+     *
+     * @return Invoice
+     */
+    public function setInvoiceText($invoiceText)
+    {
+        $this->invoiceText = $invoiceText;
+
+        return $this;
+    }
+
+    /**
+     * Get invoiceText
+     *
+     * @return string
+     */
+    public function getInvoiceText()
+    {
+        return $this->invoiceText;
     }
 }

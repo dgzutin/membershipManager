@@ -26,7 +26,7 @@ class InvoiceItem
     /** @Column(type="string", length=100, nullable=false) * */
     protected $name;
 
-    /** @Column(type="string", length=500, nullable=true) * */
+    /** @Column(type="text", nullable=true) * */
     protected $description;
 
     /** @Column(type="integer", nullable=false) * */

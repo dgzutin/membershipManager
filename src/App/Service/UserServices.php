@@ -524,7 +524,7 @@ class UserServices
         }
     }
 
-    public function generateUpdateInvoiceForUser($invoiceId, User $user, Billing $billingInfo, $cartItems, $onPaymentActions, $notifyUser, $request, $currency, $vatRate = null, $createDate = null, $dueDate = null)
+    public function generateUpdateInvoiceForUser($invoiceId, User $user, Billing $billingInfo, $cartItems, $onPaymentActions, $notifyUser, $request, $currency, $vatRate = null, $createDate = null, $dueDate = null, $invoiceText = null)
     {
         if ($invoiceId == null){
             $newInvoice = new Invoice();
@@ -566,6 +566,10 @@ class UserServices
         else{
             $date_due = new DateTime($dueDate.'T23:59:59');
             $newInvoice->setDueDate($date_due);
+        }
+        
+        if ($invoiceText != null){
+            $newInvoice->setInvoiceText($invoiceText);
         }
 
 

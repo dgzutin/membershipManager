@@ -12,6 +12,10 @@
             width: 200px;
             height: 200px;
         }
+
+        input.cropit-image-zoom-input {
+            position: relative;
+        }
         .cropit-preview-image-container {
             cursor: move;
         }
@@ -121,15 +125,15 @@
                                 <label class="btn btn-default btn-file">
                                     Browse ... <input type="file" id='image_browse' class="cropit-image-input" style="display: none;">
                                 </label>
+                                <span class="fa fa-rotate-left" id="rotate-ccw"></span>
+                                <span class="fa fa-rotate-right" id="rotate-cw"></span>
 
                                 <div class="cropit-preview"></div>
-                                <div class="image-size-label">
-                                    Resize image
-                                </div>
 
-                                <input type="range" value="0" step="0.1" class="cropit-image-zoom-input">
-                                <button id="rotate-ccw" class="btn btn-primary"><span class="fa fa-rotate-left"></span></button>
-                                <button id="rotate-cw" class="btn btn-primary"><span class="fa fa-rotate-right"></span></button>
+                                <label for="resizeSlider" class="image-size-label">
+                                    Resize image
+                                </label>
+                                <input type="range" id="resizeSlider" value="0" class="cropit-image-zoom-input">
                             </div>
 
                         </div>
@@ -168,6 +172,15 @@
     <script src="{{ baseUrl }}/assets/cropit/jquery.cropit.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/jquery.validate.min.js"></script>
     <script src="{{ baseUrl }}/assets/js/newsletterManagement.js"></script>
+
+    <script>
+
+
+        $( ".cropit-image-zoom-input" ).change(function() {
+            $('#zoomValue').html($('.cropit-image-zoom-input').val());
+        });
+
+    </script>
 
 
 {% endblock %}

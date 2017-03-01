@@ -810,7 +810,7 @@ class AdminController {
             $currency = str_replace(' ', '', $form_data['currency']);
             $currency = preg_replace('/\s+/', '', $currency);
 
-            $resultsGenInvoice = $this->userServices->generateUpdateInvoiceForUser($invoiceId, $user, $billingInfo, $items, json_encode($onPaymentActions), false, $request, $currency, $form_data['vatRate'], $form_data['createDate'], $form_data['dueDate']);
+            $resultsGenInvoice = $this->userServices->generateUpdateInvoiceForUser($invoiceId, $user, $billingInfo, $items, json_encode($onPaymentActions), false, $request, $currency, $form_data['vatRate'], $form_data['createDate'], $form_data['dueDate'], $form_data['invoiceText']);
             $respInvoiceData = $this->userServices->getInvoiceDataForUser($resultsGenInvoice['invoiceId'], $userId);
 
             return $this->container->view->render($response, 'admin/adminAddEditInvoice.html.twig', array(

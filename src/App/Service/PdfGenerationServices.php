@@ -85,22 +85,33 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, $invoiceData['invoice']->getBillingReference(), 0, 90, 80, 10, 10);
 
         // date
-        $pdf = $this->CreateTextBox($pdf, 'Date Issued: '.$invoiceData['invoiceDate'], 0, 100, 80, 10, 10);
-        $pdf = $this->CreateTextBox($pdf, 'Date due: '.$invoiceData['invoiceDueDate'], 0, 105, 80, 10, 10);
+        $pdf = $this->CreateTextBox($pdf, 'Date Issued: '.$invoiceData['invoiceDate'], 95, 75, 80, 10, 10,'','R');
+        $pdf = $this->CreateTextBox($pdf, 'Date due: '.$invoiceData['invoiceDueDate'], 95, 80, 80, 10, 10,'','R');
 // invoice title / number
-        $pdf = $this->CreateTextBox($pdf, 'Invoice #'.$invoiceData['invoiceId'], 0, 110, 120, 20, 16);
+        $pdf = $this->CreateTextBox($pdf, 'Invoice #'.$invoiceData['invoiceId'], 0, 95, 120, 20, 16);
 
+        $pdf->SetFont(PDF_FONT_NAME_MAIN, '', 10);
+        $currY = 110;
+        $i = 0;
+        if ($invoiceData['invoice']->getInvoiceText() != null){
+
+            $pdf->SetXY(20, $currY+$i);
+            $pdf->MultiCell(155, 10, 'Test', 0, 'L', 0, 1, '', '', true, null, true);
+            $i = $i + 15;
+        }
+        $currY = $currY + $i;
 
         // list headers
-        $pdf = $this->CreateTextBox($pdf, 'Quantity', 0, 130, 20, 10, 10, 'B', 'C');
-        $pdf = $this->CreateTextBox($pdf, 'Description', 20, 130, 90, 10, 10, 'B');
-        $pdf = $this->CreateTextBox($pdf, 'Unit Price', 110, 130, 30, 10, 10, 'B', 'R');
-        $pdf = $this->CreateTextBox($pdf, 'Total', 140, 130, 30, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, 'Quantity', 0, $currY, 20, 10, 10, 'B', 'C');
+        $pdf = $this->CreateTextBox($pdf, 'Description', 20, $currY, 90, 10, 10, 'B');
+        $pdf = $this->CreateTextBox($pdf, 'Unit Price', 110, $currY, 30, 10, 10, 'B', 'R');
+        $pdf = $this->CreateTextBox($pdf, 'Total', 140, $currY, 30, 10, 10, 'B', 'R');
 
-        $pdf->Line(20, 139, 195, 139);
+        $pdf->Line(20, $currY+9, 195, $currY+9);
+
+        $currY = $currY +9;
 
         // list items
-        $currY = 138;
 
         foreach ($invoiceData['invoiceItems'] as $item) {
             $pdf = $this->CreateTextBox($pdf, $item->getQuantity(), 0, $currY, 20, 10, 10, '', 'C');
