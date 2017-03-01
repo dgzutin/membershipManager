@@ -96,7 +96,7 @@ class PdfGenerationServices
         if ($invoiceData['invoice']->getInvoiceText() != null){
 
             $pdf->SetXY(20, $currY+$i);
-            $pdf->MultiCell(155, 10, 'Test', 0, 'L', 0, 1, '', '', true, null, true);
+            $pdf->MultiCell(155, 10, $invoiceData['invoice']->getInvoiceText(), 0, 'L', 0, 1, '', '', true, null, true);
             $i = $i + 15;
         }
         $currY = $currY + $i;
