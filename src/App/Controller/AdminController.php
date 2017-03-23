@@ -170,7 +170,7 @@ class AdminController {
     {
 
         $val_array = null;
-        if ($request->getMethod() == 'POST'){
+        if ($request->isPost()){
 
             $form_data = $request->getParsedBody();
             foreach ($form_data as $key =>$data){
@@ -192,8 +192,7 @@ class AdminController {
                     'form' => $val_array));
             }
             else{
-                $userService = $this->container->get('userServices');
-                $resp = $userService->registerNewUser($form_data);
+                $resp = $this->userServices->registerNewUser($form_data);
 
                 if ($resp['exception'] == true){
 
@@ -208,17 +207,16 @@ class AdminController {
                     if ($form_data['send_confirmation_mail'] == true){
                         $this->mailServices->sendUserAddedByAdminEmail($resp['user'], $request);
                     }
-
                     return $this->container->view->render($response, 'admin/adminRegisterNewUser.html.twig', array(
                         'form_submission' => true,
                         'exception' => false,
                         'message' => 'User successfully added. ID: '.$resp['user']->getId(),
+                        'user' => $resp['user'],
                         'form' => $val_array));
                 }
             }
         }
         else{
-
             return $this->container->view->render($response, 'admin/adminRegisterNewUser.html.twig', array(
                 'form_submission' => false,
                 'exception' => false,

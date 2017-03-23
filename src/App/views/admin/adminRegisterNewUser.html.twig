@@ -27,6 +27,13 @@
                             <div class="alert alert-success">
                                 <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
                             </div>
+
+                            <ul>
+                                <li><a href="{{ path_for('members', { 'userId': user.id }) }}"> Manage user's membership(s)</a></li>
+                                <li><a href="{{ path_for('impersonateUser', { 'userId': user.id }) }}"> Login as</a></li>
+                                <li><a href="{{ path_for('invoiceAdmin', { 'userId': user.id }) }}">Create new invoice for user</a></li>
+                            </ul>
+
                         {% endif %}
 
                     {% else %}
