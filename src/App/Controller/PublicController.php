@@ -265,7 +265,19 @@ class PublicController {
                 'message' => $e->getMessage());
         }
 
-        echo json_encode($resp->body);
+        try{
+            $profileResp= Request::get('https://api.linkedin.com/v1/people/~?format=json')
+                ->addHeader('Connection','Keep-Alive')
+                ->addHeader('Authorization','Bearer '.$resp->body->access_token)
+                ->send();
+        }
+        catch (Exception $e) {
+            return array('exception' => true,
+                'verified' => false,
+                'message' => $e->getMessage());
+        }
+
+        echo json_encode($profileResp->body);
 
         //echo $params['code'];
        // echo 'Hallo';
