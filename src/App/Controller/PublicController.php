@@ -247,4 +247,28 @@ class PublicController {
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 
+    public function oauth2Action(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $params = $request->getQueryParams();
+
+        $req = 'grant_type=authorization_code&code='.$params['code'].'&redirect_uri=https%3A%2F%2Fiaoe.online-engineering.net%2Foauth%2Fv2%2Fredirect&client_id=86ix8uxlc7mudl&client_secret=4nn0gbMet6QnmruS';
+
+        try{
+            $resp= Request::post('https://www.linkedin.com/oauth/v2/accessToken')
+                ->addHeader('Content-Type','application/x-www-form-urlencoded')
+                ->body($req)
+                ->send();
+        }
+        catch (Exception $e) {
+            return array('exception' => true,
+                'verified' => false,
+                'message' => $e->getMessage());
+        }
+
+        echo json_encode($resp);
+
+        echo $params['code'];
+       // echo 'Hallo';
+    }
+
 }

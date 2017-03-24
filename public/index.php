@@ -268,8 +268,6 @@ $app->group('/api-user/v1', function () use ($app) {
     $app->post('/cropImage', '\ApiController:cropImageAction' )->setName('cropImage');
     $app->post('/verifyInvoiceFullPayment', '\ApiController:verifyInvoiceFullPayment' )->setName('verifyInvoiceFullPayment');
 
-
-
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new ApiAuthenticationMiddleware(array('ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'), $container));
 
@@ -287,6 +285,7 @@ $app->get('/forgotPassword', '\PublicController:forgotPasswordAction')->setName(
 $app->post('/forgotPassword', '\PublicController:processForgotPasswordAction')->setName('processForgotPassword');
 $app->post('/paypal_ipn', '\PublicController:paypalIPnAction')->setName('paypal_ipn');
 $app->get('/newsletter/{key}', '\PublicController:publicNewsletterAction')->setName('publicNewsletter');
+$app->get('/oauth/v2/redirect', '\PublicController:oauth2Action')->setName('oauth2Redirect');
 
 
 $app->run();
