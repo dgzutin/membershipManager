@@ -265,9 +265,9 @@ class PublicController {
                 'message' => $e->getMessage());
         }
 
-        echo json_encode($resp);
+        var_dump($resp);
 
-        echo $params['code'];
+        //echo $params['code'];
        // echo 'Hallo';
     }
 
