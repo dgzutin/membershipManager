@@ -95,7 +95,6 @@ class UserServices
             $settings->setEnableOauthLinkedIn($data['enableOauthLinkedIn']);
             $settings->setLinkedInClientId($data['linkedInClientId']);
             $settings->setLinkedInClientSecret($data['linkedInClientSecret']);
-            $settings->setState($data['state']);
 
 
             try{
