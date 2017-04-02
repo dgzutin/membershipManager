@@ -27,6 +27,7 @@ class PublicController {
         $this->billingServices = $container->get('billingServices');
         $this->userServices = $container->get('userServices');
         $this->utilsServices = $container->get('utilsServices');
+        $this->linkedInServices = $container->get('linkedInServices');
     }
 
     public function loginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -38,7 +39,11 @@ class PublicController {
             $homeUrl = $this->utilsServices->getUrlForRouteName($request, 'homeUser');
             return $response->withRedirect($homeUrl, 200);
         }
-        return $this->container->view->render($response, 'login.html.twig');
+        return $this->container->view->render($response, 'login.html.twig',
+            array('linkedInOauthEndpoint' => 'https://www.linkedin.com/oauth/v2/authorization',
+                'oauthRedirect' => $this->utilsServices->getUrlForRouteName($request, 'linkedInOauth2Redirect'),
+                'linkedInState' => 'login'
+            ));
     }
 
     public function processLoginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -48,7 +53,7 @@ class PublicController {
         $userService = $this->container->get('userServices');
         $auth_result = $userService->authenticateUser($userInfo['email'],$password = $userInfo['password'] );
 
-        if ( $auth_result['exception'] == false ){
+        if ($auth_result['exception'] == false){
 
             session_start();
             $_SESSION['user_id'] = $auth_result['user_id'];
@@ -60,7 +65,6 @@ class PublicController {
 
                 $redirect_url = $_SESSION['orig_uri'];
             }
-
             return $response->withRedirect($redirect_url, 200);
         }
         
@@ -116,7 +120,7 @@ class PublicController {
             $userService = $this->container->get('userServices');
             $resp = $userService->registerNewUser($form_data);
 
-            if ($resp['exception'] == true){
+            if ($resp['exception']){
 
                 return $this->container->view->render($response, 'userNotification.twig', array(
                     'exception' => true,
@@ -124,11 +128,19 @@ class PublicController {
             }
             else{
                 $mailServices = $this->container->get('mailServices');
-                $mailServices->sendActivateAccountMail($resp['user'], $request);
+                $mailResult = $mailServices->sendActivateAccountMail($resp['user'], $request);
+                
+                
+                if ($mailResult['sent']){
+
+                    return $this->container->view->render($response, 'userNotificationMail.twig', array(
+                        'exception' => false,
+                        'mailResponse' => $mailResult));
+                }
 
                 return $this->container->view->render($response, 'userNotificationMail.twig', array(
                     'exception' => false,
-                    'mailResponse' => $resp));
+                    'mailResponse' => $mailResult));
             }
         }
     }
@@ -247,11 +259,13 @@ class PublicController {
         return $this->container->view->render($response, 'newsletter/newsletter.html.twig', $result);
     }
 
-    public function oauth2Action(ServerRequestInterface $request, ResponseInterface $response)
+    //This method searches for a user for the provided LinkedIn ID. If it does not find it, searches for a user with the same e-mail address.
+    // If one of the searches is successful logs the user in.
+    // If not, create a new local account and associate it with the LinkedIn account
+    public function linkedInOauth2Action(ServerRequestInterface $request, ResponseInterface $response)
     {
         $params = $request->getQueryParams();
-
-        $req = 'grant_type=authorization_code&code='.$params['code'].'&redirect_uri=https%3A%2F%2Fiaoe.online-engineering.net%2Foauth%2Fv2%2Fredirect&client_id=86ix8uxlc7mudl&client_secret=4nn0gbMet6QnmruS';
+        $req = 'grant_type=authorization_code&code='.$params['code'].'&redirect_uri=http%3A%2F%2Fmembershipmanager%2Foauth%2Fv2%2Fredirect&client_id=86ix8uxlc7mudl&client_secret='.$this->systemInfo['settings']->getLinkedInClientSecret();
 
         try{
             $resp= Request::post('https://www.linkedin.com/oauth/v2/accessToken')
@@ -265,22 +279,47 @@ class PublicController {
                 'message' => $e->getMessage());
         }
 
-        try{
-            $profileResp= Request::get('https://api.linkedin.com/v1/people/~?format=json')
-                ->addHeader('Connection','Keep-Alive')
-                ->addHeader('Authorization','Bearer '.$resp->body->access_token)
-                ->send();
-        }
-        catch (Exception $e) {
-            return array('exception' => true,
-                'verified' => false,
-                'message' => $e->getMessage());
-        }
+        switch ($params['state']){
 
-        echo json_encode($profileResp->body);
+            case 'login':
+                $resp = $resp = $this->linkedInServices->searchLocalAccount($resp->body->access_token);
+                if ($resp['exception'] == false){
 
-        //echo $params['code'];
-       // echo 'Hallo';
+                    //create user session
+                    session_start();
+                    $_SESSION['user_id'] = $resp['user']->getId();
+                    $_SESSION['user_role'] = $resp['user']->getRole();
+
+                    $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/home';
+
+                    if (isset($_SESSION['orig_uri'])){
+
+                        $redirect_url = $_SESSION['orig_uri'];
+                    }
+                    return $response->withRedirect($redirect_url, 200);
+                }
+            break;
+            case 'associate':
+
+                session_start();
+                $respUser =  $this->userServices->getUserById($_SESSION['user_id']);
+
+                //var_dump($respUser);
+                $linkedInProfileData = $resp = $this->linkedInServices->getLinkedInUserProfileData($resp->body->access_token);
+                $assocResp = $this->linkedInServices->associateAccountWithLinkedIn($respUser['user'], $linkedInProfileData['result']->id);
+
+                $_SESSION['linkedInStatus'] = $assocResp;
+
+                var_dump($assocResp);
+
+                $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/profile';
+                return $response->withRedirect($redirect_url, 200);
+
+                break;
+            default:
+                $redirect_url = $this->utilsServices->getBaseUrl($request).'/login';
+                return $response->withRedirect($redirect_url, 200);
+        }
     }
 
 }

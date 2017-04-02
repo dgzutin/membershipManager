@@ -87,6 +87,14 @@ class AdminController {
             array('type' => 'text', 'name' => 'bic', 'label' => "BIC", 'value' => $settings->getBic(), 'required' => true),
             array('type' => 'text', 'name' => 'bankName', 'label' => "Bank Name", 'value' => $settings->getBankName(), 'required' => false),
             array('type' => 'text', 'name' => 'bankAddress', 'label' => "Bank Address", 'value' => $settings->getBankAddress(), 'required' => false),
+
+            array('type' => 'section', 'name' => 'section', 'label' => "OAuth 2.0 Settings for LinkedIn (Redirect URL: ".$this->utilsServices->getUrlForRouteName($request, 'linkedInOauth2Redirect').")", 'required' => true),
+            array('type' => 'select', 'name' => 'enableOauthLinkedIn', 'label' => "Enable LinkedIn oAuth 2.0?", 'value' => $settings->getEnableOauthLinkedIn(), 'required' => true, 'options' => array(
+                array('value' => '0', 'name' => 'Disabled'),
+                array('value' => '1', 'name' => 'Enabled')
+            )),
+            array('type' => 'text', 'name' => 'linkedInClientId', 'label' => "LinkedIn Client ID", 'value' => $settings->getLinkedInClientId(), 'required' => false),
+            array('type' => 'text', 'name' => 'linkedInClientSecret', 'label' => "LinkedIn Client Secret", 'value' => $settings->getLinkedInClientSecret(), 'required' => false),
             );
 
         return $this->container->view->render($response, 'admin/adminEditSystemSettings.html.twig', array(

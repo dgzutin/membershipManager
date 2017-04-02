@@ -126,10 +126,12 @@
                 <br>
                 <a href="{{ path_for('register')}}">Don't have an account? Sign up here.</a>
 
-                <br>
-                <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86ix8uxlc7mudl&redirect_uri=https%3A%2F%2Fiaoe.online-engineering.net%2Foauth%2Fv2%2Fredirect&state=test">
-                   <!-- <img width="150" src="/assets/images/Sign-in-Large---Default.png"> -->
-                </a>
+                {% if systemInfo.settings.enableOauthLinkedIn %}
+                    <br>
+                    <a href="{{ linkedInOauthEndpoint }}?response_type=code&client_id={{ systemInfo.settings.linkedInClientId }}&redirect_uri={{ oauthRedirect }}&state={{ linkedInState }}">
+                        <img width="285" src="/assets/images/Sign-in-Large---Default.png">
+                    </a>
+                {% endif %}
 
             </div>
             <!-- Optional: clear the XS cols if their content doesn't match in height -->

@@ -23,6 +23,9 @@ class User
     /** @Column(type="string", length=50, nullable=false) **/
     protected $role;
 
+    /** @Column(type="string", length=50, nullable=true) **/
+    public $linkedin_id;
+
     /** @Column(type="string", length=50, nullable=false) **/
     public $first_name;
 
@@ -41,13 +44,13 @@ class User
     /** @Column(type="string", length=100, nullable=true) **/
     public $department;
 
-    /** @Column(type="string", length=100, nullable=false) **/
+    /** @Column(type="string", length=100, nullable=true) **/
     public $street;
 
-    /** @Column(type="string", length=75, nullable=false) **/
+    /** @Column(type="string", length=75, nullable=true) **/
     public $city;
 
-    /** @Column(type="string", length=50, nullable=false) **/
+    /** @Column(type="string", length=50, nullable=true) **/
     public $zip;
 
     /** @Column(type="string", length=10, nullable=false) **/
@@ -59,8 +62,11 @@ class User
     /** @Column(type="string", length=100, nullable=true) **/
     public $email_2;
 
-    /** @Column(type="string", length=100, nullable=true) **/
+    /** @Column(type="string", length=300, nullable=true) **/
     public $website;
+
+    /** @Column(type="string", length=300, nullable=true) **/
+    public $pictureUrl;
 
     /** @Column(type="string", length=100, nullable=true) **/
     public $phone;
@@ -690,4 +696,52 @@ class User
     }
 
 
+
+    /**
+     * Set linkedinId
+     *
+     * @param string $linkedinId
+     *
+     * @return User
+     */
+    public function setLinkedinId($linkedinId)
+    {
+        $this->linkedin_id = $linkedinId;
+
+        return $this;
+    }
+
+    /**
+     * Get linkedinId
+     *
+     * @return string
+     */
+    public function getLinkedinId()
+    {
+        return $this->linkedin_id;
+    }
+
+    /**
+     * Set pictureUrl
+     *
+     * @param string $pictureUrl
+     *
+     * @return User
+     */
+    public function setPictureUrl($pictureUrl)
+    {
+        $this->pictureUrl = $pictureUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get pictureUrl
+     *
+     * @return string
+     */
+    public function getPictureUrl()
+    {
+        return $this->pictureUrl;
+    }
 }

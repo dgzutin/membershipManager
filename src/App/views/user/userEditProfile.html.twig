@@ -32,14 +32,24 @@
 
                     {% else %}
 
-                        {% if exception == true %}
+                        {% if exception %}
                             <div class="alert alert-danger">
                                 <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
                             </div>
                         {% endif %}
                     {% endif %}
 
-
+                    {% if linkedIn != null %}
+                        {% if linkedIn.exception %}
+                            <div class="alert alert-danger">
+                                <a class="close" data-dismiss="alert" href="#">×</a>{{ linkedIn.message }}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success">
+                                <a class="close" data-dismiss="alert" href="#">×</a>{{ linkedIn.message }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
 
                     <div class="row">
                         <div class="col-xs-12 col-sm-4 col-md-4">
@@ -128,8 +138,6 @@
                         <input type="text" id="phone" name="phone" class="form-control" value="{{ form.phone.value }}">
                     </div>
 
-
-
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-6">
                             <div class="form-group {% if form.email_1.error == true %}has-error{% endif %}">
@@ -149,29 +157,28 @@
 
 
                     <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-md-6">
-
-
+                        <div class="col-xs-9 col-sm-9 col-md-9">
+                            {% if systemInfo.settings.enableOauthLinkedIn %}
+                                <ul>
+                                    <li> <a href="{{ linkedInOauthEndpoint }}?response_type=code&client_id={{ systemInfo.settings.linkedInClientId }}&redirect_uri={{ oauthRedirect }}&state={{ linkedInState }}">
+                                            <img src="/assets/images/Logo-2C-21px-R.png"> Associate local account with my LinkedIn account</a></li>
+                                </ul>
+                               {% endif %}
+                        </div>
+                        <div class="col-xs-3 col-sm-3 col-md-3">
+                            <div class="text-right"><a class="btn btn-primary" href="{{ path_for('resetPasswordByUser')}}">Reset password</a></div>
 
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-6">
-                            <strong>To reset your password click here:</strong> <a href="{{ path_for('resetPasswordByUser')}}"><label class="btn btn-primary btn-sm">Reset password</label></a>
+                    </div>
 
+                    <div class="row">
+                        <div class="col-xs-3 col-sm-3 col-md-3">
+                            <div class="text-right"><button type="submit" class="btn btn-success btn-block">Save Profile</button></div>
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9">
                         </div>
                     </div>
 
-                    <div class="input-group">
-
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Save Profile</button>
-
-                    <hr style="margin-top:10px;margin-bottom:10px;" >
-
-                    <div class="form-group">
-
-
-                    </div>
                 </form>
             </div>
         </div>

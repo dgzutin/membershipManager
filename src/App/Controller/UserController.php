@@ -54,7 +54,8 @@ class UserController {
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
             'invoiceInfo' => $openInvoiceResult,
             'userName' => $userName,
-            'memberships' => $memberships
+            'memberships' => $memberships,
+            'pictureUrl' => $user->getPictureUrl()
         ));
     }
     
@@ -72,11 +73,20 @@ class UserController {
                             'message' => '',
                             'fields' => array());
 
+        if (isset($_SESSION['linkedInStatus'])){
+            $linkedInStatus = $_SESSION['linkedInStatus'];
+            unset($_SESSION['linkedInStatus']);
+        }
+
 
         return $this->container->view->render($response, 'user/userEditProfile.html.twig', array(
             'form_submission' => false,
             'exception' => $resp['exception'],
             'message' => $resp['message'],
+            'linkedInOauthEndpoint' => 'https://www.linkedin.com/oauth/v2/authorization',
+            'oauthRedirect' => $this->utilsServices->getUrlForRouteName($request, 'linkedInOauth2Redirect'),
+            'linkedInState' => 'associate',
+            'linkedIn' => $linkedInStatus,
             'form' => $user));
     }
 

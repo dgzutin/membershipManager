@@ -87,7 +87,16 @@ class Settings
 
     /** @Column(type="string", length=50, nullable=true) **/
     protected $googleAnalyticsTrackingId;
-    
+
+    /** @Column(type="boolean", nullable=true) **/
+    protected $enableOauthLinkedIn;
+
+    /** @Column(type="string", length=50, nullable=true) **/
+    protected $linkedInClientId;
+
+    /** @Column(type="string", length=50, nullable=true) **/
+    protected $linkedInClientSecret;
+
 
     /**
      * Get id
@@ -650,4 +659,77 @@ class Settings
     {
         return $this->googleAnalyticsTrackingId;
     }
+
+    /**
+     * Set enableOauthLinkedIn
+     *
+     * @param boolean $enableOauthLinkedIn
+     *
+     * @return Settings
+     */
+    public function setEnableOauthLinkedIn($enableOauthLinkedIn)
+    {
+        $this->enableOauthLinkedIn = $enableOauthLinkedIn;
+
+        return $this;
+    }
+
+    /**
+     * Get enableOauthLinkedIn
+     *
+     * @return boolean
+     */
+    public function getEnableOauthLinkedIn()
+    {
+        return $this->enableOauthLinkedIn;
+    }
+
+    /**
+     * Set linkedInClientId
+     *
+     * @param string $linkedInClientId
+     *
+     * @return Settings
+     */
+    public function setLinkedInClientId($linkedInClientId)
+    {
+        $this->linkedInClientId = $linkedInClientId;
+
+        return $this;
+    }
+
+    /**
+     * Get linkedInClientId
+     *
+     * @return string
+     */
+    public function getLinkedInClientId()
+    {
+        return $this->linkedInClientId;
+    }
+
+    /**
+     * Set linkedInClientSecret
+     *
+     * @param string $linkedInClientSecret
+     *
+     * @return Settings
+     */
+    public function setLinkedInClientSecret($linkedInClientSecret)
+    {
+        $this->linkedInClientSecret = $linkedInClientSecret;
+
+        return $this;
+    }
+
+    /**
+     * Get linkedInClientSecret
+     *
+     * @return string
+     */
+    public function getLinkedInClientSecret()
+    {
+        return $this->linkedInClientSecret;
+    }
+    
 }

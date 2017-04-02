@@ -104,6 +104,10 @@ $container['pdfGenerationServices'] = function($container){
     return new Service\PdfGenerationServices($container);
 };
 
+$container['linkedInServices'] = function($container){
+    return new Service\LinkedInServices($container);
+};
+
 
 $container['mailServices'] = function ($container) {
 
@@ -285,7 +289,7 @@ $app->get('/forgotPassword', '\PublicController:forgotPasswordAction')->setName(
 $app->post('/forgotPassword', '\PublicController:processForgotPasswordAction')->setName('processForgotPassword');
 $app->post('/paypal_ipn', '\PublicController:paypalIPnAction')->setName('paypal_ipn');
 $app->get('/newsletter/{key}', '\PublicController:publicNewsletterAction')->setName('publicNewsletter');
-$app->get('/oauth/v2/redirect', '\PublicController:oauth2Action')->setName('oauth2Redirect');
+$app->get('/oauth/v2/redirect', '\PublicController:linkedInOauth2Action')->setName('linkedInOauth2Redirect');
 
 
 $app->run();

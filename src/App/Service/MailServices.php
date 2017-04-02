@@ -74,7 +74,7 @@ class MailServices
             $this->message->setBody($emailBody, 'text/html');
             $result = array('exception' => false,
                 'sent' => $this->mailer->send($this->message),
-                'message' => 'Email successfully sent to '.$user->getEmail1());
+                'message' => 'An e-mail was sent to '.$user->getEmail1().'. Follow the instructions in the e-mail to activate your account');
         }
         catch (\Exception $e){
 

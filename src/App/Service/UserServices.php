@@ -92,6 +92,12 @@ class UserServices
             $settings->setBankName($data['bankName']);
             $settings->setBankAddress($data['bankAddress']);
 
+            $settings->setEnableOauthLinkedIn($data['enableOauthLinkedIn']);
+            $settings->setLinkedInClientId($data['linkedInClientId']);
+            $settings->setLinkedInClientSecret($data['linkedInClientSecret']);
+            $settings->setState($data['state']);
+
+
             try{
                 $this->em->flush();
                 return array('exception' => false,
@@ -185,7 +191,7 @@ class UserServices
         return $result;
     }
 
-    public function registerNewUser($user_data)
+    public function registerNewUser($user_data, $active = false, $linkedinId = null)
     {
 
         $repository = $this->em->getRepository('App\Entity\User');
@@ -219,10 +225,12 @@ class UserServices
             $newuser->setStreet($user_data['street']);
             $newuser->setUserRegDate(new DateTime());
             $newuser->setWebsite($user_data['website']);
+            $newuser->setPictureUrl($user_data['pictureUrl']);
             $newuser->setZip($user_data['zip']);
-            $newuser->setActive(false);
-            $newuser->setProfileKey(sha1(microtime().rand()));
+            $newuser->setActive($active);
+            $newuser->setLinkedinId($linkedinId);
 
+            $newuser->setProfileKey(sha1(microtime().rand()));
 
             $this->em->persist($newuser);
 
@@ -230,7 +238,7 @@ class UserServices
                 $this->em->flush();
                 $result = array('exception' => false,
                                 'user' => $newuser,
-                                'message' => "User account was created. An e-mail was sent to ".$user_data['email_1'].". Follow the instructions in the e-mail to activate your account");
+                                'message' => "User account was created.");
             }
             catch (\Exception $e){
                 $result = array('exception' => true,
