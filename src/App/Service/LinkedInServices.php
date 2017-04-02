@@ -70,10 +70,10 @@ class LinkedInServices
             'result' => $profileResp->body);
     }
 
-    public function associateAccountWithLinkedIn($user, $linkedInId)
+    public function associateAccountWithLinkedIn($user, $linkedInProfile)
     {
         //check if linkedIn id already exists
-        $userResp = $this->findUserByLinkedInId($linkedInId);
+        $userResp = $this->findUserByLinkedInId($linkedInProfile->id);
 
         if ($userResp['exception'] == false){
 
@@ -85,7 +85,8 @@ class LinkedInServices
             return array('exception' => true,
                 'message' => 'Another user account is associated with this LinkedIn account.');
         }
-        $user->setLinkedinId($linkedInId);
+        $user->setLinkedinId($linkedInProfile->id);
+        $user->setPictureUrl($linkedInProfile->pictureUrl);
 
         try{
             $this->em->persist($user);
@@ -113,7 +114,7 @@ class LinkedInServices
 
             if ($userResp['exception'] == false){
                 //link user account with linkedIn account
-                return $this->associateAccountWithLinkedIn($userResp['user'], $linkedInProfileData['result']->id);
+                return $this->associateAccountWithLinkedIn($userResp['user'], $linkedInProfileData['result']);
             }
 
             //Create local user account here

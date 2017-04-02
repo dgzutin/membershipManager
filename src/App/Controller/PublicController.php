@@ -306,7 +306,7 @@ class PublicController {
 
                 //var_dump($respUser);
                 $linkedInProfileData = $resp = $this->linkedInServices->getLinkedInUserProfileData($resp->body->access_token);
-                $assocResp = $this->linkedInServices->associateAccountWithLinkedIn($respUser['user'], $linkedInProfileData['result']->id);
+                $assocResp = $this->linkedInServices->associateAccountWithLinkedIn($respUser['user'], $linkedInProfileData['result']);
 
                 $_SESSION['linkedInStatus'] = $assocResp;
 
