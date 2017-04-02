@@ -265,7 +265,7 @@ class PublicController {
     public function linkedInOauth2Action(ServerRequestInterface $request, ResponseInterface $response)
     {
         $params = $request->getQueryParams();
-        $req = 'grant_type=authorization_code&code='.$params['code'].'&redirect_uri=http%3A%2F%2Fmembershipmanager%2Foauth%2Fv2%2Fredirect&client_id=86ix8uxlc7mudl&client_secret='.$this->systemInfo['settings']->getLinkedInClientSecret();
+        $req = 'grant_type=authorization_code&code='.$params['code'].'&redirect_uri='.$this->utilsServices->getUrlForRouteName($request, 'linkedInOauth2Redirect').'&client_id='.$this->systemInfo['settings']->getLinkedInClientId().'&client_secret='.$this->systemInfo['settings']->getLinkedInClientSecret();
 
         try{
             $resp= Request::post('https://www.linkedin.com/oauth/v2/accessToken')
@@ -310,7 +310,7 @@ class PublicController {
 
                 $_SESSION['linkedInStatus'] = $assocResp;
 
-                var_dump($assocResp);
+                //var_dump($assocResp);
 
                 $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/profile';
                 return $response->withRedirect($redirect_url, 200);
