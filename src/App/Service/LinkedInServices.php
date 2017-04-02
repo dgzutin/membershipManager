@@ -79,8 +79,8 @@ class LinkedInServices
 
             if ($userResp['user']->getId() == $user->getId()){
                 //in this case user is already associated with linkedin account
-                $user->setPictureUrl($linkedInProfile->pictureUrl);
 
+                $user->setPictureUrl($linkedInProfile->pictureUrl);
                 try{
                     $this->em->persist($user);
                     $this->em->flush();
@@ -89,7 +89,7 @@ class LinkedInServices
                     return array('exception' => true,
                         'message' => $e->getMessage());
                 }
-                
+
                 return array('exception' => false,
                     'message' => 'Local user account has already been associated with your LinkedIn account.');
             }
@@ -147,6 +147,17 @@ class LinkedInServices
 
             $createUserResp = $this->userServices->registerNewUser($user_data, true, $linkedInProfileData['result']->id);
             return $createUserResp;
+        }
+
+        //just update image
+        $userResp['user']->setPictureUrl($linkedInProfileData['result']->pictureUrl);
+        try{
+            $this->em->persist($userResp['user']);
+            $this->em->flush();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
         }
 
         return array('exception' => false,
