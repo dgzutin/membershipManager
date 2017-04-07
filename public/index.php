@@ -9,9 +9,12 @@
 
 use App\Controller;
 use App\Service;
+use App\Handler;
 use App\Middleware\UserAuthenticationMiddleware;
 use App\Middleware\ApiAuthenticationMiddleware;
 use App\EmFactory;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 require '../vendor/autoload.php';
 require '../vendor/swiftmailer/swiftmailer/lib/swift_required.php';
@@ -28,13 +31,34 @@ $configuration = [
 ];
 
 $container = new \Slim\Container($configuration);
+
+//Crete loggers
+$container['appLogger'] = function(){
+    // create a log channel
+    $logger = new Logger('appLogger');
+    $logger->pushHandler(new StreamHandler('../logs/error.log'));
+    return $logger;
+};
+$container['userLogger'] = function(){
+    // create a log channel
+    $logger = new Logger('userLogger');
+    $logger->pushHandler(new StreamHandler('../logs/users.log'));
+    return $logger;
+};
+
+// Error Handlers
+$container['phpErrorHandler'] = function($container){
+    return new Handler\ErrorHandler($container);
+};
+$container['errorHandler'] = function($container){
+    return new Handler\ErrorHandler($container);
+};
+
+
 $app = new \Slim\App($container);
 
 // Get container
 $container = $app->getContainer();
-
-
-// Register components on container
 
 //create Doctrine Entity Manager
 $container['em'] = function (){
@@ -74,7 +98,7 @@ $container['view'] = function ($container) {
     return $view;
 };
 
-//Register
+//Register Services
 
 $container['utilsServices'] = function($container){
     return new Service\UtilsServices($container);

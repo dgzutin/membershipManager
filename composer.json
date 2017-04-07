@@ -6,7 +6,8 @@
         "tecnickcom/tcpdf": "^6.2",
         "swiftmailer/swiftmailer": "^5.4",
         "studio-42/elfinder": "^2.1",
-        "nategood/httpful": "^0.2.20"
+        "nategood/httpful": "^0.2.20",
+        "monolog/monolog": "^1.22"
     },
 
 

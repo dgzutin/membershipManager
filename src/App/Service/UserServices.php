@@ -243,6 +243,10 @@ class UserServices
                 $result = array('exception' => true,
                     'message' => $e->getMessage());
             }
+
+            //Log user action (new user registration)
+            $this->container->get('userLogger')->info('New user registration', array('userId' => $newuser->getId(),
+                'user_email' => $newuser->getEmail1()));
         }
         else{
             $result = array('exception' => true,

@@ -48,7 +48,6 @@ class PublicController {
 
     public function processLoginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-
         $userInfo = $request->getParsedBody();
         $userService = $this->container->get('userServices');
         $auth_result = $userService->authenticateUser($userInfo['email'],$password = $userInfo['password'] );
@@ -65,6 +64,9 @@ class PublicController {
 
                 $redirect_url = $_SESSION['orig_uri'];
             }
+            //Log user action (login)
+            $this->container->get('userLogger')->info('User logged in', $auth_result);
+
             return $response->withRedirect($redirect_url, 200);
         }
         
@@ -129,7 +131,6 @@ class PublicController {
             else{
                 $mailServices = $this->container->get('mailServices');
                 $mailResult = $mailServices->sendActivateAccountMail($resp['user'], $request);
-                
                 
                 if ($mailResult['sent']){
 
