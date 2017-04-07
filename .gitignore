@@ -2,6 +2,7 @@ composer.phar
 vendor/*
 cache/views/*
 cache/email/*
+logs/*
 src/App/config/config.json
 public/files/Member_Area/.quarantine/*
 public/files/Member_Area/.tmb/*
