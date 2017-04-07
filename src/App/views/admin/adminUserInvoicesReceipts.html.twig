@@ -93,7 +93,7 @@
 
                 <h4>Invoices and receipts:</h4>
 
-                <table class="display" id="openInvoices" cellspacing="0" width="100%" style="font-size: smaller">
+                <table class="display" id="invoicesTable" cellspacing="0" width="100%" style="font-size: smaller">
                     <thead>
                     <tr>
                         <th>Invoice ID</th>
@@ -172,8 +172,9 @@
     <script>
 
         $(document).ready(function() {
-            $('#openInvoices').DataTable();
-            $('#closedInvoices').DataTable();
+            $('#invoicesTable').DataTable({
+                "order": [[ 0, "desc" ]]
+            });
         } );
 
     </script>
