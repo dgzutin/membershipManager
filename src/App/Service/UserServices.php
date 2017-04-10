@@ -245,8 +245,18 @@ class UserServices
             }
 
             //Log user action (new user registration)
-            $this->container->get('userLogger')->info('New user registration', array('userId' => $newuser->getId(),
-                'user_email' => $newuser->getEmail1()));
+            $context['type'] = CREATE_USER;
+
+            if (isset($_SESSION['user_id'])){
+                $context['user_id'] = $_SESSION['user_id'];
+                $context['user_role'] = $_SESSION['user_role'];
+            }
+            else{
+                $context['user_id'] = $newuser->getId();
+                $context['user_role'] = $newuser->getrole();
+            }
+            $this->container->get('userLogger')->info('New user registration', $context);
+
         }
         else{
             $result = array('exception' => true,
@@ -301,6 +311,11 @@ class UserServices
                                 'user' => $user_data,
                                 'message' => $e->getMessage());
             }
+            //Log user action (new user registration)
+            $context['type'] = UPDATE_USER;
+            $context['user_id'] = $_SESSION['user_id'];
+            $context['user_role'] = $_SESSION['user_role'];
+            $this->container->get('userLogger')->info('User profile updated', $context);
         }
         else{
             $result = array('exception' => true,

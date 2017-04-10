@@ -15,6 +15,7 @@ use App\Middleware\ApiAuthenticationMiddleware;
 use App\EmFactory;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use App\Handler\DoctrineDBHandler;
 
 require '../vendor/autoload.php';
 require '../vendor/swiftmailer/swiftmailer/lib/swift_required.php';
@@ -32,6 +33,9 @@ $configuration = [
 
 $container = new \Slim\Container($configuration);
 
+// Add constant of Supported Log Types
+include_once(__DIR__."/../src/App/config/LogTypes.php");
+
 //Crete loggers
 $container['appLogger'] = function(){
     // create a log channel
@@ -39,10 +43,10 @@ $container['appLogger'] = function(){
     $logger->pushHandler(new StreamHandler('../logs/error.log'));
     return $logger;
 };
-$container['userLogger'] = function(){
+$container['userLogger'] = function($container){
     // create a log channel
     $logger = new Logger('userLogger');
-    $logger->pushHandler(new StreamHandler('../logs/users.log'));
+    $logger->pushHandler(new DoctrineDBHandler($container));
     return $logger;
 };
 

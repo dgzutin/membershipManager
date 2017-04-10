@@ -65,6 +65,8 @@ class PublicController {
                 $redirect_url = $_SESSION['orig_uri'];
             }
             //Log user action (login)
+            $auth_result['type'] = SIGN_IN_OUT;
+            $auth_result['identityProvider'] = 'Local';
             $this->container->get('userLogger')->info('User logged in', $auth_result);
 
             return $response->withRedirect($redirect_url, 200);
@@ -85,8 +87,13 @@ class PublicController {
     public function logoutAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         session_start();
+        //Log user action (logout)
+        $context['type'] = SIGN_IN_OUT;
+        $context['user_id'] = $_SESSION['user_id'];
+        $context['user_role'] = $_SESSION['user_role'];
+        $this->container->get('userLogger')->info('User logged out', $context);
         session_destroy();
-
+        
         $uri = $this->utilsServices->getBaseUrl($request).'/login';
         return $response = $response->withRedirect($uri, 200);
     }
@@ -297,6 +304,13 @@ class PublicController {
 
                         $redirect_url = $_SESSION['orig_uri'];
                     }
+                    //Log user action (login)
+                    $context['user_id'] = $_SESSION['user_id'];
+                    $context['user_role'] = $_SESSION['user_role'];
+                    $context['type'] = SIGN_IN_OUT;
+                    $context['identityProvider'] = 'LinkedIn';
+                    $this->container->get('userLogger')->info('User logged in', $context);
+
                     return $response->withRedirect($redirect_url, 200);
                 }
             break;
@@ -314,6 +328,14 @@ class PublicController {
                 //var_dump($assocResp);
 
                 $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/profile';
+
+                //Log user action (new user registration)
+                $this->container->get('userLogger')->info('Sign in with LinkedIn enabled',
+                    array('type' => UPDATE_USER,
+                          'user_id' => $_SESSION['user_id'],
+                          'user_role' => $_SESSION['user_role']
+                    ));
+
                 return $response->withRedirect($redirect_url, 200);
 
                 break;
