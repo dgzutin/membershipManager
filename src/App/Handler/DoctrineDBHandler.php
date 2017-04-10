@@ -32,11 +32,8 @@ class DoctrineDBHandler extends AbstractProcessingHandler
         $userLog->setMessage($record['message']);
         $userLog->setContext(json_encode($record['context']));
 
-        echo json_encode($record);
-
         $this->em->persist($userLog);
         $this->em->flush();
-
     }
 
     /**
