@@ -330,7 +330,7 @@ class PublicController {
                 $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/profile';
 
                 //Log user action (new user registration)
-                $this->container->get('userLogger')->info('Sign in with LinkedIn enabled',
+                $this->container->get('userLogger')->info('User enabled sign on with LinkedIn',
                     array('type' => UPDATE_USER,
                           'user_id' => $_SESSION['user_id'],
                           'user_role' => $_SESSION['user_role']

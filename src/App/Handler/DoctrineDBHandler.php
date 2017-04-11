@@ -2,6 +2,7 @@
 
 namespace App\Handler;
 
+use App\Entity\MembershipLog;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 use Monolog\Formatter\NormalizerFormatter;
@@ -29,6 +30,7 @@ class DoctrineDBHandler extends AbstractProcessingHandler
         $userLog->setUserId($record['context']['user_id']);
         $userLog->setUserRole($record['context']['user_role']);
         $userLog->setType($record['context']['type']);
+        $userLog->setAffectedMembershipId($record['context']['affectedMembershipId']);
         $userLog->setMessage($record['message']);
         $userLog->setContext(json_encode($record['context']));
 

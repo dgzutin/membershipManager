@@ -33,6 +33,9 @@ class UserLog
     protected $userRole;
 
     /** @Column(type="integer", nullable=true) * */
+    protected $affectedMembershipId;
+
+    /** @Column(type="integer", nullable=true) * */
     protected $type;
 
     /** @Column(type="text", nullable=true) **/
@@ -242,5 +245,29 @@ class UserLog
     public function getContext()
     {
         return $this->context;
+    }
+
+    /**
+     * Set affectedMembershipId
+     *
+     * @param integer $affectedMembershipId
+     *
+     * @return UserLog
+     */
+    public function setAffectedMembershipId($affectedMembershipId)
+    {
+        $this->affectedMembershipId = $affectedMembershipId;
+
+        return $this;
+    }
+
+    /**
+     * Get affectedMembershipId
+     *
+     * @return integer
+     */
+    public function getAffectedMembershipId()
+    {
+        return $this->affectedMembershipId;
     }
 }

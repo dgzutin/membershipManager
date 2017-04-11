@@ -23,6 +23,7 @@ class MembershipServices
         $this->mailService = $container->get('mailServices');
         //$this->utilsServices = $container->get('utilsServices');
         $this->em = $container['em'];
+        $this->userLogger = $container->get('userLogger');
     }
 
 
@@ -125,6 +126,15 @@ class MembershipServices
             }
 
             $memberRes = $this->getMemberByMemberId($Membership->getMemberId());
+
+            //Log user action (Modify membership)
+            $this->userLogger->info("Membership with member ID ".$Membership->getMemberId()." was updated",
+                array('type' => UPDATE_MEMBERSHIP,
+                    'user_id' => $_SESSION['user_id'],
+                    'user_role' => $_SESSION['user_role'],
+                    'affectedMembershipId' => $Membership->getId(),
+                    'submittedData' => $membershipData
+                ));
 
             // In this case it is an update.
                return  array('exception' => false,
@@ -247,6 +257,16 @@ class MembershipServices
                 }
             }
         }
+        
+        //Log user action (Create membership)
+        $this->userLogger->info("Membership with member ID ".$newMembership->getMemberId()." was created",
+            array('type' => CREATE_MEMBERSHIP,
+                'user_id' => $_SESSION['user_id'],
+                'user_role' => $_SESSION['user_role'],
+                'affectedMembershipId' => $newMembership->getId(),
+                'submittedData' => $membershipData
+            ));
+        
         return $result;
     }
     
@@ -531,6 +551,15 @@ class MembershipServices
             return array('exception' => true,
                 'message' => $e->getMessage());
         }
+
+        //Log user action (update membership validity)
+        $this->userLogger->info("Expiry date for Member ".$membership->getMemberId()." was added",
+            array('type' => UPDATE_MEMBERSHIP_VALIDITY,
+                'user_id' => $_SESSION['user_id'],
+                'user_role' => $_SESSION['user_role'],
+                'affectedMembershipId' => $membership->getId(),
+                'validUntil' => $validity->getValidUntil()->format('jS F Y'),
+            ));
 
         return array('exception' => false,
                      'membershipId' => $membership->getId(),
@@ -1337,6 +1366,16 @@ class MembershipServices
                         'validityId' => $id,
                         'message' => $e->getMessage());
                 }
+
+                //Log user action (update membership validity)
+                $this->userLogger->info("Expiry date was deleted",
+                    array('type' => UPDATE_MEMBERSHIP_VALIDITY,
+                        'user_id' => $_SESSION['user_id'],
+                        'user_role' => $_SESSION['user_role'],
+                        'affectedMembershipId' => $membershipValidity->getMembershipId(),
+                        'previousValidity' => $membershipValidity->getValidUntil()->format('jS F Y'),
+            ));
+
             }
             elseif ($membershipValidity == null){
                 $results[$i] = array('exception' => true,
@@ -1378,6 +1417,14 @@ class MembershipServices
             return array('exception' => true,
                          'message' => $e->getMessage());
         }
+
+        //Log user action (update membership validity)
+        $this->userLogger->info('Membership with member ID '.$memberId.' was terminated',
+            array('type' => UPDATE_MEMBERSHIP,
+                'user_id' => $_SESSION['user_id'],
+                'user_role' => $_SESSION['user_role'],
+                'affectedMembershipId' => $membership->getId()
+            ));
         
         if ($mailNotification == true){
 
@@ -1386,11 +1433,11 @@ class MembershipServices
             $mailSendResult = $this->mailService->sendCancelMembershipEmail($members_json, $request);
 
             return array('exception' => false,
-                'message' => 'Your membership with member ID'.$memberId.' was terminated. An e-mail confirmation was sent to '.$members_json[0]->user->email_1);
+                'message' => 'Your membership with member ID '.$memberId.' was terminated. An e-mail confirmation was sent to '.$members_json[0]->user->email_1);
         }
 
         return array('exception' => false,
-                     'message' => 'Your membership with member ID'.$memberId.' was terminated');
+                     'message' => 'Your membership with member ID '.$memberId.' was terminated');
 
     }
 
