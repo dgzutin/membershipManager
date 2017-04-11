@@ -17,7 +17,7 @@ class UserLog
     /** @Id @Column(type="integer") @GeneratedValue * */
     public $id;
 
-    /** @Column(type="datetime", nullable=false) * */
+    /** @Column(type="datetime", nullable=true) * */
     protected $dateTime;
 
     /** @Column(type="string", length=50, nullable=true) * */
