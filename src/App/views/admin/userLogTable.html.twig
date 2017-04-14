@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item active">Users</li>
+    </ol>
+    <div class="se-pre-con"></div>
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>User Logs</strong></div>
+            <div class="panel-body">
+
+                <table class="display" id="userLog" cellspacing="0" width="100%" style="font-size: smaller">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Timestamp</th>
+                        <th>Message</th>
+                        <th>Agent</th>
+                        <th>Role</th>
+                        <th>Context</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for log in logs %}
+                        <tr class="">
+                            <td>{{ log.id }}</td>
+                            <td><span class="text-info"><small>{{ log.dateTime| date('d/m/Y H:i:s') }}</small></span></td>
+                            <td><small>{{ log.message }}</small></td>
+                            <td>
+                                {% if log.userId != null %}
+                                    <a href="{{ path_for('adminViewUserProfile', { 'userId': log.userId }) }}"><span class="fa fa-user"></span> {{ log.userId }}</a>
+                                {% else %}
+                                    System
+                                {% endif %}
+
+                            </td>
+                            <td>{{ log.userRole }}</td>
+                            <td><pre class="prettyprint"><code>{{ log.context }}</code></pre></td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#userLog').DataTable({
+                "order": [[ 0, "desc" ]]
+            });
+        } );
+
+    </script>
+
+
+{% endblock %}

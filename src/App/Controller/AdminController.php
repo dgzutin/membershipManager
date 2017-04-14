@@ -895,6 +895,19 @@ class AdminController {
         return $resp;
     }
 
+    //userLogAction
+    public function userLogAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $logsResp = $this->userServices->getUserLogs((int)$args['userId']);
+        
+        return $this->container->view->render($response, 'admin/userLogTable.html.twig', $logsResp);
+    }
+    
+    //membershipLogAction
+    public function membershipLogAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $logsResp = $this->userServices->getUserLogsForMembership((int)$args['membershipId']);
 
-
+        return $this->container->view->render($response, 'admin/userLogTable.html.twig', $logsResp);
+    }
 }

@@ -217,7 +217,8 @@ $app->group('/admin', function () use ($app) {
     $app->map(['GET', 'POST'],'/invoice/{userId}[/{invoiceId}]', '\AdminController:invoiceAction')->setName('invoiceAdmin');
     $app->get('/downloadPdfInvoice/{invoiceId}', '\AdminController:downloadPdfInvoiceAction')->setName('downloadPdfInvoiceAdmin');
     $app->get('/downloadPdfReceipt/{invoiceId}', '\AdminController:downloadPdfReceiptAction')->setName('downloadPdfReceiptAdmin');
-
+    $app->get('/userLog/{userId}', '\AdminController:userLogAction')->setName('userLog');
+    $app->get('/membershipLog/{membershipId}', '\AdminController:membershipLogAction')->setName('membershipLog');
     
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));

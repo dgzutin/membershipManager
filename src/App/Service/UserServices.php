@@ -1596,8 +1596,50 @@ class UserServices
             'billing' => null,
             'memberships' => $membershipDeleteResp,
             'invoices' => null,
-            'shoppingCart' => $shoppingCartDeleteResp,
-            'message' => $e->getMessage());
+            'shoppingCart' => $shoppingCartDeleteResp);
     }
 
+    public function getUserLogs($userId)
+    {
+        $repository = $this->em->getRepository('App\Entity\UserLog');
+
+        try{
+            $logs = $repository->createQueryBuilder('log')
+                ->select('log')
+                ->where('log.userId = :userId')
+                ->setParameter('userId', $userId)
+                ->getQuery()
+                ->getResult();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        return array('exception' => false,
+            'logs' => $logs,
+            'message' => count(logs).' log(s) found');
+    }
+
+    public function getUserLogsForMembership($membershipId)
+    {
+        $repository = $this->em->getRepository('App\Entity\UserLog');
+
+        try{
+            $logs = $repository->createQueryBuilder('log')
+                ->select('log')
+                ->where('log.affectedMembershipId = :affectedMembershipId')
+                ->setParameter('affectedMembershipId', $membershipId)
+                ->getQuery()
+                ->getResult();
+        }
+        catch (\Exception $e){
+            return array('exception' => true,
+                'message' => $e->getMessage());
+        }
+
+        return array('exception' => false,
+            'logs' => $logs,
+            'message' => count(logs).' log(s) found');
+    }
 }
