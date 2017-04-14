@@ -910,4 +910,23 @@ class AdminController {
 
         return $this->container->view->render($response, 'admin/userLogTable.html.twig', $logsResp);
     }
+
+    public function errorLogAction(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $filePath = realpath(dirname(__DIR__).'/../../logs/error.log');
+
+        if (file_exists($filePath)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Type: text/plain');
+            //header('Content-Disposition: attachment;filename="'.basename('error.log').'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($filePath));
+            readfile($filePath);
+            exit;
+        }
+
+    }
 }
