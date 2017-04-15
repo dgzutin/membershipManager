@@ -320,7 +320,7 @@ $app->post('/forgotPassword', '\PublicController:processForgotPasswordAction')->
 $app->post('/paypal_ipn', '\PublicController:paypalIPnAction')->setName('paypal_ipn');
 $app->get('/newsletter/{key}', '\PublicController:publicNewsletterAction')->setName('publicNewsletter');
 $app->get('/oauth/v2/redirect', '\PublicController:linkedInOauth2Action')->setName('linkedInOauth2Redirect');
-$app->get('/getActiveMembers/{typeId}', '\PublicController:getActiveMembersAction')->setName('getActiveMembers');
+$app->get('/getInstitutionOfActiveMembers/{typeId}', '\PublicController:getInstitutionOfActiveMembersAction')->setName('getActiveMembers');
 
 
 $app->run();

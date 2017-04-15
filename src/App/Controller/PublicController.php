@@ -204,12 +204,13 @@ class PublicController {
             'message' => $resp['message']));
     }
 
-    public function getActiveMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    public function getInstitutionOfActiveMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $membersResp = $this->membershipServices->getMembers(
             array('membershipTypeId' => (int)$args['typeId'], 'cancelled' => false), array(), null, true, false, false);
 
         $i = 0;
+        $members = null;
         foreach ($membersResp['members'] as $member){
 
             $members[$i]['institution'] = $member['user']->getInstitution();
