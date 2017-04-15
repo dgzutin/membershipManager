@@ -24,6 +24,7 @@ class PublicController {
 
         $this->container = $container;
         $this->systemInfo = $container->get('userServices')->getSystemInfo();
+        $this->membershipServices = $container->get('membershipServices');
         $this->billingServices = $container->get('billingServices');
         $this->userServices = $container->get('userServices');
         $this->utilsServices = $container->get('utilsServices');
@@ -201,6 +202,24 @@ class PublicController {
         return $this->container->view->render($response, 'userNotification.twig',  array(
             'exception' => $resp['exception'],
             'message' => $resp['message']));
+    }
+
+    public function getActiveMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $membersResp = $this->membershipServices->getMembers(
+            array('membershipTypeId' => (int)$args['typeId'], 'cancelled' => false), array(), null, true, false, false);
+
+        $i = 0;
+        foreach ($membersResp['members'] as $member){
+
+            $members[$i]['institution'] = $member['user']->getInstitution();
+            $members[$i]['country'] = $this->utilsServices->getCountryNameByCode($member['user']->getCountry());
+            $i++;
+        }
+
+        return $this->container->view->render($response, 'listMembersPublic.html.twig', array(
+            'exception' => $membersResp['exception'],
+            'members' => $members));
     }
 
     public function forgotPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)

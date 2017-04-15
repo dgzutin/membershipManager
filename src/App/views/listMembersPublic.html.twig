@@ -1,0 +1,12 @@
+
+    {% if exception == true %}
+
+        <b>List not available at the moment</b>
+
+    {% else %}
+    <ul>
+        {% for member in members %}
+            <li><b>{{ member.institution }}</b>, {{ member.country }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
