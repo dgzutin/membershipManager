@@ -321,6 +321,6 @@ $app->post('/paypal_ipn', '\PublicController:paypalIPnAction')->setName('paypal_
 $app->get('/newsletter/{key}', '\PublicController:publicNewsletterAction')->setName('publicNewsletter');
 $app->get('/oauth/v2/redirect', '\PublicController:linkedInOauth2Action')->setName('linkedInOauth2Redirect');
 $app->get('/getInstitutionOfActiveMembers/{typeId}', '\PublicController:getInstitutionOfActiveMembersAction')->setName('getActiveMembers');
-
+$app->get('/publicNewsletters', '\PublicController:publicNewslettersAction')->setName('publicNewsletters');
 
 $app->run();

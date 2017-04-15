@@ -246,6 +246,15 @@ class PublicController {
         return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resp));
     }
 
+    public function publicNewslettersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+
+        $result = $this->userServices->getPublishedNewsletters();
+        $result['baseSiteUrl'] = $this->utilsServices->getBaseUrl($request);
+
+        return $this->container->view->render($response, 'publishedNewslettersPublic.html.twig', $result);
+    }
+
     public function paypalIPnAction(ServerRequestInterface $request, ResponseInterface $response)
     {
         $parsedBody = $request->getParsedBody();
