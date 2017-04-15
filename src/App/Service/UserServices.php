@@ -1618,7 +1618,7 @@ class UserServices
 
         return array('exception' => false,
             'logs' => $logs,
-            'message' => count(logs).' log(s) found');
+            'message' => count($logs).' log(s) found');
     }
 
     public function getUserLogsForMembership($membershipId)
