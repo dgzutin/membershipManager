@@ -7,12 +7,12 @@
 {% else %}
 
     <table class="table">
-        <th>Newsletter</th>
-        <th>Published on</th>
+        <th></th>
+        <th>Published</th>
         {% for newsletter in newsletters %}
 
             <tr>
-                <td><a href="{{ baseSiteUrl }}/newsletter/{{ newsletter.publicKey }}">{{ newsletter.title }}</a></td>
+                <td><a href="{{ baseSiteUrl }}/newsletter/{{ newsletter.publicKey }}" target="_blank">{{ newsletter.title }}</a></td>
                 <td>{{ newsletter.publishDate | date('jS F Y') }}</td>
             </tr>
 
