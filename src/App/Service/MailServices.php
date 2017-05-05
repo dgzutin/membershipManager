@@ -380,6 +380,7 @@ class MailServices
             "{memberGrade}" =>  '<mark>{memberGrade}</mark>',
             "{nameOfOrganization}" => '<mark>{nameOfOrganization}</mark>',
             "{orgAcronym}" => '<mark>{orgAcronym}</mark>',
+            "{institution}" => '<mark>{institution}</mark>',
         );
 
         $body_mod = strtr($emailBodyText, $placeholders);
@@ -406,6 +407,7 @@ class MailServices
             "{formalSalutation_en}" => 'Dear '.$member->user->title.' '.$member->user->first_name.' '.$member->user->last_name,
             "{firstName}" => $member->user->first_name,
             "{lastName}" => $member->user->last_name,
+            "{institution}" => $member->user->institution,
             "{memberId}" => $member->membership->memberId,
             "{membershipExpiryDate}" => $member->validity_string,
             "{membershipType}" => $member->membershipTypeName,
