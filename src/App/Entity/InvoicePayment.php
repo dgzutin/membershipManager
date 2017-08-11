@@ -9,6 +9,8 @@
 // php vendor/bin/doctrine orm:generate:entities src/
 // php vendor/bin/doctrine orm:schema-tool:update --force
 
+//Windows: php vendor/doctrine/orm/bin/doctrine orm:schema-tool:update --force
+
 namespace App\Entity;
 /**
  * @Entity @Table(name="invoicePayment")
