@@ -757,7 +757,7 @@ class UserServices
             $invoiceDate_string = $invoiceDate->format('jS F Y');
 
             $invoiceDueDate = $invoice->getDueDate();
-            $invoiceDueDate_string = $invoiceDueDate->format('l jS F Y');
+            $invoiceDueDate_string = $invoiceDueDate->format('jS F Y');
 
             $invoicePaidDate = $invoice->getPaidDate();
             $invoicePaidDate_string = null;
