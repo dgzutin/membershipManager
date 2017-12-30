@@ -62,7 +62,7 @@
                             <td>{{ newsletter.createDate | date('jS F Y')}}</td>
                             <td>
                                 {% if newsletter.published %}
-                                    <a href="{{ path_for('createBulkMailNewsletter', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a>
+                                    <a href="{{ path_for('createBulkMailNewsletterEditorMode', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a>
                                 {% else %}
                                     -
                                 {% endif %}

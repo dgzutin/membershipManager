@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path_for('newslettersAdmin')}}">Newsletters</a></li>
+        <li class="breadcrumb-item active">Send newsletter</li>
+    </ol>
+    <div class="se-pre-con"></div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading"><strong>Send Newsletters to members</strong></div>
+        <div class="panel-body">
+
+               <div class="row">
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="membershipTypeId">Membership Type</label>
+                            <select class="form-control" id="membershipTypeId" name="membershipTypeId">
+                                <option value="-1" selected>All Membership Types</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="membershipGrade">Member Grade</label>
+                            <select class="form-control" id="membershipGrade" name="membershipGrade">
+                                <option value="-1" selected>All Grades</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xs-6 col-sm-3">
+
+                        <div class="form-group">
+                            <label for="validity">Validity:</label>
+                            <select class="form-control" id="validity" name="validity">
+                                <option value="0" {% if form.validity == '0'  %}selected{% endif %}>Only Valid Memberships</option>
+                            </select>
+                        </div>
+
+                        <!--
+                        <div class="form-group">
+                            <label for="expiry_date">Expiry date</label>
+                            <select class="form-control" id="expiry_date" name="expiry_date">
+                                <option value="valid">Valid memberships</option>
+                                <option value="expired">All expired memberships</option>
+                                <option value="expired_1year">Expired memberships (1 year or less)</option>
+                                <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
+                            </select>
+                        </div>
+-->
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3">
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="replyTo">Reply to:</label>
+                    <input class="form-control" type="email" id="replyTo" name="replyTo" value="office@igip.org">
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <input class="form-control" type="text" id="subject" name="subject" value="{{ newsletter.newsletter.title }}" readonly>
+                    <input class="form-control" type="hidden" id="publicKey" name="subject" value="{{ newsletter.newsletter.publicKey }}" readonly>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12">
+                        <p style="font-size: smaller"><strong>Public link:</strong> <a href="{{ newsletter.publicLink }}">{{ newsletter.publicLink }}</a></p>
+                    </div>
+                </div>
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-12">
+                    <div class="" id="message" hidden></div>
+                </div>
+            </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12">
+                        <button id="button_verify_recipients" class="btn btn-primary">Next: verify recipients</button>
+                        <button id="button_sendNewsletterMembers"  class="btn btn-success" disabled>Send e-mail(s) now</button>
+                        <a href="{{ path_for('createBulkMailNewsletter', { 'key': newsletter.newsletter.publicKey }) }}"><button id="button_return" class="btn btn-primary" style="visibility:hidden;">Send a new e-mail</button></a>
+                    </div>
+                </div>
+
+            <!-- Table Starts here  -->
+            <table class="table table-condensed" id="recipients" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkbox_all" checked class="select_all_recipient"></th>
+                    <th>Member ID (type)</th>
+                    <th>Country</th>
+                    <th>Expiry date</th>
+                    <th>Representative</th>
+                    <th>Email</th>
+                    <th></th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bulk email functions  ============================================== -->
+    <script src="{{ baseUrl }}/assets/js/bulkEmailFunctions.js"></script>
+
+    <script>
+
+    </script>
+
+{% endblock %}

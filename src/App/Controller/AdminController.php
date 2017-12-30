@@ -728,6 +728,24 @@ class AdminController {
             'newsletter' => $resultNewsletter));
            // 'htmlNewsletter' => $htmlNewsletter));
     }
+    //For editors, no option to choose fiter
+    public function createBulkMailNewsletterEditorAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $key = $args['key'];
+        $baseUrl = $this->utilsServices->getBaseUrl($request);
+        $resultNewsletter = $this->userServices->assemblePublicNewsletter($key, true, $baseUrl, false);
+        $htmlNewsletter = $this->mailServices->createHtmlNewsletter($resultNewsletter);
+
+        $resp_process_filter = $this->utilsServices->processFilterForMembersTable(NULL);
+        $filter_form = $resp_process_filter['filter_form'];
+
+        return $this->container->view->render($response, 'admin/editorSendNewsletter.html.twig', array(
+            'membershipTypes' => $filter_form['membershipTypes'],
+            'memberGrades' => $filter_form['memberGrades'],
+            'validity' => $filter_form['validity'],
+            'newsletter' => $resultNewsletter));
+        // 'htmlNewsletter' => $htmlNewsletter));
+    }
 
     public function deleteUserAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
