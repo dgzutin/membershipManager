@@ -1051,18 +1051,23 @@ class UserServices
             }
             else{
                 //delete the file
-                if (unlink('files/newsletter/uploads/'.$article->getImageFileName())){
+                if (unlink('files/newsletter/uploads/'.$article->getImageFileName()) OR $article->getImageFileName() == ''){
 
                     try{
                         $this->em->remove($article);
                         $this->em->flush();
+
+                        $results[$i] = array(
+                            'exception' => false,
+                            'articleId' => $articleId,
+                            'message' => 'Article '.$articleId.' was deleted.');
 
                     }
                     catch (\Exception $e){
                         $results[$i] = array(
                             'exception' => true,
                             'articleId' => $articleId,
-                            'message' => 'Could not save article: '.$e->getMessage());
+                            'message' => 'Could not delete article: '.$e->getMessage());
                     }
                 }
                 else{
@@ -1071,10 +1076,6 @@ class UserServices
                         'articleId' => $articleId,
                         'message' => 'Article not removed. Could not delete image file');
                 }
-                $results[$i] = array(
-                    'exception' => false,
-                    'articleId' => $articleId,
-                    'message' => 'Article '.$articleId.' was deleted.');
             }
             $i++;
             }
