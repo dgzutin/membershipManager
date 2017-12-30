@@ -69,6 +69,7 @@
                         </div>
 
                         <div class="col-xs-12 col-sm-4">
+                            <p class="text-info text-right"><a href="{{ path_for('addNewsletterArticleEditor', { 'newsletterId': newsletter.id })}}">Add new article <i class="glyphicon glyphicon-plus"></i></a></p>
                             <p class="text-info text-right"><a target="_blank" href="{{ path_for('newsletterPreview', { 'key': newsletter.publicKey }) }}">Preview Newsletter <span class="fa fa-eye"></span></a></p>
                             <p class="text-info text-right"><a target="_blank" href="{{ path_for('publicNewsletter', { 'key': newsletter.publicKey }) }}">Public link <span class="fa fa-share-alt"></span></a></p>
                         </div>
