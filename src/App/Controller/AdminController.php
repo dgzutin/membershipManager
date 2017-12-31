@@ -621,12 +621,15 @@ class AdminController {
 
             if ($parsedBody['title'] != NULL AND $parsedBody['text'] != NULL){
 
-                $result = $this->userServices->addNewsletterArticle($request->getParsedBody(), $_SESSION['user_id']);
+                $resultAddArticle = $this->userServices->addNewsletterArticle($request->getParsedBody(), $_SESSION['user_id']);
+                if ($resultAddArticle['exception'] == true){
 
+                    return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig', $resultAddArticle);
+                }
                 return $response->withRedirect('/editor/newsletter/'.$newsletterId, 200);
                 //return $this->container->view->render($response, 'userNotification.twig', $result);
             }
-            return $this->container->view->render($response, 'user/newsletterArticle.html.twig', array(
+            return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig', array(
                 'exception' => true,
                 'message' => 'One or more fields are not correct or missing',
                 'isPost' => true,
@@ -634,7 +637,7 @@ class AdminController {
             ));
         }
 
-        return $this->container->view->render($response, 'user/newsletterArticle.html.twig');
+        return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig');
     }
 
     public function newsletterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -692,12 +695,12 @@ class AdminController {
 
                 $resultUpdate = $this->userServices->updateNewsletterArticle($articleId, $parsedBody);
 
-                var_dump($parsedBody['imageFileName']);
+                //var_dump($parsedBody['imageFileName']);
                 $resultUpdate['isPost'] = true;
                 return $this->container->view->render($response, 'admin/adminNewsletterArticle.html.twig', $resultUpdate);
             }
             else{
-                return $this->container->view->render($response, 'user/newsletterArticle.twig', array(
+                return $this->container->view->render($response, 'admin/adminNewsletterArticle.twig', array(
                     'exception' => true,
                     'message' => 'One or more fields are not correct or missing'));
             }
