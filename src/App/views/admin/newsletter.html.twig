@@ -107,7 +107,7 @@
                                 <td class="col-md-4">{{ article.title }}</td>
                                 <td class="col-md-2">{{ article.createDate | date('d-m-Y')}}</td>
                                 <td><a href="{{ path_for('adminViewUserProfile', { 'userId': article.userId }) }}">{{ article.user_name }}</a></td>
-                                <td><div id="notification_{{ article.id }}"><a href="{{ path_for('newsletterArticleAdmin', { 'articleId': article.id }) }}">open</a></div></td>
+                                <td><div id="notification_{{ article.id }}"><a href="{{ path_for('newsletterArticleAdmin', { 'articleId': article.id }) }}" target="_blank">open</a></div></td>
                                 <td>
 
                                     <input class="form-control" type="number" name="articleOrder_{{ article.id }}" value="{{ article.articleOrder }}">
