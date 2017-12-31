@@ -40,6 +40,7 @@
                             <label for="validity">Validity:</label>
                             <select class="form-control" id="validity" name="validity">
                                 <option value="0" {% if form.validity == '0'  %}selected{% endif %}>Only Valid Memberships</option>
+                                <option value="3" {% if form.validity == '3'  %}selected{% endif %}>Valid until {{ validity.one_period_ago }}</option>
                             </select>
                         </div>
 
