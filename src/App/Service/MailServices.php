@@ -48,7 +48,45 @@ class MailServices
         }
         return $result;
     }
-    
+
+    public function sendInformSiteAdminMail($user, $request)
+    {
+        $utilsServices = $this->container->get('utilsServices');
+        $userProfileLink = $utilsServices->getBaseUrl($request). '/admin/user/'.$user->getId();
+
+        $resp = array('exception' => false,
+            'salutation' => 'Dear System Owner,',
+            'message' => 'A new user registered with the '.$this->settings->getNameOfOrganization().'.',
+            'userId' => $user->getId(),
+            'name' => $user->getFirstName().' '.$user->getLastName(),
+            'email' => $user->getEmail1(),
+            'profileUrl' => $userProfileLink,
+            'comments' => $user->getComments(),
+            'nameOfOrganization' => $this->settings->getNameOfOrganization(),
+            'orgWebsite' => $this->settings->getOrgWebsite());
+
+        $template = $this->twig->loadTemplate('email/newUserNotificationAdmin.html.twig');
+        $emailBody = $template->render($resp);
+
+
+        $this->message
+            ->setSubject('New user Registration')
+            ->setFrom(array( $this->settings->getEmail() =>  $this->from));
+        try{
+            $this->message->setTo(array($this->settings->getEmail()));
+            $this->message->setBody($emailBody, 'text/html');
+            $result = array('exception' => false,
+                'sent' => $this->mailer->send($this->message));
+        }
+        catch (\Exception $e){
+
+            $result = array('exception' => true,
+                'sent' => false,
+                'message' => $e->getMessage());
+        }
+        return $result;
+    }
+
     public function sendActivateAccountMail($user, $request)
     {
         $utilsServices = $this->container->get('utilsServices');

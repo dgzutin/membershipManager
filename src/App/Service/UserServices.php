@@ -217,6 +217,7 @@ class UserServices
             $newuser->setPhone($user_data['phone']);
             $newuser->setPosition($user_data['position']);
             $newuser->setRole('ROLE_USER');
+            $newuser->setComments($user_data['comments']);
 
             $hash = password_hash($user_data['password'], PASSWORD_BCRYPT);
 
@@ -344,10 +345,12 @@ class UserServices
             $this->em->flush();
 
             return array('exception' => false,
+                         'user' => $user,
                          'message' => 'Your account bas been activated');
         }
         else{
             return array('exception' => true,
+                         'user' => '',
                          'message' => 'This account has already been activated or the key is invalid.');
         }
     }

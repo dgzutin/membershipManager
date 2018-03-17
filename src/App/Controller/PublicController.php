@@ -130,6 +130,8 @@ class PublicController {
             $userService = $this->container->get('userServices');
             $resp = $userService->registerNewUser($form_data);
 
+            //var_dump($form_data);
+
             if ($resp['exception']){
 
                 return $this->container->view->render($response, 'userNotification.twig', array(
@@ -158,6 +160,16 @@ class PublicController {
     {
         $userServices = $this->container->get('userServices');
         $result = $userServices->activateAccount($args['key']);
+
+        if (!$result['exception']){
+
+            //send e-mail to site admin informing new user registration
+            $mailServices = $this->container->get('mailServices');
+            $mailRes = $mailServices->sendInformSiteAdminMail($result['user'], $request);
+
+            //var_dump($mailRes);
+        }
+
         return $this->container->view->render($response, 'userNotification.twig', array(
             'exception' => $result['exception'],
             'message' => $result['message']));
