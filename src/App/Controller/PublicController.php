@@ -141,6 +141,8 @@ class PublicController {
             else{
                 $mailServices = $this->container->get('mailServices');
                 $mailResult = $mailServices->sendActivateAccountMail($resp['user'], $request);
+                //send e-mail to site admin informing new user registration
+                $mailRes = $mailServices->sendInformSiteAdminMail($resp['user'], $request);
                 
                 if ($mailResult['sent']){
 
@@ -164,8 +166,8 @@ class PublicController {
         if (!$result['exception']){
 
             //send e-mail to site admin informing new user registration
-            $mailServices = $this->container->get('mailServices');
-            $mailRes = $mailServices->sendInformSiteAdminMail($result['user'], $request);
+           // $mailServices = $this->container->get('mailServices');
+            //$mailRes = $mailServices->sendInformSiteAdminMail($result['user'], $request);
 
             //var_dump($mailRes);
         }
