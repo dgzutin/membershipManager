@@ -25,6 +25,9 @@ class Newsletter
     /** @Column(type="boolean", nullable=false) * */
     protected $published;
 
+    /** @Column(type="boolean", nullable=true) * */
+    protected $approved;
+
     /** @Column(type="datetime", nullable=false) * */
     protected $createDate;
 
@@ -77,6 +80,30 @@ class Newsletter
     public function getCreatorId()
     {
         return $this->creatorId;
+    }
+
+    /**
+     * Set approved
+     *
+     * @param boolean $approved
+     *
+     * @return Newsletter
+     */
+    public function setApproved($approved)
+    {
+        $this->approved = $approved;
+
+        return $this;
+    }
+
+    /**
+     * Get approved
+     *
+     * @return boolean
+     */
+    public function getApproved()
+    {
+        return $this->approved;
     }
 
     /**

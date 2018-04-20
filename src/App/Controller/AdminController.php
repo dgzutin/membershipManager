@@ -653,6 +653,7 @@ class AdminController {
         $result['newsletter'] = $newsletterResult['newsletter'];
         $result['publicLink'] = $this->utilsServices->getBaseUrl($request).'/newsletter/'.$result['newsletter']->getPublicKey();
         $result['createNewsletter'] = false;
+        $result['userRole'] = $_SESSION['user_role'];
 
         return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
     }
@@ -668,6 +669,7 @@ class AdminController {
         $result['articles'] = $articleResult['articles'];
         $result['isPost'] = true;
         $result['createNewsletter'] = false;
+        $result['userRole'] = $_SESSION['user_role'];
 
         return $this->container->view->render($response, 'admin/newsletter.html.twig', $result);
     }

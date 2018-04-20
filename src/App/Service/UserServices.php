@@ -1110,7 +1110,9 @@ class UserServices
             ->select('newsletter')
             ->orderBy('newsletter.publishDate', 'DESC')
             ->where('newsletter.published = :published')
+            ->andwhere('newsletter.approved = :approved')
             ->setParameter('published', true)
+            ->setParameter('approved', true)
             ->getQuery()
             ->getResult();
 
@@ -1245,6 +1247,8 @@ class UserServices
             }
 
             $newsletter->setPublished($data['published']);
+            $newsletter->setApproved($data['approved']);
+
             $message = 'Newsletter updated';
         }
         else{
@@ -1392,8 +1396,10 @@ class UserServices
                 ->select('newsletter')
                 ->where('newsletter.publicKey = :publicKey')
                 ->andWhere('newsletter.published = :published')
+                ->andWhere('newsletter.approved = :approved')
                 ->setParameter('publicKey', $publicKey)
                 ->setParameter('published', true)
+                ->setParameter('approved', true)
                 ->getQuery()
                 ->getOneOrNullResult();
         }
