@@ -1247,7 +1247,10 @@ class UserServices
             }
 
             $newsletter->setPublished($data['published']);
-            $newsletter->setApproved($data['approved']);
+
+            if (isset($data['approved'])){
+                $newsletter->setApproved($data['approved']);
+            }
 
             $message = 'Newsletter updated';
         }
