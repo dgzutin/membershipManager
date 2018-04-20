@@ -220,8 +220,6 @@ $app->group('/admin', function () use ($app) {
     $app->get('/userLog/{userId}', '\AdminController:userLogAction')->setName('userLog');
     $app->get('/membershipLog/{membershipId}', '\AdminController:membershipLogAction')->setName('membershipLog');
     $app->get('/errorLog', '\AdminController:errorLogAction')->setName('errorLog');
-    $app->get('/createBulkMailNewsletterEditor/{key}', '\AdminController:createBulkMailNewsletterEditorAction')->setName('createBulkMailNewsletterEditorMode');
-
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_ADMIN'), $container));
@@ -236,7 +234,7 @@ $app->group('/editor', function () use ($app) {
     $app->map(['GET', 'POST'], '/createNewsletter/', '\AdminController:createNewsletterAction')->setName('createNewsletter');
     $app->get('/newsletterPreview/{key}', '\AdminController:newsletterPreviewAction')->setName('newsletterPreview');
     $app->map(['GET', 'POST'], '/addNewsletterArticleEditor/{newsletterId}', '\AdminController:addNewsletterArticleEditorAction')->setName('addNewsletterArticleEditor');
-
+    $app->get('/createBulkMailNewsletterEditor/{key}', '\AdminController:createBulkMailNewsletterEditorAction')->setName('createBulkMailNewsletterEditorMode');
 
     //Attach the Middleware to authenticate requests to this group and pass the accepted user roles for this route or group of routes
 })->add(new UserAuthenticationMiddleware(array('ROLE_EDITOR', 'ROLE_ADMIN'), $container));
