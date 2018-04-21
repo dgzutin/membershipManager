@@ -61,8 +61,12 @@
                             </td>
                             <td>{{ newsletter.createDate | date('jS F Y')}}</td>
                             <td>
-                                {% if newsletter.published and newsletter.approved %}
-                                    <a href="{{ path_for('createBulkMailNewsletterEditorMode', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a>
+                                {% if newsletter.published %}
+                                    {% if newsletter.approved %}
+                                        <a href="{{ path_for('createBulkMailNewsletterEditorMode', { 'key': newsletter.publicKey }) }}"><span class="fa fa-envelope"></span> send</a>
+                                    {% else %}
+                                        <p class="text-danger">Pending Approval</p>
+                                    {% endif %}
                                 {% else %}
                                     -
                                 {% endif %}
