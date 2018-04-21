@@ -74,8 +74,8 @@
                             {% if userRole == 'ROLE_ADMIN' %}
 
                             <select style="background-color: lightgray" name="approved" id="approved" class="form-control" onchange="this.form.submit()">
-                                <option value="1" style="background:darkseagreen" {% if newsletter.approved == true %}selected{% endif %}>APPROVED</option>
-                                <option value="0" style="background:indianred" {% if newsletter.approved == false %}selected{% endif %}>MISSING APPROVAL</option>
+                                <option value="1" {% if newsletter.approved == true %}selected{% endif %}>Approved</option>
+                                <option value="0" {% if newsletter.approved == false %}selected{% endif %}>Pending Approval</option>
                             </select>
                             {% endif %}
                         </div>
