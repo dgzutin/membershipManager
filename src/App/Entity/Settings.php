@@ -97,6 +97,8 @@ class Settings
     /** @Column(type="string", length=50, nullable=true) **/
     protected $linkedInClientSecret;
 
+    /** @Column(type="boolean", nullable=true) **/
+    protected $enableNewUserNotification;
 
     /**
      * Get id
@@ -694,6 +696,31 @@ class Settings
     public function setLinkedInClientId($linkedInClientId)
     {
         $this->linkedInClientId = $linkedInClientId;
+
+        return $this;
+    }
+    //EnableNewUserNotification
+
+    /**
+     * Get EnableNewUserNotification
+     *
+     * @return boolean
+     */
+    public function getEnableNewUserNotification()
+    {
+        return $this->enableNewUserNotification;
+    }
+
+    /**
+     * Set EnableNewUserNotification
+     *
+     * @param string $enableNewUserNotification
+     *
+     * @return Settings
+     */
+    public function setEnableNewUserNotification($enableNewUserNotification)
+    {
+        $this->enableNewUserNotification = $enableNewUserNotification;
 
         return $this;
     }

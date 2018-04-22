@@ -141,8 +141,11 @@ class PublicController {
             else{
                 $mailServices = $this->container->get('mailServices');
                 $mailResult = $mailServices->sendActivateAccountMail($resp['user'], $request);
-                //send e-mail to site admin informing new user registration
-                $mailRes = $mailServices->sendInformSiteAdminMail($resp['user'], $request);
+
+                //send e-mail to site admin informing new user registration if enabled
+                if ($this->systemInfo['settings']->getEnableNewUserNotification()){
+                    $mailRes = $mailServices->sendInformSiteAdminMail($resp['user'], $request);
+                }
                 
                 if ($mailResult['sent']){
 

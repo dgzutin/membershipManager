@@ -45,8 +45,9 @@ class AdminController {
 
         if ($request->isPost()){
 
-          //  var_dump($request->getParsedBody());
+            //var_dump($request->getParsedBody());
             $systemInfoSave = $this->userServices->saveSystemInfo($request->getParsedBody());
+
             //$settings = $systemInfo['settings'];
         }
 
@@ -95,6 +96,10 @@ class AdminController {
             )),
             array('type' => 'text', 'name' => 'linkedInClientId', 'label' => "LinkedIn Client ID", 'value' => $settings->getLinkedInClientId(), 'required' => false),
             array('type' => 'text', 'name' => 'linkedInClientSecret', 'label' => "LinkedIn Client Secret", 'value' => $settings->getLinkedInClientSecret(), 'required' => false),
+            array('type' => 'select', 'name' => 'enableNewUserNotification', 'label' => "E-mail to admin on new user registration?", 'value' => $settings->getEnableNewUserNotification(), 'required' => true, 'options' => array(
+                array('value' => '1', 'name' => 'Enabled'),
+                array('value' => '0', 'name' => 'Disabled')
+            )),
             );
 
         return $this->container->view->render($response, 'admin/adminEditSystemSettings.html.twig', array(
