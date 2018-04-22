@@ -166,7 +166,7 @@ class PublicController {
         $userServices = $this->container->get('userServices');
         $result = $userServices->activateAccount($args['key']);
 
-        if (!$result['exception']){
+        if ($result['exception']){
 
             //send e-mail to site admin informing new user registration
            // $mailServices = $this->container->get('mailServices');
@@ -177,6 +177,12 @@ class PublicController {
                 'exception' => $result['exception'],
                 'message' => $result['message']));
         }
+
+        session_destroy();
+        //create user session
+        session_start();
+        $_SESSION['user_id'] = $result['user']->getId();
+        $_SESSION['user_role'] = $result['user']->getRole();
 
         $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/home';
         return $response->withRedirect($redirect_url, 200);
