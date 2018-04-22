@@ -51,11 +51,20 @@ class UserController {
         $memberships = $this->membershipServices->getMembershipsForUser($user->getId());
         $openInvoiceResult = $this->userServices->getInvoices($_SESSION['user_id']);
 
+        //get membership types
+        $this->shoppingCartServices->emptyCart((int)$_SESSION['user_id']);
+        $membResult = $this->membershipServices->getMembershipTypeAndStatusOfUser($user, NULL, false);
+
+
         return $this->container->view->render($response, 'user/userHome.html.twig', array(
             'invoiceInfo' => $openInvoiceResult,
             'userName' => $userName,
             'memberships' => $memberships,
-            'pictureUrl' => $user->getPictureUrl()
+            'pictureUrl' => $user->getPictureUrl(),
+            'membershipTypes' => $membResult['membershipTypes'],
+            'currency' => 'EUR',
+            'message' => $membResult['message'],
+            'form' => ''
         ));
     }
     

@@ -29,7 +29,11 @@
                     {% endif %}
                 {% endfor %}
             {% else %}
-                <p class="text-warning text-left">{{ memberships.message  }} <a href="{{ path_for('selectMembership')}}" class="btn btn-success btn-xs">Apply for membership here</a></p>
+                {% if user_role != 'ROLE_USER'  %}
+                    <p class="text-warning text-left">{{ memberships.message  }} <a href="{{ path_for('selectMembership')}}" class="btn btn-success btn-xs">Apply for membership here</a></p>
+                {% else %}
+                    <p class="text-warning text-left">You are not a member yet. Select a membership plan below:</p>
+                {% endif %}
             {% endif %}
         </div>
         <div class="col-xs-3 col-md-3">
@@ -62,6 +66,163 @@
     {% endif %}
 
     <div class="panel-group">
+
+    {% if (memberships.membershipFound == 0) and (user_role == 'ROLE_USER') %}
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Select your membership plan</strong></div>
+            <div class="panel-body">
+
+                {% if membershipTypes == null %}
+
+                    <p class="text-center text-muted"><strong>{{ message }}</strong></p>
+
+                {% else %}
+
+                    {%  for membershipType in membershipTypes %}
+
+                        <div class="well">
+                            <div class="media">
+                                <div class="media-left">
+                                    <img class="media-object" src="{{ baseUrl }}/assets/images/membership_logo.png" alt="membership">
+                                </div>
+                                <div class="media-body">
+
+                                    <h2 class="media-heading">{{ membershipType.typeName }}</h2>
+
+                                    {% if membershipType.selectable == false %}
+                                        <p class="text-danger">(Users cannot select this group. Available only to admins)</p>
+                                    {% endif %}
+
+                                    {%  if membershipType.owner == true and membershipType.cancelled == false %}
+
+                                        {%  if membershipType.membershipGrade != null %}
+
+                                            <h3><img src="{{ baseUrl }}/assets/images/memberStatus_small.png" alt="..."> {{ membershipType.membershipGrade }} ID: {{ membershipType.memberId }} </h3>
+
+                                        {% else %}
+
+                                            <h3>Member ID: {{ membershipType.memberId }}</h3>
+
+                                        {% endif %}
+
+                                        <strong>Description:</strong> {{ membershipType.description|raw }}
+
+                                        {% if membershipType.free == true %}
+
+                                            <h5><strong>Fee: </strong>FREE</h5>
+
+                                        {% else %}
+
+                                            <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
+
+                                        {% endif %}
+
+                                        {% if membershipType.validUntil != null %}
+
+                                            {% if membershipType.valid == false %}
+
+                                                <p class="text-danger"><strong> <span class="fa fa-warning"></span>Your membership expired on {{ membershipType.validUntil }}</strong></p>
+
+                                            {% else %}
+
+                                                <p class="text-info"><strong>Your membership is valid until {{ membershipType.validUntil }}</strong></p>
+
+                                            {% endif %}
+
+                                            <div class="row show-grid">
+                                                <div class="col-xs-12 col-md-8">
+                                                    <a class="btn btn-success btn-md" href="{{ path_for('membershipData', { 'membershipTypeId': membershipType.id }) }}" role="button"><spam class="fa fa-recycle"></spam> Renew Membership</a>
+                                                    <a class="btn btn-primary btn-md" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
+                                                </div>
+                                                <div class="col-xs-6 col-md-4">
+                                                    <p class="text-right"><a class="btn btn-warning btn-md" data-toggle="modal" data-target="#terms_{{ membershipType.id }}">Terms and Conditions</a></p>
+                                                </div>
+                                            </div>
+
+                                        {% else %}
+                                            <div class="row show-grid">
+                                                <div class="col-xs-12 col-md-8">
+
+                                                    {% if membershipType.free == true %}
+
+                                                        <a class="btn btn-primary btn-md" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
+
+                                                    {% else %}
+
+                                                        <a class="btn btn-success btn-md disabled" href="{{ path_for('membershipData', { 'membershipTypeId': membershipType.id }) }}" role="button"><spam class="fa fa-recycle"></spam> Renew Membership</a>
+                                                        <a class="btn btn-primary btn-md disabled" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
+                                                        <p class="text-danger">This membership is not active. <a href="{{ path_for('homeUser')}}">Home</a></p>
+
+                                                    {% endif %}
+
+                                                </div>
+                                                <div class="col-xs-6 col-md-4">
+                                                    <p class="text-right"><a class="btn btn-warning btn-md" data-toggle="modal" data-target="#terms_{{ membershipType.id }}">Terms and Conditions</a></p>
+                                                </div>
+                                            </div>
+
+                                        {% endif %}
+
+
+                                    {% else %}
+
+                                        <strong>Description:</strong> {{ membershipType.description|raw }}
+
+                                        {% if membershipType.free == true %}
+
+                                            <h5><strong>Fee: </strong>FREE</h5>
+
+                                        {% else %}
+
+                                            <h5><strong>Fee: </strong>{{ membershipType.currency }} {{ membershipType.fee }} / {{ membershipType.recurrence }}</h5>
+
+                                        {% endif %}
+
+                                        <div class="row show-grid">
+                                            <div class="col-xs-12 col-md-8">
+                                                <a class="btn btn-success btn-md" href="{{ path_for('membershipData', { 'membershipTypeId': membershipType.id }) }}" role="button"><spam class="fa fa-plus"></spam> Apply now</a>
+                                            </div>
+                                            <div class="col-xs-6 col-md-4">
+                                                <p class="text-right"><a class="btn btn-warning btn-md" data-toggle="modal" data-target="#terms_{{ membershipType.id }}">Terms and Conditions</a></p>
+                                            </div>
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dialog with terms and conditions -->
+                        <div class="modal fade" id="terms_{{ membershipType.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title" id="myModalLabel">Terms and Conditions</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{ membershipType.terms }}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+            </div>
+        </div>
+
+    {% endif %}
 
         <div class="panel panel-primary">
             <div class="panel-heading"><spam class="fa fa-user"></spam> As a user you have the following options</div>
