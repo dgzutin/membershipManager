@@ -173,11 +173,14 @@ class PublicController {
             //$mailRes = $mailServices->sendInformSiteAdminMail($result['user'], $request);
 
             //var_dump($mailRes);
+            return $this->container->view->render($response, 'userNotification.twig', array(
+                'exception' => $result['exception'],
+                'message' => $result['message']));
         }
 
-        return $this->container->view->render($response, 'userNotification.twig', array(
-            'exception' => $result['exception'],
-            'message' => $result['message']));
+        $redirect_url = $this->utilsServices->getBaseUrl($request).'/user/home';
+        return $response->withRedirect($redirect_url, 200);
+
     }
 
     public function resetPasswordAction(ServerRequestInterface $request, ResponseInterface $response, $args)
