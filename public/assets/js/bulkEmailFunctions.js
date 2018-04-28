@@ -7,10 +7,15 @@ batchSize = 20;
 
 // =============   Event Listeners ====================================
 $("#checkbox_all").change(function () {
-    $("input:checkbox").prop('checked', $(this).prop("checked"));
+    //$("input:checkbox").prop('checked', $(this).prop("checked"));
 
     for (i=0; i<members.length; i++){
-        members[i].selected = $(this).prop("checked");
+       // updateSelectedUser(i);
+      // members[i].selected = $(this).prop("checked");
+        var checkboxState = $('#checkbox_all').prop('checked');
+        $('#checkbox_'+i).prop('checked', checkboxState);
+        members[i].selected = $('#checkbox_'+i).prop("checked");
+        //console.log('Item '+i+' select was set to '+members[i].selected);
     }
 });
 
@@ -113,7 +118,7 @@ function updateSelectedUser(updateIndex)
 {
 
     members[updateIndex].selected = $('#checkbox_'+updateIndex).prop("checked");
-    console.log('Item '+updateIndex+' select was set to '+members[updateIndex].selected);
+    //console.log('Item '+updateIndex+' select was set to '+members[updateIndex].selected);
 
 }
 
