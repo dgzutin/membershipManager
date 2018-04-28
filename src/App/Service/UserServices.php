@@ -1327,6 +1327,12 @@ class UserServices
                 'message' => 'Newsletter with id '.$newsletterId.' does not exist');
         }
 
+        if ($newsletter->getPublished() == true){
+            return array ('exception' => true,
+                'newsletterId' => $newsletterId,
+                'message' => 'Changes of assigned articles not allowed for published newsletters.');
+        }
+
         $i = 0;
         $results = NULL;
 
