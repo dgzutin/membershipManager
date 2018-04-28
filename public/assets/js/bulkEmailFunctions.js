@@ -17,6 +17,7 @@ $("#checkbox_all").change(function () {
         members[i].selected = $('#checkbox_'+i).prop("checked");
         //console.log('Item '+i+' select was set to '+members[i].selected);
     }
+    console.log(members);
 });
 
 //Send emails
