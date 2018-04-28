@@ -109,6 +109,13 @@
                     <input class="form-control" type="hidden" id="publicKey" name="subject" value="{{ newsletter.newsletter.publicKey }}" readonly>
                 </div>
 
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="onlyLink" name="onlyLink">
+                    <label class="form-check-label" for="onlyLink">
+                        Send only newsletter link
+                    </label>
+                </div>
+
                 <div class="row">
                     <div class="col-xs-12 col-sm-12">
                         <p style="font-size: smaller"><strong>Public link:</strong> <a href="{{ newsletter.publicLink }}">{{ newsletter.publicLink }}</a></p>

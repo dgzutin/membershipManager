@@ -149,8 +149,11 @@ function sendNewsletterToMembers(membersSend, index)
 
 
     console.log('Sending Newsletter mails now... ');
+    var onlyLink = document.getElementById("onlyLink");
+
     var request = {
         members : membersSend[index],
+        onlyLink: onlyLink.checked,
         mailSubject: $("#subject").val(),
         key: $("#publicKey").val(),
         replyTo: $("#replyTo").val()

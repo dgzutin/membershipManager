@@ -436,6 +436,21 @@ class MailServices
         return $htmlNewsletter;
     }
 
+    public function createHtmlNewsletterOnlyLink($newsletterData, $user)
+    {
+        $resp = array('exception' => false,
+            'salutation' => 'Dear '.$user->title.' '.$user->first_name.' '.$user->last_name.',',
+            'message' => 'The '.$this->settings->getNameOfOrganization().' has just published its latest newsletter issue.',
+            'link' => $newsletterData['publicLink'],
+            'buttonLabel' => 'Click here to open the newsletter',
+            'nameOfOrganization' => $this->settings->getNameOfOrganization(),
+            'orgWebsite' => $this->settings->getOrgWebsite());
+
+        $template = $this->twig->loadTemplate('email/emailNotificationWithLink.html.twig');
+        $htmlNewsletter = $template->render($resp);
+
+        return $htmlNewsletter;
+    }
 
     private function replacePlaceholdersMembers($emailSubject, $emailBodyText, $member, $request)
     {

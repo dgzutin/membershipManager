@@ -91,13 +91,23 @@ class ApiController {
     {
         $req = json_decode($request->getBody());
 
+        $req->members[0]->user;
+
         $baseUrl = $this->utilsServices->getBaseUrl($request);
         $newsletterRes = $this->userServices->assemblePublicNewsletter($req->key, false, $baseUrl);
 
         if ($newsletterRes['exception'] == true){
             return $response->withJson($newsletterRes);
         }
-        $htmlNewsletter = $this->mailServices->createHtmlNewsletter($newsletterRes);
+        if ($req->onlyLink == true){
+
+            $user = $req->members[0]->user;
+            //var_dump($user);
+            $htmlNewsletter = $this->mailServices->createHtmlNewsletterOnlyLink($newsletterRes, $user);
+        }
+        else{
+            $htmlNewsletter = $this->mailServices->createHtmlNewsletter($newsletterRes);
+        }
 
         try{
             $results = $this->mailServices->sendGenericMassMailMembers($req->members,  $newsletterRes['newsletter']->getTitle(), $htmlNewsletter, $req->replyTo, $request);
