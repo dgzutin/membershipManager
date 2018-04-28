@@ -46,19 +46,19 @@
 
                     <div class="form-group">
                         <label for="title">Title:</label>
-                        <input type="text" name="title" id="title" class="form-control" placeholder="" value="{{ newsletter.title }}" tabindex="1" required>
+                        <input type="text" name="title" id="title" class="form-control input-sm" placeholder="" value="{{ newsletter.title }}" tabindex="1" required>
                     </div>
 
                     <div class="form-group">
                         <label for="foreword">Foreword:</label>
-                        <textarea  class="form-control" rows="5" id="foreword" name="foreword" minlength="50" maxlength="1500" tabindex="3">{{ newsletter.foreword }}</textarea>
+                        <textarea  class="form-control input-sm" rows="5" id="foreword" name="foreword" minlength="50" maxlength="1500" tabindex="3">{{ newsletter.foreword }}</textarea>
                     </div>
 
                     {% if createNewsletter == false %}
                     <div class="row">
                             <div class="col-xs-12 col-sm-3">
 
-                                <select style="background-color: lightgray" name="published" id="published" class="form-control" onchange="this.form.submit()">
+                                <select style="background-color: lightgray" name="published" id="published" class="form-control input-sm" onchange="this.form.submit()">
                                     <option value="0" {% if newsletter.published == false %}selected{% endif %}>Unpublished</option>
                                     <option value="1" {% if newsletter.published %}selected{% endif %}>Published</option>
                                 </select>
@@ -75,7 +75,7 @@
 
                             {% if userRole == 'ROLE_ADMIN' %}
 
-                            <select style="background-color: lightgray" name="approved" id="approved" class="form-control" onchange="this.form.submit()">
+                            <select style="background-color: lightgray" name="approved" id="approved" class="form-control input-sm" onchange="this.form.submit()">
                                 <option value="1" {% if newsletter.approved == true %}selected{% endif %}>Approved</option>
                                 <option value="0" {% if newsletter.approved == false %}selected{% endif %}>Pending Approval</option>
                             </select>
@@ -107,7 +107,7 @@
                             <th>ID</th>
                             <th>Title</th>
                             <th>Date</th>
-                            <th>Submitted</th>
+                            <th>User</th>
                             <th></th>
                             <th>Order</th>
                             <th></th>
@@ -124,11 +124,11 @@
                                 <td><div id="notification_{{ article.id }}"><a href="{{ path_for('newsletterArticleAdmin', { 'articleId': article.id }) }}" target="_blank">open</a></div></td>
                                 <td>
 
-                                    <input class="form-control" type="number" name="articleOrder_{{ article.id }}" value="{{ article.articleOrder }}">
+                                    <input class="form-control input-sm" type="number" name="articleOrder_{{ article.id }}" value="{{ article.articleOrder }}">
 
                                 </td>
-                                <td class="col-md-2">
-                                    <select id="{{ article.id }}" class="form-control" onchange="assignRemoveArticle({{ newsletter.id }}, [{{ article.id }}])">
+                                <td>
+                                    <select id="{{ article.id }}" class="form-control input-sm" onchange="assignRemoveArticle({{ newsletter.id }}, [{{ article.id }}])">
                                         <option value="false"  {% if article.newsletterId == -1 %} selected {% endif %}><strong>Unassigned</strong></option>
                                         <option  value="true" {% if article.newsletterId == newsletter.id %} selected {% endif %}>Assigned</option>
                                     </select>
