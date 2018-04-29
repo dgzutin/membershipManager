@@ -6,10 +6,26 @@
         {% if members == null %}
             <b>List not available at the moment</b>
         {% else %}
-            <ul>
-                {% for member in members %}
-                    <li><b>{{ member.institution }}</b>, {{ member.country }}</li>
-                {% endfor %}
-            </ul>
+
+            <div class="row">
+
+            {% for member in members %}
+
+                 <div class="row">
+
+                     <div class="col-sm-9">
+                        <h3 class="media-heading">{{ member.user.institution }}<br>
+                            <small>{{ member.user.city }}, {{ member.country }}</small></h3>
+                         <p><b>Contact:</b> {{ member.user.title }} {{ member.user.firstname }} {{ member.user.lastname }}<br>
+                             <b>E-mail:</b> {{ member.email }}</p>
+                         {% if member.user.website != null %}
+                             <p><a class="btn btn-default" target="_blank" href="{{ member.user.website }}" role="button">website &raquo;</a></p>
+                         {% endif %}
+                     </div>
+                 </div>
+                 <hr>
+            {% endfor %}
+        </div>
+
         {% endif %}
     {% endif %}

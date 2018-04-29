@@ -239,7 +239,9 @@ class PublicController {
         $members = null;
         foreach ($membersResp['members'] as $member){
 
-            $members[$i]['institution'] = $member['user']->getInstitution();
+            $members[$i]['user'] = $member['user'];
+            $members[$i]['membershipTypeName'] = $member['membershipTypeName'];
+            $members[$i]['email'] = str_replace('@', " (at) ", $member['user']->getEmail1());
             $members[$i]['country'] = $this->utilsServices->getCountryNameByCode($member['user']->getCountry());
             $i++;
         }
