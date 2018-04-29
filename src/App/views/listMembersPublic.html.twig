@@ -13,7 +13,10 @@
                  <div class="row">
 
                      <div class="col-sm-9">
-                        <h3 class="media-heading">{{ member.user.institution }} <small>{{ member.user.department }}</small><br>
+                        <h3 class="media-heading">{{ member.user.institution }} <br>
+                            {%  if member.user.department != null %}
+                                <small>{{ member.user.department }}</small><br>
+                            {% endif %}
                             <small>{{ member.user.city }}, {{ member.country }}</small></h3>
                          <p><b>Contact:</b> {{ member.user.title }} {{ member.user.firstname }} {{ member.user.lastname }}<br>
                              <b>E-mail:</b> {{ member.email }}</p>
