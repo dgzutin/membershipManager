@@ -20,12 +20,45 @@
                     </div>
                 {% endif %}
 
+                <form data-toggle="validator" role="form" method="post">
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-3 col-md-3">
+                            <label for="dateFrom">From:</label>
+                            {% if isPost %}
+                                <input type="text" class="form-control" name="dateFrom" id="dateFrom" value="{{ dateFrom }}" required>
+                            {% else %}
+                                <input type="text" class="form-control" name="dateFrom" id="dateFrom" value="01/01/{{ currentYear }}" required>
+                            {% endif %}
+
+                        </div>
+                        <div class="col-xs-3 col-md-3">
+                            <label for="dateUntil">Until:</label>
+                            {% if isPost %}
+                                <input type="text" class="form-control" name="dateUntil" id="dateUntil" value="{{ dateUntil }}" required>
+                            {% else %}
+                                <input type="text" class="form-control" name="dateUntil" id="dateUntil" value="12/31/{{ currentYear }}" required>
+                            {% endif %}
+                        </div>
+                        <div class="col-xs-3 col-md-3">
+
+                        </div>
+                        <div class="col-xs-3 col-md-3">
+                            <label for="dateUntil"></label>
+                            <button type="submit" class="btn btn-success btn-block">Submit</button>
+                        </div>
+                    </div>
+                </div>
+
+                </form>
+
                 {% if user == NULL %}
 
                     <div class="row">
                         <div class="col-xs-6 col-sm-9">
 
-                            <p>Overview of all invoices and receipts.
+                            <p>Overview of invoices and payments for the selected period:
                         </div>
 
                         <div class="col-xs-6 col-sm-3">
@@ -167,6 +200,7 @@
     </div>
 
     <script src="{{ baseUrl }}/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="{{ baseUrl }}/assets/js/invoiceManagement.js"></script>
 
     <script>
@@ -175,6 +209,12 @@
             $('#invoicesTable').DataTable({
                 "order": [[ 0, "desc" ]]
             });
+        } );
+
+        //start datepicker
+        $( function() {
+            $( "#dateFrom" ).datepicker();
+            $( "#dateUntil" ).datepicker();
         } );
 
     </script>

@@ -206,7 +206,7 @@ $app->group('/admin', function () use ($app) {
     $app->map(['GET', 'POST'], '/member/{memberId}', '\AdminController:memberAction')->setName('adminMember');
     $app->map(['GET', 'POST'], '/addMember/{userId}', '\AdminController:addMemberAction')->setName('addMemberAdmin');
     $app->get('/manageRenewals/{membershipId}', '\AdminController:manageRenewalsAction')->setName('manageRenewals');
-    $app->get('/userInvoices/{userId}', '\AdminController:userInvoicesAction')->setName('userInvoicesAdmin');
+    $app->map(['GET', 'POST'],'/userInvoices/{userId}', '\AdminController:userInvoicesAction')->setName('userInvoicesAdmin');
     $app->get('/invoicePayments/{invoiceId}', '\AdminController:invoicePaymentsAction')->setName('invoicePayments');
     $app->map(['GET', 'POST'],'/singleInvoice/{invoiceId}', '\AdminController:singleInvoiceAction')->setName('singleInvoiceAdmin');
     $app->get('/createBulkMailNewsletter/{key}', '\AdminController:createBulkMailNewsletterAction')->setName('createBulkMailNewsletter');

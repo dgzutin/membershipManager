@@ -906,27 +906,78 @@ class UserServices
                      'message' => 'New Billing info for user '.$user->getId().' added/updated.');
     }
 
-    public function getInvoices($userId)
+    public function getInvoices($userId, $dateFrom = null, $dateUntil = null)
     {
         $repository = $this->em->getRepository('App\Entity\Invoice');
 
-        if ($userId != NULL){
+        if ($dateUntil == null OR $dateFrom == null){
 
-            try{
-                $invoices = $repository->findBy(array('userId' => $userId), array('createDate' => 'DESC'));
+            if ($userId != NULL){
+
+                try{
+                    $invoices = $repository->createQueryBuilder('invoice')
+                        ->select('invoice')
+                        ->orderBy('invoice.createDate', 'DESC')
+                        ->where('invoice.userId = :userId')
+                        ->setParameter('userId', $userId)
+                        ->getQuery()
+                        ->getResult();
+                }
+                catch (\Exception $e){
+                    return array('exception' => true,
+                        'message' => $e->getMessage());
+                }
             }
-            catch (\Exception $e){
-                return array('exception' => true,
-                    'message' => $e->getMessage());
+            else{
+                try{
+                    $invoices = $repository->createQueryBuilder('invoice')
+                        ->select('invoice')
+                        ->orderBy('invoice.createDate', 'DESC')
+                        ->getQuery()
+                        ->getResult();
+                }
+                catch (\Exception $e){
+                    return array('exception' => true,
+                        'message' => $e->getMessage());
+                }
             }
+
         }
         else{
-            try{
-                $invoices = $repository->findBy(array(), array('id' => 'DESC'));
+            if ($userId != NULL){
+
+                try{
+                    $invoices = $repository->createQueryBuilder('invoice')
+                        ->select('invoice')
+                        ->orderBy('invoice.createDate', 'DESC')
+                        ->where('invoice.userId = :userId')
+                        ->andwhere('invoice.createDate BETWEEN :dateFrom AND :dateUntil ')
+                        ->setParameter('userId', $userId)
+                        ->setParameter('dateFrom', $dateFrom)
+                        ->setParameter('dateUntil', $dateUntil)
+                        ->getQuery()
+                        ->getResult();
+                }
+                catch (\Exception $e){
+                    return array('exception' => true,
+                        'message' => $e->getMessage());
+                }
             }
-            catch (\Exception $e){
-                return array('exception' => true,
-                    'message' => $e->getMessage());
+            else{
+                try{
+                    $invoices = $repository->createQueryBuilder('invoice')
+                        ->select('invoice')
+                        ->orderBy('invoice.createDate', 'DESC')
+                        ->where('invoice.createDate BETWEEN :dateFrom AND :dateUntil ')
+                        ->setParameter('dateFrom', $dateFrom)
+                        ->setParameter('dateUntil', $dateUntil)
+                        ->getQuery()
+                        ->getResult();
+                }
+                catch (\Exception $e){
+                    return array('exception' => true,
+                        'message' => $e->getMessage());
+                }
             }
         }
 

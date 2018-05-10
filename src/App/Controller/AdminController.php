@@ -11,6 +11,7 @@ use App\Entity\ShoppingCartItem;
 use App\Entity\Billing;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use DateTime;
 
 
 class AdminController {
@@ -509,6 +510,17 @@ class AdminController {
 
     public function userInvoicesAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+
+        if ($request->isPost()){
+            $form_data = $request->getParsedBody();
+            $dateFrom = DateTime::createFromFormat('m/d/Y', $form_data['dateFrom']);
+            $dateUntil = DateTime::createFromFormat('m/d/Y', $form_data['dateUntil']);
+        }
+        else{
+            $dateFrom = new DateTime(date('Y').'-01-01T00:00:01');
+            $dateUntil = new DateTime(date('Y').'-12-31T23:59:59');
+        }
+
         $userId = (int)$args['userId'];
 
         if ($userId == -1){
@@ -524,8 +536,12 @@ class AdminController {
             $invoiceOwner =  $user['user'];
         }
 
-        $result = $this->userServices-> getInvoices($userId);
+        $result = $this->userServices-> getInvoices($userId, $dateFrom, $dateUntil);
         $result['user'] = $invoiceOwner;
+        $result['currentYear'] = date('Y');
+        $result['isPost'] = $request->isPost();
+        $result['dateFrom'] = $form_data['dateFrom'];
+        $result['dateUntil'] = $form_data['dateUntil'];
 
         return $this->container->view->render($response, 'admin/adminUserInvoicesReceipts.html.twig', $result);
     }
