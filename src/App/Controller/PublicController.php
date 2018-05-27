@@ -52,14 +52,18 @@ class PublicController {
     {
         $userInfo = $request->getParsedBody();
         //verify recaptcha
-        $verifyCaptchaResult = $this->utilsServices->verifyRecaptcha($userInfo['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
-        //var_dump($userInfo['reCaptchaActive']);
-        if (!$verifyCaptchaResult->success && $userInfo['reCaptchaActive'] == 'true'){
+        if ($userInfo['reCaptchaActive'] == 'true'){
 
-            return $this->container->view->render($response, 'userNotification.twig', array(
-                'exception' => true,
-                'message' => 'Oops... Google thinks you are a robot. Have a nice day'));
+            $verifyCaptchaResult = $this->utilsServices->verifyRecaptcha($userInfo['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+            //var_dump($userInfo['reCaptchaActive']);
+            if (!$verifyCaptchaResult->success){
+
+                return $this->container->view->render($response, 'userNotification.twig', array(
+                    'exception' => true,
+                    'message' => 'Oops... Google thinks you are a robot. Have a nice day'));
+            }
         }
 
         $userService = $this->container->get('userServices');
