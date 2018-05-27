@@ -2,8 +2,9 @@
 
 {% block mainPanel %}
 
+    <script src="https://www.google.com/recaptcha/api.js?onload=loadedCallback" async defer></script>
 
-    <form class="form-signin" method="post">
+    <form class="form-signin" method="post" id="login_form">
 
         <div class="row show-grid">
             <div class="col-xs-4 col-sm-4"></div>
@@ -62,8 +63,17 @@
         <div class="row show-grid">
             <div class="col-xs-4 col-sm-4"></div>
             <div class="col-xs-12 col-sm-4">
+                <div class="g-recaptcha" data-callback="recaptcha_callback" data-sitekey="{{ publicKey }}" style="transform:scale(0.95);-webkit-transform:scale(0.95); transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
+                <input type="hidden" name="reCaptchaActive" id="reCaptchaActive" value="false">
+            </div>
+            <div class="col-xs-4 col-sm-4"></div>
+        </div>
 
-                <button class="btn btn-block btn-success" type="submit">Sign in</button>
+        <div class="row show-grid">
+            <div class="col-xs-4 col-sm-4"></div>
+            <div class="col-xs-12 col-sm-4">
+
+                <input class="btn btn-block btn-success" type="submit"></input>
                 <p class="text-center"><a href="{{ path_for('forgotPassword')}}">Forgot your password?</a></p>
                 {% if systemInfo.settings.enableOauthLinkedIn %}
 
@@ -77,5 +87,37 @@
         </div>
         <br>
     </form>
+
+    <script>
+        $('#login_form').validator();
+        var submitRecaptchaOK = false;
+        var recaptchaLoaded = false;
+
+        function loadedCallback(){
+            recaptchaLoaded = true;
+        }
+
+        function recaptcha_callback(){
+            submitRecaptchaOK = true;
+            $('input[name="reCaptchaActive"]').val('true');
+        }
+
+        $( "#login_form" ).submit(function( event ) {
+            //alert( "Handler for .submit() called." );
+
+            if (!submitRecaptchaOK && recaptchaLoaded){
+
+                event.preventDefault();
+                alert('Check reCaptcha before submitting form!')
+                //return false;
+            }
+        });
+
+        if($("#" + name).length == 0) {
+            //it doesn't exist
+        }
+
+
+    </script>
 
 {% endblock %}

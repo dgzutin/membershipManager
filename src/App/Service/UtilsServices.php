@@ -7,6 +7,7 @@
  */
 namespace App\Service;
 
+use \Httpful\Request;
 
 
 class UtilsServices
@@ -26,6 +27,35 @@ class UtilsServices
             ->getOneOrNullResult();
     }
 
+    public function verifyRecaptcha($response, $remoteip)
+    {
+        $url = "https://www.google.com/recaptcha/api/siteverify";
+        $secret = "6LdDk1sUAAAAAJuD4KhSUZOKvuhVTFJb6mMUuAnT";
+
+        $url = $this->settings->getReCaptchaURL();
+        $secret = $this->settings->getReCaptchaSecretKey();
+
+        $req = "secret=$secret";
+        $req .= "&response=$response";
+        $req .= "&remoteip=$remoteip";
+
+        //var_dump($req); "Content-Type", "application/x-www-form-urlencoded; charset=utf-8"
+
+        try{
+            $response= Request::post($url)
+                ->addHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8')
+                ->body($req)
+                ->send();
+        }
+        catch (Exception $e) {
+            return array('exception' => true,
+                'verified' => false,
+                'message' => $e->getMessage());
+        }
+
+        return $response->body;
+
+    }
     //implements binary search to find membership by ownerId in array: ARRAY MUST BE SORTED BY ownerId !!!
     public function searchMembershipsByOwnerId($sortedArray, $id)
     {

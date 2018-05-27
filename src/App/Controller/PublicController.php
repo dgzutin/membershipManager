@@ -43,13 +43,25 @@ class PublicController {
         return $this->container->view->render($response, 'login.html.twig',
             array('linkedInOauthEndpoint' => 'https://www.linkedin.com/oauth/v2/authorization',
                 'oauthRedirect' => $this->utilsServices->getUrlForRouteName($request, 'linkedInOauth2Redirect'),
-                'linkedInState' => 'login'
+                'linkedInState' => 'login',
+                'publicKey' =>  $this->systemInfo['settings']->getReCaptchaPublicKey()
             ));
     }
 
     public function processLoginAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $userInfo = $request->getParsedBody();
+        //verify recaptcha
+        $verifyCaptchaResult = $this->utilsServices->verifyRecaptcha($userInfo['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+        //var_dump($userInfo['reCaptchaActive']);
+        if (!$verifyCaptchaResult->success && $userInfo['reCaptchaActive'] == 'true'){
+
+            return $this->container->view->render($response, 'userNotification.twig', array(
+                'exception' => true,
+                'message' => 'Oops... Google thinks you are a robot. Have a nice day'));
+        }
+
         $userService = $this->container->get('userServices');
         $auth_result = $userService->authenticateUser($userInfo['email'],$password = $userInfo['password'] );
 
@@ -101,14 +113,25 @@ class PublicController {
 
     public function registerAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-
-        return $this->container->view->render($response, 'register.html.twig');
+        return $this->container->view->render($response, 'register.html.twig', array(
+            'publicKey' =>  $this->systemInfo['settings']->getReCaptchaPublicKey()));
     }
 
     public function processRegisterAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $form_data = $request->getParsedBody();
         $val_array = null;
+
+        //verify recaptcha
+        $verifyCaptchaResult = $this->utilsServices->verifyRecaptcha($form_data['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+        if (!$verifyCaptchaResult->success){
+
+            return $this->container->view->render($response, 'userNotification.twig', array(
+                'exception' => true,
+                'message' => 'Oops... Google thinks you are a robot. Have a nice day'));
+        }
+
         foreach ($form_data as $key =>$data){
 
          //TODO: add validation code for each input here
@@ -139,6 +162,7 @@ class PublicController {
                     'message' => $resp['message']));
             }
             else{
+
                 $mailServices = $this->container->get('mailServices');
                 $mailResult = $mailServices->sendActivateAccountMail($resp['user'], $request);
 

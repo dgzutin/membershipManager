@@ -14,7 +14,7 @@
 
     <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
     <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
-
+    <script src="https://www.google.com/recaptcha/api.js?onload=loadedCallback" async defer></script>
 
         <div class="panel panel-primary">
             <div class="panel-heading"><h3 class="panel-title"><strong>Register </strong></h3>
@@ -22,7 +22,7 @@
             </div>
 
             <div class="panel-body">
-                <form data-toggle="validator" role="form" method="post">
+                <form id="register_form" data-toggle="validator" role="form" method="post">
 
                     {% if validation.exception == true %}
                         <div class="alert alert-danger">
@@ -176,8 +176,21 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <div class="g-recaptcha" data-callback="recaptcha_callback" data-sitekey="{{ publicKey }}"></div>
+                                <input type="hidden" name="reCaptchaActive" id="reCaptchaActive" value="false">
+                            </div>
+                        </div>
+                    </div>
 
-                    <button type="submit" class="btn btn-success">Sign up</button>
+                    <div class="row">
+                        <div class="col-xs-9 col-sm-12 col-md-9"></div>
+                        <div class="col-xs-3 col-sm-12 col-md-3">
+                            <input type="submit" class="btn btn-block btn-success"></input>
+                        </div>
+                    </div>
 
                     <hr style="margin-top:10px;margin-bottom:10px;" >
 
@@ -192,7 +205,33 @@
 
 
 <script>
-    $('#myForm').validator();
+    $('#register_form').validator();
+    var submitRecaptchaOK = false;
+    var recaptchaLoaded = false;
+
+    function loadedCallback(){
+        recaptchaLoaded = true;
+    }
+
+    function recaptcha_callback(){
+        submitRecaptchaOK = true;
+        $('input[name="reCaptchaActive"]').val('true');
+    }
+
+    $( "#register_form" ).submit(function( event ) {
+        //alert( "Handler for .submit() called." );
+
+        if (!submitRecaptchaOK && recaptchaLoaded){
+
+            event.preventDefault();
+            alert('Check reCaptcha before submitting form!')
+            //return false;
+        }
+    });
+
+
+
+
 </script>
 
 

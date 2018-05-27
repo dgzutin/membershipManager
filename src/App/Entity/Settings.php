@@ -100,6 +100,15 @@ class Settings
     /** @Column(type="boolean", nullable=true) **/
     protected $enableNewUserNotification;
 
+    /** @Column(type="string", length=100, nullable=true) **/
+    protected $reCaptchaSecretKey;
+
+    /** @Column(type="string", length=100, nullable=true) **/
+    protected $reCaptchaPublicKey;
+
+    /** @Column(type="string", length=100, nullable=true) **/
+    protected $reCaptchaURL;
+
     /**
      * Get id
      *
@@ -759,4 +768,76 @@ class Settings
         return $this->linkedInClientSecret;
     }
     
+
+    /**
+     * Set reCaptchaSecretKey
+     *
+     * @param string $reCaptchaSecretKey
+     *
+     * @return Settings
+     */
+    public function setReCaptchaSecretKey($reCaptchaSecretKey)
+    {
+        $this->reCaptchaSecretKey = $reCaptchaSecretKey;
+
+        return $this;
+    }
+
+    /**
+     * Get reCaptchaSecretKey
+     *
+     * @return string
+     */
+    public function getReCaptchaSecretKey()
+    {
+        return $this->reCaptchaSecretKey;
+    }
+
+    /**
+     * Set reCaptchaPublicKey
+     *
+     * @param string $reCaptchaPublicKey
+     *
+     * @return Settings
+     */
+    public function setReCaptchaPublicKey($reCaptchaPublicKey)
+    {
+        $this->reCaptchaPublicKey = $reCaptchaPublicKey;
+
+        return $this;
+    }
+
+    /**
+     * Get reCaptchaPublicKey
+     *
+     * @return string
+     */
+    public function getReCaptchaPublicKey()
+    {
+        return $this->reCaptchaPublicKey;
+    }
+
+    /**
+     * Set reCaptchaURL
+     *
+     * @param string $reCaptchaURL
+     *
+     * @return Settings
+     */
+    public function setReCaptchaURL($reCaptchaURL)
+    {
+        $this->reCaptchaURL = $reCaptchaURL;
+
+        return $this;
+    }
+
+    /**
+     * Get reCaptchaURL
+     *
+     * @return string
+     */
+    public function getReCaptchaURL()
+    {
+        return $this->reCaptchaURL;
+    }
 }

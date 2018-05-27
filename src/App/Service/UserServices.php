@@ -97,6 +97,10 @@ class UserServices
             $settings->setLinkedInClientSecret($data['linkedInClientSecret']);
             $settings->setEnableNewUserNotification($data['enableNewUserNotification']);
 
+            $settings->setReCaptchaPublicKey($data['reCaptchaPublic']);
+            $settings->setReCaptchaSecretKey($data['reCaptchaSecret']);
+            $settings->setReCaptchaURL($data['reCaptchaURL']);
+
 
             try{
                 $this->em->flush();

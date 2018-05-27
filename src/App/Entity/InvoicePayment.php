@@ -10,6 +10,7 @@
 // php vendor/bin/doctrine orm:schema-tool:update --force
 
 //Windows: php vendor/doctrine/orm/bin/doctrine orm:schema-tool:update --force
+//Windows: php vendor/doctrine/orm/bin/doctrine orm:generate:entities src/
 
 namespace App\Entity;
 /**
