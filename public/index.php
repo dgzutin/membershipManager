@@ -324,5 +324,7 @@ $app->get('/newsletter/{key}', '\PublicController:publicNewsletterAction')->setN
 $app->get('/oauth/v2/redirect', '\PublicController:linkedInOauth2Action')->setName('linkedInOauth2Redirect');
 $app->get('/getInstitutionOfActiveMembers/{typeId}', '\PublicController:getInstitutionOfActiveMembersAction')->setName('getActiveMembers');
 $app->get('/publicNewsletters', '\PublicController:publicNewslettersAction')->setName('publicNewsletters');
+$app->get('/updateDataPrivacyPreferences/{key}', '\PublicController:updateDataPrivacyPreferencesAction')->setName('updateDataPrivacyPreferences');
+$app->post('/updateDataPrivacyPreferences/{key}', '\PublicController:processUpdateDataPrivacyPreferencesAction')->setName('processUpdateDataPrivacyPreferences');
 
 $app->run();

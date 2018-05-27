@@ -125,12 +125,25 @@
                             {{ systemInfo.settings.disclaimer|raw }}
                             <div class="checkbox">
                                 <label>
-                                    <input name="consent" id="consent" type="checkbox" value="" required>I agree with the data privacy terms.
+                                    <input name="generalTermsConsent" id="consent" type="checkbox" required>I agree with the data privacy terms.
                                 </label>
                             </div>
 
                         {% endif %}
 
+                        <strong>Wold you like to receive information from {{ systemInfo.settings.nameOfOrganization }}? </strong><br>
+                        You can update your preferences anytime after registration.
+                        <div class="checkbox">
+                            <label>
+                                <input name="newsletterConsent" id="consent" type="checkbox">I would like to receive the Newsletter.
+                            </label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input name="membershipEmailConsent" id="consent" type="checkbox">I would like to receive e-mails concerning my membership and other matters related to the {{ systemInfo.settings.nameOfOrganization }}.
+                            </label>
+                        </div>
 
                     </div>
 

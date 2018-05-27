@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+
+    <link href="{{ baseUrl }}/assets/form-helper/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript
+================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script src="{{ baseUrl }}/assets/form-helper/js/bootstrap-formhelpers.min.js"></script>
+    <script src="{{ baseUrl }}/assets/bootstrap-validator/validator.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=loadedCallback" async defer></script>
+
+
+                <form id="update_preferences_form" data-toggle="validator" role="form" method="post">
+
+                    {% if validation.exception == true %}
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">×</a>{{ validation.message }}
+                        </div>
+                    {% endif %}
+
+                    <div class="well">
+
+                        <strong>Wold you like to continue receiving information from {{ systemInfo.settings.nameOfOrganization }}? </strong><br><br>
+                        Update your preferences here. Please note that without your consent we will not be sending you any e-mails or newsletters anymore.<br>
+                        You can edit your preferences anytime by accessing your user profile. <br> <br>
+                        <div class="checkbox">
+                            <label>
+                                <input name="newsletterConsent" id="consent" type="checkbox" {% if form.newsletterConsent.value %}checked{% endif %}>I would like continue receiving the {{ systemInfo.settings.acronym }} Newsletter.
+                            </label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input name="membershipEmailConsent" id="consent" type="checkbox" {% if form.membershipEmailConsent.value %}checked{% endif %}>I would like to receive e-mails concerning my membership and other matters related to the {{ systemInfo.settings.nameOfOrganization }}.
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <div class="g-recaptcha" data-callback="recaptcha_callback" data-sitekey="{{ publicKey }}"></div>
+                                <input type="hidden" name="reCaptchaActive" id="reCaptchaActive" value="false">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-12 col-md-4">
+                            <input type="submit" class="btn btn-success btn-block"/>
+                        </div>
+                    </div>
+
+                </form>
+
+    <hr>
+
+<script>
+    $('#update_preferences_form').validator();
+
+    var submitRecaptchaOK = false;
+    var recaptchaLoaded = false;
+
+    function loadedCallback(){
+        recaptchaLoaded = true;
+    }
+
+    function recaptcha_callback(){
+        submitRecaptchaOK = true;
+        $('input[name="reCaptchaActive"]').val('true');
+    }
+
+    $( "#update_preferences_form" ).submit(function( event ) {
+        //alert( "Handler for .submit() called." );
+
+        if (!submitRecaptchaOK && recaptchaLoaded){
+
+            event.preventDefault();
+            alert('Check reCaptcha before submitting form!')
+            //return false;
+        }
+    });
+
+</script>
+
+
+{% endblock %}

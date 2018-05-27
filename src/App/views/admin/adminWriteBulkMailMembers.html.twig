@@ -100,6 +100,13 @@
 
                     </div>
 
+                    <div class="form-check">
+                        <input name="membershipEmailConsent" id="membershipEmailConsent" type="checkbox" checked>
+                        <label class="form-check-label" for="none">
+                            Consider user's consent for sending e-mails
+                        </label>
+                    </div>
+
                 <div class="form-group">
                     <label for="subject">Subject:</label>
                     <input class="form-control" type="text" id="subject" name="subject" required>
@@ -117,6 +124,14 @@
                     </textarea>
                 </div>
 
+                    <div class="form-check">
+                        <input name="generalTerms" id="generalTerms" type="checkbox">
+                        <label class="form-check-label" for="none">
+                            Send only to users who have not yet updated their preferences
+                        </label>
+                        (Temporary option to comply with GDPR)
+                    </div>
+
                 <button type="submit" class="btn btn-primary">Next</button>
 
                 </form>
@@ -130,12 +145,18 @@
                         <strong>{memberId}:</strong> Member ID <br>
                         <strong>{membershipExpiryDate}:</strong> Ex.: 31st December 1888 <br>
                         <strong>{membershipType}:</strong> Membership type <br>
-                        <strong>{memberGrade}:</strong> Member's grade
+                        <strong>{memberGrade}:</strong> Member's grade<br>
+                        <strong>{updatePrivacyPreferencesLink}</strong> Link to update user's privacy preferences
                     </div>
 
             </div>
         </div>
 
+    <div id="dialog-confirm_changeConsent" title="Are you sure?" hidden>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Please be aware: By not considering user's preferences, you might be violating public data protection regulations! </p>
+    </div>
+
+    <script src="{{ baseUrl }}/assets/js/bulkEmailFunctions.js"></script>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script>
 

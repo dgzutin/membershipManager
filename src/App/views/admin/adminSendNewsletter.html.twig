@@ -116,6 +116,13 @@
                     </label>
                 </div>
 
+            <div class="form-check">
+                <input name="newsletterConsent" id="newsletterConsent" type="checkbox" checked>
+                <label class="form-check-label" for="none">
+                    Consider user's consent for sending newsletters
+                </label>
+            </div>
+
                 <div class="row">
                     <div class="col-xs-12 col-sm-12">
                         <p style="font-size: smaller"><strong>Public link:</strong> <a href="{{ newsletter.publicLink }}">{{ newsletter.publicLink }}</a></p>
@@ -155,6 +162,10 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <div id="dialog-confirm_changeConsent" title="Are you sure?" hidden>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Please be aware: By not considering user's preferences, you might be violating public data protection regulations! </p>
     </div>
 
     <!-- Bulk email functions  ============================================== -->

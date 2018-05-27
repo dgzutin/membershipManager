@@ -83,6 +83,18 @@ class User
     /** @Column(type="boolean", nullable=false) * */
     protected $active;
 
+    /** @Column(type="boolean", nullable=true) * */
+    protected $generalTermsConsent;
+
+    /** @Column(type="boolean", nullable=true) * */
+    public $newsletterConsent;
+
+    /** @Column(type="boolean", nullable=true) * */
+    public $membershipEmailConsent;
+
+    /** @Column(type="boolean", nullable=true) * */
+    public $societyEmailConsent;
+
 
 
     /**
@@ -743,5 +755,101 @@ class User
     public function getPictureUrl()
     {
         return $this->pictureUrl;
+    }
+
+    /**
+     * Set generalTermsConsent
+     *
+     * @param boolean $generalTermsConsent
+     *
+     * @return User
+     */
+    public function setGeneralTermsConsent($generalTermsConsent)
+    {
+        $this->generalTermsConsent = $generalTermsConsent;
+
+        return $this;
+    }
+
+    /**
+     * Get generalTermsConsent
+     *
+     * @return boolean
+     */
+    public function getGeneralTermsConsent()
+    {
+        return $this->generalTermsConsent;
+    }
+
+    /**
+     * Set newsletterConsent
+     *
+     * @param boolean $newsletterConsent
+     *
+     * @return User
+     */
+    public function setNewsletterConsent($newsletterConsent)
+    {
+        $this->newsletterConsent = $newsletterConsent;
+
+        return $this;
+    }
+
+    /**
+     * Get newsletterConsent
+     *
+     * @return boolean
+     */
+    public function getNewsletterConsent()
+    {
+        return $this->newsletterConsent;
+    }
+
+    /**
+     * Set membershipEmailConsent
+     *
+     * @param boolean $membershipEmailConsent
+     *
+     * @return User
+     */
+    public function setMembershipEmailConsent($membershipEmailConsent)
+    {
+        $this->membershipEmailConsent = $membershipEmailConsent;
+
+        return $this;
+    }
+
+    /**
+     * Get membershipEmailConsent
+     *
+     * @return boolean
+     */
+    public function getMembershipEmailConsent()
+    {
+        return $this->membershipEmailConsent;
+    }
+
+    /**
+     * Set societyEmailConsent
+     *
+     * @param boolean $societyEmailConsent
+     *
+     * @return User
+     */
+    public function setSocietyEmailConsent($societyEmailConsent)
+    {
+        $this->societyEmailConsent = $societyEmailConsent;
+
+        return $this;
+    }
+
+    /**
+     * Get societyEmailConsent
+     *
+     * @return boolean
+     */
+    public function getSocietyEmailConsent()
+    {
+        return $this->societyEmailConsent;
     }
 }

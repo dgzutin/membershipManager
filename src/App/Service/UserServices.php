@@ -235,6 +235,29 @@ class UserServices
             $newuser->setActive($active);
             $newuser->setLinkedinId($linkedinId);
 
+            //GDPR
+
+            if ($user_data['generalTermsConsent'] == 'on'){
+                $newuser->setGeneralTermsConsent(true);
+            }
+            elseif ($user_data['generalTermsConsent'] == null){
+                $newuser->setGeneralTermsConsent(false);
+            }
+
+            if ($user_data['newsletterConsent'] == 'on'){
+                $newuser->setNewsletterConsent(true);
+            }
+            elseif ($user_data['newsletterConsent'] == null){
+                $newuser->setNewsletterConsent(false);
+            }
+
+            if ($user_data['membershipEmailConsent'] == 'on'){
+                $newuser->setMembershipEmailConsent(true);
+            }
+            elseif ($user_data['membershipEmailConsent'] == null){
+                $newuser->setMembershipEmailConsent(false);
+            }
+
             $newuser->setProfileKey(sha1(microtime().rand()));
 
             $this->em->persist($newuser);
@@ -299,6 +322,21 @@ class UserServices
             $user->setStreet($user_data['street']);
             $user->setWebsite($user_data['website']);
             $user->setZip($user_data['zip']);
+
+            if ($user_data['newsletterConsent'] == 'on'){
+                $user->setNewsletterConsent(true);
+            }
+            elseif ($user_data['newsletterConsent'] == null){
+                $user->setNewsletterConsent(false);
+            }
+
+            if ($user_data['membershipEmailConsent'] == 'on'){
+                $user->setMembershipEmailConsent(true);
+            }
+            elseif ($user_data['membershipEmailConsent'] == null){
+                $user->setMembershipEmailConsent(false);
+            }
+
 
             if ($admin_data != null){
                 $user->setRole($admin_data['role']);
@@ -386,6 +424,49 @@ class UserServices
         else{
             return array('exception' => true,
                          'message' => 'User not found for the provided id');
+        }
+    }
+
+    public function updateUserPrivacyPreferences($userId, $user_data)
+    {
+        $repository = $this->em->getRepository('App\Entity\User');
+        $user = $repository->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.id = :id')
+            ->setParameter('id', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        //var_dump($user);
+
+        if ($user != NULL){
+            $user->setActive(true);
+            $user->setProfileKey(sha1(microtime().rand()));
+            //GDPR
+            if ($user_data['newsletterConsent'] == 'on'){
+                $user->setNewsletterConsent(true);
+            }
+            elseif ($user_data['newsletterConsent'] == null){
+                $user->setNewsletterConsent(false);
+            }
+
+            if ($user_data['membershipEmailConsent'] == 'on'){
+                $user->setMembershipEmailConsent(true);
+            }
+            elseif ($user_data['membershipEmailConsent'] == null){
+                $user->setMembershipEmailConsent(false);
+            }
+
+            $user->setGeneralTermsConsent(true);
+
+            $this->em->flush();
+
+            return array('exception' => false,
+                'message' => 'Thank you for updating your preferences');
+        }
+        else{
+            return array('exception' => true,
+                'message' => 'User not found for the provided id');
         }
     }
 

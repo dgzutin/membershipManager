@@ -262,6 +262,70 @@ class PublicController {
             'message' => $resp['message']));
     }
 
+    public function updateDataPrivacyPreferencesAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        //TODO: sanitize params
+        $key = $args['key'];
+        $userService = $this->container->get('userServices');
+        $resp = $userService->findUserByKey($key);
+
+        //convert the data to be shown in the form
+        foreach ($resp['user'] as $key =>$data){
+            $user[$key] = array('value' => $data,
+                'error' => false);
+        }
+
+        if ($resp['exception'] == false){
+            return $this->container->view->render($response, 'updateDataProtectionPreferences.html.twig', array(
+                'exception' => false,
+                'publicKey' =>  $this->systemInfo['settings']->getReCaptchaPublicKey(),
+                'form' => $user,
+                'message' => $resp['message']));
+        }
+        return $this->container->view->render($response, 'userNotification.twig', array(
+            'exception' => true,
+            'publicKey' =>  $this->systemInfo['settings']->getReCaptchaPublicKey(),
+            'message' => $resp['message']));
+    }
+
+    public function processUpdateDataPrivacyPreferencesAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        //TODO: sanitize params
+        $key = $args['key'];
+
+        $form_data = $request->getParsedBody();
+
+        if ($form_data['reCaptchaActive'] == 'true'){
+
+            $verifyCaptchaResult = $this->utilsServices->verifyRecaptcha($form_data['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+            //var_dump($userInfo['reCaptchaActive']);
+            if (!$verifyCaptchaResult->success){
+
+                return $this->container->view->render($response, 'userNotification.twig', array(
+                    'exception' => true,
+                    'message' => 'Oops... Google thinks you are a robot. Have a nice day'));
+            }
+        }
+
+        $userService = $this->container->get('userServices');
+        $resp = $userService->findUserByKey($key);
+
+        if ($resp['exception'] == false){
+
+            $user = $resp['user'];
+            $resetResp = $userService->updateUserPrivacyPreferences($user->getId(), $form_data);
+
+            return $this->container->view->render($response, 'userNotification.twig', array(
+                'exception' => $resetResp['exception'],
+                'message' => $resetResp['message']));
+        }
+
+        return $this->container->view->render($response, 'userNotification.twig',  array(
+            'exception' => $resp['exception'],
+            'message' => $resp['message']));
+    }
+
     public function getInstitutionOfActiveMembersAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $membersResp = $this->membershipServices->getMembers(

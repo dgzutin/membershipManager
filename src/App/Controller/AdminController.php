@@ -102,8 +102,8 @@ class AdminController {
                 array('value' => '0', 'name' => 'Disabled')
             )),
             array('type' => 'section', 'name' => 'section', 'label' => "Complete these fields to activate Google reCaptcha on registration and login pages", 'required' => true),
-            array('type' => 'text', 'name' => 'reCaptchaSecret', 'label' => "Secret key", 'value' => $settings->getReCaptchaSecretKey(), 'required' => false),
-            array('type' => 'text', 'name' => 'reCaptchaPublic', 'label' => "Site key", 'value' => $settings->getReCaptchaPublicKey(), 'required' => false),
+            array('type' => 'text', 'name' => 'reCaptchaSecret', 'label' => "reCaptcha Secret", 'value' => $settings->getReCaptchaSecretKey(), 'required' => false),
+            array('type' => 'text', 'name' => 'reCaptchaPublic', 'label' => "reCaptcha Public", 'value' => $settings->getReCaptchaPublicKey(), 'required' => false),
             array('type' => 'text', 'name' => 'reCaptchaURL', 'label' => "reCaptcha URL", 'value' => $settings->getReCaptchaURL(), 'required' => false),
 
         );

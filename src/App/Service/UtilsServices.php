@@ -99,6 +99,18 @@ class UtilsServices
             $user_filter['country'] = $filter_form['country'];
         }
 
+        if ($filter_form['newsletterConsent'] == 'on'){
+            $user_filter['newsletterConsent'] = true;
+        }
+
+        if ($filter_form['membershipEmailConsent'] == 'on'){
+            $user_filter['membershipEmailConsent'] = true;
+        }
+
+        if ($filter_form['generalTerms'] == 'on'){
+            $user_filter['generalTerms'] = true;
+        }
+
         if ($userId != null){
             $user_filter['id'] = $userId;
         }

@@ -103,6 +103,20 @@
 
                     </div>
 
+                    <div class="form-check">
+                        <input name="membershipEmailConsent" id="membershipEmailConsent" type="checkbox" {% if form.membershipEmailConsent == 'on' %}checked{% endif %}>
+                        <label class="form-check-label" for="none">
+                            Consider user's consent for sending e-mails
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input name="generalTerms" id="generalTerms" type="checkbox" {% if form.generalTerms == 'on' %}checked{% endif %}>
+                        <label class="form-check-label" for="none">
+                            Send only to users who have not yet updated their preferences
+                        </label>
+                    </div>
+
 
                     <div class="form-group">
                         <label for="subject">Subject:</label>
@@ -158,6 +172,10 @@
        <!--           </form>   -->
             </div>
         </div>
+    </div>
+
+    <div id="dialog-confirm_changeConsent" title="Are you sure?" hidden>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Please be aware: By not considering user's preferences, you might be violating public data protection regulations! </p>
     </div>
 
     <!-- Bulk email functions  ============================================== -->

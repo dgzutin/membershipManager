@@ -151,6 +151,24 @@
                         <input type="text" id="phone" name="phone" class="form-control" value="{{ form.phone.value }}">
                     </div>
 
+                    <div class="well">
+
+                        <strong>Wold you like to receive information from {{ systemInfo.settings.nameOfOrganization }}? </strong><br>
+                        Update your preferences here.
+                        <div class="checkbox">
+                            <label>
+                                <input name="newsletterConsent" id="consent" type="checkbox" {% if form.newsletterConsent.value %}checked{% endif %}>I would like to receive the Newsletter.
+                            </label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input name="membershipEmailConsent" id="consent" type="checkbox" {% if form.membershipEmailConsent.value %}checked{% endif %}>I would like to receive e-mails concerning my membership and other matters related to the {{ systemInfo.settings.nameOfOrganization }}.
+                            </label>
+                        </div>
+
+                    </div>
+
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-6">
                             <div class="form-group {% if form.email_1.error == true %}has-error{% endif %}">

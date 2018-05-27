@@ -409,6 +409,7 @@ class MailServices
     {
         //Highlight all placeholdes by the actual data
         $placeholders = array("{resetPasswordLink}" => '<mark>{resetPasswordLink}</mark>',
+            "{updatePrivacyPreferencesLink}" => '<mark>{updatePrivacyPreferencesLink}</mark>',
             "{formalSalutation_en}" => '<mark>{formalSalutation_en}</mark>',
             "{firstName}" => '<mark>{firstName}</mark>',
             "{lastName}" => '<mark>{lastName}</mark>',
@@ -456,7 +457,9 @@ class MailServices
     {
         $utilsServices = $this->container->get('utilsServices');
         //Replace all placeholdes by the actual data
-        $placeholders = array("{resetPasswordLink}" => $utilsServices->getBaseUrl($request). '/resetPassword/'.$member->user->profileKey,
+        $placeholders = array(
+            "{resetPasswordLink}" => $utilsServices->getBaseUrl($request). '/resetPassword/'.$member->user->profileKey,
+            "{updatePrivacyPreferencesLink}" => $utilsServices->getBaseUrl($request). '/updateDataPrivacyPreferences/'.$member->user->profileKey,
             "{formalSalutation_en}" => 'Dear '.$member->user->title.' '.$member->user->first_name.' '.$member->user->last_name,
             "{firstName}" => $member->user->first_name,
             "{lastName}" => $member->user->last_name,
