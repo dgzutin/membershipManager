@@ -127,13 +127,17 @@ class PublicController {
         $val_array = null;
 
         //verify recaptcha
-        $verifyCaptchaResult = $this->utilsServices->verifyRecaptcha($form_data['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+        if ($form_data['reCaptchaActive'] == 'true'){
 
-        if (!$verifyCaptchaResult->success){
+            $verifyCaptchaResult = $this->utilsServices->verifyRecaptcha($form_data['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
-            return $this->container->view->render($response, 'userNotification.twig', array(
-                'exception' => true,
-                'message' => 'Oops... Google thinks you are a robot. Have a nice day'));
+            //var_dump($userInfo['reCaptchaActive']);
+            if (!$verifyCaptchaResult->success){
+
+                return $this->container->view->render($response, 'userNotification.twig', array(
+                    'exception' => true,
+                    'message' => 'Oops... Google thinks you are a robot. Have a nice day'));
+            }
         }
 
         foreach ($form_data as $key =>$data){
