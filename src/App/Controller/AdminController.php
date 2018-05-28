@@ -275,8 +275,18 @@ class AdminController {
     {
         $form_data = $request->getParsedBody();
 
-        $userId = $args['userId'];
-        
+        $userId = (int)$args['userId'];
+        $resp =  $this->userServices->getUserById($userId);
+
+        if ($resp['exception'] == true){
+            return $this->container->view->render($response, 'userNotificationMail.twig', array('mailResponse' => $resp));
+        }
+
+        $form_data['generalTermsConsent'] = $resp['user']->getGeneralTermsConsent();
+        $form_data['newsletterConsent'] = $resp['user']->getNewsletterConsent();
+        $form_data['membershipEmailConsent'] = $resp['user']->getMembershipEmailConsent();
+        $form_data['societyEmailConsent'] = $resp['user']->getSocietyEmailConsent();
+
         $resp = $this->userServices->updateUserProfile($userId, $form_data, $form_data);
 
         if ($resp['exception'] == true){

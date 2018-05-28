@@ -304,6 +304,29 @@
                         </div>
                 </div>
 
+                    <div class="well">
+
+                        <strong>User preferences and consent: {{ user.newsletterConsent }}</strong><br>
+                        <div class="checkbox">
+                            <label>
+                                <input name="generalTermsConsent" id="consent" type="checkbox" {% if user.generalTermsConsent %}checked{% endif %} disabled="true">I agree with the data privacy terms.
+                            </label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input name="newsletterConsent" id="consent" type="checkbox" {% if user.newsletterConsent %}checked{% endif %} disabled="true">I would like to receive the Newsletter.
+                            </label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input name="membershipEmailConsent" id="consent" type="checkbox" {% if user.membershipEmailConsent %}checked{% endif %} disabled="true">I would like to receive e-mails concerning my membership and other matters related to the {{ systemInfo.settings.nameOfOrganization }}.
+                            </label>
+                        </div>
+
+                    </div>
+
                     <p class="text-primary">Billing address:</p>
 
                     <div class="well">
