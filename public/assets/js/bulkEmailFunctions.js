@@ -89,7 +89,7 @@ function getFilteredMembers()
 {
     var newsletterConsent = 'off';
     var membershipEmailConsent = 'off';
-    var generalTerms = 'off';
+    var generalTermsConsent = 'off';
 
     if ($('#newsletterConsent').is(':checked')){
         newsletterConsent = 'on';
@@ -97,8 +97,8 @@ function getFilteredMembers()
     if ($('#membershipEmailConsent').is(':checked')){
         membershipEmailConsent = 'on';
     }
-    if ($('#generalTerms').is(':checked')){
-        generalTerms = 'on';
+    if ($('#generalTermsConsent').is(':checked')){
+        generalTermsConsent = 'on';
     }
 
 
@@ -109,7 +109,7 @@ function getFilteredMembers()
         country: $('#country').val(),
         newsletterConsent: newsletterConsent,
         membershipEmailConsent: membershipEmailConsent,
-        generalTerms: generalTerms
+        generalTermsConsent: generalTermsConsent
     };
 
     console.log(filter);
