@@ -108,7 +108,7 @@ class UtilsServices
         }
 
         if ($filter_form['generalTermsConsent'] == 'on'){
-            $user_filter['generalTermsConsent'] = true;
+            $user_filter['generalTermsConsent'] = false;
         }
 
         if ($userId != null){
