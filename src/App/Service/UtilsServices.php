@@ -107,8 +107,8 @@ class UtilsServices
             $user_filter['membershipEmailConsent'] = true;
         }
 
-        if ($filter_form['generalTerms'] == 'on'){
-            $user_filter['generalTerms'] = true;
+        if ($filter_form['generalTermsConsent'] == 'on'){
+            $user_filter['generalTermsConsent'] = true;
         }
 
         if ($userId != null){
