@@ -169,6 +169,7 @@ class ApiController {
         //get the list of members based on the filter
         $membersResp = $this->membershipServices->getMembers($membership_filter, $user_filter, $validity_filter['validity'], $validity_filter['onlyValid'], $validity_filter['onlyExpired'], $validity_filter['never_validated']);
 
+        $membersResp['userFilter'] = $user_filter;
 
         $newResponse = $response->withJson($membersResp);
         return $newResponse;

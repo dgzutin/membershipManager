@@ -108,8 +108,10 @@ class UtilsServices
         }
 
         if ($filter_form['generalTermsConsent'] == 'on'){
-            $user_filter['generalTermsConsent'] = false;
+            //get those members who have not yet updated their consent
+            $user_filter['generalTermsConsent'] = null;
         }
+
 
         if ($userId != null){
             $user_filter['id'] = $userId;
