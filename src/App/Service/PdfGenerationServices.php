@@ -344,7 +344,7 @@ class PdfGenerationServices
         $text = 'Type: '.$member['member']['membershipTypeName'];
         $ratio = 170/68;
         $Xoffset = floor(((68-strlen($text))/2)*$ratio);
-        $pdf = $this->CreateTextBox($pdf, $text, $Xoffset, 170, 120, 20, 12);
+        $pdf = $this->CreateTextBox($pdf, $text, $Xoffset, 170, 120, 20, 15);
 
         //"Y-m-d H:i:s"
         $date = new \DateTime();
