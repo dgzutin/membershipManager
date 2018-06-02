@@ -93,13 +93,12 @@
 
                                                 {% if membershipType.free == true %}
 
-                                                    <a class="btn btn-primary btn-md" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
-
                                                     <p>Download your membership certificate here:
                                                         <a href="{{ path_for('downloadPdfMemberCertificate', {'membershipId': membershipType.memberId}) }}">
                                                             <span class="glyphicon glyphicon-download-alt"></span>
                                                         </a>
                                                     </p>
+                                                    <a class="btn btn-primary btn-md" href="{{ path_for('manageMembership', {'memberId': membershipType.memberId}) }}" role="button">Manage Membership</a>
 
                                                 {% else %}
 
