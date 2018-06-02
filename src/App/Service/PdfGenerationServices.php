@@ -325,7 +325,7 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, 'CERTIFICATE OF MEMBERSHIP', 28, 100, 120, 20, 20, 'B', 'L');
         $pdf = $this->CreateTextBox($pdf, 'This certifies that', 60, 120, 120, 20, 15);
 
-        $nameAndTile = ucwords($member['member']['user']->getTitle().' '.$member['member']['user']->getFirstName().' '.$member['member']['user']->getLastName());
+        $nameAndTile = ucwords(strtolower($member['member']['user']->getTitle().' '.$member['member']['user']->getFirstName().' '.$member['member']['user']->getLastName()));
         $ratio = 170/48;
         $Xoffset = floor(((48-strlen($nameAndTile))/2)*$ratio);
         $pdf = $this->CreateTextBox($pdf, $nameAndTile, $Xoffset, 135, 120, 20, 20);
