@@ -604,6 +604,41 @@ class UserController {
         return $resp;
     }
 
+    //downloadPdfMemberCertificateAction
+
+
+    public function downloadPdfMemberCertificateAction(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $member = $this->membershipServices->getMemberByMemberId($args['membershipId']);
+
+        //$pdfInv = $this->pdfGenerationServices->generatePdfReceipt((int)$args['invoiceId'],  $_SESSION['user_id'], $request);
+
+        if ($_SESSION['user_role'] != 'ROLE_ADMIN'){
+
+            if($_SESSION['user_id'] != $member['member']['user']->getId()){
+                return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
+                    'message' => 'Certificate not available'));
+            }
+        }
+
+
+        if ($member['exception']){
+            return $this->container->view->render($response, 'userNotification.twig', $member);
+        }
+        if (!$member['member']['valid']){
+            return $this->container->view->render($response, 'userNotification.twig', array('exception' => true,
+                'message' => 'This membership is not valid. Please renew it to download your certificate'));
+        }
+
+        $pdfCert = $this->pdfGenerationServices->generatePdfMemberCertificate($member,  $_SESSION['user_id'], $request);
+
+        $resp = $response->withHeader( 'Content-type', 'application/pdf' );
+        $resp->write( $pdfCert['pdfInvoice'] );
+
+       // echo json_encode($member);
+        return $resp;
+    }
+
     public function testAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
 

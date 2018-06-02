@@ -165,6 +165,12 @@
                                 <strong>Registration date:</strong> {{ member.membership.memberRegDate | date('jS F Y') }}
 
                             <ul>
+                                <li>
+                                    Download member certificate
+                                    <a href="{{ path_for('downloadPdfMemberCertificate', {'membershipId': member.membership.memberId}) }}">
+                                        <span class="glyphicon glyphicon-download-alt"></span>
+                                    </a>
+                                </li>
                                 <li><a href="{{ path_for('manageRenewals', { 'membershipId': member.membership.id }) }}"> Manage Membership Renewals</a></li>
                                 <li><a href="{{ path_for('membershipLog', { 'membershipId': member.membership.id }) }}"> View logs</a></li>
                             </ul>

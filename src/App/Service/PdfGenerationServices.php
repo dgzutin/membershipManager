@@ -170,7 +170,6 @@ class PdfGenerationServices
 
     public function generatePdfReceipt($invoiceId, $userId, $request)
     {
-
         $invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, $userId);
 
         if ($invoiceData['exception']){
@@ -281,6 +280,95 @@ class PdfGenerationServices
 
         return array('exception' => false,
             'pdfInvoice' => $pdf->Output('invoice_'.$invoiceData['invoice']->getId().'.pdf', 'I'));
+
+    }
+
+    public function generatePdfMemberCertificate($member, $userId)
+    {
+        //$invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, $userId);
+
+        //$member = json_decode($memberStr);
+
+        $systemInfo = $this->userServices->getSystemInfo();
+        // create new PDF document
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+        // set document (meta) information
+        $pdf->SetCreator($systemInfo['settings']->getnameOfOrganization());
+        $pdf->SetAuthor($systemInfo['settings']->getnameOfOrganization());
+        $pdf->SetTitle('Membership Certificate');
+        $pdf->SetSubject('Certificate Member '.$member['member']['membership']->getMemberId());
+
+        // add a page
+        $pdf->AddPage();
+        $pdf->setJPEGQuality(90);
+
+        // get the current page break margin
+        $bMargin = $pdf->getBreakMargin();
+        // get current auto-page-break mode
+        $auto_page_break = $pdf->getAutoPageBreak();
+        // disable auto-page-break
+        $pdf->SetAutoPageBreak(false, 0);
+        // set bacground image
+        $img_file = 'assets/images/cert_back.jpg';
+        $pdf->Image($img_file, 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
+        // restore auto-page-break status
+        $pdf->SetAutoPageBreak($auto_page_break, $bMargin);
+        // set the starting point for the page content
+        $pdf->setPageMark();
+
+        $lines = array(
+            array('yPos' => 100, 'text' => 'This certifies that', 'fontSize' => 20)
+
+        );
+
+        $pdf = $this->CreateTextBox($pdf, 'CERTIFICATE OF MEMBERSHIP', 28, 100, 120, 20, 20, 'B', 'L');
+        $pdf = $this->CreateTextBox($pdf, 'This certifies that', 60, 120, 120, 20, 15);
+
+        $nameAndTile = $member['member']['user']->getTitle().' '.$member['member']['user']->getFirstName().' '.$member['member']['user']->getLastName();
+        $ratio = 170/48;
+        $Xoffset = floor(((48-strlen($nameAndTile))/2)*$ratio);
+        $pdf = $this->CreateTextBox($pdf, $nameAndTile, $Xoffset, 135, 120, 20, 20);
+
+        $text = 'is a registered member of the';
+        $ratio = 170/68;
+        $Xoffset = floor(((68-strlen($text))/2)*$ratio);
+        $pdf = $this->CreateTextBox($pdf, $text, $Xoffset, 150, 120, 20, 15);
+
+
+        $text = $systemInfo['settings']->getnameOfOrganization();
+        $ratio = 170/68;
+        $Xoffset = floor(((68-strlen($text))/2)*$ratio);
+        $pdf = $this->CreateTextBox($pdf, $text, $Xoffset, 160, 120, 20, 15);
+
+        $text = '('.$member['member']['membershipTypeName'].')';
+        $ratio = 170/68;
+        $Xoffset = floor(((68-strlen($text))/2)*$ratio);
+        $pdf = $this->CreateTextBox($pdf, $text, $Xoffset, 170, 120, 20, 15);
+
+        //"Y-m-d H:i:s"
+        $date = new \DateTime();
+
+        $pdf = $this->CreateTextBox($pdf, 'Certificate issued on '.$date->format('jS F Y'), 0, 250, 120, 20, 10);
+        if ($member['member']['valid'] && $member['member']['validity_string'] != 'n/a') {
+            $pdf = $this->CreateTextBox($pdf, 'This '.$systemInfo['settings']->getAcronym().' membership is valid until ' . $member['member']['validity_string'], 0, 255, 120, 20, 10);
+        }
+
+
+        // list headers
+
+        $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 10);
+      //  $pdf->MultiCell(175, 10, '<b>Payment received on '.$invoiceData['paidDate'].'</b>', 0, 'L', 0, 1, '', '', true, null, true);
+
+        // create content for signature (image and/or text)
+        $currY = 200;
+        //->Image('assets/images/pdf_invoice/stamp_s.jpg', 140, $currY+30, 37, 35, 'JPG');
+       // $pdf->Image('assets/images/pdf_invoice/paid.jpg', 40, $currY+40, 20, 12, 'JPG');
+
+
+
+        return array('exception' => false,
+            'pdfInvoice' => $pdf->Output('certificate'.$member['member']['membership']->getMemberId().'.pdf', 'I'));
 
     }
 
