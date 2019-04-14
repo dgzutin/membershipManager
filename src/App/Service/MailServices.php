@@ -443,7 +443,7 @@ class MailServices
     {
         $resp = array('exception' => false,
             'salutation' => '{formalSalutation_en}',
-            'message' => 'The '.$this->settings->getNameOfOrganization().' has just published its latest newsletter issue.',
+            'message' => 'The '.$this->settings->getNameOfOrganization().' has just published its latest newsletter.',
             'link' => $newsletterData['publicLink'],
             'buttonLabel' => 'Click here to open the newsletter',
             'nameOfOrganization' => $this->settings->getNameOfOrganization(),
