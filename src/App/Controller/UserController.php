@@ -621,7 +621,6 @@ class UserController {
             }
         }
 
-
         if ($member['exception']){
             return $this->container->view->render($response, 'userNotification.twig', $member);
         }
@@ -633,7 +632,7 @@ class UserController {
         $pdfCert = $this->pdfGenerationServices->generatePdfMemberCertificate($member,  $_SESSION['user_id'], $request);
 
         $resp = $response->withHeader( 'Content-type', 'application/pdf' );
-        $resp->write( $pdfCert['pdfInvoice'] );
+        $resp->write( $pdfCert['pdfCertificate']);
 
        // echo json_encode($member);
         return $resp;

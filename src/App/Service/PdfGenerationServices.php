@@ -279,16 +279,12 @@ class PdfGenerationServices
         $pdf->Cell(0, 10,  $invoiceData['issuerData']['nameOfOrganization'], 0, false, 'C');
 
         return array('exception' => false,
-            'pdfInvoice' => $pdf->Output('invoice_'.$invoiceData['invoice']->getId().'.pdf', 'I'));
+            'pdfCertificate' => $pdf->Output('invoice_'.$invoiceData['invoice']->getId().'.pdf', 'I'));
 
     }
 
     public function generatePdfMemberCertificate($member, $userId)
     {
-        //$invoiceData = $this->userServices->getInvoiceDataForUser($invoiceId, $userId);
-
-        //$member = json_decode($memberStr);
-
         $systemInfo = $this->userServices->getSystemInfo();
         // create new PDF document
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -325,10 +321,21 @@ class PdfGenerationServices
         $pdf = $this->CreateTextBox($pdf, 'CERTIFICATE OF MEMBERSHIP', 28, 100, 120, 20, 20, 'B', 'L');
         $pdf = $this->CreateTextBox($pdf, 'This certifies that', 60, 120, 120, 20, 15);
 
-        $nameAndTile = ucwords(strtolower($member['member']['user']->getTitle().' '.$member['member']['user']->getFirstName().' '.$member['member']['user']->getLastName()));
+        $nameAndTile = $member['member']['user']->getTitle().ucwords(strtolower(' '.$member['member']['user']->getFirstName().' '.utf8_encode($member['member']['user']->getLastName())));
         $ratio = 170/48;
         $Xoffset = floor(((48-strlen($nameAndTile))/2)*$ratio);
-        $pdf = $this->CreateTextBox($pdf, $nameAndTile, $Xoffset, 135, 120, 20, 20);
+
+        //$pdf->writeHTML($nameAndTile, true, false, true, false, '');
+
+        //$test = iconv('iso-8859-1', 'windows-1252', $nameAndTile);
+        $str = mb_convert_encoding($nameAndTile, "UTF-8", "iso-8859-1");
+
+        $this->CreateTextBox($pdf, $str, $Xoffset, 135, 120, 20, 20);
+        //$pdf->Write(5, $nameAndTile, '', 0, '', false, 0, false, false, 0);
+
+        // output the HTML content
+       // $pdf->writeHTML('<b>Kučerka Zútin</b>', true, false, true, false, '');
+
 
         $text = 'is a registered member of the';
         $ratio = 170/68;
@@ -354,10 +361,9 @@ class PdfGenerationServices
             $pdf = $this->CreateTextBox($pdf, 'This '.$systemInfo['settings']->getAcronym().' membership is valid until ' . $member['member']['validity_string'], 0, 255, 120, 20, 10);
         }
 
-
         // list headers
 
-        $pdf->SetFont(PDF_FONT_NAME_MAIN, 'B', 10);
+        $pdf->SetFont(PDF_FONT_NAME_MAIN, '', 10);
       //  $pdf->MultiCell(175, 10, '<b>Payment received on '.$invoiceData['paidDate'].'</b>', 0, 'L', 0, 1, '', '', true, null, true);
 
         // create content for signature (image and/or text)

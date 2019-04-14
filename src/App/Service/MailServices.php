@@ -295,14 +295,16 @@ class MailServices
         $i = 0;
         foreach ($members as $member){
 
+            $modNewsletterMail = replacePlaceholdersNewsletter($emailSubject, $emailHtmlBody, $member);
+
 
             $this->message
-                ->setSubject($emailSubject)
+                ->setSubject($modNewsletterMail['subject'])
                 ->setFrom(array( $this->settings->getEmail() => $this->from));
 
             try{
                 $this->message->setTo(array($member->user->email_1 => $member->user->first_name.' '.$member->user->last_name));
-                $this->message->setBody($emailHtmlBody, 'text/html');
+                $this->message->setBody($modNewsletterMail['body'], 'text/html');
                 $this->message->setReplyTo($replyTo);
 
                 $result = array('exception' => false,
@@ -440,7 +442,7 @@ class MailServices
     public function createHtmlNewsletterOnlyLink($newsletterData, $user)
     {
         $resp = array('exception' => false,
-            'salutation' => 'Dear '.$user->title.' '.$user->first_name.' '.$user->last_name.',',
+            'salutation' => '{formalSalutation_en}',
             'message' => 'The '.$this->settings->getNameOfOrganization().' has just published its latest newsletter issue.',
             'link' => $newsletterData['publicLink'],
             'buttonLabel' => 'Click here to open the newsletter',
@@ -470,6 +472,29 @@ class MailServices
             "{memberGrade}" => $member->memberGrade,
             "{nameOfOrganization}" => $this->settings->getNameOfOrganization(),
             "{orgAcronym}" => $this->settings->getAcronym()
+        );
+
+        $body_mod = strtr($emailBodyText, $placeholders);
+        $subject_mod = strtr($emailSubject, $placeholders);
+
+        return array('body' => $body_mod,
+            'subject' => $subject_mod);
+    }
+
+
+    private function replacePlaceholdersNewsletter($emailSubject, $emailBodyText, $member)
+    {
+        //$utilsServices = $this->container->get('utilsServices');
+        //Replace all placeholdes by the actual data
+        $placeholders = array(
+            "{formalSalutation_en}" => 'Dear '.$member->user->title.' '.$member->user->first_name.' '.$member->user->last_name,
+            "{firstName}" => $member->user->first_name,
+            "{lastName}" => $member->user->last_name,
+            "{institution}" => $member->user->institution,
+            "{memberId}" => $member->membership->memberId,
+            "{membershipExpiryDate}" => $member->validity_string,
+            "{membershipType}" => $member->membershipTypeName,
+            "{memberGrade}" => $member->memberGrade,
         );
 
         $body_mod = strtr($emailBodyText, $placeholders);
