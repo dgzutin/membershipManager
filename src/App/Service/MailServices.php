@@ -295,7 +295,7 @@ class MailServices
         $i = 0;
         foreach ($members as $member){
 
-            $modNewsletterMail = replacePlaceholdersNewsletter($emailSubject, $emailHtmlBody, $member);
+            $modNewsletterMail = $this->replacePlaceholdersNewsletter($emailSubject, $emailHtmlBody, $member);
 
 
             $this->message
