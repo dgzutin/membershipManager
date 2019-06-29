@@ -52,6 +52,7 @@
                                 <select required="required" value="{{ form.title.value }}" class="form-control" name="title" id="title">
                                     <option {% if form.title.value == 'Dr.' %} selected="selected" {% endif %}>Dr.</option>
                                     <option {% if form.title.value == 'Mrs.' %} selected="selected" {% endif %}>Mrs.</option>
+									<option {% if form.title.value == 'Ms.' %} selected="selected" {% endif %}>Ms.</option>
                                     <option {% if form.title.value == 'Mr.' %} selected="selected" {% endif %}>Mr.</option>
                                 </select>
                             </div>

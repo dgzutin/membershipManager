@@ -130,6 +130,7 @@
                                     <select required="required" value="{{ user.title }}" class="form-control" name="title" id="title">
                                         <option {% if user.title == 'Dr.' %} selected="selected" {% endif %}>Dr.</option>
                                         <option {% if user.title == 'Mrs.' %} selected="selected" {% endif %}>Mrs.</option>
+										<option {% if user.title == 'Ms.' %} selected="selected" {% endif %}>Ms.</option>
                                         <option {% if user.title == 'Mr.' %} selected="selected" {% endif %}>Mr.</option>
                                     </select>
                                 </div>
