@@ -161,8 +161,7 @@
                 <table class="display" id="users" cellspacing="0" width="100%" style="font-size: smaller">
                     <thead>
                     <tr>
-                        <th></th>
-                        <th>Member ID</th
+                        <th>Member ID</th>
 						<th>Membership type</th>
 						<th>First Name</th>
 						<th>Last Name</th>
@@ -185,7 +184,6 @@
                     <tbody>
                     {%  for member in members %}
                         <tr class="">
-                            <td>{{ member.membership.id }}</td>
                             <td>{{ member.membershipTypePrefix }}</td>
                             <td>{{ member.membership.memberId }}</td>
 							<td>{{ member.user.firstName }}</td>
