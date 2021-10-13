@@ -184,8 +184,8 @@
                     <tbody>
                     {%  for member in members %}
                         <tr class="">
-                            <td>{{ member.membershipTypePrefix }}</td>
                             <td>{{ member.membership.memberId }}</td>
+							<td>{{ member.membershipTypePrefix }}</td>
 							<td>{{ member.user.firstName }}</td>
 							<td>{{ member.user.lastName }}</td>
 							<td>{{ member.user.title }}</td>
