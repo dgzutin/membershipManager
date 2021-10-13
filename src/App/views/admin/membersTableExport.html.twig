@@ -165,7 +165,7 @@
                         <th>Member ID</th>
 						<th>First Name</th>
 						<th>Last Name</th>
-						<th>Title</th>
+						<th>Salutation</th>
 						<th>Position</th>
 						<th>Institution</th>
 						<th>Department</th>
@@ -179,9 +179,7 @@
 						<th>Phone</th>
                         <th>Expiry date</th>
                         <th>Type</th>
-                        <th>Email</th>
-                        <th></th>
-                        <th>Pref.</th>
+                        <th>Registration date</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -219,13 +217,7 @@
                                 {% endif %}
                             </td>
                             <td>{{ member.membershipTypePrefix }}</td>
-                            <td>{{ member.user.email1 }}</td>
-                            <td><a href="{{ path_for('adminMember', { 'memberId': member.membership.memberId }) }}">view</a></td>
-                            <td>
-                                {% if member.user.generalTermsConsent %}<span style="color: #2b542c" class="glyphicon glyphicon-ok"></span>{% else %}<span style="color: #761c19" class="glyphicon glyphicon-question-sign"></span>{% endif %}
-                                {% if member.user.membershipEmailConsent %}<span class="glyphicon glyphicon-envelope"></span>{% else %}{% endif %}
-                                {% if member.user.newsletterConsent %}<span style="color: #0D3349" class="glyphicon glyphicon-info-sign"></span>{% else %}{% endif %}
-                            </td>
+                            <td>{{ member.user.userRegDate }}</td>
                         </tr>
                     {% endfor %}
 
