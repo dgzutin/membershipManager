@@ -173,6 +173,7 @@
 						<th>City</th>
 						<th>ZIP</th>
                         <th>Country</th>
+						<th>Country code</th>
 						<th>E-Mail 1</th>
 						<th>E-Mail 2</th>
 						<th>Website</th>
@@ -180,7 +181,6 @@
                         <th>Expiry date</th>
                         <th>Type</th>
                         <th>Email</th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -198,19 +198,31 @@
 							<td>{{ member.user.city }}</td>
 							<td>{{ member.user.zip }}</td>
                             <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
+							<td>{{ member.user.country }}</td>
 							<td>{{ member.user.email1 }}</td>
 							<td>{{ member.user.email2 }}</td>
 							<td>{{ member.user.website }}</td>
 							<td>{{ member.user.phone }}</td>
-                            <td>{{ member.validity.validUntil }}</td>
+                            <td>
+                                {% if member.valid == true  %}
+
+                                    <span class="text-success">{{ member.validity.validUntil| date('d/m/Y') }}</span>
+
+                                {% else %}
+
+                                    {% if member.validity != null  %}
+
+                                        <span class="text-danger">{{ member.validity.validUntil| date('d/m/Y') }}</span>
+
+                                    {% else %}
+                                        <span class="text-danger">n/a</span>
+                                    {% endif %}
+
+                                {% endif %}
+                            </td>
                             <td>{{ member.membershipTypePrefix }}</td>
                             <td>{{ member.user.email1 }}</td>
                             <td><a href="{{ path_for('adminMember', { 'memberId': member.membership.memberId }) }}">view</a></td>
-                            <td>
-                                {% if member.user.generalTermsConsent %}<span style="color: #2b542c" class="glyphicon glyphicon-ok"></span>{% else %}<span style="color: #761c19" class="glyphicon glyphicon-question-sign"></span>{% endif %}
-                                {% if member.user.membershipEmailConsent %}<span class="glyphicon glyphicon-envelope"></span>{% else %}{% endif %}
-                                {% if member.user.newsletterConsent %}<span style="color: #0D3349" class="glyphicon glyphicon-info-sign"></span>{% else %}{% endif %}
-                            </td>
                         </tr>
                     {% endfor %}
 
