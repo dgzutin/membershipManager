@@ -169,7 +169,14 @@
 						<th>Position</th>
 						<th>Institution</th>
 						<th>Department</th>
+						<th>Street</th>
+						<th>City</th>
+						<th>ZIP</th>
                         <th>Country</th>
+						<th>E-Mail 1</th>
+						<th>E-Mail 2/th>
+						<th>Website/th>
+						<th>Phone/th>
                         <th>Expiry date</th>
                         <th>Type</th>
                         <th>Email</th>
@@ -188,7 +195,14 @@
 							<td>{{ member.user.position }}</td>
 							<td>{{ member.user.institution }}</td>
 							<td>{{ member.user.department }}</td>
+							<td>{{ member.user.street }}</td>
+							<td>{{ member.user.city }}</td>
+							<td>{{ member.user.zip }}</td>
                             <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
+							<td>{{ member.user.email1 }}</td>
+							<td>{{ member.user.email2 }}</td>
+							<td>{{ member.user.website }}</td>
+							<td>{{ member.user.phone }}</td>
                             <td>
                                 {% if member.valid == true  %}
 
