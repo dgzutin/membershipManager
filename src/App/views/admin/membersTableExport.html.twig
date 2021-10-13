@@ -162,7 +162,8 @@
                     <thead>
                     <tr>
                         <th></th>
-                        <th>Member ID</th>
+                        <th>Member ID</th
+						<th>Membership type</th>
 						<th>First Name</th>
 						<th>Last Name</th>
 						<th>Salutation</th>
@@ -179,13 +180,13 @@
 						<th>Website</th>
 						<th>Phone</th>
                         <th>Expiry date</th>
-                        <th>Type</th>
                     </tr>
                     </thead>
                     <tbody>
                     {%  for member in members %}
                         <tr class="">
                             <td>{{ member.membership.id }}</td>
+                            <td>{{ member.membershipTypePrefix }}</td>
                             <td>{{ member.membership.memberId }}</td>
 							<td>{{ member.user.firstName }}</td>
 							<td>{{ member.user.lastName }}</td>
@@ -219,7 +220,6 @@
 
                                 {% endif %}
                             </td>
-                            <td>{{ member.membershipTypePrefix }}</td>
                         </tr>
                     {% endfor %}
 
