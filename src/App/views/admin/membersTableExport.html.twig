@@ -182,12 +182,12 @@
                         <tr class="">
                             <td>{{ member.membership.id }}</td>
                             <td>{{ member.membership.memberId }}</td>
-							<td>{{ member.membership.firstName }}</td>
-							<td>{{ member.membership.lastName }}</td>
-							<td>{{ member.membership.title }}</td>
-							<td>{{ member.membership.position }}</td>
-							<td>{{ member.membership.institution }}</td>
-							<td>{{ member.membership.department }}</td>
+							<td>{{ member.user.firstName }}</td>
+							<td>{{ member.user.lastName }}</td>
+							<td>{{ member.user.title }}</td>
+							<td>{{ member.user.position }}</td>
+							<td>{{ member.user.institution }}</td>
+							<td>{{ member.user.department }}</td>
                             <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
                             <td>
                                 {% if member.valid == true  %}
