@@ -427,7 +427,7 @@ class AdminController {
             return $this->container->view->render($response, 'userNotification.twig', array('message' => $membersResp['message']));
         }
         
-        return $this->container->view->render($response, 'admin/membersTable.html.twig', array(
+        return $this->container->view->render($response, 'admin/membersTableExport.html.twig', array(
             'exception' => $membersResp['exception'],
             'message' => $membersResp['message'],
             'membershipTypes' => $filter_form['membershipTypes'],
