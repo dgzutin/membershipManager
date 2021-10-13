@@ -1,0 +1,225 @@
+{% extends 'base.html.twig' %}
+
+{% block mainPanel %}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path_for('homeUser')}}">Home</a></li>
+        <li class="breadcrumb-item active">Members</li>
+    </ol>
+    <div class="se-pre-con"></div>
+
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Manage Users and Members</div>
+            <div class="panel-body">
+
+                {% if exception == true %}
+                    <div class="alert alert-danger">
+                        <a class="close" data-dismiss="alert" href="#">×</a>{{ message }}
+                    </div>
+                {% endif %}
+
+                <form class="" method="post">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="membershipTypeId">Membership Type</label>
+                            <select class="form-control" id="membershipTypeId" name="membershipTypeId" onchange="this.form.submit()">
+
+                                <option value="-1">All Membership Types</option>
+                                {% for membershipType in membershipTypes %}
+                                    <option value="{{ membershipType.id }}" {% if form.membershipTypeId == membershipType.id  %}selected{% endif %}>{{ membershipType.typeName }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="membershipGrade">Member Grade</label>
+                            <select class="form-control" id="membershipGrade" name="membershipGrade" onchange="this.form.submit()">
+
+                                <option value="-1">All Grades</option>
+                                {% for memberGrade in memberGrades %}
+                                    <option value="{{ memberGrade.id }}" {% if form.membershipGrade == memberGrade.id  %}selected{% endif %}>{{ memberGrade.gradeName }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xs-6 col-sm-3">
+
+                        <div class="form-group">
+                            <label for="validity">Validity:</label>
+                            <select class="form-control" id="validity" name="validity" onchange="this.form.submit()">
+
+                                <option value="-1" {% if form.validity == '-1'  %}selected{% endif %}>All</option>
+                                <option value="0" {% if form.validity == '0'  %}selected{% endif %}>Only Valid Memberships</option>
+                                <option value="1" {% if form.validity == '1'  %}selected{% endif %}>Valid until {{ validity.current_period }}</option>
+                                <option value="2" {% if form.validity == '2'  %}selected{% endif %}>Valid until {{ validity.next_period }}</option>
+                                <option value="3" {% if form.validity == '3'  %}selected{% endif %}>Valid until {{ validity.one_period_ago }}</option>
+                                <option value="4" {% if form.validity == '4'  %}selected{% endif %}>Valid until {{ validity.two_periods_ago }}</option>
+                                <option value="5" {% if form.validity == '5'  %}selected{% endif %}>All Expired</option>
+                                <option value="6" {% if form.validity == '6'  %}selected{% endif %}>Never validated memberships</option>
+                                <option value="7" {% if form.validity == '7'  %}selected{% endif %}>Cancelled memberships</option>
+
+                            </select>
+                        </div>
+
+                        <!--
+                        <div class="form-group">
+                            <label for="expiry_date">Expiry date</label>
+                            <select class="form-control" id="expiry_date" name="expiry_date">
+                                <option value="valid">Valid memberships</option>
+                                <option value="expired">All expired memberships</option>
+                                <option value="expired_1year">Expired memberships (1 year or less)</option>
+                                <option value="expired_more_than_2years">Expired memberships (2 years o more)</option>
+                            </select>
+                        </div>
+-->
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-group">
+                            <label for="country">Country:</label>
+                            <div id="country" class="bfh-selectbox bfh-countries" data-country="{{ form.country }}" data-flags="true" data-name="country">
+                                <input type="hidden" value="" onchange="this.form.submit()">
+                                <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+                                    <span class="bfh-selectbox-option input-medium" data-option=""></span>
+                                    <b class="caret"></b>
+                                </a>
+                                <div class="bfh-selectbox-options">
+                                    <input type="text" class="bfh-selectbox-filter">
+                                    <div role="listbox">
+                                        <ul role="option">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-9">
+
+                                {% if singleUser %}
+
+                                    {% if membershipTypeAvailable %}
+                                        <p class="text-info">
+                                            You can create a new membership for the user by clicking the button on the right.
+                                        </p>
+                                    {% else %}
+                                        <p class="text-danger">
+                                            This user has reached the maximum number of memberships.
+                                        </p>
+                                    {% endif %}
+
+                                {% else %}
+
+                                <p class="text-info">
+                                    This table shows only registered members. Use the select boxes above to change the filter properties.
+                                    Additionally you can search the table for any keyword and the matching rows will be selected on the fly.
+                                </p>
+                                {% endif %}
+                        </div>
+
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group">
+
+                                {% if singleUser %}
+
+                                    {% if membershipTypeAvailable %}
+                                        <a class="btn btn-lg btn-success btn-block" href="{{ path_for('addMemberAdmin', { 'userId': userId }) }}"><span class="fa fa-plus"></span> New membership</a>
+                                    {% else %}
+                                        <button class="btn btn-lg btn-success btn-block" disabled=""><span class="fa fa-plus"></span> New membership</button>
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <button class="btn btn-lg btn-success btn-block" type="submit">Apply Filter</button>
+
+                                {% endif %}
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+                <hr>
+
+                <table class="display" id="users" cellspacing="0" width="100%" style="font-size: smaller">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Member ID</th>
+                        <th>Country</th>
+                        <th>Expiry date</th>
+                        <th>Type</th>
+                        <th>Representative</th>
+                        <th>Email</th>
+                        <th></th>
+                        <th>Pref.</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for member in members %}
+                        <tr class="">
+                            <td>{{ member.membership.id }}</td>
+                            <td>{{ member.membership.memberId }}</td>
+                            <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
+                            <td>
+                                {% if member.valid == true  %}
+
+                                    <span class="text-success">{{ member.validity.validUntil| date('d/m/Y') }}</span>
+
+                                {% else %}
+
+                                    {% if member.validity != null  %}
+
+                                        <span class="text-danger">{{ member.validity.validUntil| date('d/m/Y') }}</span>
+
+                                    {% else %}
+                                        <span class="text-danger">n/a</span>
+                                    {% endif %}
+
+                                {% endif %}
+                            </td>
+                            <td>{{ member.membershipTypePrefix }}</td>
+                            <td> <a href="{{ path_for('adminViewUserProfile', { 'userId': member.user.id }) }}">{{ member.user.lastName }}, {{ member.user.firstName }}</a></td>
+                            <td>{{ member.user.email1 }}</td>
+                            <td><a href="{{ path_for('adminMember', { 'memberId': member.membership.memberId }) }}">view</a></td>
+                            <td>
+                                {% if member.user.generalTermsConsent %}<span style="color: #2b542c" class="glyphicon glyphicon-ok"></span>{% else %}<span style="color: #761c19" class="glyphicon glyphicon-question-sign"></span>{% endif %}
+                                {% if member.user.membershipEmailConsent %}<span class="glyphicon glyphicon-envelope"></span>{% else %}{% endif %}
+                                {% if member.user.newsletterConsent %}<span style="color: #0D3349" class="glyphicon glyphicon-info-sign"></span>{% else %}{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/DataTables-1.10.11/media/js/jquery.dataTables.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#users').DataTable();
+        } );
+
+    </script>
+
+
+{% endblock %}

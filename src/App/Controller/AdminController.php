@@ -399,6 +399,47 @@ class AdminController {
             'membershipTypeAvailable' => $membershipTypeAvailable
         ));
     }
+	
+	public function membersExportAction(ServerRequestInterface $request, ResponseInterface $response, $args) 
+    {
+        $userId = null;
+        $membershipTypeAvailable = false;
+        $singleUser = false;
+        if (isset($args['userId'])){
+            $userId = (int)$args['userId'];
+            $membershipTypeAvailable = $this->utilsServices->newMembershipPossible((int)$args['userId']);
+            $singleUser = true;
+        }
+
+        $post_data = $request->getParsedBody();
+        $resp = $this->utilsServices->processFilterForMembersTable($post_data, $userId);
+
+        $membership_filter = $resp['membership_filter'];
+        $user_filter = $resp['user_filter'];
+        $validity_filter = $resp['ValidityFilter'];
+        $filter_form = $resp['filter_form'];
+
+        //get the list of members based on the filter
+        $membersResp = $this->membershipServices->getMembers($membership_filter, $user_filter, $validity_filter['validity'], $validity_filter['onlyValid'], $validity_filter['onlyExpired'], $validity_filter['never_validated']);
+
+        if ($membersResp['exception']){
+
+            return $this->container->view->render($response, 'userNotification.twig', array('message' => $membersResp['message']));
+        }
+        
+        return $this->container->view->render($response, 'admin/membersTable.html.twig', array(
+            'exception' => $membersResp['exception'],
+            'message' => $membersResp['message'],
+            'membershipTypes' => $filter_form['membershipTypes'],
+            'memberGrades' => $filter_form['memberGrades'],
+            'validity' => $filter_form['validity'],
+            'members' => $membersResp['members'],
+            'userId' => $userId,
+            'form' => $post_data,
+            'singleUser' => $singleUser,
+            'membershipTypeAvailable' => $membershipTypeAvailable
+        ));
+    }
 
     public function memberAction(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
