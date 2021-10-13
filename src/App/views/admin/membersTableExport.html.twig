@@ -178,7 +178,7 @@
 						<th>Website</th>
 						<th>Phone</th>
                         <th>Expiry date</th>
-                        <th>Type</th>
+                        <th>Membership Type</th>
                         <th>Registration date</th>
                     </tr>
                     </thead>
@@ -199,23 +199,9 @@
                             <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
 							<td>{{ member.user.email1 }}</td>
 							<td>{{ member.user.email2 }}</td>
-                            <td>
-                                {% if member.valid == true  %}
-
-                                    <span class="text-success">{{ member.validity.validUntil| date('d/m/Y') }}</span>
-
-                                {% else %}
-
-                                    {% if member.validity != null  %}
-
-                                        <span class="text-danger">{{ member.validity.validUntil| date('d/m/Y') }}</span>
-
-                                    {% else %}
-                                        <span class="text-danger">n/a</span>
-                                    {% endif %}
-
-                                {% endif %}
-                            </td>
+							<td>{{ member.user.website }}</td>
+							<td>{{ member.user.phone }}</td>
+                            <td>{{ member.validity.validUntil }}</td>
                             <td>{{ member.membershipTypePrefix }}</td>
                             <td>{{ member.user.userRegDate }}</td>
                         </tr>
