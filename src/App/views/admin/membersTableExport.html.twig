@@ -158,7 +158,15 @@
 				
 				<button onclick="ExportToExcel('xlsx')">Export table to excel</button>
 
-                <table class="display" id="users" cellspacing="0" width="100%" style="font-size: smaller">
+                
+
+
+            </div>
+        </div>
+    </div>
+
+	
+	<table class="display" id="users" cellspacing="0" width="100%" style="font-size: smaller">
                     <thead>
                     <tr>
                         <th></th>
@@ -174,14 +182,14 @@
 						<th>ZIP</th>
                         <th>Country</th>
 						<th>E-Mail 1</th>
-						<th>E-Mail 2/th>
-						<th>Website/th>
-						<th>Phone/th>
+						<th>E-Mail 2</th>
+						<th>Website</th>
+						<th>Phone</th>
                         <th>Expiry date</th>
-                        <th>Type</th>
-                        <th>Email</th>
-                        <th></th>
-                        <th>Pref.</th>
+                        <th>Membership Type</th>
+                        <th>Registration date</th>
+						<th>User is active</th>
+						<th>Comments</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -203,42 +211,15 @@
 							<td>{{ member.user.email2 }}</td>
 							<td>{{ member.user.website }}</td>
 							<td>{{ member.user.phone }}</td>
-                            <td>
-                                {% if member.valid == true  %}
-
-                                    <span class="text-success">{{ member.validity.validUntil| date('d/m/Y') }}</span>
-
-                                {% else %}
-
-                                    {% if member.validity != null  %}
-
-                                        <span class="text-danger">{{ member.validity.validUntil| date('d/m/Y') }}</span>
-
-                                    {% else %}
-                                        <span class="text-danger">n/a</span>
-                                    {% endif %}
-
-                                {% endif %}
-                            </td>
+                            <td>{{ member.validity.validUntil}}</td>
                             <td>{{ member.membershipTypePrefix }}</td>
-                            <td>{{ member.user.email1 }}</td>
-                            <td><a href="{{ path_for('adminMember', { 'memberId': member.membership.memberId }) }}">view</a></td>
-                            <td>
-                                {% if member.user.generalTermsConsent %}<span style="color: #2b542c" class="glyphicon glyphicon-ok"></span>{% else %}<span style="color: #761c19" class="glyphicon glyphicon-question-sign"></span>{% endif %}
-                                {% if member.user.membershipEmailConsent %}<span class="glyphicon glyphicon-envelope"></span>{% else %}{% endif %}
-                                {% if member.user.newsletterConsent %}<span style="color: #0D3349" class="glyphicon glyphicon-info-sign"></span>{% else %}{% endif %}
-                            </td>
+							<td>{{ member.user.active }}</td>
+                            <td>{{ member.user.comments }}</td>
                         </tr>
                     {% endfor %}
 
                     </tbody>
                 </table>
-
-
-            </div>
-        </div>
-    </div>
-
     
 	
 
