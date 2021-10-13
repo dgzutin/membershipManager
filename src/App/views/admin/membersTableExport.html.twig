@@ -179,7 +179,6 @@
 						<th>Phone</th>
                         <th>Expiry date</th>
                         <th>Membership Type</th>
-                        <th>Registration date</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -203,7 +202,6 @@
 							<td>{{ member.user.phone }}</td>
                             <td>{{ member.validity.validUntil }}</td>
                             <td>{{ member.membershipTypePrefix }}</td>
-                            <td>{{ member.user.userRegDate }}</td>
                         </tr>
                     {% endfor %}
 
