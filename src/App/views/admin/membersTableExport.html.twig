@@ -179,7 +179,8 @@
 						<th>Phone</th>
                         <th>Expiry date</th>
                         <th>Type</th>
-                        <th>Registration date</th>
+                        <th>Email</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -199,8 +200,6 @@
                             <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
 							<td>{{ member.user.email1 }}</td>
 							<td>{{ member.user.email2 }}</td>
-							<td>{{ member.user.website }}</td>
-							<td>{{ member.user.phone }}</td>
                             <td>
                                 {% if member.valid == true  %}
 
@@ -219,7 +218,13 @@
                                 {% endif %}
                             </td>
                             <td>{{ member.membershipTypePrefix }}</td>
-                            <td>{{ member.user.userRegDate }}</td>
+                            <td>{{ member.user.email1 }}</td>
+                            <td><a href="{{ path_for('adminMember', { 'memberId': member.membership.memberId }) }}">view</a></td>
+                            <td>
+                                {% if member.user.generalTermsConsent %}<span style="color: #2b542c" class="glyphicon glyphicon-ok"></span>{% else %}<span style="color: #761c19" class="glyphicon glyphicon-question-sign"></span>{% endif %}
+                                {% if member.user.membershipEmailConsent %}<span class="glyphicon glyphicon-envelope"></span>{% else %}{% endif %}
+                                {% if member.user.newsletterConsent %}<span style="color: #0D3349" class="glyphicon glyphicon-info-sign"></span>{% else %}{% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
 
