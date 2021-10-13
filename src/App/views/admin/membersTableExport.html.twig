@@ -156,7 +156,7 @@
 
                 <hr>
 				
-				<button onclick="ExportToExcel('xlsx')">Export table to excel</button>
+				<button class="btn btn-lg btn-success btn-block" onclick="ExportToExcel('xlsx')">Filtered members to Excel</button>
 
                 <table class="display" id="users" cellspacing="0" width="100%" style="visibility:hidden">
                     <thead>
@@ -243,7 +243,7 @@
             var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
             return dl ?
                 XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-                XLSX.writeFile(wb, fn || ('MySheetName.' + (type || 'xlsx')));
+                XLSX.writeFile(wb, fn || ('Members.' + (type || 'xlsx')));
         }
 
     </script>
