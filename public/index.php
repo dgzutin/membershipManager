@@ -203,7 +203,7 @@ $app->group('/admin', function () use ($app) {
     $app->post('/verifyBulkMailMembers', '\AdminController:verifyBulkMailMembersAction')->setName('verifyBulkMailMembersAdmin');
     $app->map(['GET', 'POST'], '/registerNewUser', '\AdminController:registerNewUserAction')->setName('registerNewUser');
     $app->map(['GET', 'POST'], '/members[/{userId}]', '\AdminController:membersAction')->setName('members');
-	$app->map(['GET', 'POST'], '/members[/{userId}]', '\AdminController:membersExportAction')->setName('membersExport');
+	$app->map(['GET', 'POST'], '/membersExport[/{userId}]', '\AdminController:membersExportAction')->setName('membersExport');
     $app->map(['GET', 'POST'], '/member/{memberId}', '\AdminController:memberAction')->setName('adminMember');
     $app->map(['GET', 'POST'], '/addMember/{userId}', '\AdminController:addMemberAction')->setName('addMemberAdmin');
     $app->get('/manageRenewals/{membershipId}', '\AdminController:manageRenewalsAction')->setName('manageRenewals');
