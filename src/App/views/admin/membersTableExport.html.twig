@@ -163,10 +163,15 @@
                     <tr>
                         <th></th>
                         <th>Member ID</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Title</th>
+						<th>Position</th>
+						<th>Institution</th>
+						<th>Department</th>
                         <th>Country</th>
                         <th>Expiry date</th>
                         <th>Type</th>
-                        <th>Representative</th>
                         <th>Email</th>
                         <th></th>
                         <th>Pref.</th>
@@ -177,6 +182,12 @@
                         <tr class="">
                             <td>{{ member.membership.id }}</td>
                             <td>{{ member.membership.memberId }}</td>
+							<td>{{ member.membership.firstName }}</td>
+							<td>{{ member.membership.lastName }}</td>
+							<td>{{ member.membership.title }}</td>
+							<td>{{ member.membership.position }}</td>
+							<td>{{ member.membership.institution }}</td>
+							<td>{{ member.membership.department }}</td>
                             <td><span class="bfh-countries" data-country="{{ member.user.country }}" data-flags="true"></span></td>
                             <td>
                                 {% if member.valid == true  %}
@@ -196,7 +207,6 @@
                                 {% endif %}
                             </td>
                             <td>{{ member.membershipTypePrefix }}</td>
-                            <td> <a href="{{ path_for('adminViewUserProfile', { 'userId': member.user.id }) }}">{{ member.user.lastName }}, {{ member.user.firstName }}</a></td>
                             <td>{{ member.user.email1 }}</td>
                             <td><a href="{{ path_for('adminMember', { 'memberId': member.membership.memberId }) }}">view</a></td>
                             <td>
